@@ -1,0 +1,53 @@
+{
+  "company": {
+    "name": "ASNS",
+    "legalName": "ADVANCED SYSTEMS & NETWORK SOLUTIONS SRL",
+    "regCom": "J40/12223/2006",
+    "cif": "RO18890424",
+    "address": "Sos. Berceni, Nr.39, Bl.107, Sc.2, Et.7, Ap.100, Sector 4, Jud. București",
+    "iban": "RO59BTRLRONCRT0549484001",
+    "bank": "BANCA TRANSILVANIA",
+    "representative": "Adrian Nichitov",
+    "representativeRole": "Administrator",
+    "email": "office@asns.ro",
+    "phone": "+40731156333",
+    "website": "https://asns.ro"
+  },
+  "contracts": {
+    "defaultDuration": 12,
+    "defaultCurrency": "EUR",
+    "penaltyRate": 0.1,
+    "noticePeriod": 30,
+    "autoRenew": true,
+    "paymentTermDays": 5,
+    "numbering": {
+      "agency": {
+        "prefix": "ASNS-AG",
+        "nextNumber": 1,
+        "year": 2026
+      },
+      "fudly": {
+        "prefix": "ASNS-FD",
+        "nextNumber": 1,
+        "year": 2026
+      },
+      "climaticpro": {
+        "prefix": "ASNS-CP",
+        "nextNumber": 1,
+        "year": 2026
+      }
+    }
+  },
+  "integrations": {
+    "ai": {
+      "provider": "gemini",
+      "apiKey": "AIzaSyDCCqUZuwGzJLAwZDZtcjMtKNyf-JY6ZjM",
+      "model": "gemini-2.5-flash",
+      "enabled": true
+    },
+    "smso": {
+      "apiKey": "6iABkheApb8L6a0bpJY2amhCYPD5Bo9zu9a4EuHj",
+      "enabled": true
+    }
+  }
+}

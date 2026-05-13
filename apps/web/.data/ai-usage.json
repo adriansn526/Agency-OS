@@ -1,0 +1,186 @@
+[
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 402,
+    "completionTokens": 40,
+    "action": "generate",
+    "timestamp": "2026-04-27T06:28:36.584Z",
+    "totalTokens": 442,
+    "cost": 0.0000843
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 391,
+    "completionTokens": 41,
+    "action": "generate",
+    "timestamp": "2026-04-27T06:29:43.388Z",
+    "totalTokens": 432,
+    "cost": 0.00008325
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/marketing/templates",
+    "timestamp": "2026-05-04T12:02:29.712Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/marketing/templates",
+    "timestamp": "2026-05-04T12:05:55.613Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 9,
+    "completionTokens": 0,
+    "action": "generate",
+    "timestamp": "2026-05-05T17:21:17.465Z",
+    "totalTokens": 9,
+    "cost": 0.0000013499999999999998
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/projects/cmnzkiert0003cuxtu6lrdunv",
+    "timestamp": "2026-05-11T09:47:45.892Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/projects/cmnzkiert0003cuxtu6lrdunv",
+    "timestamp": "2026-05-11T09:48:23.006Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:38:04.385Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:38:53.188Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:39:17.082Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:39:27.381Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:39:42.479Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T15:41:18.204Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/",
+    "timestamp": "2026-05-12T16:54:06.102Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/crm",
+    "timestamp": "2026-05-13T03:56:06.882Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/crm",
+    "timestamp": "2026-05-13T03:57:08.389Z",
+    "totalTokens": 0,
+    "cost": 0
+  },
+  {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "action": "copilot_chat",
+    "detail": "/crm",
+    "timestamp": "2026-05-13T03:57:18.784Z",
+    "totalTokens": 0,
+    "cost": 0
+  }
+]

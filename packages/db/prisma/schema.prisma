@@ -1,0 +1,710 @@
+// packages/db/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Users ───
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String?   // bcrypt hash
+  role      String    @default("operator") // admin, manager, operator, viewer
+  avatar    String?
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ─── Business Lines ───
+model BusinessLine {
+  id        String   @id @default(cuid())
+  slug      String   @unique // 'agency', 'fudly', 'climaticpro', 'wertaudit'
+  name      String
+  icon      String
+  color     String
+  domain    String?  // 'fudly.ro', 'climaticpro.ro' — used for short links
+  config    Json     // entityTypes, projectTemplates, offerTemplates (full config)
+  createdAt DateTime @default(now())
+
+  clients          Client[]
+  leads            Lead[]
+  projects         Project[]
+  offers           Offer[]
+  contracts        Contract[]
+  invoices         Invoice[]
+  serviceTemplates ServiceTemplate[]
+  offerTemplates   OfferTemplate[]
+  communications   Communication[]
+  // ─── Marketing ───
+  marketingSegments   MarketingSegment[]
+  marketingTemplates  MarketingTemplate[]
+  marketingCampaigns  MarketingCampaign[]
+  shortLinks          ShortLink[]
+  // ─── Reporting ───
+  clientReports       ClientReport[]
+}
+
+// ─── CRM: Clients ───
+model Client {
+  id             String       @id @default(cuid())
+  businessLineId String
+  entityType     String       // 'clients', 'restaurants', 'end_clients', 'installers', etc.
+  companyName    String
+  cui            String?
+  regCom         String?
+  contactPerson  String
+  email          String
+  phone          String?
+  address        String?
+  website        String?
+  websites       String[]     @default([]) // all monitored domains
+  status         String       @default("prospect") // activ, inactiv, prospect
+  industry       String?
+  notes          String?
+  // ─── Google Integrations ───
+  googleAdsCustomerId  String?  // Google Ads Customer ID (e.g. "4111955891")
+  ga4PropertyId        String?  // GA4 Property ID (e.g. "properties/123456")
+  gscSiteUrl           String?  // GSC verified site (e.g. "sc-domain:example.ro")
+  customFields   Json?        // câmpuri specifice per entityType
+  deletedAt      DateTime?    // soft delete
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  leads          Lead[]
+  projects       Project[]
+  offers         Offer[]
+  contracts      Contract[]
+  invoices       Invoice[]
+  activities     Activity[]
+  retainers      Retainer[]
+  communications Communication[]
+  brandDNA       BrandDNA?
+  clientReports  ClientReport[]
+
+  @@index([businessLineId, entityType])
+  @@index([status])
+}
+
+// ─── CRM: Leads ───
+model Lead {
+  id             String       @id @default(cuid())
+  businessLineId String
+  entityType     String
+  companyName    String
+  contactPerson  String
+  email          String
+  phone          String?
+  status         String       // pipeline status (varies per entityType)
+  source         String?      // website, referral, linkedin, cold_outreach, google_ads
+  value          Float?       // estimated deal value
+  probability    Float?       // conversion probability (0-100)
+  priority       String?      // low, medium, high, urgent
+  notes          String?
+  customFields   Json?
+  assignedTo     String?      // userId
+  nextAction     String?
+  nextActionDate DateTime?
+  convertedToId  String?      // clientId after conversion
+  // External import fields
+  externalId     String?      // ID from source system (e.g. Fudly MongoDB _id)
+  externalSource String?      // 'fudly_crm', 'manual', etc.
+  city           String?
+  address        String?
+  // Business data fields (CSV import)
+  cui             String?      // CIF/CUI firma
+  website         String?
+  county          String?      // Județ
+  industry        String?      // agricultura, comert, constructii, medical, fonduri, altele
+  caenCode        String?      // Cod CAEN
+  caenDescription String?      // Descriere CAEN
+  revenue         Float?       // Cifra de afaceri
+  employees       Int?         // Nr angajați
+  companyStatus   String?      // Functiune / Dizolvare / Radiere
+  foundedYear     Int?         // An înființare
+  contactRole     String?      // Funcție contact
+  phone2          String?
+  phone3          String?
+  email2          String?
+  activityDomain  String?      // Domeniu activitate (e.g. "Construcții", "Instalații electrice")
+  services        String?      // Servicii oferite (pipe-separated, e.g. "montaj | reparații | mentenanță")
+  // ─── Campaign Suppression ───
+  lastCampaignAt DateTime?               // When was the last campaign sent to this lead
+  lastCampaignId String?                 // Which campaign was sent last
+  campaignCount  Int          @default(0) // Total campaigns sent to this lead
+  // ─── Marketing GDPR ───
+  optOut         Boolean      @default(false)  // GDPR: a cerut să fie exclus din marketing
+  optOutAt       DateTime?                     // Când a cerut opt-out
+
+  deletedAt      DateTime?    // soft delete
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  convertedTo    Client?      @relation(fields: [convertedToId], references: [id])
+  activities     Activity[]
+  campaignLeads  CampaignLead[]
+
+  @@unique([externalId, externalSource])
+  @@index([businessLineId, entityType])
+  @@index([status])
+  @@index([industry])
+  @@index([county])
+  @@index([cui])
+}
+
+// ─── Projects ───
+model Project {
+  id             String       @id @default(cuid())
+  businessLineId String
+  clientId       String
+  templateId     String       // reference to projectTemplate in BusinessLine.config
+  name           String
+  status         String       @default("planificare")
+  currentPhase   String?
+  progress       Int          @default(0)
+  startDate      DateTime?
+  dueDate        DateTime?
+  budget         Float?
+  assignedTo     String?      // userId
+  notes          String?
+  metadata       Json?        // phases progress, checklist state, linked entities
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  client         Client       @relation(fields: [clientId], references: [id])
+  activities     Activity[]
+
+  @@index([businessLineId, status])
+}
+
+// ─── Offers ───
+model Offer {
+  id             String       @id @default(cuid())
+  number         String       @unique // OF-2026-001
+  businessLineId String
+  entityType     String
+  clientId       String?
+  entityName     String
+  templateId     String
+  templateName   String
+  status         String       @default("draft")
+  value          Float
+  currency       String       @default("EUR")
+  validUntil     DateTime?
+  blocks         Json         // offer blocks (hero, features, pricing, stats)
+  customFields   Json?
+  modules        Json?        // service modules selected
+  sentAt         DateTime?    // când a fost trimisă prima dată
+  viewedAt       DateTime?    // primul offer_opened event
+  acceptedAt     DateTime?    // când a acceptat clientul
+  createdBy      String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  client         Client?      @relation(fields: [clientId], references: [id])
+  contracts      Contract[]
+  deliveries     OfferDelivery[]
+  activities     Activity[]
+
+  @@index([businessLineId, status])
+  @@index([clientId])
+}
+
+// ─── Offer Delivery (Smart Delivery) ───
+model OfferDelivery {
+  id               String    @id @default(cuid())
+  offerId          String
+  token            String    @unique  // token unic pentru URL public
+  sentAt           DateTime  @default(now())
+  sentTo           String    // email destinatar
+  sentBy           String    // userId care a trimis
+  emailSubject     String?
+  emailMessage     String?   @db.Text
+  pdfAttached      Boolean   @default(true)
+  trackingEnabled  Boolean   @default(true)
+  firstOpenedAt    DateTime?
+  lastOpenedAt     DateTime?
+  totalViews       Int       @default(0)
+  clientResponse   String?   // 'accepted' | 'rejected' | 'pending'
+  clientResponseAt DateTime?
+  clientMessage    String?   @db.Text
+  createdAt        DateTime  @default(now())
+
+  offer  Offer        @relation(fields: [offerId], references: [id])
+  events OfferEvent[]
+
+  @@index([offerId])
+}
+
+// ─── Offer Tracking Events ───
+model OfferEvent {
+  id         String   @id @default(cuid())
+  deliveryId String
+  type       String   // 'opened', 'section_viewed', 'time_on_section', 'scroll_depth', 'accepted', 'rejected', 'pdf_downloaded', 'revisited', 'question_asked'
+  metadata   Json?    // { section, duration, depth, message, sessionNumber }
+  ip         String?
+  userAgent  String?
+  device     String?  // 'desktop' | 'mobile' | 'tablet'
+  timestamp  DateTime @default(now())
+
+  delivery OfferDelivery @relation(fields: [deliveryId], references: [id])
+
+  @@index([deliveryId, type])
+  @@index([timestamp(sort: Desc)])
+}
+
+// ─── Contracts ───
+model Contract {
+  id             String       @id @default(cuid())
+  number         String       @unique // ASNS-2026-001
+  businessLineId String
+  offerId        String?
+  clientId       String
+  templateId     String
+  sections       Json         // resolved contract sections (Art. 1-12)
+  anexa2         Json?        // Statement of Work (deliverables, phases, reporting)
+  companyDetails Json         // prestator details at time of contract
+  clientDetails  Json         // beneficiar details at time of contract
+  status         String       @default("draft") // draft, sent, signed, active, expired
+  value          Float
+  currency       String       @default("EUR")
+  duration       Int          // months
+  startDate      DateTime
+  endDate        DateTime
+  signedAt       DateTime?
+  createdBy      String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  offer          Offer?       @relation(fields: [offerId], references: [id])
+  client         Client       @relation(fields: [clientId], references: [id])
+  invoices       Invoice[]
+  activities     Activity[]
+
+  @@index([businessLineId, status])
+  @@index([clientId])
+}
+
+// ─── Finance: Invoices ───
+model Invoice {
+  id             String       @id @default(cuid())
+  number         String       @unique
+  businessLineId String
+  clientId       String
+  contractId     String?
+  type           String       // 'proforma', 'fiscala', 'subscriptie'
+  direction      String       // 'emisa' (income), 'primita' (expense)
+  status         String       @default("emisa") // emisa, trimisa, platita, restanta
+  amount         Float
+  currency       String       @default("EUR")
+  issuedAt       DateTime     @default(now())
+  dueDate        DateTime
+  paidAt         DateTime?
+  items          Json         // line items [{description, quantity, unitPrice, total}]
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  client         Client       @relation(fields: [clientId], references: [id])
+  contract       Contract?    @relation(fields: [contractId], references: [id])
+
+  @@index([businessLineId, status, direction])
+  @@index([clientId])
+}
+
+// ─── Retainers / Subscriptions ───
+model Retainer {
+  id             String       @id @default(cuid())
+  clientId       String
+  businessLineId String
+  serviceName    String
+  amount         Float
+  currency       String       @default("EUR")
+  billingCycle   String       @default("lunar") // lunar, trimestrial
+  status         String       @default("activ") // activ, inactiv, expirat
+  startDate      DateTime
+  endDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  client         Client       @relation(fields: [clientId], references: [id])
+
+  @@index([businessLineId, status])
+}
+
+// ─── Activity Log ───
+model Activity {
+  id             String       @id @default(cuid())
+  businessLineId String?
+  userId         String?
+  userName       String?
+  action         String       // 'created', 'updated', 'status_changed', 'note_added', etc.
+  entityType     String       // 'client', 'lead', 'project', 'offer', 'contract', 'invoice'
+  entityId       String
+  entityName     String
+  details        Json?        // { oldStatus, newStatus, field, oldValue, newValue }
+  createdAt      DateTime     @default(now())
+
+  // Optional relations for querying
+  clientId       String?
+  leadId         String?
+  projectId      String?
+  offerId        String?
+  contractId     String?
+
+  client         Client?      @relation(fields: [clientId], references: [id])
+  lead           Lead?        @relation(fields: [leadId], references: [id])
+  project        Project?     @relation(fields: [projectId], references: [id])
+  offer          Offer?       @relation(fields: [offerId], references: [id])
+  contract       Contract?    @relation(fields: [contractId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ─── Service Catalog ───
+model ServiceTemplate {
+  id             String       @id @default(cuid())
+  businessLineId String
+  name           String       // "SEO Optimization", "Plan Pro"
+  shortName      String       // "SEO", "Pro"
+  icon           String?      // Lucide icon name
+  description    String?
+  category       String       // "development", "marketing", "saas", "consultancy"
+  defaultPrice   Float
+  pricingUnit    String       // "fix", "lunar", "per_hour", "one_time"
+  setupFee       Float?       // one-time setup fee
+  currency       String       @default("EUR")
+  includedWith   String[]     // IDs of parent services that bundle this one free
+  defaultBlocks  Json?        // Pre-built offer blocks [{type, title, data}]
+  isActive       Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+
+  @@index([businessLineId, isActive])
+}
+
+// ─── Offer Templates (pre-defined combos of services) ───
+model OfferTemplate {
+  id             String       @id @default(cuid())
+  businessLineId String
+  name           String       // "Pachet Digital Start", "Propunere Subscripție Fudly"
+  description    String?
+  serviceIds     String[]     // ServiceTemplate IDs included
+  defaultBlocks  Json?        // Extra blocks specific to this template combo
+  isActive       Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+
+  @@index([businessLineId, isActive])
+}
+
+// ─── Communications ───
+model Communication {
+  id              String        @id @default(cuid())
+  businessLineId  String?
+  clientId        String?
+
+  channel         String        // email | call | whatsapp | sms | video
+  direction       String        // inbound | outbound
+  subject         String
+  body            String        @db.Text
+  fromAddr        String?       // sender (email or phone)
+  toAddr          String?       // recipient (email or phone)
+
+  // Email-specific
+  emailStatus     String?       // sent | delivered | opened | bounced
+
+  // Call-specific
+  phone           String?
+  callResult      String?       // answered | no_answer | voicemail | busy
+  duration        Int?          // minutes
+
+  // Video-specific
+  meetingType     String?       // review | demo | kickoff
+  meetingUrl      String?
+  participants    String[]      @default([])
+
+  // Metadata
+  userId          String?
+  userName        String?
+  tags            String[]      @default([])
+  attachments     String[]      @default([])
+  metadata        Json?         // contractId, offerId, invoiceId, etc.
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  businessLine    BusinessLine? @relation(fields: [businessLineId], references: [id])
+  client          Client?       @relation(fields: [clientId], references: [id])
+
+  @@index([clientId])
+  @@index([businessLineId])
+  @@index([channel])
+  @@index([createdAt])
+}
+
+// ─── Uptime Monitoring ───
+model UptimeCheck {
+  id          String   @id @default(cuid())
+  domain      String
+  clientId    String?
+  statusCode  Int      // HTTP status code (200, 503, 0=timeout)
+  responseMs  Int      // response time in ms
+  isUp        Boolean
+  error       String?  // error message if down
+  checkedAt   DateTime @default(now())
+
+  @@index([domain, checkedAt(sort: Desc)])
+  @@index([checkedAt(sort: Desc)])
+}
+
+model UptimeIncident {
+  id          String    @id @default(cuid())
+  domain      String
+  clientId    String?
+  startedAt   DateTime  @default(now())
+  resolvedAt  DateTime?
+  durationMin Int?      // downtime in minutes
+  cause       String?   // HTTP status or error message
+  notified    Boolean   @default(false)
+
+  @@index([domain, resolvedAt])
+}
+
+// ─── Marketing: Segments ───
+model MarketingSegment {
+  id             String   @id @default(cuid())
+  businessLineId String
+  name           String   // "Instalatori Cluj", "Restaurante fără website"
+  description    String?
+  filters        Json     // FilterCondition[] — exact formatul din lead-filters.tsx
+  excludedLeadIds Json?    // String[] — lead IDs excluded manually
+  contactCount   Int      @default(0)  // recalculat la salvare
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  businessLine   BusinessLine       @relation(fields: [businessLineId], references: [id])
+  campaigns      MarketingCampaign[]
+
+  @@index([businessLineId])
+}
+
+// ─── Marketing: Templates ───
+model MarketingTemplate {
+  id             String   @id @default(cuid())
+  businessLineId String
+  name           String   // "Invitație Instalatori", "Promo Restaurant"
+  channel        String   // Extensibil: 'sms' | 'email' | 'linkedin' | 'facebook' | 'instagram' | 'tiktok'
+  subject        String?  // pentru email / linkedin
+  body           String   @db.Text  // Corp mesaj cu {{variabile}}
+  mediaUrl       String?  // URL imagine/video pentru social campaigns
+  mediaType      String?  // 'image' | 'video' | 'carousel'
+  variables      String[] @default([])  // autodetectate: ["company_name", "city"]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  businessLine   BusinessLine       @relation(fields: [businessLineId], references: [id])
+  campaigns      MarketingCampaign[]
+
+  @@index([businessLineId, channel])
+}
+
+// ─── Marketing: Campaigns ───
+model MarketingCampaign {
+  id             String    @id @default(cuid())
+  businessLineId String
+  name           String
+  channel        String    // Extensibil: 'sms' | 'email' | 'linkedin' | 'facebook' | 'instagram' | 'tiktok'
+  campaignType   String    @default("outbound") // 'outbound' (sms/email) | 'social' (platforms)
+  segmentId      String?
+  templateId     String
+  status         String    @default("draft")
+                           // draft | scheduled | running | completed | paused
+  scheduledAt    DateTime?
+  sentAt         DateTime?
+  completedAt    DateTime?
+  // ─── Social Campaign extras (extensibil) ───
+  socialConfig   Json?     // { platform_campaign_id, adSetId, budget, targeting, objective }
+  socialMetrics  Json?     // { reach, impressions, engagement, cpl, cpc, ctr } — populated by sync
+  totalLeads     Int       @default(0)
+  totalSent      Int       @default(0)
+  totalOpened    Int       @default(0)
+  totalConverted Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  businessLine   BusinessLine       @relation(fields: [businessLineId], references: [id])
+  segment        MarketingSegment?  @relation(fields: [segmentId], references: [id])
+  template       MarketingTemplate  @relation(fields: [templateId], references: [id])
+  campaignLeads  CampaignLead[]
+  shortLinks     ShortLink[]
+
+  @@index([businessLineId, status])
+  @@index([scheduledAt])
+}
+
+// ─── Marketing: Campaign ↔ Lead junction ───
+model CampaignLead {
+  id             String    @id @default(cuid())
+  campaignId     String
+  leadId         String
+  uniqueCode     String    @unique    // cod unic pentru LP tracking (UUID scurt)
+  lpUrl          String?              // URL LP personalizat generat
+  messageBody    String?   @db.Text   // mesajul final după populare variabile
+  sentAt         DateTime?
+  // ─── LP Tracking ───
+  lpOpenedAt     DateTime?
+  lpOpenCount    Int       @default(0)
+  lpTimeSpent    Int       @default(0)  // secunde
+  // ─── Status ───
+  status         String    @default("pending")
+                           // pending | sent | delivered | opened | interested | converted
+  followUpSentAt DateTime?
+  convertedAt    DateTime?
+  notes          String?   @db.Text
+  createdAt      DateTime  @default(now())
+
+  campaign       MarketingCampaign @relation(fields: [campaignId], references: [id])
+  lead           Lead              @relation(fields: [leadId], references: [id])
+
+  @@unique([campaignId, leadId])  // un lead nu poate fi de 2 ori în aceeași campanie
+  @@index([campaignId, status])
+  @@index([leadId])
+  @@index([uniqueCode])
+}
+
+// ─── Marketing: Short Links ───
+model ShortLink {
+  id             String    @id @default(cuid())
+  code           String    @unique         // "a3Kx9Z" — 6 chars alfanumeric
+  targetUrl      String                     // URL-ul complet de destinatie
+  title          String?                    // label scurt: "Demo Fudly", "Promo Vara"
+  clicks         Int       @default(0)      // click counter
+  businessLineId String
+  campaignId     String?
+  createdAt      DateTime  @default(now())
+
+  businessLine   BusinessLine       @relation(fields: [businessLineId], references: [id])
+  campaign       MarketingCampaign? @relation(fields: [campaignId], references: [id])
+
+  @@index([businessLineId])
+  @@index([code])
+}
+
+// ─── AI: Brand DNA ───
+model BrandDNA {
+  id           String   @id @default(cuid())
+  clientId     String   @unique
+  url          String
+  name         String
+  tagline      String?
+  logoUrl      String?
+  favicon      String?
+  ogImage      String?
+  logos        Json     @default("[]")   // LogoInfo[]
+  colors       Json     @default("[]")   // ColorInfo[]
+  fonts        Json     @default("[]")   // FontInfo[]
+  tone         Json                      // ToneProfile
+  audience     Json                      // AudienceProfile
+  industry     String?
+  category     String?
+  keywords     String[] @default([])
+  rawText      String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  client       Client   @relation(fields: [clientId], references: [id])
+}
+
+// ─── AI Copilot: Conversation History ───
+model CopilotConversation {
+  id          String           @id @default(cuid())
+  title       String?          // Auto-generated from first user message
+  messages    Json             // Array: [{role, content, toolsUsed?, actionsPerformed?, timestamp}]
+  pathname    String?          // Last active page
+  tokenCount  Int              @default(0)
+  cost        Float            @default(0)    // Estimated USD cost
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  actions     CopilotAction[]
+}
+
+// ─── AI Copilot: Action Log ───
+model CopilotAction {
+  id               String              @id @default(cuid())
+  conversationId   String
+  actionType       String              // 'update_lead_status', 'navigate_to', etc.
+  status           String              @default("pending") // pending, approved, rejected, executed, failed
+  payload          Json                // { leadId, oldStatus, newStatus, reasoning, ... }
+  reasoning        String?  @db.Text   // AI's motivation text
+  result           Json?               // Execution result after approval
+  approvedAt       DateTime?
+  executedAt       DateTime?
+  createdAt        DateTime            @default(now())
+  conversation     CopilotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([status])
+}
+
+// ─── Client Reporting Portal ───
+
+model ClientReport {
+  id             String    @id @default(cuid())
+  token          String    @unique @default(cuid())
+  businessLineId String
+  clientId       String
+  domain         String?   // Target domain for multi-site clients (e.g. "inchideriterase.ro")
+  title          String    @default("Raport Performanță")
+  widgets        Json      @default("[]")
+  notes          String?   @db.Text
+  status         String    @default("active")
+  sentAt         DateTime?
+  viewedAt       DateTime?
+  viewCount      Int       @default(0)
+  createdBy      String    @default("admin")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  businessLine   BusinessLine    @relation(fields: [businessLineId], references: [id])
+  client         Client          @relation(fields: [clientId], references: [id])
+  snapshots      ReportSnapshot[]
+
+  @@index([clientId])
+  @@index([token])
+}
+
+model ReportSnapshot {
+  id          String    @id @default(cuid())
+  reportId    String
+  dateFrom    DateTime
+  dateTo      DateTime
+  content     String    @db.Text
+  highlights  Json?
+  generatedBy String    @default("ai-copilot")
+  createdAt   DateTime  @default(now())
+
+  report      ClientReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId, dateFrom])
+  @@unique([reportId, dateFrom, dateTo])
+}
