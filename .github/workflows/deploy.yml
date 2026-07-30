@@ -18,6 +18,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Generate Prisma Client
+        run: npm run db:generate --workspace=@repo/db
+
       - name: Build Next.js App
         run: npm run build
         working-directory: ./apps/web
