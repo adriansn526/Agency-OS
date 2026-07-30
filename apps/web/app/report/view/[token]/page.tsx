@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useParams } from "next/navigation"
 import { ReportHeader } from "@/components/report/report-header"
 import { ReportConversions } from "@/components/report/report-conversions"
+import { ReportConversionDetails } from "@/components/report/report-conversion-details"
 import { ReportAttribution } from "@/components/report/report-attribution"
 import { ReportAdsKpis } from "@/components/report/report-ads-kpis"
 import { ReportAdsTrend } from "@/components/report/report-ads-trend"
@@ -14,6 +15,10 @@ import { ReportSeoTables } from "@/components/report/report-seo-tables"
 import { ReportSeoArticles } from "@/components/report/report-seo-articles"
 import { ReportSocial } from "@/components/report/report-social"
 import { ReportHealth } from "@/components/report/report-health"
+import { ReportPosthogTraffic } from "@/components/report/report-posthog-traffic"
+import { ReportUptimeWidget } from "@/components/report/report-uptime-widget"
+import { ReportAdsExtendedWidget } from "@/components/report/report-ads-extended-widget"
+import { ReportSEOPagesKeywords } from "@/components/report/report-seo-pages-keywords"
 import { ReportInterpretation } from "@/components/report/report-interpretation"
 import { ReportFooter } from "@/components/report/report-footer"
 
@@ -135,6 +140,11 @@ export default function PublicReportPage() {
           <ReportAttribution data={data?.source_attribution as any} loading={dataLoading} />
         )}
 
+        {/* 📊 Conversion Details (Landing Pages + Form Submissions) */}
+        {isEnabled("conversion_details") && (
+          <ReportConversionDetails data={data?.conversion_details as any} loading={dataLoading} />
+        )}
+
         {/* 📣 Google Ads Breakdown */}
         {isEnabled("google_ads_kpis") && (
           <ReportAdsKpis data={data?.google_ads_kpis as any} loading={dataLoading} />
@@ -144,6 +154,9 @@ export default function PublicReportPage() {
         )}
         {isEnabled("google_ads_tables") && (
           <ReportAdsTables data={data?.google_ads_tables as any} loading={dataLoading} />
+        )}
+        {isEnabled("google_ads_extended") && (
+          <ReportAdsExtendedWidget data={data?.google_ads_extended as any} loading={dataLoading} />
         )}
 
         {/* 🔍 SEO Breakdown */}
@@ -162,14 +175,29 @@ export default function PublicReportPage() {
           <ReportSeoArticles data={data?.seo_articles as any} loading={dataLoading} />
         )}
 
+        {/* 🔗 SEO Pagini ↔ Keywords + Recomandări */}
+        {isEnabled("seo_page_keywords") && (
+          <ReportSEOPagesKeywords data={data?.seo_page_keywords as any} loading={dataLoading} />
+        )}
+
         {/* 🌐 Social Breakdown */}
         {isEnabled("social_breakdown") && (
           <ReportSocial data={data?.social_breakdown as any} loading={dataLoading} />
         )}
 
+        {/* 📊 PostHog Traffic Analytics (NEW) */}
+        {isEnabled("posthog_traffic") && (
+          <ReportPosthogTraffic data={data?.posthog_traffic as any} loading={dataLoading} />
+        )}
+
         {/* 📈 Site Health & Web Vitals */}
         {isEnabled("site_health") && (
           <ReportHealth data={data?.site_health as any} loading={dataLoading} />
+        )}
+
+        {/* ⏱ Uptime (NEW) */}
+        {isEnabled("uptime") && (
+          <ReportUptimeWidget data={data?.uptime as any} loading={dataLoading} />
         )}
 
         {/* 💡 AI Interpretation */}

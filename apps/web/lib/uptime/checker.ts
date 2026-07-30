@@ -5,6 +5,7 @@
  */
 
 import { db } from '@repo/db'
+import { sendTelegramAlert } from '@/lib/notifications/telegram'
 
 // ─── Types ───
 
@@ -51,10 +52,10 @@ export async function getMonitoredDomains(): Promise<MonitoredDomain[]> {
 
   function addDomain(raw: string | null | undefined, clientId: string, clientName: string) {
     if (!raw) return
-    // Normalize: remove protocol, sc-domain:, trailing slash
+    // Normalize: remove protocol, sc-domain:, sc:, trailing slash
     let domain = raw
       .replace(/^https?:\/\//, '')
-      .replace(/^sc-domain:/, '')
+      .replace(/^sc(?:-domain)?:/, '')
       .replace(/\/$/, '')
       .trim()
     if (!domain || domain.length < 4 || !domain.includes('.')) return
@@ -245,31 +246,6 @@ export async function runUptimeCheck(): Promise<{
   return { checked: results.length, up, down: results.length - up, alerts }
 }
 
-// ─── Telegram ───
-
-async function sendTelegramAlert(message: string) {
-  const botToken = process.env.TELEGRAM_BOT_TOKEN
-  const chatId = process.env.TELEGRAM_CHAT_ID
-
-  if (!botToken || !chatId) {
-    console.warn('[Uptime] Telegram not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID missing)')
-    return
-  }
-
-  try {
-    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'Markdown',
-      }),
-    })
-  } catch (err) {
-    console.error('[Uptime] Telegram send failed:', err)
-  }
-}
 
 // ─── Query Helpers ───
 

@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
   transpilePackages: ["@repo/ui", "@repo/mock-data", "@repo/db"],
   devIndicators: false,
   typescript: {

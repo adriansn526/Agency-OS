@@ -1,4 +1,5 @@
 "use client"
+import { Search } from "lucide-react"
 import { WidgetWrapper, DataTable } from "./report-widget-wrapper"
 import { useState } from "react"
 
@@ -11,11 +12,11 @@ export function ReportSeoTables({ data, loading }: { data?: SeoTablesData; loadi
   const [tab, setTab] = useState<"keywords" | "pages">("keywords")
 
   if (!data || (data as any).error) {
-    return <WidgetWrapper title="SEO — Detalii" icon="🔍" loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
+    return <WidgetWrapper title="SEO — Detalii" icon={<Search size={16} />} loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
   }
 
   return (
-    <WidgetWrapper title="SEO — Detalii" icon="🔍">
+    <WidgetWrapper title="SEO — Detalii" icon={<Search size={16} />}>
       <div style={{ display: "flex", borderBottom: "1px solid #f1f5f9", padding: "0 24px" }}>
         <button onClick={() => setTab("keywords")} style={{ padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", background: "none", border: "none", fontFamily: "Inter, sans-serif", color: tab === "keywords" ? "#059669" : "#94a3b8", borderBottom: tab === "keywords" ? "2px solid #059669" : "2px solid transparent" }}>Top Keywords</button>
         <button onClick={() => setTab("pages")} style={{ padding: "10px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer", background: "none", border: "none", fontFamily: "Inter, sans-serif", color: tab === "pages" ? "#059669" : "#94a3b8", borderBottom: tab === "pages" ? "2px solid #059669" : "2px solid transparent" }}>Top Pagini</button>

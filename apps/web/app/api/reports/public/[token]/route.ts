@@ -60,12 +60,23 @@ export async function GET(
       data: updateData as any,
     })
 
+    // Auto-upgrade: add new widgets to legacy reports
+    const reportWidgets = (report.widgets || []) as Array<{ type: string; label?: string; enabled: boolean }>
+    const autoAddWidgets = [
+      { type: 'conversion_details', label: '📊 Conversii Detaliate', enabled: true },
+    ]
+    for (const nw of autoAddWidgets) {
+      if (!reportWidgets.some(w => w.type === nw.type)) {
+        reportWidgets.push(nw)
+      }
+    }
+
     return NextResponse.json({
       data: {
         id: report.id,
         title: report.title,
         notes: report.notes,
-        widgets: report.widgets,
+        widgets: reportWidgets,
         createdAt: report.createdAt,
         client: {
           name: report.client.companyName,

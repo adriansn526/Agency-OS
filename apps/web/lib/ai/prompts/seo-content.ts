@@ -37,13 +37,17 @@ export type ContentType =
   | 'blog_outline'
 
 export interface GenerateContentInput {
-  type: ContentType
+  type: ContentType | 'seo_auto_optimizer'
   topic: string             // keyword or topic
   brand?: Partial<BrandDNA> // optional Brand DNA context
   platform?: string         // for social: facebook, instagram, tiktok, linkedin
   language?: string         // default: 'ro' (Romanian)
   tone?: string             // override tone
   maxLength?: number        // desired max length in words
+  currentHtml?: string
+  missingGsc?: string[]
+  missingLsi?: string[]
+  targetWordCount?: number
 }
 
 /**
@@ -60,15 +64,46 @@ export function buildContentPrompt(input: GenerateContentInput): {
   const langLabel = lang === 'ro' ? 'Romanian' : lang === 'en' ? 'English' : lang
 
   switch (input.type) {
+    case 'seo_auto_optimizer':
+      return {
+        system: `You are an expert SEO Content Optimizer and Editor. Your task is to receive an existing article (which may contain HTML and shortcodes) and expand it.
+You must strictly output the ENTIRE ARTICLE with your additions included. Do NOT just output the new parts! Output the full code. Do NOT wrap it in markdown blocks like \`\`\`html.
+Rules:
+1. DO NOT DELETE ANY EXISTING CONTENT. You must keep all existing text, HTML tags, and shortcodes (e.g. [vc_row], [vc_column]) exactly as they are. Return the entire original content + your additions.
+2. DO NOT USE DIACRITICS in Romanian (use 'a' instead of 'ă'/'â', 's' instead of 'ș', 't' instead of 'ț', 'i' instead of 'î').
+3. ADD new content (paragraphs, H2/H3 sections, FAQs) to reach the Target Word Count and naturally integrate the Missing Keywords.
+4. IMPORTANT: Any NEW content you add MUST be wrapped inside a <mark class="ai-added"> tag. Example: <mark class="ai-added">Acesta este un paragraf nou.</mark>
+5. Ensure the text flows naturally and matches the brand tone.`,
+        user: `${brandContext ? `\n--- BRAND CONTEXT ---\n${brandContext}\n---\n\n` : ''}Here are the SEO gaps you must fill for the target topic: "${input.topic}":
+${input.missingGsc?.length ? `- Missing Search Console Keywords to insert: ${input.missingGsc.join(', ')}` : ''}
+${input.missingLsi?.length ? `- Missing LSI/Related Keywords to insert: ${input.missingLsi.join(', ')}` : ''}
+${input.targetWordCount ? `- Target Word Count: Expand the article to approximately ${input.targetWordCount} words.` : ''}
+
+Here is the current content:
+${input.currentHtml}
+
+Please expand the content to fix these gaps following all rules. Output the FULL, complete article containing both the original content and your new additions. Output only the raw text/html.`,
+        maxTokens: 65536,
+        temperature: 0.7,
+      }
+
     case 'seo_article':
       return {
-        system: `You are an expert SEO content writer. Write in ${langLabel}. Use the brand context to match the brand's voice and tone. Structure the article with H2/H3 headings, include the target keyword naturally (3-5% density), and write compelling meta descriptions.`,
+        system: `You are an expert SEO content writer. Write in ${langLabel}. Use the brand context to match the brand's voice and tone. 
+Your content must strictly adhere to the following Readability and SEO On-Page rules:
+- Flesch Reading Ease: Use short sentences and simple words. Avoid complex vocabulary unless strictly necessary for the niche.
+- Paragraph Length: No paragraph should exceed 150 words. Break long text walls into smaller, skimmable paragraphs.
+- Subheading Distribution: Insert an H2 or H3 subheading at least every 300 words.
+- Transition Words: Use transition words (e.g., moreover, however, therefore, in addition) frequently to ensure logical flow.
+- Keyword Placement: The exact target keyword MUST appear in the first 100 words of the text, in the H1 title, and in at least one H2 or H3.
+- Keyword Density: Maintain a natural keyword density between 1% and 2.5%. Do not stuff keywords.
+- Links placeholder: Suggest at least 2 external high-authority links naturally within the text by writing [External Link: <topic>].`,
         user: `${brandContext ? `\n--- BRAND CONTEXT ---\n${brandContext}\n---\n\n` : ''}Write a comprehensive SEO article about: "${input.topic}"
 
 Requirements:
 - Length: ${input.maxLength || 1200}-${(input.maxLength || 1200) + 400} words
 - Include H2 and H3 subheadings
-- Natural keyword integration
+- Natural keyword integration (Target keyword: "${input.topic}")
 - Engaging introduction with hook
 - Actionable conclusion with CTA
 - Write in ${langLabel}

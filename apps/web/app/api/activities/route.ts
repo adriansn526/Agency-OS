@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import type { Prisma } from '@repo/db'
 
-export const dynamic = 'force-dynamic'
-
 // ─── GET /api/activities ───
 // Lista activități paginată cu filtre multiple
 export async function GET(request: NextRequest) {

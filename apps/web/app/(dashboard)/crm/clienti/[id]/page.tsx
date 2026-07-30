@@ -12,24 +12,28 @@ import { CallLogModal } from "@/components/call-log-modal"
 import { DomainChipsInput } from "@/components/ui/domain-chips-input"
 import { useClientCommunications } from "@/lib/hooks/use-communications"
 import { BrandDNACard } from "@/components/brand-dna-card"
+import { ClientWebsiteHealthTab } from "@/components/client-website-health-tab"
 import {
   ArrowLeft, Phone, Mail, Globe, Calendar, DollarSign, User, FileText,
   Receipt, FolderKanban, Activity, CheckCircle2, AlertTriangle,
   ExternalLink, Edit, MoreHorizontal, CreditCard, Repeat,
   MessageSquare, PhoneCall, Video, StickyNote, Loader2,
   TrendingUp, Shield, Zap, Plus, Send, Dna, BarChart3, Copy, Sparkles,
+  FormInput, Key,
 } from "lucide-react"
 
 /* ────────────────────────────────────────────── */
 /*  Tab definitions                               */
 /* ────────────────────────────────────────────── */
 
-type TabKey = "overview" | "contracte" | "facturi" | "proiecte" | "oferte" | "retainer" | "comunicatii" | "activitate" | "performance" | "brand-dna" | "rapoarte"
+type TabKey = "overview" | "contracte" | "facturi" | "proiecte" | "oferte" | "retainer" | "comunicatii" | "activitate" | "performance" | "brand-dna" | "rapoarte" | "formulare" | "website-health"
 
 const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: "overview",     label: "360° Overview", icon: Zap },
   { key: "brand-dna",    label: "🧬 Brand DNA", icon: Dna },
   { key: "performance",  label: "📊 Performance", icon: TrendingUp },
+  { key: "website-health", label: "🏥 Website Health", icon: Zap },
+  { key: "formulare",    label: "📝 Formulare",  icon: FormInput },
   { key: "rapoarte",     label: "📋 Rapoarte",   icon: BarChart3 },
   { key: "oferte",       label: "Oferte",       icon: FileText },
   { key: "facturi",      label: "Facturi",      icon: Receipt },
@@ -760,6 +764,11 @@ export default function SingleClientPage() {
           <ClientPerformanceTab clientId={id} />
         )}
 
+        {/* Website Health */}
+        {activeTab === "website-health" && (
+          <ClientWebsiteHealthTab clientId={id} />
+        )}
+
         {/* Brand DNA */}
         {activeTab === "brand-dna" && (
           <BrandDNACard
@@ -772,6 +781,11 @@ export default function SingleClientPage() {
         {/* Rapoarte */}
         {activeTab === "rapoarte" && (
           <ClientReportsTab clientId={id} clientName={client.companyName} />
+        )}
+
+        {/* Formulare */}
+        {activeTab === "formulare" && (
+          <FormLeadsTab clientId={id} clientName={client.companyName} />
         )}
 
         {/* Activitate */}
@@ -1094,13 +1108,16 @@ function ClientReportsTab({ clientId, clientName }: { clientId: string; clientNa
           widgets: [
             { type: "conversions_hero", label: "🏆 Rezultate", enabled: true },
             { type: "source_attribution", label: "📊 Surse", enabled: true },
+            { type: "conversion_details", label: "📊 Conversii Detaliate", enabled: true },
             { type: "google_ads_kpis", label: "📣 Ads KPIs", enabled: true },
             { type: "google_ads_trend", label: "📣 Ads Trend", enabled: true },
             { type: "google_ads_tables", label: "📣 Ads Tables", enabled: true },
+            { type: "google_ads_extended", label: "📣 Ads Analiză Extinsă", enabled: true },
             { type: "seo_kpis", label: "🔍 SEO KPIs", enabled: true },
             { type: "seo_trend", label: "🔍 SEO Trend", enabled: true },
             { type: "seo_tables", label: "🔍 SEO Tables", enabled: true },
             { type: "seo_articles", label: "📝 Articole", enabled: true },
+            { type: "seo_page_keywords", label: "🔗 SEO Pagini & Recomandări", enabled: true },
             { type: "social_breakdown", label: "🌐 Social", enabled: true },
             { type: "site_health", label: "📈 Health", enabled: true },
           ],
@@ -1376,6 +1393,297 @@ function ClientReportsTab({ clientId, clientName }: { clientId: string; clientNa
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ────────────────────────────────────────────── */
+/*  Tab: Formulare & Lead Tracking               */
+/* ────────────────────────────────────────────── */
+
+interface LeadAnalytics {
+  total: number
+  converted: number
+  conversionRate: number
+  byPage: { page: string; count: number; converted: number; conversionRate: number }[]
+  byService: { service: string; count: number; converted: number }[]
+  byDomain: { domain: string; count: number; converted: number }[]
+  byUtmSource: { source: string; count: number; converted: number }[]
+  byCampaign: { campaign: string; count: number }[]
+  recent: { id: string; name: string; email: string; phone: string; domain: string; page: string; service: string; utmSource: string; createdAt: string }[]
+}
+
+interface ApiKeyData {
+  id: string; key: string; domain: string; label: string; isActive: boolean; createdAt: string
+}
+
+function FormLeadsTab({ clientId, clientName }: { clientId: string; clientName: string }) {
+  const [analytics, setAnalytics] = useState<LeadAnalytics | null>(null)
+  const [apiKeys, setApiKeys] = useState<ApiKeyData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [newDomain, setNewDomain] = useState('')
+  const [newLabel, setNewLabel] = useState('')
+  const [showCode, setShowCode] = useState<string | null>(null)
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchAll() {
+      setLoading(true)
+      const [analyticsRes, keysRes] = await Promise.all([
+        fetch(`/api/analytics/leads?clientId=${clientId}`).then(r => r.json()).catch(() => null),
+        fetch(`/api/clients/${clientId}/api-keys`).then(r => r.json()).catch(() => ({ data: [] })),
+      ])
+      setAnalytics(analyticsRes)
+      setApiKeys(keysRes.data || [])
+      setLoading(false)
+    }
+    fetchAll()
+  }, [clientId])
+
+  const handleCreateKey = async () => {
+    if (!newDomain.trim()) return
+    const res = await fetch(`/api/clients/${clientId}/api-keys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain: newDomain, label: newLabel }),
+    })
+    const data = await res.json()
+    if (data.data) {
+      setApiKeys(prev => [data.data, ...prev])
+      setNewDomain('')
+      setNewLabel('')
+    }
+  }
+
+  const handleDeleteKey = async (keyId: string) => {
+    await fetch(`/api/clients/${clientId}/api-keys`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keyId }),
+    })
+    setApiKeys(prev => prev.filter(k => k.id !== keyId))
+  }
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-12">
+      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+    </div>
+  )
+
+  const getSnippet = (apiKey: string) =>
+    `<script src="https://admin.asns.ro/asns-forms.js"\n        data-key="${apiKey}"\n        data-service="general">\n</script>`
+
+  return (
+    <div className="space-y-4">
+      {/* ── KPI Hero ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-surface rounded-xl border border-border p-4 text-center">
+          <p className="text-2xl font-bold text-foreground tabular-nums">{analytics?.total || 0}</p>
+          <p className="text-[10px] text-muted-foreground">Total cereri</p>
+        </div>
+        <div className="bg-surface rounded-xl border border-border p-4 text-center">
+          <p className="text-2xl font-bold text-emerald-400 tabular-nums">{analytics?.converted || 0}</p>
+          <p className="text-[10px] text-muted-foreground">Convertite</p>
+        </div>
+        <div className="bg-surface rounded-xl border border-border p-4 text-center">
+          <p className="text-2xl font-bold text-primary tabular-nums">{analytics?.conversionRate || 0}%</p>
+          <p className="text-[10px] text-muted-foreground">Rată conversie</p>
+        </div>
+        <div className="bg-surface rounded-xl border border-border p-4 text-center">
+          <p className="text-2xl font-bold text-blue-400 tabular-nums">{apiKeys.length}</p>
+          <p className="text-[10px] text-muted-foreground">API Keys active</p>
+        </div>
+      </div>
+
+      {/* ── Breakdown by Page & Service ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {/* By Page */}
+        <div className="bg-surface rounded-xl border border-border p-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+            <Globe size={14} className="text-blue-400" />
+            Top pagini conversie
+          </h3>
+          {(analytics?.byPage || []).length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-3">Încă nu sunt date</p>
+          ) : (
+            <div className="space-y-2">
+              {analytics!.byPage.slice(0, 8).map(p => (
+                <div key={p.page} className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-foreground truncate">{p.page}</p>
+                    <div className="h-1.5 bg-muted/50 rounded-full overflow-hidden mt-0.5">
+                      <div
+                        className="h-full bg-primary/60 rounded-full"
+                        style={{ width: `${analytics!.total > 0 ? (p.count / analytics!.total) * 100 : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-foreground tabular-nums">{p.count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* By Service */}
+        <div className="bg-surface rounded-xl border border-border p-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+            <Zap size={14} className="text-amber-400" />
+            Servicii solicitate
+          </h3>
+          {(analytics?.byService || []).length === 0 ? (
+            <p className="text-xs text-muted-foreground text-center py-3">Încă nu sunt date</p>
+          ) : (
+            <div className="space-y-2">
+              {analytics!.byService.slice(0, 8).map(s => (
+                <div key={s.service} className="flex items-center justify-between">
+                  <span className="text-xs text-foreground">{s.service}</span>
+                  <span className="text-xs font-bold text-foreground tabular-nums">{s.count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── UTM Sources ── */}
+      {(analytics?.byUtmSource || []).length > 0 && (
+        <div className="bg-surface rounded-xl border border-border p-4">
+          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+            <TrendingUp size={14} className="text-green-400" />
+            Surse trafic (UTM)
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {analytics!.byUtmSource.slice(0, 8).map(u => (
+              <div key={u.source} className="bg-muted/30 rounded-lg p-2 text-center">
+                <p className="text-sm font-bold text-foreground tabular-nums">{u.count}</p>
+                <p className="text-[10px] text-muted-foreground">{u.source}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Recent Leads ── */}
+      {(analytics?.recent || []).length > 0 && (
+        <div className="bg-surface rounded-xl border border-border overflow-hidden">
+          <div className="px-4 py-3 border-b border-border">
+            <h3 className="text-sm font-semibold text-foreground">Ultimele cereri</h3>
+          </div>
+          <div className="divide-y divide-border">
+            {analytics!.recent.map(l => (
+              <div key={l.id} className="px-4 py-2.5 flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground truncate">{l.name}</p>
+                  <p className="text-[10px] text-muted-foreground">{l.email} • {l.page || '/'}</p>
+                </div>
+                <span className="text-[10px] text-muted-foreground flex-shrink-0 tabular-nums">
+                  {formatDate(l.createdAt)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── API Keys Management ── */}
+      <div className="bg-surface rounded-xl border border-border p-4">
+        <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+          <Key size={14} className="text-purple-400" />
+          API Keys — Integrare Formulare
+        </h3>
+        <p className="text-[11px] text-muted-foreground mb-3">
+          Generează un API key pentru fiecare domeniu al clientului. Adaugă snippet-ul JS pe site.
+        </p>
+
+        {/* Create new key */}
+        <div className="flex gap-2 mb-3">
+          <input
+            placeholder="Domeniu (ex: qualitycontrol.com.ro)"
+            value={newDomain}
+            onChange={e => setNewDomain(e.target.value)}
+            className="flex-1 px-3 py-1.5 text-xs bg-muted/30 border border-border rounded-lg text-foreground placeholder:text-muted-foreground"
+          />
+          <input
+            placeholder="Label (opțional)"
+            value={newLabel}
+            onChange={e => setNewLabel(e.target.value)}
+            className="w-36 px-3 py-1.5 text-xs bg-muted/30 border border-border rounded-lg text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={handleCreateKey}
+            disabled={!newDomain.trim()}
+            className="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded-lg font-medium disabled:opacity-50 flex items-center gap-1"
+          >
+            <Plus size={12} /> Generează
+          </button>
+        </div>
+
+        {/* Existing keys */}
+        {apiKeys.length === 0 ? (
+          <p className="text-xs text-muted-foreground text-center py-3">Nicio cheie API. Creează una pentru a începe tracking-ul formularelor.</p>
+        ) : (
+          <div className="space-y-2">
+            {apiKeys.map(k => (
+              <div key={k.id} className="bg-muted/20 rounded-lg p-3 border border-border/50">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <Globe size={12} className="text-blue-400" />
+                    <span className="text-xs font-medium text-foreground">{k.domain}</span>
+                    {k.label && <span className="text-[10px] text-muted-foreground">— {k.label}</span>}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setShowCode(showCode === k.id ? null : k.id)}
+                      className="text-[10px] text-primary hover:underline"
+                    >
+                      {showCode === k.id ? 'Ascunde cod' : 'Cod integrare'}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteKey(k.id)}
+                      className="text-[10px] text-red-400 hover:underline ml-2"
+                    >
+                      Șterge
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <code className="text-[10px] text-muted-foreground bg-muted/30 px-2 py-0.5 rounded font-mono truncate flex-1">
+                    {k.key}
+                  </code>
+                  <button
+                    onClick={() => handleCopy(k.key, k.id)}
+                    className="text-[10px] text-primary hover:underline flex items-center gap-0.5 flex-shrink-0"
+                  >
+                    {copiedId === k.id ? '✓' : <><Copy size={10} /> Copiază</>}
+                  </button>
+                </div>
+
+                {/* Integration code snippet */}
+                {showCode === k.id && (
+                  <div className="mt-2 relative">
+                    <pre className="text-[10px] bg-zinc-900 text-emerald-300 rounded-lg p-3 overflow-x-auto font-mono">
+                      {getSnippet(k.key)}
+                    </pre>
+                    <button
+                      onClick={() => handleCopy(getSnippet(k.key), `snippet-${k.id}`)}
+                      className="absolute top-2 right-2 text-[10px] text-zinc-400 hover:text-white bg-zinc-800 px-2 py-0.5 rounded"
+                    >
+                      {copiedId === `snippet-${k.id}` ? '✓ Copiat' : 'Copiază'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

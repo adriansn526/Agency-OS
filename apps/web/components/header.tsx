@@ -16,6 +16,7 @@ const breadcrumbMap: Record<string, string> = {
   "/offers": "Oferte",
   "/activity": "Activity Log",
   "/reports": "Rapoarte",
+  "/seo": "SEO Dashboard",
   "/communications": "Comunicare",
   "/documents": "Documente",
   "/hr": "HR",
@@ -27,6 +28,12 @@ const breadcrumbMap: Record<string, string> = {
   "/settings/integrations": "Integrări & AI",
   "/settings/roles": "Roluri & Permisiuni",
   "/settings/language": "Limbă",
+  "/intraconstruct": "IntraConstruct",
+  "/intraconstruct/tenants": "Tenanți",
+  "/intraconstruct/usage": "AI Usage",
+  "/contracts": "Contracte",
+  "/marketing": "Marketing",
+  "/monitoring": "Monitoring",
 }
 
 export function Header() {

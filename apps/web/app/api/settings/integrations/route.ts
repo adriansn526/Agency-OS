@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { readSettings, writeSettings } from '../_store'
 import { testConnection, resetSMSOCache } from '@/lib/integrations/smso'
 import { resetLLMCache } from '@/lib/ai/client'
+import { db } from '@repo/db'
 
 // ─── GET /api/settings/integrations ───
 export async function GET() {
@@ -21,7 +22,17 @@ export async function GET() {
         apiKey: integrations.ai.apiKey.slice(0, 6) + '***',
       }
     }
-    return NextResponse.json({ data: integrations })
+
+    // Fetch DB integrations
+    const googleAcc = await db.connectedAccount.findFirst({ where: { provider: 'google', clientId: null } })
+    const posthogAcc = await db.connectedAccount.findFirst({ where: { provider: 'posthog', clientId: null } })
+
+    const dbIntegrations = {
+      google: googleAcc ? { connected: true, email: googleAcc.email } : { connected: false },
+      posthog: posthogAcc ? { connected: true, hasKey: true } : { connected: false, hasKey: false }
+    }
+
+    return NextResponse.json({ data: { ...integrations, ...dbIntegrations } })
   } catch (error) {
     console.error('[API] GET /api/settings/integrations error:', error)
     return NextResponse.json({ error: 'Failed to fetch integration settings' }, { status: 500 })
@@ -54,6 +65,25 @@ export async function PATCH(request: NextRequest) {
     }
 
     writeSettings(settings)
+
+    // Save PostHog API Key
+    if (body.posthog?.apiKey) {
+      const { saveConnectedAccount } = await import('@/lib/integrations/oauth')
+      await saveConnectedAccount({
+        provider: 'posthog',
+        providerAccountId: 'master',
+        accessToken: body.posthog.apiKey,
+        clientId: undefined
+      })
+    } else if (body.posthog?.disconnect) {
+      await db.connectedAccount.deleteMany({ where: { provider: 'posthog', clientId: null } })
+    }
+
+    // Disconnect Google
+    if (body.google?.disconnect) {
+      await db.connectedAccount.deleteMany({ where: { provider: 'google', clientId: null } })
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[API] PATCH /api/settings/integrations error:', error)

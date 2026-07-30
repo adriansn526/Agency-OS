@@ -9,7 +9,7 @@ import {
   ArrowLeft, Phone, Mail, Globe, Calendar, DollarSign, Target, Clock, User,
   FileText, Send, Activity, TrendingUp, AlertTriangle, CheckCircle2, XCircle,
   Sparkles, Edit, MoreHorizontal, MessageSquare, PhoneCall, Video, StickyNote,
-  Plus, ArrowRight, Loader2, Trash2, UserPlus,
+  Plus, ArrowRight, Loader2, Trash2, UserPlus, Bot
 } from "lucide-react"
 import { getBusinessLine } from "@repo/mock-data"
 
@@ -67,6 +67,25 @@ export default function SingleLeadPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [leadOffers, setLeadOffers] = useState<any[]>([])
+  const [isCallingAI, setIsCallingAI] = useState(false)
+
+  const initiateAICall = async () => {
+    if (!lead?.phone) return alert('Lead-ul nu are număr de telefon asociat.')
+    setIsCallingAI(true)
+    try {
+      const res = await fetch('/api/voice/outbound', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadId: lead.id })
+      })
+      if (!res.ok) throw new Error('Eroare la inițiere apel')
+      alert('Apelul AI a fost inițiat cu succes! Verifică tab-ul Activitate.')
+    } catch (err) {
+      alert('Eroare la inițierea apelului.')
+    } finally {
+      setIsCallingAI(false)
+    }
+  }
 
   // Derive pipeline stages from lead's business line
   const pipelineStages = useMemo(() => {
@@ -149,6 +168,14 @@ export default function SingleLeadPage() {
           <ArrowLeft size={15} /> Înapoi
         </button>
         <div className="flex items-center gap-2">
+          <button onClick={initiateAICall} disabled={isCallingAI || !lead?.phone} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+            {isCallingAI ? <Loader2 size={12} className="animate-spin" /> : <Bot size={12} />}
+            Inițiază Apel AI
+          </button>
+          <a href={lead?.phone ? `tel:${lead.phone}` : '#'} className={cn("flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground border border-border rounded-lg hover:bg-muted/80 transition-colors", !lead?.phone && "opacity-50 cursor-not-allowed")}>
+            <Phone size={12} />
+            Apel (Standard)
+          </a>
           <Link href={`/offers/new`} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
             <Send size={12} /> Generează Ofertă
           </Link>
@@ -392,7 +419,13 @@ export default function SingleLeadPage() {
         {/* ═══ Activitate ═══ */}
         {activeTab === "activitate" && (
           <div className="bg-surface rounded-xl border border-border p-4">
-            <p className="text-xs text-muted-foreground text-center py-4">Activitățile se încarcă din Activity Log.</p>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-foreground">Istoric Apeluri & AI Voice</h3>
+            </div>
+            <div className="text-center py-8">
+              <Bot size={24} className="text-muted-foreground/30 mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground">Aici vor apărea înregistrările și transcriptul conversațiilor purtate de agentul AI cu acest lead.</p>
+            </div>
           </div>
         )}
 

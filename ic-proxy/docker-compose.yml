@@ -1,0 +1,21 @@
+services:
+  agency-os-proxy:
+    build: .
+    container_name: agency-os-proxy
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.agency-os.rule=Host(`my.asns.ro`)"
+      - "traefik.http.routers.agency-os.entrypoints=websecure"
+      - "traefik.http.routers.agency-os.tls.certresolver=cfresolver"
+      - "traefik.http.routers.agency-os-http.rule=Host(`my.asns.ro`)"
+      - "traefik.http.routers.agency-os-http.entrypoints=web"
+      - "traefik.http.services.agency-os.loadbalancer.server.port=80"
+
+networks:
+  proxy:
+    external: true

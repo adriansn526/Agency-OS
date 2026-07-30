@@ -10,6 +10,12 @@ import { AddTaskModal, EditProjectModal, LogTimeModal, MoreActionsMenu } from "@
 import { WidgetGrid, StatCardWidget, KeywordTable, CampaignTable, BarChartWidget } from "@/components/dashboard-widgets"
 import { useProjectKPIs } from "@/lib/hooks/use-project-kpis"
 import { DateRangePicker } from "@/components/ui/date-range-picker"
+import { Card, CardContent } from "@/components/ui/card"
+import { ProjectFinancialTab } from "@/components/project-financial-tab"
+import { ProjectAIContentTab } from "@/components/project-ai-content-tab"
+import { ProjectSeoAuditTab } from "@/components/project-seo-audit-tab"
+import { ProjectSeoContentTab } from "@/components/project-seo-content-tab"
+import { ProjectSeoBacklinksTab } from "@/components/project-seo-backlinks-tab"
 import {
   ArrowLeft,
   Calendar,
@@ -36,11 +42,17 @@ import {
   Save,
   Phone,
   Sparkles,
+  Search,
+  Link2,
+  Globe
 } from "lucide-react"
 
 import { AIContentGenerator } from "@/components/ai-content-generator"
 
-type TabView = "overview" | "tasks" | "time" | "files" | "activity" | "performance" | "keywords" | "financial" | "analytics" | "settings" | "ai-content"
+import { ProjectSeoImpactTab } from "@/components/project-seo-impact-tab"
+import { ProjectContentSourcesTab } from "@/components/project-content-sources-tab"
+
+type TabView = "overview" | "tasks" | "time" | "files" | "activity" | "performance" | "keywords" | "financial" | "analytics" | "settings" | "ai-content" | "seo-audit" | "seo-content" | "seo-backlinks" | "seo-impact" | "content-sources"
 
 interface APIProject {
   id: string
@@ -97,6 +109,22 @@ export default function ProjectSinglePage() {
   const [showAddTask, setShowAddTask] = useState(false)
   const [showEditProject, setShowEditProject] = useState(false)
   const [showLogTime, setShowLogTime] = useState(false)
+  
+  const [keywordVolumes, setKeywordVolumes] = useState<Record<string, number>>({})
+  const [loadingVolumes, setLoadingVolumes] = useState(false)
+
+  // Load saved tab
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTab = localStorage.getItem(`agencyos_tab_${projectId}`)
+      if (savedTab) setActiveTab(savedTab as TabView)
+    }
+  }, [projectId])
+
+  const handleTabChange = (tab: TabView) => {
+    setActiveTab(tab)
+    localStorage.setItem(`agencyos_tab_${projectId}`, tab)
+  }
 
   // Fetch project data
   useEffect(() => {
@@ -119,6 +147,23 @@ export default function ProjectSinglePage() {
 
   // Live KPI data from Google Ads / GSC API
   const { data: liveKPIs, loading: kpiLoading } = useProjectKPIs(projectId, dateFrom, dateTo)
+  
+  // Auto-fetch volumes
+  useEffect(() => {
+    if (liveKPIs?.pageKeywords && liveKPIs.pageKeywords.length > 0) {
+      const keywords = Array.from(new Set(liveKPIs.pageKeywords.map((pk: any) => pk.query)))
+      setLoadingVolumes(true)
+      fetch('/api/seo/keyword-volumes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, keywords })
+      })
+      .then(r => r.json())
+      .then(json => { if (json.data) setKeywordVolumes(json.data) })
+      .catch(console.error)
+      .finally(() => setLoadingVolumes(false))
+    }
+  }, [liveKPIs?.pageKeywords, projectId])
 
   const metadata = project?.metadata || {}
   const phases = metadata.phases || []
@@ -227,15 +272,20 @@ export default function ProjectSinglePage() {
 
   const tabs: { value: TabView; label: string; icon: any; count?: number }[] = [
     { value: "overview", label: "Overview", icon: BarChart3 },
-    ...(hasDashboard ? [{ value: "performance" as TabView, label: "📊 Performance", icon: TrendingUp }] : []),
-    ...(isSeoProject ? [{ value: "keywords" as TabView, label: "🔑 Keywords", icon: Target }] : []),
-    ...(isAdsProject ? [{ value: "keywords" as TabView, label: "📢 Campaigns", icon: Target }] : []),
-    ...(liveKPIs?.posthog && !('error' in (liveKPIs.posthog || {})) ? [{ value: "analytics" as TabView, label: "🔬 Analytics", icon: BarChart3 }] : []),
+    ...(hasDashboard ? [{ value: "performance" as TabView, label: "Performance", icon: TrendingUp }] : []),
+    ...(isSeoProject ? [{ value: "keywords" as TabView, label: "Keywords", icon: Target }] : []),
+    ...(isSeoProject ? [{ value: "seo-audit" as TabView, label: "Audit SEO", icon: Search }] : []),
+    ...(isSeoProject ? [{ value: "seo-content" as TabView, label: "SEO Content", icon: FileText }] : []),
+    ...(isSeoProject ? [{ value: "seo-backlinks" as TabView, label: "Backlinks", icon: Link2 }] : []),
+    ...(isSeoProject ? [{ value: "seo-impact" as TabView, label: "Impact Analysis", icon: BarChart3 }] : []),
+    ...(isSeoProject ? [{ value: "content-sources" as TabView, label: "Surse Content", icon: Globe }] : []),
+    ...(isAdsProject ? [{ value: "keywords" as TabView, label: "Campaigns", icon: Target }] : []),
+    ...(liveKPIs?.posthog && !('error' in (liveKPIs.posthog || {})) ? [{ value: "analytics" as TabView, label: "Analytics", icon: BarChart3 }] : []),
     { value: "tasks", label: "Tasks", icon: CheckCircle2, count: localTasks.length },
-    { value: "financial", label: "💰 Financial", icon: DollarSign },
+    { value: "financial", label: "Financial", icon: DollarSign },
     { value: "activity", label: "Activitate", icon: MessageSquare, count: project.activities?.length },
-    ...(isMarketingProject ? [{ value: "ai-content" as TabView, label: "🤖 AI Content", icon: Sparkles }] : []),
-    { value: "settings" as TabView, label: "⚙️ Setări", icon: Settings },
+    ...(isMarketingProject ? [{ value: "ai-content" as TabView, label: "AI Content", icon: Sparkles }] : []),
+    { value: "settings" as TabView, label: "Setări", icon: Settings },
   ]
 
   return (
@@ -334,7 +384,7 @@ export default function ProjectSinglePage() {
             return (
               <button
                 key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
+                onClick={() => handleTabChange(tab.value as TabView)}
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 whitespace-nowrap",
                   isActive
@@ -523,6 +573,89 @@ export default function ProjectSinglePage() {
                           <td className="py-2 text-left text-muted-foreground pl-3 max-w-[150px] truncate">{conv.campaigns?.join(', ') || '—'}</td>
                         </tr>
                       ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* ─── Landing Page Conversions (which pages convert) ─── */}
+            {liveKPIs?.landingPageConversions && liveKPIs.landingPageConversions.length > 0 && (
+              <div className="bg-surface rounded-xl border border-border p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-1">📄 Conversii per Pagină (Landing Pages)</h3>
+                <p className="text-[10px] text-muted-foreground mb-3">De pe ce pagini vin conversiile din Google Ads</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 text-muted-foreground font-medium">Pagină</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">Conversii</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">Valoare</th>
+                        <th className="text-left py-2 pl-4 text-muted-foreground font-medium">Acțiuni</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {liveKPIs.landingPageConversions.slice(0, 15).map((lp: any, i: number) => {
+                        // Extract path from URL
+                        let path = lp.landingPage
+                        try { path = new URL(lp.landingPage).pathname } catch {}
+                        return (
+                          <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                            <td className="py-2 text-foreground font-medium max-w-[260px] truncate" title={lp.landingPage}>
+                              {path || '/'}
+                            </td>
+                            <td className="py-2 text-right text-success font-bold">{lp.totalConversions}</td>
+                            <td className="py-2 text-right text-warning">{lp.totalValue > 0 ? `${lp.totalValue} RON` : '—'}</td>
+                            <td className="py-2 pl-4">
+                              <div className="flex flex-wrap gap-1">
+                                {(lp.topActions || []).slice(0, 3).map((a: any, j: number) => (
+                                  <span key={j} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-[9px] px-1.5 py-0.5 rounded-full font-medium">
+                                    {a.count}× {a.name.length > 25 ? a.name.slice(0, 25) + '…' : a.name}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* ─── PostHog Form Submissions per Page ─── */}
+            {liveKPIs?.conversionsByPage && liveKPIs.conversionsByPage.length > 0 && (
+              <div className="bg-surface rounded-xl border border-border p-5">
+                <h3 className="text-sm font-semibold text-foreground mb-1">📝 Conversii per Pagină (PostHog)</h3>
+                <p className="text-[10px] text-muted-foreground mb-3">Form submissions, click-uri telefon și email — de pe care pagini vin</p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-2 text-muted-foreground font-medium">Pagină</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">Total</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">📝 Forms</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">📞 Telefon</th>
+                        <th className="py-2 text-right text-muted-foreground font-medium">📧 Email</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {liveKPIs.conversionsByPage.slice(0, 20).map((cp: any, i: number) => {
+                        let path = cp.pageUrl
+                        try { path = new URL(cp.pageUrl).pathname } catch {}
+                        return (
+                          <tr key={i} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                            <td className="py-2 text-foreground font-medium max-w-[300px] truncate" title={cp.pageUrl}>
+                              {path || '/'}
+                            </td>
+                            <td className="py-2 text-right text-success font-bold">{cp.totalConversions}</td>
+                            <td className="py-2 text-right text-primary">{cp.formSubmissions || '—'}</td>
+                            <td className="py-2 text-right text-green-400">{cp.phoneClicks || '—'}</td>
+                            <td className="py-2 text-right text-blue-400">{cp.emailClicks || '—'}</td>
+                          </tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -1123,17 +1256,26 @@ export default function ProjectSinglePage() {
                           </div>
                           <div className="px-4 py-2">
                             <div className="flex flex-wrap gap-1.5">
-                              {keywords.sort((a, b) => b.clicks - a.clicks).map((kw, j) => (
-                                <span key={j} className={cn(
-                                  "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border",
-                                  kw.position <= 3 ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                                  kw.position <= 10 ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
-                                  'bg-muted text-muted-foreground border-border'
-                                )} title={`Poz: ${(kw.position ?? 0).toFixed(1)} | Clicks: ${kw.clicks} | Impr: ${kw.impressions}`}>
-                                  {kw.query}
-                                  <span className="opacity-60">#{(kw.position ?? 0).toFixed(0)}</span>
-                                </span>
-                              ))}
+                              {keywords.sort((a, b) => b.clicks - a.clicks).map((kw, j) => {
+                                const vol = keywordVolumes[kw.query]
+                                const volStr = vol !== undefined ? ` | Vol: ${vol}` : ''
+                                return (
+                                  <span key={j} className={cn(
+                                    "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border",
+                                    kw.position <= 3 ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                                    kw.position <= 10 ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' :
+                                    'bg-muted text-muted-foreground border-border'
+                                  )} title={`Poz: ${(kw.position ?? 0).toFixed(1)} | Clicks: ${kw.clicks} | Impr: ${kw.impressions}${volStr}`}>
+                                    {kw.query}
+                                    <span className="opacity-60">#{(kw.position ?? 0).toFixed(0)}</span>
+                                    {vol !== undefined && (
+                                      <span className="ml-1 text-[9px] text-blue-400 font-bold bg-blue-500/10 px-1 rounded">
+                                        V:{vol >= 1000 ? (vol/1000).toFixed(1)+'k' : vol}
+                                      </span>
+                                    )}
+                                  </span>
+                                )
+                              })}
                             </div>
                           </div>
                         </div>
@@ -1141,6 +1283,95 @@ export default function ProjectSinglePage() {
                     </div>
                   </div>
                 );
+              })()}
+
+              {/* SEO Recommendations */}
+              {(liveKPIs as any)?.pageKeywords && (liveKPIs as any).pageKeywords.length > 0 && (() => {
+                // Dynamic import workaround — inline analysis
+                const pageKeywords = (liveKPIs as any).pageKeywords as Array<{ page: string; query: string; clicks: number; impressions: number; ctr: number; position: number }>
+
+                // Quick analysis inline
+                const byQuery = new Map<string, typeof pageKeywords>()
+                for (const pk of pageKeywords) {
+                  const q = pk.query.toLowerCase().trim()
+                  if (!byQuery.has(q)) byQuery.set(q, [])
+                  byQuery.get(q)!.push(pk)
+                }
+
+                // Cannibalization
+                const cannibalized = [...byQuery.entries()].filter(([, entries]) => entries.length >= 2 && entries.reduce((s, e) => s + e.impressions, 0) > 10)
+
+                // Low-hanging fruit
+                const lowHanging = pageKeywords
+                  .filter(pk => pk.position >= 4 && pk.position <= 20 && pk.impressions >= 20)
+                  .sort((a, b) => (b.impressions / b.position) - (a.impressions / a.position))
+                  .slice(0, 8)
+
+                if (cannibalized.length === 0 && lowHanging.length === 0) return null
+
+                return (
+                  <div className="bg-surface rounded-xl border border-border p-4">
+                    <h3 className="text-sm font-semibold text-foreground mb-4">💡 Recomandări SEO</h3>
+                    <div className="space-y-3">
+                      {/* Cannibalization alerts */}
+                      {cannibalized.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-red-400 uppercase tracking-wider">🔴 Canibalizare Keywords ({cannibalized.length})</p>
+                          {cannibalized.slice(0, 5).map(([query, entries], i) => {
+                            const sorted = entries.sort((a, b) => a.position - b.position)
+                            return (
+                              <div key={i} className="bg-red-500/5 border border-red-500/10 rounded-lg p-3">
+                                <p className="text-xs font-medium text-foreground mb-1">"{query}"</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {sorted.map((e, j) => (
+                                    <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                                      {e.page.replace(/https?:\/\/[^/]+/, '') || '/'} <span className="font-bold">#{e.position.toFixed(0)}</span>
+                                    </span>
+                                  ))}
+                                </div>
+                                <p className="text-[10px] text-muted-foreground mt-1">Consolidează conținutul sau diferențiază intent-ul</p>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
+
+                      {/* Low-hanging fruit */}
+                      {lowHanging.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider">🟡 Oportunități Rapide ({lowHanging.length})</p>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="border-b border-border text-muted-foreground">
+                                  <th className="text-left py-2 font-medium">Keyword</th>
+                                  <th className="text-left py-2 font-medium">Pagină</th>
+                                  <th className="text-right py-2 font-medium">Poz.</th>
+                                  <th className="text-right py-2 font-medium">Impresii</th>
+                                  <th className="text-right py-2 font-medium">Clicks</th>
+                                  <th className="text-right py-2 font-medium">Potențial</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {lowHanging.map((pk, i) => (
+                                  <tr key={i} className="border-b border-border/30 hover:bg-muted/20">
+                                    <td className="py-2 font-medium text-foreground">{pk.query}</td>
+                                    <td className="py-2 text-muted-foreground truncate max-w-[200px]">{pk.page.replace(/https?:\/\/[^/]+/, '')}</td>
+                                    <td className={cn("py-2 text-right font-bold", pk.position <= 10 ? 'text-yellow-400' : 'text-orange-400')}>{pk.position.toFixed(1)}</td>
+                                    <td className="py-2 text-right text-muted-foreground">{pk.impressions.toLocaleString()}</td>
+                                    <td className="py-2 text-right text-primary">{pk.clicks}</td>
+                                    <td className="py-2 text-right text-green-400 font-medium">~{Math.round(pk.impressions * 0.25)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground">* Potențial = click-uri estimate la poziția #1 (~25% CTR)</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
               })()}
 
               {/* Top Pages */}
@@ -1242,6 +1473,76 @@ export default function ProjectSinglePage() {
             </div>
           ) : null}
         </div>
+      )}
+
+      {/* SEO AUDIT TAB */}
+      {activeTab === "seo-audit" && isSeoProject && (() => {
+        const projectGscUrl = metadata.gscSiteUrl || project.client?.gscSiteUrl || ''
+        const projectDomain = projectGscUrl.replace('sc-domain:', '').replace(/^https?:\/\//, '').replace(/\/$/, '')
+        return (
+          <ProjectSeoAuditTab
+            domain={projectDomain}
+            gscUrl={projectGscUrl}
+          />
+        )
+      })()}
+
+      {/* SEO CONTENT TAB */}
+      {activeTab === "seo-content" && isSeoProject && (
+        <ProjectSeoContentTab 
+          projectId={project.id} 
+          metadata={metadata} 
+          gscQueries={liveKPIs?.gscQueries || []}
+          gscPages={liveKPIs?.gscPages || []}
+          gscPageKeywords={liveKPIs?.pageKeywords || []}
+          backlinksPages={liveKPIs?.backlinksPages || []}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+        />
+      )}
+
+      {/* BACKLINKS TAB */}
+      {activeTab === "seo-backlinks" && isSeoProject && (() => {
+        const projectGscUrl = metadata.gscSiteUrl || project.client?.gscSiteUrl || ''
+        const projectDomain = projectGscUrl.replace('sc-domain:', '').replace(/^https?:\/\//, '').replace(/\/$/, '')
+        
+        // Extract competitors from content sources
+        const sources = metadata.contentSources || [];
+        const competitors = sources.map((s: any) => {
+          try {
+            return new URL(s.url).hostname.replace(/^www\./, '');
+          } catch {
+            return s.url.replace(/^https?:\/\//, '').replace(/\/.*$/, '').replace(/^www\./, '');
+          }
+        }).filter((d: string) => d && d !== projectDomain);
+        
+        const uniqueCompetitors = Array.from(new Set(competitors)) as string[];
+
+        return <ProjectSeoBacklinksTab 
+          domain={projectDomain} 
+          competitors={uniqueCompetitors}
+          summary={liveKPIs?.backlinksSummary}
+          backlinks={liveKPIs?.backlinksDetail || []}
+        />
+      })()}
+
+      {/* SEO IMPACT TAB */}
+      {activeTab === "seo-impact" && isSeoProject && (() => {
+        const projectGscUrl = metadata.gscSiteUrl || project.client?.gscSiteUrl || ''
+        const projectDomain = projectGscUrl.replace('sc-domain:', '').replace(/^https?:\/\//, '').replace(/\/$/, '')
+        return <ProjectSeoImpactTab 
+          projectId={project.id}
+          domain={projectDomain} 
+          gscPages={liveKPIs?.gscPages || []} 
+          gscDaily={liveKPIs?.gscDaily || []}
+          dfsPages={liveKPIs?.backlinksPages || []}
+          metadata={metadata} 
+        />
+      })()}
+
+      {/* CONTENT SOURCES TAB */}
+      {activeTab === "content-sources" && (
+        <ProjectContentSourcesTab projectId={projectId} metadata={metadata} />
       )}
 
       {/* TASKS TAB */}
@@ -1525,7 +1826,29 @@ export default function ProjectSinglePage() {
       onClose={() => setShowAddTask(false)}
       teamMembers={project.assignedTo ? [project.assignedTo] : ['Neasignat']}
       onAdd={(task: any) => {
-        setShowAddTask(false)
+        const newTask = {
+          id: Math.random().toString(36).substring(7),
+          ...task,
+          status: 'todo',
+          createdAt: new Date().toISOString()
+        }
+        const updatedMetadata = {
+          ...project.metadata,
+          tasks: [...(project.metadata?.tasks || []), newTask]
+        }
+        
+        fetch(`/api/projects/${projectId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ metadata: updatedMetadata }),
+        }).then(r => r.json()).then(j => {
+          if (j.data) setProject(j.data)
+          setShowAddTask(false)
+          toast.success("Task adăugat cu succes!")
+        }).catch(e => {
+          console.error(e)
+          toast.error("Eroare la adăugarea taskului")
+        })
       }}
     />
     <EditProjectModal
@@ -1588,6 +1911,11 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
   const [gscUrl, setGscUrl] = useState(project.client?.gscSiteUrl || meta.gscSiteUrl || '')
   const [adsCustomerId, setAdsCustomerId] = useState(project.client?.googleAdsCustomerId || '')
   const [ga4PropertyId, setGa4PropertyId] = useState(project.client?.ga4PropertyId || '')
+  
+  // WordPress SEO settings
+  const [wpUrl, setWpUrl] = useState(meta.wpUrl || '')
+  const [wpUsername, setWpUsername] = useState(meta.wpUsername || '')
+  const [wpAppPassword, setWpAppPassword] = useState(meta.wpAppPassword || '')
 
   // Telnyx phones with DNI
   const [phones, setPhones] = useState<Array<{ number: string; source: string; label: string }>>(() => {
@@ -1622,6 +1950,9 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
         posthogProjectId: posthogId || undefined,
         gscSiteUrl: gscUrl || undefined,
         telnyxPhoneNumbers: phones.filter(p => p.number.trim()),
+        wpUrl: wpUrl || undefined,
+        wpUsername: wpUsername || undefined,
+        wpAppPassword: wpAppPassword || undefined,
       }
       const projRes = await fetch(`/api/projects/${projectId}`, {
         method: 'PATCH',
@@ -1711,6 +2042,50 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
             className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
           />
           <p className="text-[10px] text-muted-foreground mt-1">Format: <code className="bg-muted/50 px-1 rounded">sc-domain:exemplu.ro</code> sau <code className="bg-muted/50 px-1 rounded">https://exemplu.ro/</code></p>
+        </div>
+      </div>
+
+      {/* WordPress */}
+      <div className="bg-surface rounded-xl border border-border p-5 space-y-4">
+        <div className="flex items-center gap-2">
+          <span className="text-base">📝</span>
+          <h3 className="text-sm font-semibold text-foreground">WordPress</h3>
+          <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full">CMS</span>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="text-xs text-muted-foreground block mb-1">Site URL</label>
+            <input
+              type="text"
+              value={wpUrl}
+              onChange={e => setWpUrl(e.target.value)}
+              placeholder="ex: https://domeniu.ro"
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Username</label>
+              <input
+                type="text"
+                value={wpUsername}
+                onChange={e => setWpUsername(e.target.value)}
+                placeholder="ex: admin"
+                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground block mb-1">Application Password</label>
+              <input
+                type="password"
+                value={wpAppPassword}
+                onChange={e => setWpAppPassword(e.target.value)}
+                placeholder="xxxx xxxx xxxx xxxx"
+                className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary/50"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Generată din Users → Profile → Application Passwords</p>
+            </div>
+          </div>
         </div>
       </div>
 

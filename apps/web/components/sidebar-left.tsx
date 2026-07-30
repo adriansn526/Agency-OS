@@ -31,6 +31,11 @@ import {
   Filter,
   Link2,
   Bot,
+  HardHat,
+  Activity,
+  Building2,
+  Search,
+  Radar,
 } from "lucide-react"
 
 interface NavItem {
@@ -74,7 +79,9 @@ const coreModules: NavItem[] = [
 
 const secondaryModules: NavItem[] = [
   { title: "Comunicare", href: "/communications", icon: Mail, badge: "Soon" },
-  { title: "Rapoarte", href: "/reports", icon: BarChart3, badge: "Soon" },
+  { title: "Rapoarte", href: "/reports", icon: BarChart3 },
+  { title: "SEO", href: "/seo", icon: Search },
+  { title: "Monitoring", href: "/monitoring", icon: Radar },
   { title: "Documente", href: "/documents", icon: FileText, badge: "Soon" },
 ]
 
@@ -83,6 +90,17 @@ const advancedModules: NavItem[] = [
   { title: "Automatizări", href: "/automations", icon: Zap, badge: "Soon" },
   { title: "Knowledge Base", href: "/wiki", icon: BookOpen, badge: "Soon" },
   { title: "Activity Log", href: "/activity", icon: ClipboardList },
+]
+
+const platformModules: NavItem[] = [
+  {
+    title: "IntraConstruct", href: "/intraconstruct", icon: HardHat,
+    children: [
+      { title: "Dashboard", href: "/intraconstruct", icon: LayoutDashboard },
+      { title: "Tenanți", href: "/intraconstruct/tenants", icon: Building2 },
+      { title: "AI Usage", href: "/intraconstruct/usage", icon: Activity },
+    ],
+  },
 ]
 
 const settingsModules: NavItem[] = [
@@ -223,6 +241,7 @@ export function SidebarLeft() {
       <nav className="flex-1 overflow-y-auto py-2 space-y-0.5">
         {renderSection(mainModules)}
         {renderSection(coreModules, "Core")}
+        {renderSection(platformModules, "Platforme")}
         {renderSection(secondaryModules, "Secundar")}
         {renderSection(advancedModules, "Avansat")}
       </nav>

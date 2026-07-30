@@ -3,9 +3,11 @@
 // Each function returns compressed JSON optimized for LLM context.
 // All tools are READ-only — no write operations on external APIs.
 
-import { getAccountMetrics, getCampaigns, getSearchTerms } from '@/lib/integrations/google-ads'
+import { getAccountMetrics, getCampaigns, getSearchTerms, getKeywordPerformance, getImpressionShare } from '@/lib/integrations/google-ads'
 import { getHealthMetrics, getWebVitals, getTrafficBySource, getTopPages as phGetTopPages } from '@/lib/integrations/posthog'
 import { getSiteMetrics, getTopQueries, getTopPages as gscGetTopPages } from '@/lib/integrations/gsc'
+import { analyzeNegativeKeywords, applyNegativeKeywords } from '@/lib/reports/negative-keywords-analyzer'
+import { analyzePage } from '@/lib/seo/page-analyzer'
 import { db } from '@repo/db'
 
 // ────────────────────────────────────────────
@@ -470,6 +472,16 @@ export async function executeExternalTool(name: string, args: Record<string, unk
         return JSON.stringify(await googleAdsGetCampaigns(args.customer_id as string, args.date_from as string, args.date_to as string))
       case 'google_ads_get_search_terms':
         return JSON.stringify(await googleAdsGetSearchTerms(args.customer_id as string, args.date_from as string, args.date_to as string))
+      case 'google_ads_keyword_performance':
+        return JSON.stringify(await googleAdsKeywordPerformance(args.customer_id as string, args.date_from as string, args.date_to as string))
+      case 'google_ads_impression_share':
+        return JSON.stringify(await googleAdsImpressionShareTool(args.customer_id as string, args.date_from as string, args.date_to as string))
+      case 'analyze_negative_keywords':
+        return JSON.stringify(await analyzeNegativeKeywordsTool(args.customer_id as string, args.date_from as string, args.date_to as string, args.domain as string, args.client_name as string))
+      case 'apply_negative_keywords':
+        return JSON.stringify(await applyNegativeKeywordsTool(args.customer_id as string, args.campaign_id as string, args.keywords as string[], args.match_type as string, args.client_name as string, args.domain as string))
+      case 'seo_analyze_page':
+        return JSON.stringify(await seoAnalyzePageTool(args.url as string, args.target_keyword as string))
       case 'posthog_get_health':
         return JSON.stringify(await posthogGetHealth(args.date_from as string, args.date_to as string))
       case 'posthog_get_web_vitals':
@@ -491,5 +503,165 @@ export async function executeExternalTool(name: string, args: Record<string, unk
     const msg = err instanceof Error ? err.message : 'Eroare necunoscută'
     console.error(`[Copilot External Tool] Error executing ${name}:`, msg)
     return JSON.stringify({ error: `Eroare la executarea tool-ului "${name}": ${msg}` })
+  }
+}
+
+// ────────────────────────────────────────────
+// Phase 2: Negative Keywords Tools
+// ────────────────────────────────────────────
+
+export async function googleAdsKeywordPerformance(customerId: string, dateFrom?: string, dateTo?: string) {
+  if (!customerId) return { error: 'Lipsește Google Ads Customer ID.' }
+  const range = dateFrom && dateTo ? { dateFrom, dateTo } : defaultDateRange()
+
+  try {
+    const keywords = await getKeywordPerformance(customerId, range.dateFrom, range.dateTo)
+    return {
+      period: `${range.dateFrom} → ${range.dateTo}`,
+      totalKeywords: keywords.length,
+      keywords: keywords.slice(0, 20).map(k => ({
+        keyword: k.keyword,
+        matchType: k.matchType,
+        qualityScore: k.qualityScore,
+        clicks: k.clicks,
+        impressions: k.impressions,
+        ctr: k.ctr,
+        cpc: k.cpc,
+        spend: k.spend,
+      })),
+    }
+  } catch (err) {
+    return { error: `Eroare keyword performance: ${err instanceof Error ? err.message : err}` }
+  }
+}
+
+export async function googleAdsImpressionShareTool(customerId: string, dateFrom?: string, dateTo?: string) {
+  if (!customerId) return { error: 'Lipsește Google Ads Customer ID.' }
+  const range = dateFrom && dateTo ? { dateFrom, dateTo } : defaultDateRange()
+
+  try {
+    const data = await getImpressionShare(customerId, range.dateFrom, range.dateTo)
+    return {
+      period: `${range.dateFrom} → ${range.dateTo}`,
+      campaigns: data.map(d => ({
+        campaign: d.campaignName,
+        impressionShare: d.searchImpressionShare,
+        lostBudget: d.lostIsBudget,
+        lostRank: d.lostIsRank,
+      })),
+    }
+  } catch (err) {
+    return { error: `Eroare impression share: ${err instanceof Error ? err.message : err}` }
+  }
+}
+
+export async function analyzeNegativeKeywordsTool(
+  customerId: string, dateFrom?: string, dateTo?: string,
+  domain?: string, clientName?: string
+) {
+  if (!customerId) return { error: 'Lipsește Google Ads Customer ID.' }
+  const range = dateFrom && dateTo ? { dateFrom, dateTo } : defaultDateRange()
+
+  try {
+    const analysis = await analyzeNegativeKeywords(
+      customerId, range.dateFrom, range.dateTo,
+      undefined, domain, clientName
+    )
+    return {
+      period: `${range.dateFrom} → ${range.dateTo}`,
+      summary: analysis.summary,
+      highPrioritySuggestions: analysis.suggestions
+        .filter(s => s.priority === 'high' || s.priority === 'medium')
+        .slice(0, 15)
+        .map(s => ({
+          term: s.term,
+          reason: s.reason,
+          wastedSpend: s.wastedSpend,
+          campaign: s.campaignName,
+          suggestedMatchType: s.matchType,
+        })),
+      topIrrelevantTerms: analysis.analyzed
+        .filter(t => t.classification === 'irrelevant')
+        .slice(0, 10)
+        .map(t => ({ term: t.term, score: t.score, reason: t.reason, cost: t.cost })),
+    }
+  } catch (err) {
+    return { error: `Eroare analiză negative keywords: ${err instanceof Error ? err.message : err}` }
+  }
+}
+
+export async function applyNegativeKeywordsTool(
+  customerId: string, campaignId: string, keywords: string[],
+  matchType?: string, clientName?: string, domain?: string
+) {
+  if (!customerId || !campaignId) return { error: 'Lipsesc customerId și campaignId.' }
+  if (!keywords?.length) return { error: 'Lipsesc keywords-urile de adăugat.' }
+
+  try {
+    const result = await applyNegativeKeywords(
+      customerId, campaignId, keywords,
+      (matchType as 'BROAD' | 'PHRASE' | 'EXACT') || 'BROAD',
+      clientName, domain
+    )
+    return {
+      success: result.success,
+      added: result.added,
+      keywords: keywords,
+      errors: result.errors,
+      message: result.success
+        ? `✅ ${result.added} termeni negativi adăugați cu succes. Notificare Telegram trimisă.`
+        : `❌ Eroare la adăugarea termenilor: ${result.errors.join(', ')}`,
+    }
+  } catch (err) {
+    return { error: `Eroare apply negative keywords: ${err instanceof Error ? err.message : err}` }
+  }
+}
+
+// ────────────────────────────────────────────
+// Phase 3: SEO Tools
+// ────────────────────────────────────────────
+
+export async function seoAnalyzePageTool(url: string, targetKeyword?: string) {
+  if (!url) return { error: 'URL-ul este obligatoriu.' }
+
+  let normalizedUrl = url
+  if (!url.startsWith('http')) normalizedUrl = `https://${url}`
+
+  try {
+    const analysis = await analyzePage(normalizedUrl, targetKeyword)
+    return {
+      url: normalizedUrl,
+      score: analysis.overallScore,
+      scoreBreakdown: analysis.scoreBreakdown,
+      title: { value: analysis.title.value, length: analysis.title.length, status: analysis.title.score },
+      metaDescription: { value: analysis.metaDescription.value.slice(0, 80) + '...', status: analysis.metaDescription.score },
+      headings: {
+        h1: analysis.h1.values,
+        h2Count: analysis.h2.count,
+        h3Count: analysis.h3.count,
+      },
+      content: {
+        wordCount: analysis.wordCount,
+        readingTimeMin: analysis.readingTimeMin,
+        topKeywords: analysis.keywordDensity.slice(0, 5),
+      },
+      links: {
+        internal: analysis.internalLinks.count,
+        external: analysis.externalLinks.count,
+      },
+      images: {
+        total: analysis.totalImages,
+        withoutAlt: analysis.imagesWithoutAlt,
+      },
+      technical: {
+        hasSchema: analysis.hasSchemaMarkup,
+        hasCanonical: !!analysis.canonical,
+        hasViewport: analysis.hasViewportMeta,
+        loadTimeMs: analysis.loadTimeMs,
+      },
+      issues: analysis.issues.slice(0, 10),
+    }
+  } catch (err) {
+    return { error: `Eroare SEO analiză: ${err instanceof Error ? err.message : err}` }
   }
 }

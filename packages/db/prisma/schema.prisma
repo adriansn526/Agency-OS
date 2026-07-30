@@ -72,6 +72,9 @@ model Client {
   googleAdsCustomerId  String?  // Google Ads Customer ID (e.g. "4111955891")
   ga4PropertyId        String?  // GA4 Property ID (e.g. "properties/123456")
   gscSiteUrl           String?  // GSC verified site (e.g. "sc-domain:example.ro")
+  // ─── PostHog Integration ───
+  posthogProjectId String?  // Optional explicit Project ID in PostHog. If missing, filtering is done via domain.
+  
   customFields   Json?        // câmpuri specifice per entityType
   deletedAt      DateTime?    // soft delete
   createdAt      DateTime     @default(now())
@@ -88,6 +91,10 @@ model Client {
   communications Communication[]
   brandDNA       BrandDNA?
   clientReports  ClientReport[]
+  domainConfigs  ClientDomainConfig[]
+  seoAudits      SeoAudit[]
+  apiKeys        ClientApiKey[]
+  connectedAccounts ConnectedAccount[]
 
   @@index([businessLineId, entityType])
   @@index([status])
@@ -143,6 +150,19 @@ model Lead {
   optOut         Boolean      @default(false)  // GDPR: a cerut să fie exclus din marketing
   optOutAt       DateTime?                     // Când a cerut opt-out
 
+  // ─── Form Tracking ───
+  sourcePage       String?    // URL pagina de unde vine cererea: "/contact", "/servicii/web-design"
+  sourceService    String?    // Serviciul solicitat: "web-design", "seo", "google-ads"
+  sourceDomain     String?    // Domeniul site-ului: "qualitycontrol.com.ro"
+  sourceFormId     String?    // ID formular (pt multiple forms pe aceeași pagină)
+  sourceReferrer   String?    // Referrer URL complet
+  // ─── UTM Tracking ───
+  utmSource        String?    // google, facebook, newsletter
+  utmMedium        String?    // cpc, email, organic
+  utmCampaign      String?    // campaign name
+  utmTerm          String?    // keyword
+  utmContent       String?    // ad variant
+
   deletedAt      DateTime?    // soft delete
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -158,6 +178,10 @@ model Lead {
   @@index([industry])
   @@index([county])
   @@index([cui])
+  @@index([sourcePage])
+  @@index([sourceService])
+  @@index([sourceDomain])
+  @@index([utmSource])
 }
 
 // ─── Projects ───
@@ -674,10 +698,12 @@ model ClientReport {
   businessLineId String
   clientId       String
   domain         String?   // Target domain for multi-site clients (e.g. "inchideriterase.ro")
+  domainConfigId String?   // Reference to ClientDomainConfig for data sources
   title          String    @default("Raport Performanță")
   widgets        Json      @default("[]")
   notes          String?   @db.Text
   status         String    @default("active")
+  showCostData   Boolean   @default(false) // Whether client can see spend/CPC data
   sentAt         DateTime?
   viewedAt       DateTime?
   viewCount      Int       @default(0)
@@ -685,12 +711,39 @@ model ClientReport {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  businessLine   BusinessLine    @relation(fields: [businessLineId], references: [id])
-  client         Client          @relation(fields: [clientId], references: [id])
+  businessLine   BusinessLine         @relation(fields: [businessLineId], references: [id])
+  client         Client               @relation(fields: [clientId], references: [id])
+  domainConfig   ClientDomainConfig?  @relation(fields: [domainConfigId], references: [id])
   snapshots      ReportSnapshot[]
 
   @@index([clientId])
   @@index([token])
+  @@index([domainConfigId])
+}
+
+// ─── Client Domain Configuration ───
+// Stores per-domain data source configuration for clients with multiple sites
+model ClientDomainConfig {
+  id                   String    @id @default(cuid())
+  clientId             String
+  domain               String    // e.g. "autorulate.ro", "inchideriterase.ro"
+
+  // ─── Data Sources ───
+  googleAdsCustomerId  String?   // Google Ads CID specific to this domain
+  googleAdsCampaignIds String[]  @default([]) // Filter only relevant campaigns
+  gscSiteUrl           String?   // GSC verified site URL (e.g. "sc-domain:autorulate.ro")
+  posthogProjectId     String?   // PostHog project ID (null = use default project)
+
+  isActive             Boolean   @default(true)
+  notes                String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  client               Client          @relation(fields: [clientId], references: [id])
+  reports              ClientReport[]
+
+  @@unique([clientId, domain])
+  @@index([clientId])
 }
 
 model ReportSnapshot {
@@ -707,4 +760,179 @@ model ReportSnapshot {
 
   @@index([reportId, dateFrom])
   @@unique([reportId, dateFrom, dateTo])
+}
+
+// ═══════════════════════════════════════════════════════
+// IntraConstruct — Single-Tenant Instance Management
+// ═══════════════════════════════════════════════════════
+
+// ─── Tenant Instance (remote deployment) ───
+model TenantInstance {
+  id              String    @id @default(cuid())
+  tenantId        String    @unique // IntraConstruct-ERP tenant ID
+  tenantName      String    // Display name
+  tenantSlug      String    // e.g. "aeroductr"
+
+  // ─── Deployment ───
+  deploymentType  String    @default("shared") // 'shared' | 'single-tenant'
+  serverHost      String?   // IP or hostname (e.g. "185.x.x.x")
+  serverPort      Int       @default(22)
+  sshUser         String?   // e.g. "deploy"
+  sshPrivateKey   String?   @db.Text // AES-256 encrypted
+  apiEndpoint     String?   // e.g. "https://erp.aeroduct.ro"
+  internalApiKey  String?   // API key for /api/internal/* on remote instance
+
+  // ─── Status ───
+  status          String    @default("active") // 'active' | 'migrating' | 'suspended' | 'offline'
+  version         String?   // e.g. "1.2.0"
+  lastHeartbeat   DateTime?
+  lastUpdate      DateTime?
+
+  // ─── License ───
+  plan            String    @default("pro") // 'starter' | 'pro' | 'enterprise'
+  licenseKey      String    @unique @default(cuid()) // License key sent to remote instance
+  gracePeriodDays Int       @default(7)
+
+  // ─── Update Schedule ───
+  updateWindow    String?   // Cron-like: "SAT 03:00-05:00"
+  autoUpdate      Boolean   @default(false)
+
+  // ─── Credits (current balance) ───
+  creditsAi       Int       @default(0) // AI token credits remaining
+  creditsSms      Int       @default(0) // SMS credits remaining
+  creditsVoice    Int       @default(0) // Voice minutes (x100 for decimals)
+  creditsCalls    Int       @default(0) // Telephony minutes remaining
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  creditPackages  CreditPackage[]
+  creditUsage     CreditUsage[]
+  heartbeats      TenantHeartbeat[]
+
+  @@index([tenantSlug])
+  @@index([status])
+}
+
+// ─── Credit Packages (purchased prepaid packs) ───
+model CreditPackage {
+  id              String    @id @default(cuid())
+  instanceId      String
+  type            String    // 'ai' | 'sms' | 'voice' | 'calls'
+  packageName     String    // 'AI Starter', 'SMS 500', etc.
+  credits         Int       // Amount of credits purchased
+  priceEur        Float     // Amount paid by client
+  costEur         Float     // Our actual cost
+  status          String    @default("active") // 'active' | 'exhausted' | 'expired'
+  expiresAt       DateTime? // Optional expiry
+  purchasedAt     DateTime  @default(now())
+
+  instance        TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId, type])
+  @@index([status])
+}
+
+// ─── Credit Usage (consumption log) ───
+model CreditUsage {
+  id              String    @id @default(cuid())
+  instanceId      String
+  type            String    // 'ai' | 'sms' | 'voice' | 'calls'
+  amount          Int       // Credits consumed
+  detail          String?   // 'copilot_chat', 'sms_notification', 'voice_call', etc.
+  provider        String?   // 'gemini', 'openai', 'smso', 'telnyx'
+  rawCostUsd      Float?    // Actual provider cost
+  metadata        Json?     // Extra info (model, tokens, duration, etc.)
+  reportedAt      DateTime  @default(now())
+
+  instance        TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId, type, reportedAt])
+  @@index([reportedAt(sort: Desc)])
+}
+
+// ─── Tenant Heartbeat (health reports from remote instances) ───
+model TenantHeartbeat {
+  id              String    @id @default(cuid())
+  instanceId      String
+  version         String?
+  uptime          Int?      // seconds
+  dbSize          String?   // e.g. "245MB"
+  activeUsers     Int?
+  lastActivity    DateTime?
+
+  // ─── Resource usage since last heartbeat ───
+  aiTokensUsed    Int       @default(0)
+  smsUsed         Int       @default(0)
+  voiceMinutes    Float     @default(0)
+  callMinutes     Float     @default(0)
+
+  // ─── System health ───
+  cpuPercent      Float?
+  memoryPercent   Float?
+  diskPercent     Float?
+  healthy         Boolean   @default(true)
+  errors          Json?     // Recent error summary
+
+  receivedAt      DateTime  @default(now())
+
+  instance        TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId, receivedAt(sort: Desc)])
+}
+
+// ─── SEO Audits ───
+model SeoAudit {
+  id        String   @id @default(cuid())
+  domain    String
+  clientId  String?
+  score     Int      // Overall score 0-100
+  results   Json     // SeoPageAnalysis[] — per-page results
+  summary   Json     // SiteAuditSummary
+  createdAt DateTime @default(now())
+
+  client    Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  @@index([domain, createdAt(sort: Desc)])
+  @@index([clientId, createdAt(sort: Desc)])
+}
+
+// ─── Client API Keys (Form Tracking) ───
+model ClientApiKey {
+  id        String   @id @default(cuid())
+  clientId  String
+  key       String   @unique  // UUID v4 generat automat
+  domain    String             // domeniu autorizat (CORS): "qualitycontrol.com.ro"
+  label     String?            // "site principal", "landing page X"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([clientId])
+  @@index([domain])
+}
+
+// ─── External Integrations ───
+model ConnectedAccount {
+  id                  String    @id @default(cuid())
+  provider            String    // e.g., "google", "posthog"
+  providerAccountId   String?   // External account ID (email for Google, or just a generic ID)
+  accessToken         String    @db.Text // Can be API key for PostHog or actual token for Google
+  refreshToken        String?   @db.Text
+  expiresAt           Int?      // Expiration timestamp for accessToken
+  tokenType           String?
+  scope               String?
+  email               String?   // Email associated with the account
+  
+  clientId            String?
+  client              Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([clientId])
 }

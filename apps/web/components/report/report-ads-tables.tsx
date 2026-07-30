@@ -1,11 +1,12 @@
 "use client"
+import { Megaphone } from "lucide-react"
 import { WidgetWrapper, DataTable } from "./report-widget-wrapper"
 import { useState } from "react"
 
 interface AdsTablesData {
   campaigns: Array<{ name: string; clicks: number; impressions: number; spend: number; conversions: number; roas: number; status: string }>
   convBreakdown: Array<{ actionName: string; allConversions: number; value: number; campaigns: string[] }>
-  searchTerms: Array<{ term: string; clicks: number; impressions: number; ctr: number; cpc: number; conversions: number }>
+  searchTerms: Array<{ term: string; campaign?: string; clicks: number; impressions: number; ctr: number; cpc: number; conversions: number }>
 }
 
 const TABS = [
@@ -18,11 +19,11 @@ export function ReportAdsTables({ data, loading }: { data?: AdsTablesData; loadi
   const [tab, setTab] = useState("campaigns")
 
   if (!data || (data as any).error) {
-    return <WidgetWrapper title="Google Ads — Detalii" icon="📣" loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
+    return <WidgetWrapper title="Google Ads — Detalii" icon={<Megaphone size={16} />} loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
   }
 
   return (
-    <WidgetWrapper title="Google Ads — Detalii" icon="📣">
+    <WidgetWrapper title="Google Ads — Detalii" icon={<Megaphone size={16} />}>
       {/* Tab bar */}
       <div style={{ display: "flex", borderBottom: "1px solid #f1f5f9", padding: "0 24px" }}>
         {TABS.map(t => (
@@ -68,12 +69,13 @@ export function ReportAdsTables({ data, loading }: { data?: AdsTablesData; loadi
         <DataTable
           columns={[
             { key: "term", label: "Termen Căutat" },
+            { key: "campaign", label: "Campanie" },
             { key: "clicks", label: "Clicks", align: "right" },
             { key: "ctr", label: "CTR", align: "right" },
             { key: "cpc", label: "CPC (€)", align: "right" },
             { key: "conversions", label: "Conv.", align: "right" },
           ]}
-          rows={(data.searchTerms || []).map(t => ({ ...t, ctr: (t.ctr ?? 0) + "%", cpc: (t.cpc ?? 0).toFixed(2) }))}
+          rows={(data.searchTerms || []).map(t => ({ ...t, campaign: t.campaign || "—", ctr: (t.ctr ?? 0) + "%", cpc: (t.cpc ?? 0).toFixed(2) }))}
           maxRows={15}
         />
       )}

@@ -1,4 +1,5 @@
 "use client"
+import { PieChart } from "lucide-react"
 
 // ─── Source Attribution Chart ───
 // Horizontal bar chart showing where conversions/traffic came from
@@ -26,7 +27,7 @@ interface AttributionItem {
 export function ReportAttribution({ data, loading }: { data?: AttributionItem[]; loading?: boolean }) {
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <WidgetWrapper title="Surse Trafic — Attribution" icon="📊" loading={loading}>
+      <WidgetWrapper title="Surse Trafic — Attribution" icon={<PieChart size={16} />} loading={loading}>
         <div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>
           Nu sunt date disponibile pentru perioada selectată.
         </div>
@@ -37,7 +38,7 @@ export function ReportAttribution({ data, loading }: { data?: AttributionItem[];
   const total = data.reduce((s, d) => s + d.pageviews, 0)
 
   return (
-    <WidgetWrapper title="Surse Trafic — Attribution" icon="📊">
+    <WidgetWrapper title="Surse Trafic — Attribution" icon={<PieChart size={16} />}>
       <div style={{ padding: "16px 24px 24px" }}>
         <ResponsiveContainer width="100%" height={Math.max(200, data.length * 48)}>
           <BarChart data={data} layout="vertical" margin={{ left: 100, right: 40 }}>

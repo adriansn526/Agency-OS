@@ -1,0 +1,566 @@
+[
+  {
+    "location_name": "Albania",
+    "location_code": 2008,
+    "language_name": "Albanian",
+    "language_code": "sq"
+  },
+  {
+    "location_name": "Algeria",
+    "location_code": 2012,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Angola",
+    "location_code": 2024,
+    "language_name": "Portuguese",
+    "language_code": "pt"
+  },
+  {
+    "location_name": "Azerbaijan",
+    "location_code": 2031,
+    "language_name": "Azeri",
+    "language_code": "az"
+  },
+  {
+    "location_name": "Argentina",
+    "location_code": 2032,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Australia",
+    "location_code": 2036,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Austria",
+    "location_code": 2040,
+    "language_name": "German",
+    "language_code": "de"
+  },
+  {
+    "location_name": "Bahrain",
+    "location_code": 2048,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Bangladesh",
+    "location_code": 2050,
+    "language_name": "Bengali",
+    "language_code": "bn"
+  },
+  {
+    "location_name": "Armenia",
+    "location_code": 2051,
+    "language_name": "Armenian",
+    "language_code": "hy"
+  },
+  {
+    "location_name": "Belgium",
+    "location_code": 2056,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Bolivia",
+    "location_code": 2068,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Bosnia and Herzegovina",
+    "location_code": 2070,
+    "language_name": "Bosnian",
+    "language_code": "bs"
+  },
+  {
+    "location_name": "Brazil",
+    "location_code": 2076,
+    "language_name": "Portuguese",
+    "language_code": "pt"
+  },
+  {
+    "location_name": "Bulgaria",
+    "location_code": 2100,
+    "language_name": "Bulgarian",
+    "language_code": "bg"
+  },
+  {
+    "location_name": "Myanmar (Burma)",
+    "location_code": 2104,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Cambodia",
+    "location_code": 2116,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Cameroon",
+    "location_code": 2120,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Canada",
+    "location_code": 2124,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Sri Lanka",
+    "location_code": 2144,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Chile",
+    "location_code": 2152,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Taiwan",
+    "location_code": 2158,
+    "language_name": "Chinese (Traditional)",
+    "language_code": "zh-TW"
+  },
+  {
+    "location_name": "Colombia",
+    "location_code": 2170,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Costa Rica",
+    "location_code": 2188,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Croatia",
+    "location_code": 2191,
+    "language_name": "Croatian",
+    "language_code": "hr"
+  },
+  {
+    "location_name": "Cyprus",
+    "location_code": 2196,
+    "language_name": "Greek",
+    "language_code": "el"
+  },
+  {
+    "location_name": "Czechia",
+    "location_code": 2203,
+    "language_name": "Czech",
+    "language_code": "cs"
+  },
+  {
+    "location_name": "Denmark",
+    "location_code": 2208,
+    "language_name": "Danish",
+    "language_code": "da"
+  },
+  {
+    "location_name": "Ecuador",
+    "location_code": 2218,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "El Salvador",
+    "location_code": 2222,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Estonia",
+    "location_code": 2233,
+    "language_name": "Estonian",
+    "language_code": "et"
+  },
+  {
+    "location_name": "Finland",
+    "location_code": 2246,
+    "language_name": "Finnish",
+    "language_code": "fi"
+  },
+  {
+    "location_name": "France",
+    "location_code": 2250,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Germany",
+    "location_code": 2276,
+    "language_name": "German",
+    "language_code": "de"
+  },
+  {
+    "location_name": "Ghana",
+    "location_code": 2288,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Greece",
+    "location_code": 2300,
+    "language_name": "Greek",
+    "language_code": "el"
+  },
+  {
+    "location_name": "Guatemala",
+    "location_code": 2320,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Hong Kong",
+    "location_code": 2344,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Hungary",
+    "location_code": 2348,
+    "language_name": "Hungarian",
+    "language_code": "hu"
+  },
+  {
+    "location_name": "India",
+    "location_code": 2356,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Indonesia",
+    "location_code": 2360,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Ireland",
+    "location_code": 2372,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Israel",
+    "location_code": 2376,
+    "language_name": "Hebrew",
+    "language_code": "he"
+  },
+  {
+    "location_name": "Italy",
+    "location_code": 2380,
+    "language_name": "Italian",
+    "language_code": "it"
+  },
+  {
+    "location_name": "Cote d'Ivoire",
+    "location_code": 2384,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Japan",
+    "location_code": 2392,
+    "language_name": "Japanese",
+    "language_code": "ja"
+  },
+  {
+    "location_name": "Kazakhstan",
+    "location_code": 2398,
+    "language_name": "Russian",
+    "language_code": "ru"
+  },
+  {
+    "location_name": "Jordan",
+    "location_code": 2400,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Kenya",
+    "location_code": 2404,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "South Korea",
+    "location_code": 2410,
+    "language_name": "Korean",
+    "language_code": "ko"
+  },
+  {
+    "location_name": "Latvia",
+    "location_code": 2428,
+    "language_name": "Latvian",
+    "language_code": "lv"
+  },
+  {
+    "location_name": "Lithuania",
+    "location_code": 2440,
+    "language_name": "Lithuanian",
+    "language_code": "lt"
+  },
+  {
+    "location_name": "Malaysia",
+    "location_code": 2458,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Malta",
+    "location_code": 2470,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Mexico",
+    "location_code": 2484,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Monaco",
+    "location_code": 2492,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Moldova",
+    "location_code": 2498,
+    "language_name": "Romanian",
+    "language_code": "ro"
+  },
+  {
+    "location_name": "Morocco",
+    "location_code": 2504,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Netherlands",
+    "location_code": 2528,
+    "language_name": "Dutch",
+    "language_code": "nl"
+  },
+  {
+    "location_name": "New Zealand",
+    "location_code": 2554,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Nicaragua",
+    "location_code": 2558,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Nigeria",
+    "location_code": 2566,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Norway",
+    "location_code": 2578,
+    "language_name": "Norwegian (Bokmål)",
+    "language_code": "nb"
+  },
+  {
+    "location_name": "Pakistan",
+    "location_code": 2586,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Panama",
+    "location_code": 2591,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Paraguay",
+    "location_code": 2600,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Peru",
+    "location_code": 2604,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Philippines",
+    "location_code": 2608,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Poland",
+    "location_code": 2616,
+    "language_name": "Polish",
+    "language_code": "pl"
+  },
+  {
+    "location_name": "Portugal",
+    "location_code": 2620,
+    "language_name": "Portuguese",
+    "language_code": "pt"
+  },
+  {
+    "location_name": "Romania",
+    "location_code": 2642,
+    "language_name": "Romanian",
+    "language_code": "ro"
+  },
+  {
+    "location_name": "Saudi Arabia",
+    "location_code": 2682,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Senegal",
+    "location_code": 2686,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Serbia",
+    "location_code": 2688,
+    "language_name": "Serbian",
+    "language_code": "sr"
+  },
+  {
+    "location_name": "Singapore",
+    "location_code": 2702,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Slovakia",
+    "location_code": 2703,
+    "language_name": "Slovak",
+    "language_code": "sk"
+  },
+  {
+    "location_name": "Vietnam",
+    "location_code": 2704,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Slovenia",
+    "location_code": 2705,
+    "language_name": "Slovenian",
+    "language_code": "sl"
+  },
+  {
+    "location_name": "South Africa",
+    "location_code": 2710,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Spain",
+    "location_code": 2724,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Sweden",
+    "location_code": 2752,
+    "language_name": "Swedish",
+    "language_code": "sv"
+  },
+  {
+    "location_name": "Switzerland",
+    "location_code": 2756,
+    "language_name": "German",
+    "language_code": "de"
+  },
+  {
+    "location_name": "Thailand",
+    "location_code": 2764,
+    "language_name": "Thai",
+    "language_code": "th"
+  },
+  {
+    "location_name": "United Arab Emirates",
+    "location_code": 2784,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Tunisia",
+    "location_code": 2788,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "Turkiye",
+    "location_code": 2792,
+    "language_name": "Turkish",
+    "language_code": "tr"
+  },
+  {
+    "location_name": "Ukraine",
+    "location_code": 2804,
+    "language_name": "Ukrainian",
+    "language_code": "uk"
+  },
+  {
+    "location_name": "North Macedonia",
+    "location_code": 2807,
+    "language_name": "Macedonian",
+    "language_code": "mk"
+  },
+  {
+    "location_name": "Egypt",
+    "location_code": 2818,
+    "language_name": "Arabic",
+    "language_code": "ar"
+  },
+  {
+    "location_name": "United Kingdom",
+    "location_code": 2826,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "United States",
+    "location_code": 2840,
+    "language_name": "English",
+    "language_code": "en"
+  },
+  {
+    "location_name": "Burkina Faso",
+    "location_code": 2854,
+    "language_name": "French",
+    "language_code": "fr"
+  },
+  {
+    "location_name": "Uruguay",
+    "location_code": 2858,
+    "language_name": "Spanish",
+    "language_code": "es"
+  },
+  {
+    "location_name": "Venezuela",
+    "location_code": 2862,
+    "language_name": "Spanish",
+    "language_code": "es"
+  }
+]

@@ -1,4 +1,5 @@
 "use client"
+import { Globe } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 
@@ -14,7 +15,7 @@ interface SocialItem {
 export function ReportSocial({ data, loading }: { data?: SocialItem[]; loading?: boolean }) {
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <WidgetWrapper title="Social — Breakdown" icon="🌐" loading={loading}>
+      <WidgetWrapper title="Social — Breakdown" icon={<Globe size={16} />} loading={loading}>
         <div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>
           Nu a fost detectat trafic social pentru această perioadă.
         </div>
@@ -32,7 +33,7 @@ export function ReportSocial({ data, loading }: { data?: SocialItem[]; loading?:
   }))
 
   return (
-    <WidgetWrapper title="Social — Breakdown" icon="🌐">
+    <WidgetWrapper title="Social — Breakdown" icon={<Globe size={16} />}>
       <div style={{ padding: "16px 24px 24px", display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
         {/* Pie Chart */}
         <div style={{ width: 240, height: 240, flexShrink: 0 }}>

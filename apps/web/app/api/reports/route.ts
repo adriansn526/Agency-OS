@@ -3,17 +3,21 @@ import { db } from '@repo/db'
 
 // Default widgets — all enabled
 const DEFAULT_WIDGETS = [
-  { type: 'conversions_hero', label: '🏆 Rezultate', enabled: true },
-  { type: 'source_attribution', label: '📊 Surse Conversii', enabled: true },
-  { type: 'google_ads_kpis', label: '📣 Google Ads KPIs', enabled: true },
-  { type: 'google_ads_trend', label: '📣 Google Ads Trend', enabled: true },
-  { type: 'google_ads_tables', label: '📣 Google Ads Tables', enabled: true },
-  { type: 'seo_kpis', label: '🔍 SEO KPIs', enabled: true },
-  { type: 'seo_trend', label: '🔍 SEO Trend', enabled: true },
-  { type: 'seo_tables', label: '🔍 SEO Tables', enabled: true },
-  { type: 'seo_articles', label: '📝 Articole Noi', enabled: true },
-  { type: 'social_breakdown', label: '🌐 Social', enabled: true },
-  { type: 'site_health', label: '📈 Site Health', enabled: true },
+  { type: 'conversions_hero', label: 'Rezultate', enabled: true },
+  { type: 'source_attribution', label: 'Surse Conversii', enabled: true },
+  { type: 'google_ads_kpis', label: 'Google Ads KPIs', enabled: true },
+  { type: 'google_ads_trend', label: 'Google Ads Trend', enabled: true },
+  { type: 'google_ads_tables', label: 'Google Ads Tables', enabled: true },
+  { type: 'google_ads_extended', label: 'Google Ads Analiză Extinsă', enabled: true },
+  { type: 'seo_kpis', label: 'SEO KPIs', enabled: true },
+  { type: 'seo_trend', label: 'SEO Trend', enabled: true },
+  { type: 'seo_tables', label: 'SEO Tables', enabled: true },
+  { type: 'seo_articles', label: 'Articole Noi', enabled: true },
+  { type: 'seo_page_keywords', label: 'SEO Pagini & Recomandări', enabled: true },
+  { type: 'social_breakdown', label: 'Social', enabled: true },
+  { type: 'posthog_traffic', label: 'Website Analytics', enabled: true },
+  { type: 'site_health', label: 'Site Health', enabled: true },
+  { type: 'uptime', label: 'Uptime', enabled: true },
 ]
 
 // ─── GET /api/reports ───

@@ -46,43 +46,62 @@ const inputClass = "w-full px-3 py-2 text-sm bg-muted/50 border border-border ro
 // ────────────────────────────────────────────────
 export function AddTaskModal({ open, onClose, teamMembers, onAdd }: {
   open: boolean; onClose: () => void; teamMembers: string[]
-  onAdd: (task: { title: string; assignee: string; dueDate: string; hours: number }) => void
+  onAdd: (task: { type: string; title: string; assignee?: string; dueDate?: string; hours?: number }) => void
 }) {
+  const [type, setType] = useState<"task" | "note">("task")
   const [title, setTitle] = useState("")
   const [assignee, setAssignee] = useState(teamMembers[0] || "")
-  const [dueDate, setDueDate] = useState("")
+  const [dueDate, setDueDate] = useState(new Date().toISOString().split('T')[0])
   const [hours, setHours] = useState(4)
+
+  useEffect(() => {
+    if (open) {
+      setDueDate(new Date().toISOString().split('T')[0])
+      setTitle("")
+      setType("task")
+      setHours(4)
+    }
+  }, [open])
 
   const handleSubmit = () => {
     if (!title.trim()) return
-    onAdd({ title: title.trim(), assignee, dueDate, hours })
-    setTitle(""); setDueDate(""); setHours(4)
+    onAdd({ type, title: title.trim(), assignee, dueDate, hours: type === 'task' ? hours : undefined })
     onClose()
   }
 
   return (
-    <ModalShell open={open} onClose={onClose} title="Task Nou">
+    <ModalShell open={open} onClose={onClose} title={type === 'task' ? "Adaugă Task" : "Adaugă Notă"}>
       <div className="space-y-4">
-        <Field label="Titlu Task">
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ex: Implementare pagină contact" className={inputClass} autoFocus />
+        <Field label="Tip Înregistrare">
+          <select value={type} onChange={(e) => setType(e.target.value as any)} className={inputClass}>
+            <option value="task">Task</option>
+            <option value="note">Notă</option>
+          </select>
         </Field>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Assignee">
-            <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputClass}>
-              {teamMembers.map((m) => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </Field>
-          <Field label="Ore Estimate">
-            <input type="number" min={1} max={100} value={hours} onChange={(e) => setHours(+e.target.value)} className={inputClass} />
-          </Field>
-        </div>
-        <Field label="Due Date">
-          <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputClass} />
+        <Field label={type === 'task' ? "Titlu Task" : "Conținut Notă"}>
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={type === 'task' ? "Ex: Implementare pagină contact" : "Ex: Clientul a cerut redirecționare 301"} className={inputClass} autoFocus />
         </Field>
+        {type === 'task' && (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Assignee">
+                <select value={assignee} onChange={(e) => setAssignee(e.target.value)} className={inputClass}>
+                  {teamMembers.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </Field>
+              <Field label="Ore Estimate">
+                <input type="number" min={1} max={100} value={hours} onChange={(e) => setHours(+e.target.value)} className={inputClass} />
+              </Field>
+            </div>
+            <Field label="Deadline">
+              <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className={inputClass} />
+            </Field>
+          </>
+        )}
         <div className="flex justify-end gap-2 pt-2">
           <button onClick={onClose} className="px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted rounded-lg transition-colors">Anulează</button>
           <button onClick={handleSubmit} disabled={!title.trim()} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary-hover disabled:opacity-40 transition-colors flex items-center gap-1.5">
-            <Plus size={12} /> Adaugă Task
+            <Plus size={12} /> Salvează
           </button>
         </div>
       </div>

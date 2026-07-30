@@ -96,6 +96,16 @@ interface ProjectKPIs {
     topPages: Array<{ page: string; views: number; users: number }>;
   } | { error: string } | null;
   telnyx: { totalCalls: number; avgDuration: number; totalDuration: number; calls: Array<{ id: string; from: string; to: string; duration: number; createdAt: string; downloadUrl: string | null }> } | { error: string } | null;
+  // Conversion tracking (detailed)
+  landingPageConversions: Array<{ landingPage: string; totalConversions: number; totalValue: number; topActions: Array<{ name: string; count: number }> }> | null;
+  formSubmissions: Array<{ pageUrl: string; formId: string; formType: string; count: number }> | null;
+  conversionsByPage: Array<{ pageUrl: string; totalConversions: number; formSubmissions: number; phoneClicks: number; emailClicks: number }> | null;
+  // SEO
+  pageKeywords: any[] | null;
+  // Backlinks
+  backlinksSummary: any | null;
+  backlinksPages: any[] | null;
+  backlinksDetail: any[] | null;
 }
 
 export function useProjectKPIs(projectId: string, dateFrom?: string, dateTo?: string) {

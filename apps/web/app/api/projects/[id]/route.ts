@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 
+export const dynamic = 'force-dynamic'
+
 // ─── GET /api/projects/[id] ───
 export async function GET(
   _request: NextRequest,

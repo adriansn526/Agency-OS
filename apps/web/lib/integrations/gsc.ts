@@ -200,3 +200,27 @@ export async function getPageKeywords(
     position: row.position || 0,
   }));
 }
+
+/**
+ * Inspect a URL using the Google Search Console URL Inspection API
+ * @param siteUrl The property URL (e.g., sc-domain:example.com or https://example.com/)
+ * @param inspectionUrl The exact URL to inspect (e.g., https://example.com/about)
+ */
+export async function inspectUrl(siteUrl: string, inspectionUrl: string) {
+  try {
+    const searchconsole = getSearchConsoleClient();
+    
+    // The urlInspection API is technically part of searchconsole API v1
+    const response = await searchconsole.urlInspection.index.inspect({
+      requestBody: {
+        inspectionUrl,
+        siteUrl
+      }
+    });
+
+    return response.data.inspectionResult;
+  } catch (error: any) {
+    console.error(`[GSC] Failed to inspect URL ${inspectionUrl}:`, error.message);
+    throw new Error(`Inspect failed: ${error.message}`);
+  }
+}

@@ -1,4 +1,5 @@
 "use client"
+import { Activity } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 
 interface HealthData {
@@ -11,11 +12,11 @@ const STATUS_LABELS = { good: "Bun", "needs-improvement": "De Îmbunătățit", 
 
 export function ReportHealth({ data, loading }: { data?: HealthData; loading?: boolean }) {
   if (!data || (!data.health && !data.webVitals)) {
-    return <WidgetWrapper title="Site Health & Web Vitals" icon="📈" loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>PostHog nu este configurat.</div></WidgetWrapper>
+    return <WidgetWrapper title="Site Health & Web Vitals" icon={<Activity size={16} />} loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>PostHog nu este configurat.</div></WidgetWrapper>
   }
 
   return (
-    <WidgetWrapper title="Site Health & Web Vitals" icon="📈">
+    <WidgetWrapper title="Site Health & Web Vitals" icon={<Activity size={16} />}>
       <div style={{ padding: "16px 24px 24px" }}>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           {/* Health Score Gauge */}

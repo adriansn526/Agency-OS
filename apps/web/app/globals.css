@@ -217,3 +217,16 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+
+/* Tiptap Editor Styles */
+.tiptap-editor .ProseMirror h1 { font-size: 2rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 1rem; }
+.tiptap-editor .ProseMirror h2 { font-size: 1.5rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.75rem; }
+.tiptap-editor .ProseMirror h3 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+.tiptap-editor .ProseMirror h4 { font-size: 1.125rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+.tiptap-editor .ProseMirror a { color: var(--color-primary); text-decoration: underline; }
+.tiptap-editor .ProseMirror ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+.tiptap-editor .ProseMirror ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+.tiptap-editor .ProseMirror p { margin-bottom: 1rem; line-height: 1.6; }
+.tiptap-editor .ProseMirror strong { font-weight: 700; }
+.tiptap-editor .ProseMirror em { font-style: italic; }

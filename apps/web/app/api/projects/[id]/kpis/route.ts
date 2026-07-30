@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@repo/db';
-import { getCampaigns, getDailyPerformance, getConversionBreakdown, getSearchTerms } from '@/lib/integrations/google-ads';
+import { getCampaigns, getDailyPerformance, getConversionBreakdown, getSearchTerms, getLandingPageConversionsSummary } from '@/lib/integrations/google-ads';
 import { getSiteMetrics, getTopQueries, getTopPages, getGSCDailyPerformance, getPageKeywords } from '@/lib/integrations/gsc';
-import { getFullAnalytics } from '@/lib/integrations/posthog';
+import { getFullAnalytics, getFormSubmissions, getConversionsByPage } from '@/lib/integrations/posthog';
 import { getCallRecordings } from '@/lib/integrations/telnyx';
 
 /**
@@ -68,6 +68,11 @@ export async function GET(
       pageKeywords: null,
       // PostHog
       posthog: null,
+      // Landing page conversions (detailed)
+      landingPageConversions: null,
+      // Form submissions per page (PostHog)
+      formSubmissions: null,
+      conversionsByPage: null,
       // Telnyx
       telnyx: null,
     };
@@ -116,6 +121,15 @@ export async function GET(
         result.dailyPerformance = campaignFilter?.length ? null : daily;
         result.conversionBreakdown = convBreakdown;
         result.searchTerms = terms;
+
+        // Landing page conversion breakdown (which pages drive conversions)
+        try {
+          result.landingPageConversions = await getLandingPageConversionsSummary(
+            googleAdsId as string, dateFrom, dateTo, campaignFilter
+          );
+        } catch (e) {
+          console.warn('[KPI] Landing page conversions error:', e);
+        }
       } catch (err: any) {
         console.error('[KPI] Google Ads error:', err.message);
         result.googleAds = { error: err.message };
@@ -128,8 +142,8 @@ export async function GET(
       try {
         const [metrics, queries, pages, daily] = await Promise.all([
           getSiteMetrics(gscSiteUrl as string, dateFrom, dateTo),
-          getTopQueries(gscSiteUrl as string, dateFrom, dateTo, 20),
-          getTopPages(gscSiteUrl as string, dateFrom, dateTo, 15),
+          getTopQueries(gscSiteUrl as string, dateFrom, dateTo, 50),
+          getTopPages(gscSiteUrl as string, dateFrom, dateTo, 500),
           getGSCDailyPerformance(gscSiteUrl as string, dateFrom, dateTo),
         ]);
 
@@ -157,12 +171,105 @@ export async function GET(
       }
     }
 
+    // ─── DataForSEO Backlinks ───
+    const projectDomain = (gscSiteUrl as string || '').replace('sc-domain:', '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+    if (projectDomain && (project.templateId === 'seo_project' || project.templateId === 'seo_programmatic')) {
+      const metaObj = project.metadata as any || {};
+      const dfsCache = metaObj.dfsCache;
+      const now = new Date();
+      const ONE_DAY = 24 * 60 * 60 * 1000;
+
+      if (dfsCache && dfsCache.lastFetch && now.getTime() - new Date(dfsCache.lastFetch).getTime() < ONE_DAY) {
+        // Use cached data
+        result.backlinksSummary = dfsCache.summary || null;
+        result.backlinksDetail = dfsCache.detail || [];
+        
+        // Compute pages
+        const pagesMap = new Map();
+        (dfsCache.detail || []).forEach((item: any) => {
+          if (!item.url_to) return;
+          const existing = pagesMap.get(item.url_to);
+          if (existing) {
+            existing.backlinks++;
+            existing.referring_domains++;
+          } else {
+            pagesMap.set(item.url_to, { url: item.url_to, backlinks: 1, referring_domains: 1, rank: item.rank || 0 });
+          }
+        });
+        result.backlinksPages = Array.from(pagesMap.values());
+      } else {
+        // Fetch fresh data
+        const { getDomainBacklinksSummary, getDomainBacklinksDetail } = await import('@/lib/integrations/dataforseo');
+        let summary = null;
+        let detail = [];
+
+        try {
+          summary = await getDomainBacklinksSummary(projectDomain);
+        } catch (err: any) {
+          console.error('[KPI] DataForSEO Backlinks Summary error:', err.message);
+          summary = { error: err.message };
+        }
+
+        try {
+          detail = await getDomainBacklinksDetail(projectDomain, 100);
+        } catch (err: any) {
+          console.error('[KPI] DataForSEO Backlinks Detail error:', err.message);
+          detail = [];
+        }
+
+        // Compute pages
+        const pagesMap = new Map();
+        detail.forEach((item: any) => {
+          if (!item.url_to) return;
+          const existing = pagesMap.get(item.url_to);
+          if (existing) {
+            existing.backlinks++;
+            existing.referring_domains++;
+          } else {
+            pagesMap.set(item.url_to, { url: item.url_to, backlinks: 1, referring_domains: 1, rank: item.rank || 0 });
+          }
+        });
+        
+        const pages = Array.from(pagesMap.values());
+        
+        result.backlinksSummary = summary;
+        result.backlinksDetail = detail;
+        result.backlinksPages = pages;
+
+        // Cache in DB
+        await db.project.update({
+          where: { id },
+          data: {
+            metadata: {
+              ...metaObj,
+              dfsCache: {
+                lastFetch: now.toISOString(),
+                summary,
+                detail
+              }
+            }
+          }
+        });
+      }
+    }
+
     // ─── PostHog data (HogQL-powered) ───
     const posthogProjectId = meta?.posthogProjectId;
     if (posthogProjectId && process.env.POSTHOG_PERSONAL_API_KEY) {
       try {
         const analytics = await getFullAnalytics(posthogProjectId as string, dateFrom, dateTo, project.templateId);
         result.posthog = analytics;
+
+        // Get domain for form submission queries
+        const projectDomain = (gscSiteUrl as string || '').replace('sc-domain:', '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+        if (projectDomain) {
+          const [formSubs, convByPage] = await Promise.all([
+            getFormSubmissions(posthogProjectId as string, projectDomain, dateFrom, dateTo).catch(() => []),
+            getConversionsByPage(posthogProjectId as string, projectDomain, dateFrom, dateTo).catch(() => []),
+          ]);
+          result.formSubmissions = formSubs;
+          result.conversionsByPage = convByPage;
+        }
       } catch (err: any) {
         console.error('[KPI] PostHog error:', err.message);
         result.posthog = { error: err.message };

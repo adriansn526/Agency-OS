@@ -1,0 +1,117 @@
+--- a/apps/web/app/(dashboard)/settings/integrations/page.tsx
++++ b/apps/web/app/(dashboard)/settings/integrations/page.tsx
+@@ -60,6 +60,11 @@
+   const [smsoTesting, setSMSOTesting] = useState(false)
+   const [smsoTestResult, setSMSOTestResult] = useState<{ success: boolean; message: string } | null>(null)
+ 
++  // External Integrations
++  const [googleStatus, setGoogleStatus] = useState<{connected: boolean, email?: string}>({ connected: false })
++  const [posthogStatus, setPosthogStatus] = useState<{connected: boolean, hasKey: boolean}>({ connected: false, hasKey: false })
++  const [posthogKey, setPosthogKey] = useState("")
++
+   // Load existing settings
+   useEffect(() => {
+     fetch("/api/settings/integrations")
+@@ -82,6 +87,12 @@
+             enabled: j.data.smso.enabled ?? true,
+           })
+         }
++        if (j.data?.google) {
++          setGoogleStatus(j.data.google)
++        }
++        if (j.data?.posthog) {
++          setPosthogStatus(j.data.posthog)
++        }
+       })
+       .catch(() => {})
+       .finally(() => setLoading(false))
+@@ -197,6 +208,22 @@
+     } finally { setSMSOTesting(false) }
+   }
+ 
++  const handlePosthogSave = async () => {
++    await fetch("/api/settings/integrations", {
++      method: "PATCH",
++      headers: { "Content-Type": "application/json" },
++      body: JSON.stringify({ posthog: { apiKey: posthogKey } }),
++    })
++    window.location.reload()
++  }
++
++  const handleDisconnect = async (provider: string) => {
++    await fetch("/api/settings/integrations", {
++      method: "PATCH",
++      headers: { "Content-Type": "application/json" },
++      body: JSON.stringify({ [provider]: { disconnect: true } }),
++    })
++    window.location.reload()
++  }
++
+   if (loading) {
+     return (
+@@ -613,6 +640,65 @@
+         </div>
+       </div>
+ 
++      {/* External Accounts */}
++      <div className="bg-surface rounded-xl border border-border overflow-hidden">
++        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
++          <div className="flex items-center gap-2">
++            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
++              <BarChart3 size={16} className="text-blue-400" />
++            </div>
++            <div>
++              <h2 className="text-sm font-bold text-foreground">Conturi Externe</h2>
++              <p className="text-[10px] text-muted-foreground">Google (GSC, Analytics) și PostHog</p>
++            </div>
++          </div>
++        </div>
++
++        <div className="p-5 space-y-6">
++          {/* Google */}
++          <div className="flex flex-col gap-2 p-4 border border-border rounded-lg bg-muted/20">
++            <div className="flex items-center justify-between">
++              <div>
++                <h3 className="text-sm font-bold text-foreground">Google Workspace</h3>
++                <p className="text-xs text-muted-foreground">
++                  {googleStatus.connected 
++                    ? `Conectat ca: ${googleStatus.email}`
++                    : "Permite accesul la Google Search Console și Analytics"}
++                </p>
++              </div>
++              {googleStatus.connected ? (
++                <button onClick={() => handleDisconnect('google')} className="px-3 py-1.5 text-xs text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-red-500/20">Deconectează</button>
++              ) : (
++                <a href="/api/auth/google/connect" className="px-3 py-1.5 text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">Conectează Google</a>
++              )}
++            </div>
++          </div>
++
++          {/* PostHog */}
++          <div className="flex flex-col gap-2 p-4 border border-border rounded-lg bg-muted/20">
++            <div className="flex items-center justify-between mb-2">
++              <div>
++                <h3 className="text-sm font-bold text-foreground">PostHog Analytics</h3>
++                <p className="text-xs text-muted-foreground">Product analytics & events (Personal API Key)</p>
++              </div>
++              {posthogStatus.connected && (
++                <button onClick={() => handleDisconnect('posthog')} className="px-3 py-1.5 text-xs text-red-500 hover:bg-red-500/10 rounded-lg transition-colors border border-red-500/20">Șterge Cheia</button>
++              )}
++            </div>
++            {!posthogStatus.connected && (
++              <div className="flex gap-2">
++                <input
++                  type="password"
++                  value={posthogKey}
++                  onChange={(e) => setPosthogKey(e.target.value)}
++                  placeholder="phx_..."
++                  className="flex-1 px-3 py-1.5 text-sm bg-muted/50 border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 font-mono"
++                />
++                <button onClick={handlePosthogSave} disabled={!posthogKey} className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 disabled:opacity-50">Salvează</button>
++              </div>
++            )}
++          </div>
++        </div>
++      </div>
++
+       {/* Info card */}

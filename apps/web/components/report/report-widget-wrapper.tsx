@@ -2,12 +2,13 @@
 
 // ─── Report Widget Wrapper ───
 // Provides consistent card styling, loading skeleton, and section headers
+// Supports both Lucide icon components (ReactNode) and emoji strings
 
 import { ReactNode } from "react"
 
 interface WidgetWrapperProps {
   title: string
-  icon: string
+  icon: ReactNode  // Lucide component or emoji string
   loading?: boolean
   children: ReactNode
   fullWidth?: boolean
@@ -31,7 +32,23 @@ export function WidgetWrapper({ title, icon, loading, children, fullWidth }: Wid
         alignItems: "center",
         gap: 10,
       }}>
-        <span style={{ fontSize: 18 }}>{icon}</span>
+        <div style={{
+          width: 32,
+          height: 32,
+          borderRadius: 8,
+          background: "#f1f5f9",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#6366f1",
+          flexShrink: 0,
+        }}>
+          {typeof icon === "string" ? (
+            <span style={{ fontSize: 16 }}>{icon}</span>
+          ) : (
+            icon
+          )}
+        </div>
         <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#0f172a", letterSpacing: -0.3 }}>{title}</h2>
         {loading && (
           <div style={{

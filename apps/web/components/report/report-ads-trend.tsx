@@ -1,4 +1,5 @@
 "use client"
+import { Megaphone } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
 
@@ -8,7 +9,7 @@ interface DailyData {
 
 export function ReportAdsTrend({ data, loading }: { data?: DailyData[]; loading?: boolean }) {
   if (!data || !Array.isArray(data) || data.length === 0) {
-    return <WidgetWrapper title="Google Ads — Trend Zilnic" icon="📣" loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
+    return <WidgetWrapper title="Google Ads — Trend Zilnic" icon={<Megaphone size={16} />} loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
   }
 
   const formatted = data.map(d => ({
@@ -17,7 +18,7 @@ export function ReportAdsTrend({ data, loading }: { data?: DailyData[]; loading?
   }))
 
   return (
-    <WidgetWrapper title="Google Ads — Trend Zilnic" icon="📣">
+    <WidgetWrapper title="Google Ads — Trend Zilnic" icon={<Megaphone size={16} />}>
       <div style={{ padding: "16px 24px 24px" }}>
         <ResponsiveContainer width="100%" height={280}>
           <AreaChart data={formatted}>

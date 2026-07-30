@@ -1,4 +1,5 @@
 "use client"
+import { FileText } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 
 interface ArticleData {
@@ -8,7 +9,7 @@ interface ArticleData {
 export function ReportSeoArticles({ data, loading }: { data?: ArticleData[]; loading?: boolean }) {
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <WidgetWrapper title="Articole Noi — Content SEO" icon="📝" loading={loading}>
+      <WidgetWrapper title="Articole Noi — Content SEO" icon={<FileText size={16} />} loading={loading}>
         <div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>
           Nu au fost detectate articole noi pentru această perioadă.
         </div>
@@ -17,7 +18,7 @@ export function ReportSeoArticles({ data, loading }: { data?: ArticleData[]; loa
   }
 
   return (
-    <WidgetWrapper title="Articole Noi — Content SEO" icon="📝">
+    <WidgetWrapper title="Articole Noi — Content SEO" icon={<FileText size={16} />}>
       <div style={{ padding: "16px 24px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
         {data.map((article, i) => {
           // Extract clean title from URL

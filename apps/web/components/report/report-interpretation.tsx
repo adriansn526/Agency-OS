@@ -1,4 +1,5 @@
 "use client"
+import { Sparkles } from "lucide-react"
 import { useState } from "react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 
@@ -22,7 +23,7 @@ export function ReportInterpretation({ snapshots }: { snapshots: Snapshot[] }) {
   const highlights = Array.isArray(active.highlights) ? active.highlights as Array<{ label: string; value: string; trend?: string }> : null
 
   return (
-    <WidgetWrapper title="Interpretare & Analiză" icon="💡">
+    <WidgetWrapper title="Interpretare & Analiză" icon={<Sparkles size={16} />}>
       <div style={{ padding: "16px 24px 24px" }}>
         {/* Period tabs */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>

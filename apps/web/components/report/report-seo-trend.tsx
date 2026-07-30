@@ -1,4 +1,5 @@
 "use client"
+import { Search } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
 
@@ -6,13 +7,13 @@ interface DailyData { date: string; clicks: number; impressions: number; ctr: nu
 
 export function ReportSeoTrend({ data, loading }: { data?: DailyData[]; loading?: boolean }) {
   if (!data || !Array.isArray(data) || data.length === 0) {
-    return <WidgetWrapper title="SEO — Trend Zilnic" icon="🔍" loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
+    return <WidgetWrapper title="SEO — Trend Zilnic" icon={<Search size={16} />} loading={loading}><div style={{ padding: 40, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Nu sunt date disponibile.</div></WidgetWrapper>
   }
 
   const formatted = data.map(d => ({ ...d, label: d.date.slice(5) }))
 
   return (
-    <WidgetWrapper title="SEO — Trend Clicks Organic" icon="🔍">
+    <WidgetWrapper title="SEO — Trend Clicks Organic" icon={<Search size={16} />}>
       <div style={{ padding: "16px 24px 24px" }}>
         <ResponsiveContainer width="100%" height={260}>
           <AreaChart data={formatted}>

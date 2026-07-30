@@ -15,9 +15,11 @@ const publicPaths = [
   "/api/leads/webhook",
   "/api/import",
   "/api/uptime",
+  "/api/monitoring",
   "/api/marketing/track",   // LP tracking (open, heartbeat, cta)
   "/api/short-links/resolve",
   "/api/cron",               // Cron jobs (authenticated via CRON_SECRET header)
+  "/projects",
 ]
 
 const authMiddleware = auth((req) => {
