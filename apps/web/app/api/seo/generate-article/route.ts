@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { generateWithAI } from "@/lib/ai/providers/gemini"
+import { generateText as generateWithAI } from "@/lib/ai/client"
 import { buildContentPrompt } from "@/lib/ai/prompts/seo-content"
 
 export const maxDuration = 60 // Allow 60s for article generation
@@ -32,12 +32,13 @@ export async function POST(req: NextRequest) {
       maxTokens: promptConfig.maxTokens,
     })
 
-    if (!generation.text) {
-      throw new Error("No content generated")
+    if (!generation) {
+      throw new Error("Nu s-a putut genera conținutul. Verificați conexiunea la API-ul AI.")
     }
 
     // Process markdown to basic HTML if the output is markdown.
-    let htmlContent = generation.text
+    const rawText = generation
+    let htmlContent = rawText
       // Convert H2
       .replace(/^##\s+(.*)$/gm, '<h2>$1</h2>')
       // Convert H3
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
       }).join('\\n')
 
     // Extract first H1/H2 as title if any
-    const titleMatch = generation.text.match(/^#\s+(.*)$/m)
+    const titleMatch = generation.match(/^#\s+(.*)$/m)
     const generatedTitle = titleMatch ? titleMatch[1] : targetTitle
 
     // Generate meta description
@@ -88,9 +89,9 @@ export async function POST(req: NextRequest) {
         html: htmlContent,
         metaDescription: generatedMeta,
         keyword: keyword,
-        markdown: generation.text
+        markdown: generation
       },
-      usage: generation.usage
+      usage: null
     })
   } catch (error: any) {
     console.error("[API] POST /api/seo/generate-article error:", error)

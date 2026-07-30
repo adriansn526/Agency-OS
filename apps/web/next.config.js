@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@repo/ui", "@repo/mock-data", "@repo/db"],
+  serverExternalPackages: ["ssh2"],
   devIndicators: false,
   typescript: {
     ignoreBuildErrors: true,
