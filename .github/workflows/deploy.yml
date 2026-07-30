@@ -50,7 +50,7 @@ jobs:
             
             # Copy new files from deploy_temp
             # Standalone output puts the server files in apps/web inside standalone
-            cp -r deploy_temp/.next/standalone/apps/web/* ./apps/web/ || true
+            cp -r deploy_temp/.next/standalone/apps/web/. ./apps/web/ || true
             cp -r deploy_temp/.next/standalone/node_modules ./ || true
             cp -r deploy_temp/.next/static ./apps/web/.next/ || true
             cp -r deploy_temp/public ./apps/web/ || true
