@@ -1,0 +1,58 @@
+name: Deploy Agency OS
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js App
+        run: npm run build
+        working-directory: ./apps/web
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "apps/web/.next/standalone/,apps/web/.next/static/,apps/web/public/"
+          target: "/home/asns/projects/AdvancedSystems/agency-os/deploy_temp/"
+          strip_components: 2
+
+      - name: Restart Server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/asns/projects/AdvancedSystems/agency-os
+            
+            # Ensure deploy directories exist
+            mkdir -p apps/web/.next
+            
+            # Copy new files from deploy_temp
+            # Standalone output puts the server files in apps/web inside standalone
+            cp -r deploy_temp/standalone/apps/web/* ./apps/web/ || true
+            cp -r deploy_temp/standalone/node_modules ./ || true
+            cp -r deploy_temp/static ./apps/web/.next/ || true
+            cp -r deploy_temp/public ./apps/web/ || true
+            
+            # Cleanup temp
+            rm -rf deploy_temp
+            
+            # Restart service
+            sudo systemctl restart agency-os
