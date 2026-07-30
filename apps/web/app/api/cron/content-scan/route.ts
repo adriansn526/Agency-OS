@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { db as prisma } from '@repo/db'
 
 // GET /api/cron/content-scan
 // Scans all feed sources with active cron schedules and discovers new articles

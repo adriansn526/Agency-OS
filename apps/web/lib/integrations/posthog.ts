@@ -117,3 +117,16 @@ export async function getConversionsByPage(posthogProjectId: string, projectDoma
   // Placeholder implementation to fix build
   return [];
 }
+
+export async function getHealthMetrics(projectId: string, dateFrom: string, dateTo: string) { return null; }
+export async function getWebVitals(projectId: string, dateFrom: string, dateTo: string) { return null; }
+export async function getTrafficBySource(projectId: string, dateFrom: string, dateTo: string) { return []; }
+export async function getTopPages(projectId: string, dateFrom: string, dateTo: string) { return []; }
+
+export type DomainTrafficStats = any;
+export type DomainBounceStats = any;
+export type DomainDailyTraffic = any;
+export type PostHogWebVitals = any;
+export type PostHogTrafficBySource = any;
+export type PostHogHealthMetrics = any;
+export async function getDomainFullAnalytics(projectId: string, domain: string, dateFrom: string, dateTo: string) { return null; }

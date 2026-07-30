@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { generateWithAI } from "@/lib/ai/gemini"
+import { generateWithAI } from "@/lib/ai/providers/gemini"
 import { buildContentPrompt } from "@/lib/ai/prompts/seo-content"
 
 export const maxDuration = 60 // Allow 60s for article generation

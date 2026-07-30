@@ -1,0 +1,375 @@
+
+> web@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+./apps/web/app/api/contracts/[id]/pdf/route.ts:34:31
+Module not found: Can't resolve 'puppeteer'
+  [90m32 |[0m ...
+  [90m33 |[0m ...[90me — puppeteer is an optional dependency, fa...[0m
+[31m[1m>[0m [90m34 |[0m ...eer = [36mawait[0m [36mimport[0m([32m'puppeteer'[0m)
+  [90m   |[0m                [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+  [90m35 |[0m ...r = [36mawait[0m puppeteer.[36mdefault[0m.launch({
+  [90m36 |[0m ...[36mtrue[0m,
+  [90m37 |[0m ...[32mno-sandbox'[0m, [32m'--disable-setuid-sandbox'[0m],
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+> Build error occurred
+Error: Turbopack build failed with 15 errors:
+./node_modules/ssh2/lib/protocol/crypto.js
+non-ecmascript placeable asset
+asset is not placeable in ESM chunks, so it doesn't have a module id
+
+Import trace:
+  App Route:
+    ./node_modules/ssh2/lib/protocol/crypto.js
+    ./node_modules/ssh2/lib/client.js
+    ./node_modules/ssh2/lib/index.js
+    ./apps/web/lib/ssh.ts
+    ./apps/web/app/api/intraconstruct/tenants/[id]/migrate/route.ts
+
+
+./apps/web/app/api/seo/generate-article/route.ts:2:1
+Module not found: Can't resolve '@/lib/ai/gemini'
+  [90m1 |[0m ...[36mport[0m { [33mNextRequest[0m, [33mNextResponse[0m } [36mfrom[0m [32m"nex...[0m
+[31m[1m>[0m [90m2 |[0m ...[36mport[0m { generateWithAI } [36mfrom[0m [32m"@/lib/ai/gemini"[0m
+  [90m  |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m ...[36mport[0m { buildContentPrompt } [36mfrom[0m [32m"@/lib/ai/p...[0m
+  [90m4 |[0m ...
+  [90m5 |[0m ...[36mport[0m [36mconst[0m maxDuration = [35m60[0m [90m// Allow 60s for...[0m
+
+Import map: aliased to relative './lib/ai/gemini' inside of [project]/apps/web
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./apps/web/app/api/cron/content-scan/route.ts:2:1
+Module not found: Can't resolve '@/lib/prisma'
+  [90m1 |[0m [36mimport[0m { [33mNextRequest[0m, [33mNextResponse[0m } [36mfrom[0m [32m'next...[0m
+[31m[1m>[0m [90m2 |[0m [36mimport[0m { prisma } [36mfrom[0m [32m'@/lib/prisma'[0m
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m3 |[0m
+  [90m4 |[0m [90m// GET /api/cron/content-scan[0m
+  [90m5 |[0m [90m// Scans all feed sources with active cron sche...[0m
+
+Import map: aliased to relative './lib/prisma' inside of [project]/apps/web
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./apps/web/app/api/reports/public/[token]/data/route.ts:23:1
+Export getDomainFullAnalytics doesn't exist in target module
+  [90m21 |[0m   getPageKeywords,
+  [90m22 |[0m } [36mfrom[0m [32m'@/lib/integrations/gsc'[0m
+[31m[1m>[0m [90m23 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m24 |[0m   getHealthMetrics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m25 |[0m   getWebVitals,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m26 |[0m   getTrafficBySource,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m27 |[0m   getDomainFullAnalytics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m28 |[0m   getFormSubmissions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m29 |[0m   getConversionsByPage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m30 |[0m } [36mfrom[0m [32m'@/lib/integrations/posthog'[0m
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m31 |[0m [36mimport[0m { resolveDomainSources } [36mfrom[0m [32m'@/lib/re...[0m
+  [90m32 |[0m [36mimport[0m { analyzeSEOOpportunities } [36mfrom[0m [32m'@/lib...[0m
+  [90m33 |[0m
+
+The export getDomainFullAnalytics was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getFullAnalytics?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/lib/reports/aggregator.ts:28:1
+Export getDomainFullAnalytics doesn't exist in target module
+  [90m26 |[0m   getPageKeywords,
+  [90m27 |[0m } [36mfrom[0m [32m'@/lib/integrations/gsc'[0m
+[31m[1m>[0m [90m28 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m29 |[0m   getDomainFullAnalytics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m30 |[0m   [36mtype[0m [33mDomainTrafficStats[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m31 |[0m   [36mtype[0m [33mDomainBounceStats[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m32 |[0m   [36mtype[0m [33mDomainDailyTraffic[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m33 |[0m   [36mtype[0m [33mPostHogWebVitals[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m34 |[0m   [36mtype[0m [33mPostHogTrafficBySource[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m35 |[0m   [36mtype[0m [33mPostHogHealthMetrics[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m36 |[0m } [36mfrom[0m [32m'@/lib/integrations/posthog'[0m
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m37 |[0m [36mimport[0m { getCallRecordings, [36mtype[0m [33mTelnyxCallSta..[0m.
+  [90m38 |[0m [36mimport[0m { analyzeSEOOpportunities, [36mtype[0m [33mSEOAnal...[0m
+  [90m39 |[0m [36mimport[0m { db } [36mfrom[0m [32m'@repo/db'[0m
+
+The export getDomainFullAnalytics was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getFullAnalytics?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./apps/web/lib/reports/aggregator.ts
+    ./apps/web/app/api/reports/public/[token]/data/route.ts
+
+
+./apps/web/app/api/clients/[id]/kpis/route.ts:3:1
+Export getHealthMetrics doesn't exist in target module
+  [90m1 |[0m ...[33mtResponse[0m } [36mfrom[0m [32m'next/server'[0m
+  [90m2 |[0m ...[32m/db'[0m
+[31m[1m>[0m [90m3 |[0m ..., getWebVitals, getTrafficBySource } [36mfrom[0m [32m'@...[0m
+  [90m  |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m ...s } [36mfrom[0m [32m'@/lib/integrations/telnyx'[0m
+  [90m5 |[0m ...
+  [90m6 |[0m ...
+
+The export getHealthMetrics was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getMasterPosthog?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/app/api/reports/public/[token]/data/route.ts:23:1
+Export getHealthMetrics doesn't exist in target module
+  [90m21 |[0m   getPageKeywords,
+  [90m22 |[0m } [36mfrom[0m [32m'@/lib/integrations/gsc'[0m
+[31m[1m>[0m [90m23 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m24 |[0m   getHealthMetrics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m25 |[0m   getWebVitals,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m26 |[0m   getTrafficBySource,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m27 |[0m   getDomainFullAnalytics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m28 |[0m   getFormSubmissions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m29 |[0m   getConversionsByPage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m30 |[0m } [36mfrom[0m [32m'@/lib/integrations/posthog'[0m
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m31 |[0m [36mimport[0m { resolveDomainSources } [36mfrom[0m [32m'@/lib/re...[0m
+  [90m32 |[0m [36mimport[0m { analyzeSEOOpportunities } [36mfrom[0m [32m'@/lib...[0m
+  [90m33 |[0m
+
+The export getHealthMetrics was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getMasterPosthog?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/lib/ai/copilot/external-tools.ts:7:1
+Export getHealthMetrics doesn't exist in target module
+  [90m 5 |[0m ...
+  [90m 6 |[0m ... getSearchTerms, getKeywordPerformance, get...
+[31m[1m>[0m [90m 7 |[0m ...getTrafficBySource, getTopPages [36mas[0m phGetTop...
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m ...etTopPages [36mas[0m gscGetTopPages } [36mfrom[0m [32m'@/lib/...[0m
+  [90m 9 |[0m ...gativeKeywords } [36mfrom[0m [32m'@/lib/reports/negati...[0m
+  [90m10 |[0m ...[32mge-analyzer'[0m
+
+The export getHealthMetrics was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getMasterPosthog?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./apps/web/lib/ai/copilot/external-tools.ts
+    ./apps/web/lib/ai/copilot/tools.ts
+    ./apps/web/app/api/ai/copilot/route.ts
+
+
+./apps/web/lib/ai/copilot/external-tools.ts:7:1
+Export getTopPages doesn't exist in target module
+  [90m 5 |[0m ...
+  [90m 6 |[0m ... getSearchTerms, getKeywordPerformance, get...
+[31m[1m>[0m [90m 7 |[0m ...getTrafficBySource, getTopPages [36mas[0m phGetTop...
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m ...etTopPages [36mas[0m gscGetTopPages } [36mfrom[0m [32m'@/lib/...[0m
+  [90m 9 |[0m ...gativeKeywords } [36mfrom[0m [32m'@/lib/reports/negati...[0m
+  [90m10 |[0m ...[32mge-analyzer'[0m
+
+The export getTopPages was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getMasterPosthog?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./apps/web/lib/ai/copilot/external-tools.ts
+    ./apps/web/lib/ai/copilot/tools.ts
+    ./apps/web/app/api/ai/copilot/route.ts
+
+
+./apps/web/app/api/clients/[id]/kpis/route.ts:3:1
+Export getTrafficBySource doesn't exist in target module
+  [90m1 |[0m ...[33mtResponse[0m } [36mfrom[0m [32m'next/server'[0m
+  [90m2 |[0m ...[32m/db'[0m
+[31m[1m>[0m [90m3 |[0m ..., getWebVitals, getTrafficBySource } [36mfrom[0m [32m'@...[0m
+  [90m  |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m ...s } [36mfrom[0m [32m'@/lib/integrations/telnyx'[0m
+  [90m5 |[0m ...
+  [90m6 |[0m ...
+
+The export getTrafficBySource was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getConversionsByPage?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/app/api/reports/public/[token]/data/route.ts:23:1
+Export getTrafficBySource doesn't exist in target module
+  [90m21 |[0m   getPageKeywords,
+  [90m22 |[0m } [36mfrom[0m [32m'@/lib/integrations/gsc'[0m
+[31m[1m>[0m [90m23 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m24 |[0m   getHealthMetrics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m25 |[0m   getWebVitals,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m26 |[0m   getTrafficBySource,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m27 |[0m   getDomainFullAnalytics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m28 |[0m   getFormSubmissions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m29 |[0m   getConversionsByPage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m30 |[0m } [36mfrom[0m [32m'@/lib/integrations/posthog'[0m
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m31 |[0m [36mimport[0m { resolveDomainSources } [36mfrom[0m [32m'@/lib/re...[0m
+  [90m32 |[0m [36mimport[0m { analyzeSEOOpportunities } [36mfrom[0m [32m'@/lib...[0m
+  [90m33 |[0m
+
+The export getTrafficBySource was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getConversionsByPage?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/lib/ai/copilot/external-tools.ts:7:1
+Export getTrafficBySource doesn't exist in target module
+  [90m 5 |[0m ...
+  [90m 6 |[0m ... getSearchTerms, getKeywordPerformance, get...
+[31m[1m>[0m [90m 7 |[0m ...getTrafficBySource, getTopPages [36mas[0m phGetTop...
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m ...etTopPages [36mas[0m gscGetTopPages } [36mfrom[0m [32m'@/lib/...[0m
+  [90m 9 |[0m ...gativeKeywords } [36mfrom[0m [32m'@/lib/reports/negati...[0m
+  [90m10 |[0m ...[32mge-analyzer'[0m
+
+The export getTrafficBySource was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getConversionsByPage?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./apps/web/lib/ai/copilot/external-tools.ts
+    ./apps/web/lib/ai/copilot/tools.ts
+    ./apps/web/app/api/ai/copilot/route.ts
+
+
+./apps/web/app/api/clients/[id]/kpis/route.ts:3:1
+Export getWebVitals doesn't exist in target module
+  [90m1 |[0m ...[33mtResponse[0m } [36mfrom[0m [32m'next/server'[0m
+  [90m2 |[0m ...[32m/db'[0m
+[31m[1m>[0m [90m3 |[0m ..., getWebVitals, getTrafficBySource } [36mfrom[0m [32m'@...[0m
+  [90m  |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m ...s } [36mfrom[0m [32m'@/lib/integrations/telnyx'[0m
+  [90m5 |[0m ...
+  [90m6 |[0m ...
+
+The export getWebVitals was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getFullAnalytics?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/app/api/reports/public/[token]/data/route.ts:23:1
+Export getWebVitals doesn't exist in target module
+  [90m21 |[0m   getPageKeywords,
+  [90m22 |[0m } [36mfrom[0m [32m'@/lib/integrations/gsc'[0m
+[31m[1m>[0m [90m23 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m24 |[0m   getHealthMetrics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m25 |[0m   getWebVitals,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m26 |[0m   getTrafficBySource,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m27 |[0m   getDomainFullAnalytics,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m28 |[0m   getFormSubmissions,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m29 |[0m   getConversionsByPage,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m30 |[0m } [36mfrom[0m [32m'@/lib/integrations/posthog'[0m
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m31 |[0m [36mimport[0m { resolveDomainSources } [36mfrom[0m [32m'@/lib/re...[0m
+  [90m32 |[0m [36mimport[0m { analyzeSEOOpportunities } [36mfrom[0m [32m'@/lib...[0m
+  [90m33 |[0m
+
+The export getWebVitals was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getFullAnalytics?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+
+./apps/web/lib/ai/copilot/external-tools.ts:7:1
+Export getWebVitals doesn't exist in target module
+  [90m 5 |[0m ...
+  [90m 6 |[0m ... getSearchTerms, getKeywordPerformance, get...
+[31m[1m>[0m [90m 7 |[0m ...getTrafficBySource, getTopPages [36mas[0m phGetTop...
+  [90m   |[0m    [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m 8 |[0m ...etTopPages [36mas[0m gscGetTopPages } [36mfrom[0m [32m'@/lib/...[0m
+  [90m 9 |[0m ...gativeKeywords } [36mfrom[0m [32m'@/lib/reports/negati...[0m
+  [90m10 |[0m ...[32mge-analyzer'[0m
+
+The export getWebVitals was not found in module [project]/apps/web/lib/integrations/posthog.ts [app-route] (ecmascript).
+Did you mean to import getFullAnalytics?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  App Route:
+    ./apps/web/lib/ai/copilot/external-tools.ts
+    ./apps/web/lib/ai/copilot/tools.ts
+    ./apps/web/app/api/ai/copilot/route.ts
+
+
+    at <unknown> (./apps/web/app/api/seo/generate-article/route.ts:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./apps/web/app/api/cron/content-scan/route.ts:2:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./apps/web/app/api/reports/public/[token]/data/route.ts:23:1)
+    at <unknown> (./apps/web/lib/reports/aggregator.ts:28:1)
+    at <unknown> (./apps/web/app/api/clients/[id]/kpis/route.ts:3:1)
+    at <unknown> (./apps/web/app/api/reports/public/[token]/data/route.ts:23:1)
+    at <unknown> (./apps/web/lib/ai/copilot/external-tools.ts:7:1)
+    at <unknown> (./apps/web/lib/ai/copilot/external-tools.ts:7:1)
+    at <unknown> (./apps/web/app/api/clients/[id]/kpis/route.ts:3:1)
+    at <unknown> (./apps/web/app/api/reports/public/[token]/data/route.ts:23:1)
+    at <unknown> (./apps/web/lib/ai/copilot/external-tools.ts:7:1)
+    at <unknown> (./apps/web/app/api/clients/[id]/kpis/route.ts:3:1)
+    at <unknown> (./apps/web/app/api/reports/public/[token]/data/route.ts:23:1)
+    at <unknown> (./apps/web/lib/ai/copilot/external-tools.ts:7:1)
+npm error Lifecycle script `build` failed with error:
+npm error code 1
+npm error path /home/asns/projects/AdvancedSystems/agency-os/apps/web
+npm error workspace web@0.1.0
+npm error location /home/asns/projects/AdvancedSystems/agency-os/apps/web
+npm error command failed
+npm error command sh -c next build
