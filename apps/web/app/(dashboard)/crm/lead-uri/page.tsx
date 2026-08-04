@@ -271,6 +271,29 @@ export default function LeadPage() {
     router.push(`/crm/lead-uri/${lead.id}`)
   }, [router])
 
+  const handleBulkDelete = async () => {
+    if (!confirm(`Sigur vrei să ștergi ${selectedIds.size} lead-uri?`)) return
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/leads/bulk-delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selectedIds) })
+      })
+      if (res.ok) {
+        clearSelection()
+        fetchLeads()
+      } else {
+        alert('Eroare la ștergerea lead-urilor.')
+        setLoading(false)
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Eroare la ștergerea lead-urilor.')
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="p-4 md:p-6 space-y-4 animate-fade-in h-full flex flex-col">
       <NewLeadModal open={showNewLead} onClose={() => setShowNewLead(false)} onCreated={fetchLeads} />
@@ -417,7 +440,7 @@ export default function LeadPage() {
                 </div>
               )}
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-red-600/10 text-red-400 rounded-lg hover:bg-red-600/20 transition-colors">
+            <button onClick={handleBulkDelete} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-red-600/10 text-red-400 rounded-lg hover:bg-red-600/20 transition-colors">
               <Trash2 size={12} /> Șterge
             </button>
             <button onClick={clearSelection} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground ml-1">
@@ -938,7 +961,7 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
         cell: ({ getValue }) => <span className="text-xs text-foreground-secondary tabular-nums">{formatDate(getValue() as string)}</span>,
       },
     ],
-    []
+    [selectedIds, toggleSelect, selectAll, clearSelection, data]
   )
 
   const table = useReactTable({

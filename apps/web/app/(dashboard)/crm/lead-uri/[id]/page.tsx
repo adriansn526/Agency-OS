@@ -338,6 +338,51 @@ export default function SingleLeadPage() {
                   )}
                 </div>
               )}
+
+              {/* Form Tracking & Raw Data */}
+              {(lead.sourcePage || lead.utmSource || lead.customFields) && (
+                <div className="bg-surface rounded-xl border border-border p-4 space-y-3">
+                  <h3 className="text-sm font-semibold text-foreground">Date Tracking & Formular</h3>
+                  
+                  {/* Tracking / UTMs */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                    {[
+                      { label: "Pagina Sursă", value: lead.sourcePage },
+                      { label: "Serviciu", value: lead.sourceService },
+                      { label: "Referrer", value: lead.sourceReferrer },
+                      { label: "Form ID", value: lead.sourceFormId },
+                      { label: "UTM Source", value: lead.utmSource },
+                      { label: "UTM Medium", value: lead.utmMedium },
+                      { label: "UTM Campaign", value: lead.utmCampaign },
+                      { label: "IP", value: lead.customFields?.ip },
+                      { label: "Data Trimiterii", value: lead.customFields?.submittedAt ? formatDate(lead.customFields.submittedAt) : null },
+                    ].filter(d => d.value).map((d) => (
+                      <div key={d.label}>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{d.label}</p>
+                        <p className="text-xs font-medium text-foreground truncate" title={String(d.value)}>{d.value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Raw Form Data (Dynamic Custom Fields) */}
+                  {lead.customFields?.rawFormData && Object.keys(lead.customFields.rawFormData).length > 0 && (
+                    <div className="pt-3 border-t border-border/50">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Câmpuri specifice formular (Raw Data)</p>
+                      <div className="bg-muted/30 rounded-lg p-3 space-y-2">
+                        {Object.entries(lead.customFields.rawFormData).map(([key, val]) => {
+                          if (typeof val !== 'string' && typeof val !== 'number' && typeof val !== 'boolean') return null;
+                          return (
+                            <div key={key} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <span className="text-[11px] font-medium text-muted-foreground w-1/3 shrink-0 capitalize">{key.replace(/_/g, ' ')}:</span>
+                              <span className="text-xs text-foreground font-medium break-words">{String(val)}</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Right — Pipeline + Status Change */}
