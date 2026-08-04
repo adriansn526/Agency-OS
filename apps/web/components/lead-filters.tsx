@@ -383,7 +383,7 @@ function PropertySelector({ value, onChange, onClose, properties }: { value: str
             >
               <span className="text-muted-foreground">{p.icon}</span>
               <span className="font-medium">{p.label}</span>
-              {p.type === 'custom' && <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Custom</span>}
+              {p.key.startsWith('cf.') && <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Custom</span>}
             </button>
           ))}
           {!displayCategory && <div className="p-4 text-xs text-muted-foreground text-center">Nicio proprietate găsită.</div>}
@@ -593,6 +593,7 @@ export function FilterBar({
   onFiltersChange,
   totalCount,
   filteredCount,
+  businessLineId,
 }: {
   filters: FilterCondition[]
   onFiltersChange: (filters: FilterCondition[]) => void
