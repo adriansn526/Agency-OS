@@ -129,4 +129,45 @@ export type DomainDailyTraffic = any;
 export type PostHogWebVitals = any;
 export type PostHogTrafficBySource = any;
 export type PostHogHealthMetrics = any;
-export async function getDomainFullAnalytics(projectId: string, domain: string, dateFrom: string, dateTo: string) { return null; }
+
+async function hogql(projectId: string, query: string) {
+  const masterKey = process.env.POSTHOG_PERSONAL_API_KEY;
+  if (!masterKey) return [];
+  const res = await fetch(`https://eu.posthog.com/api/projects/${projectId}/query/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${masterKey}` },
+    body: JSON.stringify({ query: { kind: 'HogQLQuery', query } })
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results || [];
+}
+
+export async function getDomainFullAnalytics(projectId: string, domain: string, dateFrom: string, dateTo: string) {
+  const tStart = `${dateFrom} 00:00:00`;
+  const tEnd = `${dateTo} 23:59:59`;
+  const dFilter = domain ? ` AND properties.$host LIKE '%${domain}%'` : '';
+  
+  const [trafficR, bounceR, dailyR, sourceR, pagesR] = await Promise.all([
+    hogql(projectId, `SELECT uniq(properties.$session_id), uniq(distinct_id), count() FROM events WHERE event = '$pageview' AND timestamp >= '${tStart}' AND timestamp <= '${tEnd}'${dFilter}`),
+    hogql(projectId, `SELECT count() FROM events WHERE event = '$pageview' AND timestamp >= '${tStart}' AND timestamp <= '${tEnd}'${dFilter} GROUP BY properties.$session_id HAVING count() = 1`),
+    hogql(projectId, `SELECT toDate(timestamp) as day, uniq(properties.$session_id), uniq(distinct_id), count() FROM events WHERE event = '$pageview' AND timestamp >= '${tStart}' AND timestamp <= '${tEnd}'${dFilter} GROUP BY day ORDER BY day ASC`),
+    hogql(projectId, `SELECT properties.$set_once.utm_source, properties.$set_once.utm_medium, uniq(properties.$session_id), uniq(distinct_id) FROM events WHERE event = '$pageview' AND timestamp >= '${tStart}' AND timestamp <= '${tEnd}'${dFilter} GROUP BY properties.$set_once.utm_source, properties.$set_once.utm_medium ORDER BY uniq(properties.$session_id) DESC LIMIT 10`),
+    hogql(projectId, `SELECT properties.$current_url, count(), uniq(distinct_id) FROM events WHERE event = '$pageview' AND timestamp >= '${tStart}' AND timestamp <= '${tEnd}'${dFilter} GROUP BY properties.$current_url ORDER BY count() DESC LIMIT 10`),
+  ]);
+
+  const sessions = trafficR[0]?.[0] || 0;
+  const users = trafficR[0]?.[1] || 0;
+  const pageviews = trafficR[0]?.[2] || 0;
+  const bounces = bounceR.length || 0;
+  
+  return {
+    domainTraffic: { sessions, users, pageviews },
+    bounceRate: { bounceRate: sessions > 0 ? Math.round((bounces / sessions) * 100) : 0 },
+    dailyTraffic: dailyR.map((r: any) => ({ date: r[0], sessions: r[1] || 0, users: r[2] || 0, pageviews: r[3] || 0 })),
+    trafficBySource: sourceR.map((r: any) => ({ source: r[0] || '(direct)', medium: r[1] || '(none)', sessions: r[2] || 0, users: r[3] || 0 })),
+    topPages: pagesR.map((r: any) => ({ url: r[0] || '', views: r[1] || 0, users: r[2] || 0 })),
+    webVitals: null,
+    health: { exceptions: 0, rageClicks: 0, deadClicks: 0, healthScore: 100, topErrorPages: [] }
+  };
+}
