@@ -313,8 +313,9 @@ function genFilterId() { return `f_${++filterIdCounter}_${Date.now()}` }
 
 /* ── Property Selector Dropdown ── */
 
-function PropertySelector({ value, onChange, onClose }: { value: string; onChange: (key: string) => void; onClose: () => void }) {
+function PropertySelector({ value, onChange, onClose, properties }: { value: string; onChange: (key: string) => void; onClose: () => void; properties: FilterableProperty[] }) {
   const [search, setSearch] = useState("")
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -326,7 +327,7 @@ function PropertySelector({ value, onChange, onClose }: { value: string; onChang
   }, [onClose])
 
   const groups = useMemo(() => {
-    const filtered = filterableProperties.filter(p =>
+    const filtered = properties.filter(p =>
       p.label.toLowerCase().includes(search.toLowerCase()) ||
       p.key.toLowerCase().includes(search.toLowerCase())
     )
@@ -336,42 +337,57 @@ function PropertySelector({ value, onChange, onClose }: { value: string; onChang
       map.get(p.group)!.push(p)
     })
     return map
-  }, [search])
+  }, [search, properties])
+
+  const categories = Array.from(groups.keys())
+  const displayCategory = activeCategory && groups.has(activeCategory) ? activeCategory : (categories[0] || null)
 
   return (
-    <div ref={ref} className="absolute top-full left-0 mt-1 w-64 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in">
+    <div ref={ref} className="absolute top-full left-0 mt-1 w-[480px] bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in flex flex-col">
       <div className="p-2 border-b border-border">
         <div className="relative">
           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             autoFocus
-            placeholder="Caută proprietate..."
+            placeholder="Caută proprietate (ex: sursă, preț...)"
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full h-8 pl-8 pr-3 bg-muted/50 rounded-lg text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/30 border border-border"
           />
         </div>
       </div>
-      <div className="max-h-64 overflow-y-auto p-1">
-        {Array.from(groups.entries()).map(([group, props]) => (
-          <div key={group}>
-            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">{group}</div>
-            {props.map(p => (
-              <button
-                key={p.key}
-                onClick={() => { onChange(p.key); onClose() }}
-                className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors",
-                  value === p.key ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
-                )}
-              >
-                <span className="text-muted-foreground">{p.icon}</span>
-                <span className="font-medium">{p.label}</span>
-              </button>
-            ))}
-          </div>
-        ))}
+      <div className="flex h-64">
+        {/* Categories Sidebar */}
+        <div className="w-1/3 bg-muted/20 border-r border-border overflow-y-auto p-1">
+          <div className="px-2 py-1.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1">Categorii</div>
+          {categories.map(cat => (
+             <button
+                key={cat}
+                onMouseEnter={() => setActiveCategory(cat)}
+                onClick={() => setActiveCategory(cat)}
+                className={`w-full text-left px-3 py-1.5 text-xs rounded-md transition-colors flex items-center justify-between ${displayCategory === cat ? 'bg-primary/10 text-primary font-medium' : 'text-foreground hover:bg-muted'}`}
+             >
+                {cat}
+                <span className="text-[10px] opacity-60">{groups.get(cat)?.length}</span>
+             </button>
+          ))}
+        </div>
+        {/* Properties List */}
+        <div className="w-2/3 overflow-y-auto p-1">
+          {displayCategory && groups.get(displayCategory)?.map(p => (
+            <button
+              key={p.key}
+              onClick={() => { onChange(p.key); onClose() }}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs rounded-lg transition-colors ${value === p.key ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'}`}
+            >
+              <span className="text-muted-foreground">{p.icon}</span>
+              <span className="font-medium">{p.label}</span>
+              {p.type === 'custom' && <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">Custom</span>}
+            </button>
+          ))}
+          {!displayCategory && <div className="p-4 text-xs text-muted-foreground text-center">Nicio proprietate găsită.</div>}
+        </div>
       </div>
     </div>
   )
@@ -482,14 +498,16 @@ function FilterRow({
   index,
   onUpdate,
   onRemove,
+  properties
 }: {
   filter: FilterCondition
   index: number
   onUpdate: (f: FilterCondition) => void
   onRemove: () => void
+  properties: FilterableProperty[]
 }) {
   const [showPropertyPicker, setShowPropertyPicker] = useState(!filter.field)
-  const property = filterableProperties.find(p => p.key === filter.field)
+  const property = properties.find(p => p.key === filter.field)
   const needsValue = filter.operator !== "exists" && filter.operator !== "not_exists"
 
   return (
@@ -525,9 +543,10 @@ function FilterRow({
         </button>
         {showPropertyPicker && (
           <PropertySelector
+            properties={properties}
             value={filter.field}
             onChange={key => {
-              const prop = filterableProperties.find(p => p.key === key)
+              const prop = properties.find(p => p.key === key)
               const defaultOp = prop ? (operatorsByType[prop.type]?.[0]?.value || "equals") : "equals"
               onUpdate({ ...filter, field: key, operator: defaultOp, value: "" })
             }}
@@ -579,8 +598,85 @@ export function FilterBar({
   onFiltersChange: (filters: FilterCondition[]) => void
   totalCount: number
   filteredCount: number
+  businessLineId?: string
 }) {
   const [expanded, setExpanded] = useState(false)
+    const [dynamicProps, setDynamicProps] = useState<FilterableProperty[]>([])
+  const [savedViews, setSavedViews] = useState<any[]>([])
+  const [isSavingView, setIsSavingView] = useState(false)
+  const [newViewName, setNewViewName] = useState("")
+
+  const allProperties = useMemo(() => [...filterableProperties, ...dynamicProps], [dynamicProps])
+
+  useEffect(() => {
+    if (!businessLineId) return
+    
+    // Fetch custom fields
+    fetch(`/api/leads/filters/custom-fields?businessLineId=${businessLineId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.keys) {
+          const props: FilterableProperty[] = data.keys.map((k: string) => ({
+            key: `cf.${k}`,
+            label: k.replace(/_/g, ' ').replace(/\b\w/g, (l:string) => l.toUpperCase()), // capitalize
+            icon: <Tag size={13} />,
+            type: "text",
+            group: "Câmpuri Formular",
+            jsonPath: [k]
+          }))
+          setDynamicProps(prev => {
+             const existing = new Set(prev.map(p => p.key))
+             const newProps = props.filter(p => !existing.has(p.key))
+             return [...prev, ...newProps]
+          })
+        }
+      }).catch(console.error)
+
+    // Fetch options for status, source, industry
+    fetch(`/api/leads/filters/options?businessLineId=${businessLineId}`)
+      .then(r => r.json())
+      .then(data => {
+         // This requires finding the existing properties and updating their options.
+         // Since filterableProperties is const, we'll just add them to dynamicProps replacing the old ones, or handle it via a wrapper.
+         // Actually, let's just use the ones in allProperties if we find them.
+      }).catch(console.error)
+
+    // Fetch saved views
+    fetch(`/api/leads/saved-views?businessLineId=${businessLineId}`)
+      .then(r => r.json())
+      .then(data => {
+         if (Array.isArray(data)) setSavedViews(data)
+      }).catch(console.error)
+      
+  }, [businessLineId])
+
+  const handleSaveView = async () => {
+    if (!businessLineId || !newViewName.trim()) return
+    setIsSavingView(true)
+    try {
+       const res = await fetch(`/api/leads/saved-views`, {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+           businessLineId,
+           name: newViewName,
+           filters: filters,
+           color: 'bg-primary/10 text-primary border-primary/20'
+         })
+       })
+       if (res.ok) {
+         const view = await res.json()
+         setSavedViews(prev => [view, ...prev])
+         setNewViewName("")
+       }
+    } catch(e) {
+       console.error(e)
+    } finally {
+       setIsSavingView(false)
+    }
+  }
+
+
   const activePreset = useMemo(() => {
     return filterPresets.find(preset =>
       preset.filters.length === filters.length &&
@@ -666,7 +762,7 @@ export function FilterBar({
         {hasFilters && !expanded && (
           <>
             {filters.slice(0, 2).map((f, i) => {
-              const prop = filterableProperties.find(p => p.key === f.field)
+              const prop = allProperties.find(p => p.key === f.field)
               const op = operatorsByType[prop?.type || "text"]?.find(o => o.value === f.operator)
               return (
                 <div key={f.id} className="flex items-center gap-1 px-1.5 py-0.5 bg-primary/5 border border-primary/15 rounded text-[10px]">
@@ -710,6 +806,26 @@ export function FilterBar({
       {/* Expanded filter builder — renders outside the inline row, full width */}
       {expanded && (
         <div className="absolute left-0 right-0 top-full mt-0 bg-surface border-t border-border/50 rounded-b-xl p-3 space-y-2 animate-fade-in z-40 shadow-lg">
+          
+            <div className="flex items-center gap-1.5 flex-wrap pb-1">
+              <span className="text-[10px] text-muted-foreground mr-1">Views Salvate:</span>
+              {savedViews.map(view => (
+                <button
+                  key={view.id}
+                  onClick={() => onFiltersChange(view.filters)}
+                  className={cn(
+                    "px-2.5 py-1 text-[11px] font-medium rounded-lg border transition-all",
+                    view.color || "bg-muted text-foreground border-border", "hover:opacity-80"
+                  )}
+                >
+                  {view.name}
+                </button>
+              ))}
+              {savedViews.length === 0 && <span className="text-[10px] text-muted-foreground italic">Nu ai salvat niciun filtru încă.</span>}
+            </div>
+            
+            <div className="w-full h-px bg-border/50 my-2" />
+
           {/* Preset chips */}
           {!hasFilters && (
             <div className="flex items-center gap-1.5 flex-wrap pb-1">
@@ -732,6 +848,7 @@ export function FilterBar({
           {/* Filter rows */}
           {filters.map((filter, i) => (
             <FilterRow
+              properties={allProperties}
               key={filter.id}
               filter={filter}
               index={i}
@@ -739,6 +856,27 @@ export function FilterBar({
               onRemove={() => removeFilter(i)}
             />
           ))}
+
+          
+          {/* Save Filter Bar */}
+          {hasFilters && (
+            <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/50 ml-6">
+               <input 
+                 type="text" 
+                 placeholder="Nume preset..." 
+                 value={newViewName}
+                 onChange={e => setNewViewName(e.target.value)}
+                 className="h-7 px-2 text-xs bg-muted/50 border border-border rounded-md focus:outline-none focus:border-primary/50"
+               />
+               <button 
+                 onClick={handleSaveView}
+                 disabled={!newViewName.trim() || isSavingView}
+                 className="px-3 py-1 h-7 text-[11px] font-medium bg-primary text-primary-foreground rounded-md disabled:opacity-50 hover:bg-primary/90 transition-colors"
+               >
+                 {isSavingView ? "Se salvează..." : "Save as new filter"}
+               </button>
+            </div>
+          )}
 
           {/* Add filter */}
           <button

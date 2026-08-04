@@ -387,6 +387,7 @@ export default function LeadPage() {
               onFiltersChange={setAdvancedFilters}
               totalCount={leadsState.length}
               filteredCount={filteredLeads.length}
+              businessLineId={activeLineId}
             />
           </div>
         </div>

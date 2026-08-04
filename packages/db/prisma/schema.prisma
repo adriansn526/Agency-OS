@@ -49,6 +49,7 @@ model BusinessLine {
   shortLinks          ShortLink[]
   // ─── Reporting ───
   clientReports       ClientReport[]
+  savedViews          SavedView[]
 }
 
 // ─── CRM: Clients ───
@@ -397,6 +398,25 @@ model Activity {
   @@index([entityType, entityId])
   @@index([createdAt(sort: Desc)])
 }
+
+// ─── CRM: Saved Views ───
+model SavedView {
+  id             String       @id @default(cuid())
+  businessLineId String
+  userId         String?      // Dacă e null, e view global
+  name           String
+  icon           String?
+  color          String?
+  filters        Json         // FilterCondition[]
+  entityType     String       @default("lead")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+
+  @@index([businessLineId, entityType])
+}
+
 
 // ─── Service Catalog ───
 model ServiceTemplate {
