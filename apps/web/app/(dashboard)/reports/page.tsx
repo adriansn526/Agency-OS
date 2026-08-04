@@ -101,10 +101,10 @@ function AdsSection({ data, showCost = true }: { data: NonNullable<DomainReportD
           <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} />
           <MiniKpi label="Click-uri" value={k.clicks.toLocaleString("ro-RO")} />
           <MiniKpi label="CTR" value={`${k.ctr}%`} />
-          {showCost && <MiniKpi label="Spend" value={`€${k.spend.toLocaleString("ro-RO")}`} />}
-          {showCost && <MiniKpi label="CPC" value={`€${k.cpc}`} />}
+          {showCost && <MiniKpi label="Spend" value={`${k.spend.toLocaleString("ro-RO")} lei`} />}
+          {showCost && <MiniKpi label="CPC" value={`${k.cpc} lei`} />}
           <MiniKpi label="Conversii" value={k.conversions.toLocaleString("ro-RO")} />
-          <MiniKpi label="Valoare Conv." value={`€${k.conversionsValue.toLocaleString("ro-RO")}`} />
+          <MiniKpi label="Valoare Conv." value={`${k.conversionsValue.toLocaleString("ro-RO")} lei`} />
           <MiniKpi label="Rată Conversie" value={`${k.conversionRate}%`} />
           <MiniKpi label="ROAS" value={`${k.roas}x`} />
         </div>
@@ -130,7 +130,7 @@ function AdsSection({ data, showCost = true }: { data: NonNullable<DomainReportD
                       <td className="px-5 py-2 font-medium text-foreground">{c.name}</td>
                       <td className="text-right px-3 py-2 text-foreground">{c.metrics.clicks?.toLocaleString("ro-RO")}</td>
                       <td className="text-right px-3 py-2 text-foreground">{c.metrics.conversions}</td>
-                      {showCost && <td className="text-right px-3 py-2 text-foreground">€{c.metrics.spend?.toLocaleString("ro-RO")}</td>}
+                      {showCost && <td className="text-right px-3 py-2 text-foreground">{c.metrics.spend?.toLocaleString("ro-RO")} lei</td>}
                       <td className="text-right px-3 py-2 text-foreground">{c.metrics.roas}x</td>
                     </tr>
                   ))}

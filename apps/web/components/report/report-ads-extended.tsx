@@ -11,15 +11,27 @@ export function AdsDeviceBreakdown({ data }: { data: GoogleAdsData }) {
   if (!devices?.length) return null
 
   const totalClicks = devices.reduce((s, d) => s + d.clicks, 0)
+  const deviceMap: Record<string, string> = {
+    "2": "Mobile",
+    "3": "Tablet",
+    "4": "Desktop",
+    "6": "Connected TV",
+    "Desktop": "Desktop",
+    "Mobile": "Mobile",
+    "Tablet": "Tablet",
+  }
+  
   const icons: Record<string, React.ReactNode> = {
     Desktop: <Monitor size={14} />,
     Mobile: <Smartphone size={14} />,
     Tablet: <Tablet size={14} />,
+    "Connected TV": <Monitor size={14} />
   }
   const colors: Record<string, string> = {
     Desktop: "bg-blue-500",
     Mobile: "bg-violet-500",
     Tablet: "bg-amber-500",
+    "Connected TV": "bg-emerald-500"
   }
 
   return (
@@ -31,30 +43,34 @@ export function AdsDeviceBreakdown({ data }: { data: GoogleAdsData }) {
 
       {/* Visual bar */}
       <div className="flex h-3 rounded-full overflow-hidden mb-3">
-        {devices.map(d => (
-          <div
-            key={d.device}
-            className={`${colors[d.device] || "bg-zinc-500"} transition-all`}
-            style={{ width: `${totalClicks > 0 ? (d.clicks / totalClicks) * 100 : 0}%` }}
-          />
-        ))}
+        {devices.map(d => {
+          const deviceName = deviceMap[d.device] || d.device
+          return (
+            <div
+              key={d.device}
+              className={`${colors[deviceName] || "bg-zinc-500"} transition-all`}
+              style={{ width: `${totalClicks > 0 ? (d.clicks / totalClicks) * 100 : 0}%` }}
+            />
+          )
+        })}
       </div>
 
       {/* Table */}
       <div className="space-y-2">
         {devices.map(d => {
+          const deviceName = deviceMap[d.device] || d.device
           const pct = totalClicks > 0 ? ((d.clicks / totalClicks) * 100).toFixed(1) : "0"
           return (
             <div key={d.device} className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2 text-zinc-300">
-                {icons[d.device] || <Monitor size={14} />}
-                <span>{d.device}</span>
+                {icons[deviceName] || <Monitor size={14} />}
+                <span>{deviceName}</span>
                 <span className="text-zinc-500">({pct}%)</span>
               </div>
               <div className="flex items-center gap-3 text-zinc-400">
                 <span>{d.clicks.toLocaleString("ro-RO")} clicks</span>
                 <span>{d.ctr}% CTR</span>
-                <span>€{d.spend.toLocaleString("ro-RO")}</span>
+                <span>{d.spend.toLocaleString("ro-RO")} lei</span>
               </div>
             </div>
           )
