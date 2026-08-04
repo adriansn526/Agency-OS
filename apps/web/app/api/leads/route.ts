@@ -8,7 +8,11 @@ const DIRECT_FIELDS = new Set([
   'phone2', 'phone3', 'email2', 'contactRole',
   'cui', 'county', 'industry', 'caenCode', 'caenDescription',
   'revenue', 'employees', 'companyStatus', 'foundedYear', 'website',
-  'activityDomain', 'services',
+  'activityDomain', 'services', 'createdAt', 'updatedAt'
+])
+
+const DATE_FIELDS = new Set([
+  'createdAt', 'updatedAt'
 ])
 
 const NUMBER_FIELDS = new Set([
@@ -37,12 +41,15 @@ function buildFilterCondition(filter: { field: string; operator: string; value: 
   if (!DIRECT_FIELDS.has(field)) return null
 
   const isNum = NUMBER_FIELDS.has(field)
+  const isDate = DATE_FIELDS.has(field)
+
+  const parseValue = (v: any) => isNum ? Number(v) : (isDate ? new Date(v) : v)
 
   switch (operator) {
     case 'equals':
-      return { [field]: isNum ? Number(value) : { equals: value, mode: 'insensitive' } }
+      return { [field]: isNum || isDate ? parseValue(value) : { equals: value, mode: 'insensitive' } }
     case 'not_equals':
-      return { [field]: isNum ? { not: Number(value) } : { not: { equals: value, mode: 'insensitive' } } }
+      return { [field]: isNum || isDate ? { not: parseValue(value) } : { not: { equals: value, mode: 'insensitive' } } }
     case 'contains':
       return { [field]: { contains: String(value), mode: 'insensitive' } }
     case 'not_contains':
@@ -50,13 +57,13 @@ function buildFilterCondition(filter: { field: string; operator: string; value: 
     case 'starts_with':
       return { [field]: { startsWith: String(value), mode: 'insensitive' } }
     case 'gt':
-      return { [field]: { gt: isNum ? Number(value) : value } }
+      return { [field]: { gt: parseValue(value) } }
     case 'gte':
-      return { [field]: { gte: isNum ? Number(value) : value } }
+      return { [field]: { gte: parseValue(value) } }
     case 'lt':
-      return { [field]: { lt: isNum ? Number(value) : value } }
+      return { [field]: { lt: parseValue(value) } }
     case 'lte':
-      return { [field]: { lte: isNum ? Number(value) : value } }
+      return { [field]: { lte: parseValue(value) } }
     case 'exists':
       return { [field]: { not: null } }
     case 'not_exists':

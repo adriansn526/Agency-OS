@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import {
   Filter, Plus, X, ChevronDown, Search, Star, Globe, MapPin,
   Hash, BarChart3, Tag, Zap, SlidersHorizontal, RotateCcw,
-  Flame, Smartphone, Building2, TrendingUp,
+  Flame, Smartphone, Building2, TrendingUp, Calendar,
 } from "lucide-react"
 
 /* ============================================================
@@ -90,6 +90,7 @@ const operatorsByType: Record<FieldType, OperatorDef[]> = {
 const filterableProperties: FilterableProperty[] = [
   // ─── Lead (General) ───
   { key: "companyName", label: "Companie", icon: <Building2 size={13} />, type: "text", group: "Lead" },
+  { key: "createdAt", label: "Data Creării", icon: <Calendar size={13} />, type: "date", group: "Lead" },
   { key: "contactPerson", label: "Persoană Contact", icon: <Search size={13} />, type: "text", group: "Lead" },
   { key: "city", label: "Oraș", icon: <MapPin size={13} />, type: "text", group: "Lead" },
   { key: "status", label: "Status", icon: <Tag size={13} />, type: "enum", group: "Lead",
@@ -274,12 +275,16 @@ function evaluateCondition(lead: any, condition: FilterCondition): boolean {
     case "starts_with":
       return typeof value === "string" && value.toLowerCase().startsWith(String(target).toLowerCase())
     case "gt":
+      if (typeof value === "string" && typeof target === "string" && isNaN(Number(target))) return new Date(value) > new Date(target)
       return typeof value === "number" && value > Number(target)
     case "gte":
+      if (typeof value === "string" && typeof target === "string" && isNaN(Number(target))) return new Date(value) >= new Date(target)
       return typeof value === "number" && value >= Number(target)
     case "lt":
+      if (typeof value === "string" && typeof target === "string" && isNaN(Number(target))) return new Date(value) < new Date(target)
       return typeof value === "number" && value < Number(target)
     case "lte":
+      if (typeof value === "string" && typeof target === "string" && isNaN(Number(target))) return new Date(value) <= new Date(target)
       return typeof value === "number" && value <= Number(target)
     case "exists":
       return value !== null && value !== undefined && value !== ""
@@ -460,7 +465,7 @@ function ValueInput({ property, value, onChange }: { property: FilterablePropert
 
   return (
     <input
-      type={property.type === "number" ? "number" : "text"}
+      type={property.type === "date" ? "date" : property.type === "number" ? "number" : "text"}
       value={value ?? ""}
       onChange={e => onChange(property.type === "number" ? (e.target.value ? Number(e.target.value) : "") : e.target.value)}
       placeholder={property.type === "number" ? "0" : "Valoare..."}
