@@ -157,12 +157,12 @@ export async function getDomainFullAnalytics(projectId: string, domain: string, 
   ]);
 
   const sessions = trafficR[0]?.[0] || 0;
-  const users = trafficR[0]?.[1] || 0;
+  const uniqueVisitors = trafficR[0]?.[1] || 0;
   const pageviews = trafficR[0]?.[2] || 0;
   const bounces = bounceR.length || 0;
   
   return {
-    domainTraffic: { sessions, users, pageviews },
+    domainTraffic: { sessions, uniqueVisitors, pageviews },
     bounceRate: { bounceRate: sessions > 0 ? Math.round((bounces / sessions) * 100) : 0 },
     dailyTraffic: dailyR.map((r: any) => ({ date: r[0], sessions: r[1] || 0, users: r[2] || 0, pageviews: r[3] || 0 })),
     trafficBySource: sourceR.map((r: any) => ({ source: r[0] || '(direct)', medium: r[1] || '(none)', sessions: r[2] || 0, users: r[3] || 0 })),
