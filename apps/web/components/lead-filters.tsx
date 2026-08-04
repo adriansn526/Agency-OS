@@ -721,19 +721,17 @@ export function FilterBar({
     <>
       {/* Inline controls — sits in the same flex row as search & status tabs */}
       <div className="flex items-center gap-1.5">
-        {/* Presets (quick access) */}
-        {filterPresets.slice(0, 4).map(preset => (
+        {/* Saved Views (quick access) */}
+        {savedViews.slice(0, 4).map(preset => (
           <button
             key={preset.id}
-            onClick={() => applyPreset(preset)}
+            onClick={() => onFiltersChange(preset.filters)}
             className={cn(
               "px-2 py-1 text-[10px] font-medium rounded-md border transition-all whitespace-nowrap",
-              activePreset?.id === preset.id
-                ? preset.color + " border-current/30"
-                : "text-muted-foreground border-transparent hover:text-foreground hover:bg-muted"
+              preset.color ? preset.color + " border-current/30" : "bg-muted text-foreground border-border hover:opacity-80"
             )}
           >
-            {preset.label}
+            {preset.name}
           </button>
         ))}
 
@@ -827,24 +825,7 @@ export function FilterBar({
             
             <div className="w-full h-px bg-border/50 my-2" />
 
-          {/* Preset chips */}
-          {!hasFilters && (
-            <div className="flex items-center gap-1.5 flex-wrap pb-1">
-              <span className="text-[10px] text-muted-foreground mr-1">Preset-uri:</span>
-              {filterPresets.map(preset => (
-                <button
-                  key={preset.id}
-                  onClick={() => applyPreset(preset)}
-                  className={cn(
-                    "px-2.5 py-1 text-[11px] font-medium rounded-lg border transition-all",
-                    preset.color, "hover:opacity-80"
-                  )}
-                >
-                  {preset.label}
-                </button>
-              ))}
-            </div>
-          )}
+
 
           {/* Filter rows */}
           {filters.map((filter, i) => (
