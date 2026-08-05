@@ -46,7 +46,7 @@ export function ReportAdsTables({ data, loading }: { data?: AdsTablesData; loadi
           columns={[
             { key: "name", label: "Campanie" },
             { key: "clicks", label: "Clicks", align: "right" },
-            { key: "spend", label: "Spend (€)", align: "right" },
+            { key: "spend", label: "Spend (lei)", align: "right" },
             { key: "conversions", label: "Conversii", align: "right" },
             { key: "roas", label: "ROAS", align: "right" },
           ]}
@@ -59,7 +59,7 @@ export function ReportAdsTables({ data, loading }: { data?: AdsTablesData; loadi
           columns={[
             { key: "actionName", label: "Tip Conversie" },
             { key: "allConversions", label: "Conversii", align: "right" },
-            { key: "value", label: "Valoare (€)", align: "right" },
+            { key: "value", label: "Valoare (lei)", align: "right" },
           ]}
           rows={(data.convBreakdown || []).map(c => ({ ...c, value: (c.value ?? 0).toFixed(2) }))}
         />
@@ -72,7 +72,7 @@ export function ReportAdsTables({ data, loading }: { data?: AdsTablesData; loadi
             { key: "campaign", label: "Campanie" },
             { key: "clicks", label: "Clicks", align: "right" },
             { key: "ctr", label: "CTR", align: "right" },
-            { key: "cpc", label: "CPC (€)", align: "right" },
+            { key: "cpc", label: "CPC (lei)", align: "right" },
             { key: "conversions", label: "Conv.", align: "right" },
           ]}
           rows={(data.searchTerms || []).map(t => ({ ...t, campaign: t.campaign || "—", ctr: (t.ctr ?? 0) + "%", cpc: (t.cpc ?? 0).toFixed(2) }))}

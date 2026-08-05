@@ -163,7 +163,7 @@ export function AdsKeywordQuality({ data }: { data: GoogleAdsData }) {
                 </td>
                 <td className="py-1.5 text-right text-zinc-400">{kw.clicks}</td>
                 <td className="py-1.5 text-right text-zinc-400">{kw.ctr}%</td>
-                <td className="py-1.5 text-right text-zinc-400">€{kw.cpc}</td>
+                <td className="py-1.5 text-right text-zinc-400">{kw.cpc} lei</td>
               </tr>
             ))}
           </tbody>
@@ -203,7 +203,7 @@ export function AdsTimeAnalysis({ data }: { data: GoogleAdsData }) {
                 <div
                   key={h.hour}
                   className={`flex-1 h-6 rounded-sm ${bg} transition-all`}
-                  title={`${h.label}: ${h.clicks} clicks, €${h.spend}`}
+                  title={`${h.label}: ${h.clicks} clicks, ${h.spend} lei`}
                 />
               )
             })}
@@ -267,7 +267,7 @@ export function AdsAdGroupPerformance({ data }: { data: GoogleAdsData }) {
               <tr key={i} className="border-t border-white/5">
                 <td className="py-1.5 text-zinc-300 max-w-[150px] truncate" title={ag.name}>{ag.name}</td>
                 <td className="py-1.5 text-right text-zinc-400">{ag.metrics.clicks}</td>
-                <td className="py-1.5 text-right text-zinc-400">€{ag.metrics.spend}</td>
+                <td className="py-1.5 text-right text-zinc-400">{ag.metrics.spend} lei</td>
                 <td className="py-1.5 text-right text-zinc-400">{ag.metrics.conversions}</td>
                 <td className="py-1.5 text-right text-zinc-400">{ag.metrics.roas}x</td>
               </tr>

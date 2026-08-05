@@ -13,6 +13,7 @@ const publicPaths = [
   "/api/offers/public",
   "/api/contracts/public",
   "/api/leads/webhook",
+  "/api/webhooks",          // whatsapp & other future webhooks
   "/api/import",
   "/api/uptime",
   "/api/monitoring",

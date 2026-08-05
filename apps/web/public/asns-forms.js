@@ -33,7 +33,7 @@
   function getUtmParams() {
     var params = {};
     var search = window.location.search;
-    var utm_keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+    var utm_keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid'];
     
     utm_keys.forEach(function(key) {
       var match = search.match(new RegExp('[?&]' + key + '=([^&]*)'));
@@ -114,6 +114,7 @@
       utm_campaign: utm.utm_campaign || '',
       utm_term: utm.utm_term || '',
       utm_content: utm.utm_content || '',
+      gclid: utm.gclid || '',
       extra: formData._extra || {}
     };
     

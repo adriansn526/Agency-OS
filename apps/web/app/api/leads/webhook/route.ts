@@ -101,13 +101,28 @@ export async function POST(req: NextRequest) {
 
   // Tracking fields
   const sourcePage = sanitize(body.sourcePage || body.page || body.pageUrl || '')
-  const sourceReferrer = sanitize(body.sourceReferrer || body.referrer || '')
+  let sourceReferrer = sanitize(body.sourceReferrer || body.referrer || '')
   const sourceFormId = sanitize(body.sourceFormId || body.formId || '')
   const utmSource = sanitize(body.utmSource || body.utm_source || '')
   const utmMedium = sanitize(body.utmMedium || body.utm_medium || '')
   const utmCampaign = sanitize(body.utmCampaign || body.utm_campaign || '')
   const utmTerm = sanitize(body.utmTerm || body.utm_term || '')
   const utmContent = sanitize(body.utmContent || body.utm_content || '')
+
+  // Improve Referrer Detection for Google Ads / Organic
+  const isGoogleAds = utmSource.toLowerCase().includes('google_ads') || 
+                      utmSource.toLowerCase().includes('adwords') || 
+                      utmMedium.toLowerCase() === 'cpc' || 
+                      body.gclid || 
+                      body.extra?.gclid;
+
+  if (isGoogleAds) {
+    sourceReferrer = 'Google Ads';
+  } else if (sourceReferrer.toLowerCase().includes('google')) {
+    sourceReferrer = 'Google Organic';
+  } else if (sourceReferrer.toLowerCase().includes('facebook') || utmSource.toLowerCase() === 'facebook') {
+    sourceReferrer = 'Facebook';
+  }
 
   // Require at least name or email
   if (!name && !email) {

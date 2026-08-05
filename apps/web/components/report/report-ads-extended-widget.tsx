@@ -72,7 +72,7 @@ export function ReportAdsExtendedWidget({ data, loading }: { data?: AdsExtendedD
               { key: "clicks", label: "Clicks", align: "right" },
               { key: "impressions", label: "Impressions", align: "right" },
               { key: "ctr", label: "CTR", align: "right" },
-              { key: "spend", label: "Cost (€)", align: "right" },
+              { key: "spend", label: "Cost (lei)", align: "right" },
               { key: "conversions", label: "Conv.", align: "right" },
             ]}
             rows={data.deviceBreakdown.map(d => ({
@@ -92,8 +92,8 @@ export function ReportAdsExtendedWidget({ data, loading }: { data?: AdsExtendedD
             { key: "qs", label: "QS", align: "right" },
             { key: "clicks", label: "Clicks", align: "right" },
             { key: "ctr", label: "CTR", align: "right" },
-            { key: "cpc", label: "CPC (€)", align: "right" },
-            { key: "spend", label: "Cost (€)", align: "right" },
+            { key: "cpc", label: "CPC (lei)", align: "right" },
+            { key: "spend", label: "Cost (lei)", align: "right" },
           ]}
           rows={data.keywords.map(k => ({
             keyword: k.keyword,
@@ -154,7 +154,7 @@ export function ReportAdsExtendedWidget({ data, loading }: { data?: AdsExtendedD
                     <div key={h.hour} style={{
                       flex: 1, height: 24, borderRadius: 2, background: bg,
                       transition: "background 0.2s",
-                    }} title={`${h.label}: ${h.clicks} clicks, €${h.spend}`} />
+                    }} title={`${h.label}: ${h.clicks} clicks, ${h.spend} lei`} />
                   )
                 })}
               </div>
@@ -192,7 +192,7 @@ export function ReportAdsExtendedWidget({ data, loading }: { data?: AdsExtendedD
             { key: "name", label: "Ad Group" },
             { key: "campaign", label: "Campanie" },
             { key: "clicks", label: "Clicks", align: "right" },
-            { key: "spend", label: "Cost (€)", align: "right" },
+            { key: "spend", label: "Cost (lei)", align: "right" },
             { key: "conversions", label: "Conv.", align: "right" },
             { key: "roas", label: "ROAS", align: "right" },
           ]}
