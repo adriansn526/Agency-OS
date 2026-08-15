@@ -834,6 +834,18 @@ model TenantInstance {
   @@index([status])
 }
 
+// ─── Credit Package Configurations ───
+model CreditPackageConfig {
+  id          String   @id @default(cuid())
+  name        String   // e.g. "Boost 50k Tokens"
+  priceEur    Float    @default(0)
+  tokensAi    Int      @default(0)
+  sms         Int      @default(0)
+  voiceMin    Int      @default(0)
+  callsMin    Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
 // ─── Credit Packages (purchased prepaid packs) ───
 model CreditPackage {
   id              String    @id @default(cuid())
