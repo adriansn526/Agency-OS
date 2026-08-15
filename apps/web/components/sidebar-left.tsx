@@ -112,6 +112,7 @@ const settingsModules: NavItem[] = [
       { title: "Pipeline-uri", href: "/settings/pipelines", icon: GitBranch },
       { title: "Integrări & AI", href: "/settings/integrations", icon: Bot },
       { title: "Roluri & Permisiuni", href: "/settings/roles", icon: Shield },
+      { title: "Pachete Credite", href: "/settings/credit-packages", icon: Zap },
       { title: "Limbă", href: "/settings/language", icon: Languages },
     ],
   },
