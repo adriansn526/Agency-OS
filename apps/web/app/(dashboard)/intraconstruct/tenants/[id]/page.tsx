@@ -361,6 +361,7 @@ export default function TenantDetailPage() {
           <p className="text-sm text-muted-foreground">Se încarcă detaliile tenant-ului...</p>
         </div>
       </div>
+      {allocateModal}
     )
   }
 
@@ -1185,6 +1186,64 @@ function MigrateTab({
   const isConfigured = !!instance?.serverHost
   const isSingleTenant = instance?.deploymentType === "single-tenant"
 
+  
+  const allocateModal = showAllocateModal && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+      <div className="bg-surface border border-border rounded-xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <h3 className="font-semibold text-foreground">Alocă Pachet de Credite</h3>
+          <button onClick={() => setShowAllocateModal(false)} className="text-muted-foreground hover:text-foreground">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="p-5 space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-muted-foreground mb-2">Selectează Pachetul</label>
+            <select
+              className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-amber-500"
+              value={selectedPackageId}
+              onChange={(e) => setSelectedPackageId(e.target.value)}
+            >
+              <option value="">-- Alege --</option>
+              {creditPackages.map(p => (
+                <option key={p.id} value={p.id}>{p.name} ({p.priceEur} EUR)</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedPackageId && (
+            <div className="bg-muted/30 border border-border rounded-lg p-3 text-xs space-y-2">
+              {(() => {
+                const p = creditPackages.find(x => x.id === selectedPackageId)
+                return p ? (
+                  <>
+                    <div className="flex justify-between"><span className="text-muted-foreground">AI Tokens:</span><span className="font-medium text-violet-400">+{p.tokensAi.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">SMS:</span><span className="font-medium text-blue-400">+{p.sms.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Voice Min:</span><span className="font-medium text-amber-400">+{p.voiceMin.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Telefonie Min:</span><span className="font-medium text-emerald-400">+{p.callsMin.toLocaleString()}</span></div>
+                  </>
+                ) : null
+              })()}
+            </div>
+          )}
+        </div>
+        <div className="px-5 py-4 border-t border-border bg-muted/20 flex justify-end gap-2">
+          <button onClick={() => setShowAllocateModal(false)} className="px-4 py-2 text-xs font-medium text-muted-foreground hover:text-foreground">
+            Anulează
+          </button>
+          <button
+            onClick={handleAllocatePackage}
+            disabled={!selectedPackageId || allocating}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-amber-500 text-white rounded-lg hover:bg-amber-600 disabled:opacity-50"
+          >
+            {allocating ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
+            Confirmă Alocarea
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // ─── Already migrated: show management UI ───
   if (isSingleTenant && instance?.status === "active") {
     return (
@@ -1495,43 +1554,7 @@ function MigrateTab({
       )}
 
       {/* Allocate Package Modal */}
-      {showAllocateModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-surface border border-border rounded-xl w-full max-w-md mx-4 overflow-hidden">
-            <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-              <h3 className="font-semibold text-foreground">Alocă Pachet de Credite</h3>
-              <button onClick={() => setShowAllocateModal(false)} className="text-muted-foreground hover:text-foreground">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="p-5 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-muted-foreground mb-2">Selectează Pachetul</label>
-                <select
-                  className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-amber-500"
-                  value={selectedPackageId}
-                  onChange={(e) => setSelectedPackageId(e.target.value)}
-                >
-                  <option value="">-- Alege --</option>
-                  {creditPackages.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} ({p.priceEur} EUR)</option>
-                  ))}
-                </select>
-              </div>
-
-              {selectedPackageId && (
-                <div className="bg-muted/30 border border-border rounded-lg p-3 text-xs space-y-2">
-                  {(() => {
-                    const p = creditPackages.find(x => x.id === selectedPackageId)
-                    return p ? (
-                      <>
-                        <div className="flex justify-between"><span className="text-muted-foreground">AI Tokens:</span><span className="font-medium text-violet-400">+{p.tokensAi.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span className="text-muted-foreground">SMS:</span><span className="font-medium text-blue-400">+{p.sms.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span className="text-muted-foreground">Voice Min:</span><span className="font-medium text-amber-400">+{p.voiceMin.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span className="text-muted-foreground">Telefonie Min:</span><span className="font-medium text-emerald-400">+{p.callsMin.toLocaleString()}</span></div>
-                      </>
-                    ) : null
-                  })()}
+      {allocateModal}()}
                 </div>
               )}
             </div>
