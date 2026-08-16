@@ -25,22 +25,19 @@ export async function POST(
 
     // 2. Update tenant instance by incrementing balances
     const updatedInstance = await db.tenantInstance.update({
-      where: { id },
+      where: { tenantId: id },
       data: {
-        creditsAi: { increment: pkg.tokensAi },
-        creditsSms: { increment: pkg.sms },
-        creditsVoice: { increment: pkg.voiceMin },
-        creditsCalls: { increment: pkg.callsMin },
+        balanceCredits: { increment: pkg.totalCredits },
       }
     })
 
     // 3. Log the purchase in CreditPackage (the history table)
     await db.creditPackage.create({
       data: {
-        instanceId: id,
-        type: "mixed", // or we could create multiple records, but keeping it simple
+        instanceId: updatedInstance.id,
+        type: "universal",
         packageName: pkg.name,
-        credits: pkg.tokensAi || pkg.sms || pkg.voiceMin || pkg.callsMin, // Just a reference number
+        credits: pkg.totalCredits,
         priceEur: pkg.priceEur,
         costEur: 0,
         status: "active"

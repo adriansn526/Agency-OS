@@ -20,6 +20,7 @@ const publicPaths = [
   "/api/marketing/track",   // LP tracking (open, heartbeat, cta)
   "/api/short-links/resolve",
   "/api/cron",               // Cron jobs (authenticated via CRON_SECRET header)
+  "/api/intraconstruct",     // IntraConstruct remote API (authenticated via X-License-Key)
   "/projects",
 ]
 

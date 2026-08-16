@@ -2,22 +2,28 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Plus, Trash2, Loader2, AlertTriangle, Zap, MessageSquare, Phone, Save, X } from "lucide-react"
+import { ArrowLeft, Plus, Trash2, Loader2, Zap, Save, X, Activity } from "lucide-react"
 
 export default function CreditPackagesSettings() {
   const [packages, setPackages] = useState<any[]>([])
+  const [rules, setRules] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    fetchPackages()
+    fetchData()
   }, [])
 
-  const fetchPackages = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch("/api/settings/credit-packages")
-      const data = await res.json()
-      setPackages(data)
+      const [resPkg, resRules] = await Promise.all([
+        fetch("/api/settings/credit-packages"),
+        fetch("/api/settings/pricing-rules")
+      ])
+      const pkgData = await resPkg.json()
+      const rulesData = await resRules.json()
+      setPackages(pkgData)
+      setRules(rulesData)
     } catch (e) {
       console.error(e)
     } finally {
@@ -47,7 +53,7 @@ export default function CreditPackagesSettings() {
           </Link>
           <div>
             <h1 className="text-xl font-bold text-foreground">Pachete de Credite</h1>
-            <p className="text-sm text-muted-foreground">Definește pachetele ce pot fi alocate tenanților (ex: AI Tokens, SMS)</p>
+            <p className="text-sm text-muted-foreground">Definește pachetele de Credite Universale pe care le vinzi tenanților.</p>
           </div>
         </div>
         <button
@@ -73,20 +79,8 @@ export default function CreditPackagesSettings() {
               
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-muted-foreground">
-                  <span className="flex items-center gap-2"><Zap size={14} className="text-violet-400"/> AI Tokens:</span>
-                  <span className="font-medium text-foreground">{pkg.tokensAi.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span className="flex items-center gap-2"><MessageSquare size={14} className="text-blue-400"/> SMS:</span>
-                  <span className="font-medium text-foreground">{pkg.sms.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span className="flex items-center gap-2"><Phone size={14} className="text-amber-400"/> Voice Min:</span>
-                  <span className="font-medium text-foreground">{pkg.voiceMin.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span className="flex items-center gap-2"><Phone size={14} className="text-green-400"/> Telefonie:</span>
-                  <span className="font-medium text-foreground">{pkg.callsMin.toLocaleString()}</span>
+                  <span className="flex items-center gap-2"><Zap size={14} className="text-amber-500"/> Total Credite:</span>
+                  <span className="font-bold text-foreground">{pkg.totalCredits?.toLocaleString() || 0}</span>
                 </div>
               </div>
 
@@ -103,6 +97,7 @@ export default function CreditPackagesSettings() {
 
       {showModal && (
         <NewPackageModal
+          rules={rules}
           onClose={() => setShowModal(false)}
           onSave={(pkg) => {
             setPackages([pkg, ...packages])
@@ -114,19 +109,27 @@ export default function CreditPackagesSettings() {
   )
 }
 
-function NewPackageModal({ onClose, onSave }: { onClose: () => void, onSave: (p: any) => void }) {
+function NewPackageModal({ rules, onClose, onSave }: { rules: any[], onClose: () => void, onSave: (p: any) => void }) {
   const [formData, setFormData] = useState({
     name: "",
     priceEur: 0,
-    tokensAi: 0,
-    sms: 0,
-    voiceMin: 0,
-    callsMin: 0
+    totalCredits: 0
   })
   const [saving, setSaving] = useState(false)
 
+  // Find universal credit base cost
+  const universalRule = rules.find(r => r.serviceName === "universal_credit")
+  const costPerCredit = universalRule ? universalRule.costPerUnitEur : 0.005
+
+  const baseCost = formData.totalCredits * costPerCredit
+  const profit = formData.priceEur - baseCost
+  const isLoss = profit < 0
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isLoss) {
+      if (!confirm("Atenție! Pachetul generează pierdere. Ești sigur că vrei să îl salvezi?")) return
+    }
     setSaving(true)
     try {
       const res = await fetch("/api/settings/credit-packages", {
@@ -146,45 +149,47 @@ function NewPackageModal({ onClose, onSave }: { onClose: () => void, onSave: (p:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-surface rounded-2xl border border-border w-full max-w-md mx-4 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h2 className="font-semibold text-foreground">Pachet Nou</h2>
+      <div className="bg-surface rounded-2xl border border-border w-full max-w-md mx-4 overflow-hidden shadow-xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/20">
+          <h2 className="font-semibold text-foreground">Pachet Nou de Credite</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
             <label className="text-xs font-semibold text-muted-foreground block mb-1">Nume Pachet</label>
-            <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm" placeholder="ex: Boost 50k Tokens"/>
+            <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm" placeholder="ex: Pro 100k Credits"/>
           </div>
-          <div>
-            <label className="text-xs font-semibold text-muted-foreground block mb-1">Preț (EUR)</label>
-            <input type="number" value={formData.priceEur} onChange={e => setFormData({...formData, priceEur: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm"/>
-          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-semibold text-violet-400 block mb-1">AI Tokens</label>
-              <input type="number" value={formData.tokensAi} onChange={e => setFormData({...formData, tokensAi: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm"/>
+              <label className="text-xs font-semibold text-amber-500 flex items-center gap-1 mb-1">
+                <Zap size={12}/> Credite Incluse
+              </label>
+              <input type="number" required min="1" value={formData.totalCredits || ""} onChange={e => setFormData({...formData, totalCredits: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm" placeholder="10000"/>
             </div>
             <div>
-              <label className="text-xs font-semibold text-blue-400 block mb-1">SMS</label>
-              <input type="number" value={formData.sms} onChange={e => setFormData({...formData, sms: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm"/>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-amber-400 block mb-1">Voice (min)</label>
-              <input type="number" value={formData.voiceMin} onChange={e => setFormData({...formData, voiceMin: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm"/>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-green-400 block mb-1">Telefonie (min)</label>
-              <input type="number" value={formData.callsMin} onChange={e => setFormData({...formData, callsMin: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm"/>
+              <label className="text-xs font-semibold text-emerald-500 block mb-1">Preț Vânzare (EUR)</label>
+              <input type="number" required step="0.01" min="0" value={formData.priceEur || ""} onChange={e => setFormData({...formData, priceEur: Number(e.target.value)})} className="w-full bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm" placeholder="50"/>
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-2">
+          <div className={`p-4 rounded-xl border ${isLoss ? 'bg-red-500/10 border-red-500/20' : 'bg-blue-500/10 border-blue-500/20'} space-y-2`}>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-muted-foreground">Cost Bază ({costPerCredit} €/credit):</span>
+              <span className="font-medium text-foreground">{baseCost.toFixed(2)} EUR</span>
+            </div>
+            <div className="flex justify-between items-center text-sm font-bold pt-2 border-t border-border/50">
+              <span className={isLoss ? 'text-red-500' : 'text-emerald-500'}>Profit / Marjă:</span>
+              <span className={isLoss ? 'text-red-500' : 'text-emerald-500'}>{profit.toFixed(2)} EUR</span>
+            </div>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
             <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground">Anulează</button>
-            <button disabled={saving || !formData.name} type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm flex items-center gap-2">
+            <button disabled={saving || !formData.name || !formData.totalCredits} type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm flex items-center gap-2 hover:opacity-90">
               {saving ? <Loader2 size={16} className="animate-spin"/> : <Save size={16}/>}
-              Salvează
+              Salvează Pachet
             </button>
           </div>
         </form>

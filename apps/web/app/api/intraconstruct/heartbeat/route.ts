@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         status: true,
-        creditsAi: true,
-        creditsSms: true,
-        creditsVoice: true,
-        creditsCalls: true,
+        balanceCredits: true,
+        
+        
+        
       },
     })
 
@@ -92,10 +92,10 @@ export async function POST(request: NextRequest) {
       ack: true,
       status: instance.status,
       credits: {
-        ai: instance.creditsAi,
-        sms: instance.creditsSms,
-        voice: instance.creditsVoice,
-        calls: instance.creditsCalls,
+        ai: instance.balanceCredits,
+        sms: 0,
+        voice: 0,
+        calls: 0,
       },
     })
   } catch (error: any) {

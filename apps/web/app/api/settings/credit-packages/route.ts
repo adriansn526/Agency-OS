@@ -16,7 +16,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, priceEur, tokensAi, sms, voiceMin, callsMin } = body
+    const { name, priceEur, totalCredits } = body
 
     if (!name) {
       return NextResponse.json({ error: "Numele este obligatoriu" }, { status: 400 })
@@ -26,10 +26,7 @@ export async function POST(req: NextRequest) {
       data: {
         name,
         priceEur: Number(priceEur) || 0,
-        tokensAi: Number(tokensAi) || 0,
-        sms: Number(sms) || 0,
-        voiceMin: Number(voiceMin) || 0,
-        callsMin: Number(callsMin) || 0,
+        totalCredits: Number(totalCredits) || 0,
       },
     })
 

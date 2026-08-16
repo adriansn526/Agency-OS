@@ -45,7 +45,11 @@ export async function GET() {
         slug: inst.tenantSlug,
         plan: inst.plan,
         status: inst.status,
-        domain: inst.apiEndpoint ? new URL(inst.apiEndpoint).hostname : null,
+        domain: (() => {
+          if (!inst.apiEndpoint) return null;
+          try { return new URL(inst.apiEndpoint).hostname }
+          catch { return inst.apiEndpoint }
+        })(),
         logo: null,
         color: null,
         trialEndsAt: null,

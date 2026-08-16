@@ -818,10 +818,7 @@ model TenantInstance {
   autoUpdate      Boolean   @default(false)
 
   // ─── Credits (current balance) ───
-  creditsAi       Int       @default(0) // AI token credits remaining
-  creditsSms      Int       @default(0) // SMS credits remaining
-  creditsVoice    Int       @default(0) // Voice minutes (x100 for decimals)
-  creditsCalls    Int       @default(0) // Telephony minutes remaining
+  balanceCredits  Int       @default(0) // Universal Agency Credits
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -834,15 +831,21 @@ model TenantInstance {
   @@index([status])
 }
 
-// ─── Credit Package Configurations ───
+// ─── Credit Configuration ───
+model CreditPricingRule {
+  id              String   @id @default(cuid())
+  serviceName     String   @unique // 'sms', 'openai_rtc', 'elevenlabs', 'twilio_sip', 'gpt4o_tokens_1m'
+  costPerUnitEur  Float    @default(0) // How much it costs you
+  creditsPerUnit  Int      @default(1) // How many credits the tenant consumes
+  unitDescription String   // 'per 1 SMS', 'per 1 Minute', 'per 1M Tokens'
+  updatedAt       DateTime @updatedAt
+}
+
 model CreditPackageConfig {
   id          String   @id @default(cuid())
-  name        String   // e.g. "Boost 50k Tokens"
+  name        String   // e.g. "Pro 10k Credits"
   priceEur    Float    @default(0)
-  tokensAi    Int      @default(0)
-  sms         Int      @default(0)
-  voiceMin    Int      @default(0)
-  callsMin    Int      @default(0)
+  totalCredits Int     @default(0)
   createdAt   DateTime @default(now())
 }
 
@@ -850,7 +853,7 @@ model CreditPackageConfig {
 model CreditPackage {
   id              String    @id @default(cuid())
   instanceId      String
-  type            String    // 'ai' | 'sms' | 'voice' | 'calls'
+  type            String    @default("universal") // 'universal' or legacy 'ai' | 'sms' | 'voice' | 'calls'
   packageName     String    // 'AI Starter', 'SMS 500', etc.
   credits         Int       // Amount of credits purchased
   priceEur        Float     // Amount paid by client

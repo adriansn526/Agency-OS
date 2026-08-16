@@ -1241,17 +1241,16 @@ function MigrateTab({
               Alocă Pachet
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
             {[
-              { label: "AI Credite", value: instance.creditsAi, icon: <Zap size={14} />, color: "text-violet-400" },
-              { label: "SMS", value: instance.creditsSms, icon: <Mail size={14} />, color: "text-blue-400" },
-              { label: "Voice (min)", value: instance.creditsVoice, icon: <Activity size={14} />, color: "text-amber-400" },
-              { label: "Telefonie (min)", value: instance.creditsCalls, icon: <Globe size={14} />, color: "text-emerald-400" },
+              { label: "Credite Universale Disponibile", value: instance.balanceCredits, icon: <Zap size={14} />, color: "text-amber-500" },
             ].map((c) => (
-              <div key={c.label} className="bg-background/50 rounded-lg p-3">
-                <div className={cn("mb-1", c.color)}>{c.icon}</div>
-                <p className="text-lg font-bold text-foreground tabular-nums">{c.value?.toLocaleString() ?? 0}</p>
-                <p className="text-[9px] text-muted-foreground">{c.label}</p>
+              <div key={c.label} className="bg-background/50 rounded-lg p-4 border border-amber-500/20">
+                <div className={cn("mb-2 flex items-center gap-2", c.color)}>
+                  {c.icon}
+                  <span className="font-semibold text-sm">{c.label}</span>
+                </div>
+                <p className="text-3xl font-bold text-foreground tabular-nums">{c.value?.toLocaleString() ?? 0}</p>
               </div>
             ))}
           </div>
@@ -1572,10 +1571,7 @@ function AllocateModal({
                 const p = creditPackages.find((x: any) => x.id === selectedPackageId)
                 return p ? (
                   <>
-                    <div className="flex justify-between"><span className="text-muted-foreground">AI Tokens:</span><span className="font-medium text-violet-400">+{p.tokensAi.toLocaleString()}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">SMS:</span><span className="font-medium text-blue-400">+{p.sms.toLocaleString()}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Voice Min:</span><span className="font-medium text-amber-400">+{p.voiceMin.toLocaleString()}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Telefonie Min:</span><span className="font-medium text-emerald-400">+{p.callsMin.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Credite Universale:</span><span className="font-medium text-amber-500">+{p.totalCredits?.toLocaleString() || 0}</span></div>
                   </>
                 ) : null
               })()}

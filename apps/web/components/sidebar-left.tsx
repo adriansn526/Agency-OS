@@ -113,6 +113,7 @@ const settingsModules: NavItem[] = [
       { title: "Integrări & AI", href: "/settings/integrations", icon: Bot },
       { title: "Roluri & Permisiuni", href: "/settings/roles", icon: Shield },
       { title: "Pachete Credite", href: "/settings/credit-packages", icon: Zap },
+      { title: "Costuri & Reguli", href: "/settings/pricing-rules", icon: Activity },
       { title: "Limbă", href: "/settings/language", icon: Languages },
     ],
   },

@@ -30,10 +30,10 @@ export async function POST(request: NextRequest) {
       select: {
         id: true,
         status: true,
-        creditsAi: true,
-        creditsSms: true,
-        creditsVoice: true,
-        creditsCalls: true,
+        balanceCredits: true,
+        
+        
+        
       },
     })
 
@@ -72,20 +72,20 @@ export async function POST(request: NextRequest) {
 
     // Check sufficient credits
     const insufficient: string[] = []
-    if (decrements.ai > instance.creditsAi) insufficient.push("ai")
-    if (decrements.sms > instance.creditsSms) insufficient.push("sms")
-    if (decrements.voice > instance.creditsVoice) insufficient.push("voice")
-    if (decrements.calls > instance.creditsCalls) insufficient.push("calls")
+    if (decrements.ai > instance.balanceCredits) insufficient.push("ai")
+    if (decrements.sms > 0) insufficient.push("sms")
+    if (decrements.voice > 0) insufficient.push("voice")
+    if (decrements.calls > 0) insufficient.push("calls")
 
     if (insufficient.length > 0) {
       return NextResponse.json({
         error: "Insufficient credits",
         insufficient,
         current: {
-          ai: instance.creditsAi,
-          sms: instance.creditsSms,
-          voice: instance.creditsVoice,
-          calls: instance.creditsCalls,
+          ai: instance.balanceCredits,
+          sms: 0,
+          voice: 0,
+          calls: 0,
         },
       }, { status: 402 })
     }
@@ -96,10 +96,10 @@ export async function POST(request: NextRequest) {
       db.tenantInstance.update({
         where: { id: instance.id },
         data: {
-          creditsAi: { decrement: decrements.ai },
-          creditsSms: { decrement: decrements.sms },
-          creditsVoice: { decrement: decrements.voice },
-          creditsCalls: { decrement: decrements.calls },
+          balanceCredits: { decrement: decrements.ai + decrements.sms + decrements.voice + decrements.calls },
+          
+          
+          
         },
       }),
       // Create usage log entries
@@ -122,10 +122,10 @@ export async function POST(request: NextRequest) {
     const updated = await db.tenantInstance.findUnique({
       where: { id: instance.id },
       select: {
-        creditsAi: true,
-        creditsSms: true,
-        creditsVoice: true,
-        creditsCalls: true,
+        balanceCredits: true,
+        
+        
+        
       },
     })
 
@@ -133,10 +133,10 @@ export async function POST(request: NextRequest) {
       success: true,
       reported: reports.length,
       credits: {
-        ai: updated?.creditsAi ?? 0,
-        sms: updated?.creditsSms ?? 0,
-        voice: updated?.creditsVoice ?? 0,
-        calls: updated?.creditsCalls ?? 0,
+        ai: updated?.balanceCredits ?? 0,
+        sms: 0 ?? 0,
+        voice: 0 ?? 0,
+        calls: 0 ?? 0,
       },
     })
   } catch (error: any) {

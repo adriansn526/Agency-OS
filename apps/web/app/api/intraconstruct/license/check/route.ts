@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
         status: true,
         plan: true,
         gracePeriodDays: true,
-        creditsAi: true,
-        creditsSms: true,
-        creditsVoice: true,
-        creditsCalls: true,
+        balanceCredits: true,
+        
+        
+        
         lastHeartbeat: true,
       },
     })
@@ -54,10 +54,10 @@ export async function POST(request: NextRequest) {
       tenantSlug: instance.tenantSlug,
       gracePeriodDays: instance.gracePeriodDays,
       credits: {
-        ai: instance.creditsAi,
-        sms: instance.creditsSms,
-        voice: instance.creditsVoice,
-        calls: instance.creditsCalls,
+        ai: instance.balanceCredits,
+        sms: 0,
+        voice: 0,
+        calls: 0,
       },
       checkedAt: new Date().toISOString(),
     })

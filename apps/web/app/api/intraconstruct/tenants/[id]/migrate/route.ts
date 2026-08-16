@@ -86,10 +86,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       lastHeartbeat: true,
       plan: true,
       licenseKey: true,
-      creditsAi: true,
-      creditsSms: true,
-      creditsVoice: true,
-      creditsCalls: true,
+      balanceCredits: true,
+      
+      
+      
       updateWindow: true,
       sshPrivateKey: true,
     },
