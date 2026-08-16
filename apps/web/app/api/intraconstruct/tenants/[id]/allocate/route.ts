@@ -25,7 +25,7 @@ export async function POST(
 
     // 2. Update tenant instance by incrementing balances
     const updatedInstance = await db.tenantInstance.update({
-      where: { tenantId: id },
+      where: { id: id },
       data: {
         balanceCredits: { increment: pkg.totalCredits },
       }
