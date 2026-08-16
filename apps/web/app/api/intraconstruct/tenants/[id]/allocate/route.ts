@@ -3,10 +3,10 @@ import { db } from "@repo/db"
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params // This is the tenantInstance.id
+    const { id } = await params // This is the tenantInstance.id
     const body = await req.json()
     const { packageId } = body
 
