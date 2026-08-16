@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { db } from "@repo/db"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   try {
     const rules = await db.creditPricingRule.findMany({

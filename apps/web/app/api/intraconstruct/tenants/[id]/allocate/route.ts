@@ -44,6 +44,25 @@ export async function POST(
       }
     })
 
+    // 4. Push sync to remote tenant instance if api endpoint exists
+    if (updatedInstance.apiEndpoint && updatedInstance.internalApiKey) {
+      try {
+        await fetch(`${updatedInstance.apiEndpoint}/api/internal/license/sync`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${updatedInstance.internalApiKey}`
+          },
+          body: JSON.stringify({
+            balanceCredits: updatedInstance.balanceCredits,
+            packageId: pkg.id
+          })
+        }).catch(err => console.error("[Tenant Allocate] Push sync network error:", err))
+      } catch (err) {
+        console.error("[Tenant Allocate] Push sync failed:", err)
+      }
+    }
+
     return NextResponse.json(updatedInstance)
 
   } catch (error: any) {

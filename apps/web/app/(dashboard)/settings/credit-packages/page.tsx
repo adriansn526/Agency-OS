@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Plus, Trash2, Loader2, Zap, Save, X, Activity } from "lucide-react"
+import { ArrowLeft, Plus, Trash2, Loader2, Zap, Save, X, Activity, Pencil } from "lucide-react"
 
 export default function CreditPackagesSettings() {
   const [packages, setPackages] = useState<any[]>([])
   const [rules, setRules] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [editPkg, setEditPkg] = useState<any>(null)
 
   useEffect(() => {
     fetchData()
@@ -57,7 +58,10 @@ export default function CreditPackagesSettings() {
           </div>
         </div>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setEditPkg(null)
+            setShowModal(true)
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors shadow-sm"
         >
           <Plus size={16} /> Pachet Nou
@@ -84,12 +88,23 @@ export default function CreditPackagesSettings() {
                 </div>
               </div>
 
-              <button
-                onClick={() => handleDelete(pkg.id)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 size={16} />
-              </button>
+              <div className="absolute top-4 right-4 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={() => {
+                    setEditPkg(pkg)
+                    setShowModal(true)
+                  }}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Pencil size={16} />
+                </button>
+                <button
+                  onClick={() => handleDelete(pkg.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -98,10 +113,19 @@ export default function CreditPackagesSettings() {
       {showModal && (
         <NewPackageModal
           rules={rules}
-          onClose={() => setShowModal(false)}
-          onSave={(pkg) => {
-            setPackages([pkg, ...packages])
+          editPkg={editPkg}
+          onClose={() => {
             setShowModal(false)
+            setEditPkg(null)
+          }}
+          onSave={(pkg) => {
+            if (editPkg) {
+              setPackages(packages.map((p) => (p.id === pkg.id ? pkg : p)))
+            } else {
+              setPackages([pkg, ...packages])
+            }
+            setShowModal(false)
+            setEditPkg(null)
           }}
         />
       )}
@@ -109,11 +133,11 @@ export default function CreditPackagesSettings() {
   )
 }
 
-function NewPackageModal({ rules, onClose, onSave }: { rules: any[], onClose: () => void, onSave: (p: any) => void }) {
+function NewPackageModal({ rules, editPkg, onClose, onSave }: { rules: any[], editPkg?: any, onClose: () => void, onSave: (p: any) => void }) {
   const [formData, setFormData] = useState({
-    name: "",
-    priceEur: 0,
-    totalCredits: 0
+    name: editPkg?.name || "",
+    priceEur: editPkg?.priceEur || 0,
+    totalCredits: editPkg?.totalCredits || 0
   })
   const [saving, setSaving] = useState(false)
 
@@ -132,8 +156,10 @@ function NewPackageModal({ rules, onClose, onSave }: { rules: any[], onClose: ()
     }
     setSaving(true)
     try {
-      const res = await fetch("/api/settings/credit-packages", {
-        method: "POST",
+      const url = editPkg ? `/api/settings/credit-packages/${editPkg.id}` : "/api/settings/credit-packages"
+      const method = editPkg ? "PUT" : "POST"
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       })
@@ -151,7 +177,9 @@ function NewPackageModal({ rules, onClose, onSave }: { rules: any[], onClose: ()
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-surface rounded-2xl border border-border w-full max-w-md mx-4 overflow-hidden shadow-xl">
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/20">
-          <h2 className="font-semibold text-foreground">Pachet Nou de Credite</h2>
+          <h2 className="font-semibold text-foreground">
+            {editPkg ? "Editare Pachet" : "Pachet Nou de Credite"}
+          </h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
         </div>
         
