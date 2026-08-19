@@ -242,6 +242,9 @@ export async function runUptimeCheck(): Promise<{
     }
   }
 
+  // --- Add OpenWA Monitor ---
+  await checkOpenWA(alerts)
+
   const up = results.filter(r => r.isUp).length
   return { checked: results.length, up, down: results.length - up, alerts }
 }
@@ -314,3 +317,85 @@ export async function getUptimeStatus() {
     }
   })
 }
+
+// ─── OpenWA Health Check ───
+async function checkOpenWA(alerts: string[]) {
+  const apiUrl = process.env.OPENWA_API_URL || 'http://localhost:2785'
+  const apiKey = process.env.OPENWA_API_KEY
+  
+  if (!apiUrl || !apiKey) return
+
+  let isUp = false
+  let errorMsg = ''
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 5000)
+
+  try {
+    const res = await fetch(`${apiUrl}/api/sessions`, {
+      headers: { 'X-API-Key': apiKey },
+      signal: controller.signal,
+    })
+    clearTimeout(timeout)
+    
+    if (res.ok) {
+      const sessions = await res.json()
+      const hasReady = sessions.some((s: any) => s.status === 'ready' || s.status === 'connected')
+      if (hasReady) {
+        isUp = true
+      } else {
+        errorMsg = 'Toate sesiunile OpenWA sunt deconectate'
+      }
+    } else {
+      errorMsg = `API Error: HTTP ${res.status}`
+    }
+  } catch (err: any) {
+    clearTimeout(timeout)
+    errorMsg = `Eroare conexiune API: ${err.name === 'AbortError' ? 'Timeout' : err.message}`
+  }
+
+  const domainName = 'OPENWA_BOT'
+  
+  if (!isUp) {
+    const existing = await db.uptimeIncident.findFirst({
+      where: { domain: domainName, resolvedAt: null },
+    })
+    
+    if (!existing) {
+      await db.uptimeIncident.create({
+        data: {
+          domain: domainName,
+          cause: errorMsg,
+          notified: true,
+        },
+      })
+      const msg = `⚠️ *CRITIC: Bot WhatsApp Deconectat!*\n` +
+        `Motiv: ${errorMsg}\n` +
+        `Acțiune: Intră în panou și reconectează botul OpenWA!\n` +
+        `🕐 Detectat: ${new Date().toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest' })}`
+      alerts.push(msg)
+      await sendTelegramAlert(msg)
+    }
+  } else {
+    const openIncident = await db.uptimeIncident.findFirst({
+      where: { domain: domainName, resolvedAt: null },
+    })
+
+    if (openIncident) {
+      const now = new Date()
+      const durationMin = Math.round((now.getTime() - openIncident.startedAt.getTime()) / 60000)
+      
+      await db.uptimeIncident.update({
+        where: { id: openIncident.id },
+        data: { resolvedAt: now, durationMin },
+      })
+      
+      const msg = `✅ *REZOLVAT: Bot WhatsApp Conectat!*\n` +
+        `⏱ Downtime: ${durationMin} minute\n` +
+        `Status: Conexiune restabilită cu succes.`
+      alerts.push(msg)
+      await sendTelegramAlert(msg)
+    }
+  }
+}
+
