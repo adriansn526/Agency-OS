@@ -1,0 +1,275 @@
+<!DOCTYPE html><html lang="en"><head><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-NJWFXC9&amp;gtm_auth=&amp;gtm_preview=&amp;gtm_cookies_win=x"></script><script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];
+        w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js', });
+        var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl+'&gtm_auth=&gtm_preview=&gtm_cookies_win=x';
+        f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-NJWFXC9');</script><style id="react-native-stylesheet"></style>
+    <meta charset="utf-8">
+    <meta httpequiv="X-UA-Compatible" content="IE=edge">
+    <script>
+      window.__SIMULATOR_BUFFER__ = [];
+      window.addEventListener('message', function (event) {
+        if (!window.__SIMULATOR_READY__) {
+          window.__SIMULATOR_BUFFER__.push(event);
+        }
+      });
+    </script>
+    <!--
+      This viewport works for phones with notches.
+      It's optimized for gestures by disabling global zoom.
+     -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1.00001, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="/app-icon/launcher.png">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
+    <title>Bolt Food</title>
+    <style>
+      /**
+       * Extend the react-native-web reset:
+       * https://github.com/necolas/react-native-web/blob/master/packages/react-native-web/src/exports/StyleSheet/initialRules.js
+       */
+      html,
+      body,
+      #root {
+        width: 100%;
+        /* To smooth any scrolling behavior */
+        -webkit-overflow-scrolling: touch;
+        margin: 0px;
+        padding: 0px;
+        /* Allows content to fill the viewport and go beyond the bottom */
+        min-height: 100%;
+      }
+      #root {
+        flex-shrink: 0;
+        flex-basis: auto;
+        flex-grow: 1;
+        display: flex;
+        flex: 1;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        /* Prevent text size change on orientation change https://gist.github.com/tfausak/2222823#file-ios-8-web-app-html-L138 */
+        -webkit-text-size-adjust: 100%;
+        height: calc(100% + env(safe-area-inset-top));
+      }
+
+      html {
+        background-color: #eee;
+      }
+
+      body {
+        display: flex;
+        /* Allows you to scroll below the viewport; default value is visible */
+        overscroll-behavior: none;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -ms-overflow-style: scrollbar;
+      }
+
+      img {
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+      /* Enable for apps that support dark-theme */
+      /*@media (prefers-color-scheme: dark) {
+        body {
+          background-color: black;
+        }
+      }*/
+    </style>
+  <link rel="preload" href="/_expo/static/css/bottom-sheet-3501acf1fa07ee98531645dbcfb8e857.css" as="style"><link rel="stylesheet" href="/_expo/static/css/bottom-sheet-3501acf1fa07ee98531645dbcfb8e857.css"><link rel="preload" href="/_expo/static/css/blur-441632113e9997b394ba7cde95e3b18c.css" as="style"><link rel="stylesheet" href="/_expo/static/css/blur-441632113e9997b394ba7cde95e3b18c.css"><link rel="preload" href="/_expo/static/css/bottom-sheet-1c995c3a780c9a7614454575d84073f8.css" as="style"><link rel="stylesheet" href="/_expo/static/css/bottom-sheet-1c995c3a780c9a7614454575d84073f8.css"><style id="ReanimatedPredefinedWebAnimationsStyle"></style><style id="ReanimatedCustomWebAnimationsStyle"></style><style id="expo-image-styles">
+[data-expoimage] .cross-dissolve {
+  transition-property: opacity;
+  animation-fill-mode: forwards;
+}
+[data-expoimage] .cross-dissolve-start:not(.transitioning) {
+  opacity: 0;
+}
+[data-expoimage] .cross-dissolve-active {
+  opacity: 1;
+}
+[data-expoimage] .cross-dissolve-end {
+  opacity: 0;
+}
+[data-expoimage] .flip-from-left {
+  transition-property: transform, opacity;
+  transition-timing-function: var(--expo-image-timing,linear), steps(2, jump-none) !important;
+  transform-origin: center;
+
+}
+[data-expoimage] .flip-from-left-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  perspective: 1000px;
+}
+[data-expoimage] .flip-from-left-start:not(.transitioning) {
+  transform:  translateZ(calc(var(--expo-image-width,1000px) * -1.25)) rotateY(-180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-left-active {
+  transform: translateZ(0px) rotateY(0) ;
+  opacity:1;
+}
+[data-expoimage] .flip-from-left-end {
+  transform:  translateZ(calc(var(--expo-image-width,1000px) * -1.25)) rotateY(180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-right {
+  transition-property: transform, opacity;
+  transition-timing-function: var(--expo-image-timing,linear), steps(2, jump-none) !important;
+  transform-origin: center;
+}
+[data-expoimage] .flip-from-right-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  perspective: 1000px;
+}
+[data-expoimage] .flip-from-right-start:not(.transitioning) {
+  transform:  translateZ(calc(var(--expo-image-width,1000px) * -1.25)) rotateY(180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-right-active {
+  transform: translateZ(0px) rotateY(0) ;
+  opacity:1;
+}
+[data-expoimage] .flip-from-right-end {
+  transform:  translateZ(calc(var(--expo-image-width,1000px) * -1.25)) rotateY(-180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-top {
+  transition-property: transform, opacity;
+  transition-timing-function: var(--expo-image-timing,linear), steps(2, jump-none) !important;
+  transform-origin: center;
+}
+[data-expoimage] .flip-from-top-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  perspective: 1000px;
+}
+[data-expoimage] .flip-from-top-start:not(.transitioning) {
+  transform:  translateZ(calc(var(--expo-image-height,1000px) * -1.5)) rotateX(180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-top-active {
+  transform: translateZ(0px) rotateX(0) ;
+  opacity:1;
+}
+[data-expoimage] .flip-from-top-end {
+  transform:  translateZ(calc(var(--expo-image-height,1000px) * -1.5)) rotateX(-180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-bottom {
+  transition-property: transform, opacity;
+  transition-timing-function: var(--expo-image-timing,linear), steps(2, jump-none) !important;
+  transform-origin: center;
+}
+[data-expoimage] .flip-from-bottom-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  perspective: 1000px;
+}
+[data-expoimage] .flip-from-bottom-start:not(.transitioning) {
+  transform:  translateZ(calc(var(--expo-image-height,1000px) * -1.25)) rotateX(-180deg);
+  opacity: 0;
+}
+[data-expoimage] .flip-from-bottom-active {
+  transform: translateZ(0px) rotateX(0) ;
+  opacity:1;
+}
+[data-expoimage] .flip-from-bottom-end {
+  transform:  translateZ(calc(var(--expo-image-height,1000px) * -1.25)) rotateX(180deg);
+  opacity: 0;
+}
+[data-expoimage] .image-timing-linear {
+  --expo-image-timing: linear;
+}
+[data-expoimage] .image-timing-ease-in {
+  --expo-image-timing: ease-in;
+}
+[data-expoimage] .image-timing-ease-out {
+  --expo-image-timing: ease-out;
+}
+[data-expoimage] .image-timing-ease-in-out {
+  --expo-image-timing: ease-in-out;
+}
+</style><style id="expo-generated-fonts">@font-face{font-family:"InterVariable";src:url("/InterVariable.ttf");font-display:auto}@font-face{font-family:"bolticons";src:url("/bolticons-81c094a.ttf");font-display:auto}</style><script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAc3mxKzjHP0_Q0W1jDsz9ugL64FjNMLtM" async="" defer=""></script></head>
+
+  <body><noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJWFXC9&gtm_auth=&gtm_preview=&gtm_cookies_win=x"
+        height="0" width="0" style="display:none;visibility:hidden" id="tag-manager"></iframe></noscript><a href="https://food.bolt.eu/cdn-cgi/content?id=.w2vgr0qeWukzWdtmzaaVCo6.xDgYiP3OjC_TGzAu9E-1787840128.977725-1.2.1.1-vs3lwH66YIm1v9NI4zOxGYbCx_uJ6aPn1vsOtvFQUT0o.APAaJ5db3t2.GJ6UFWI" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+    <!--
+      A generic no script element with a reload button and a message.
+      Feel free to customize this however you'd like.
+    -->
+    <noscript>
+      <form
+        action=""
+        style="
+          background-color: #fff;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 9999;
+        "
+      >
+        <div
+          style="
+            font-size: 18px;
+            font-family: Helvetica, sans-serif;
+            line-height: 24px;
+            margin: 10%;
+            width: 80%;
+          "
+        >
+          <p>Oh no! It looks like JavaScript is not enabled in your browser.</p>
+          <p style="margin: 20px 0">
+            <button
+              type="submit"
+              style="
+                background-color: #4630eb;
+                border-radius: 100px;
+                border: none;
+                box-shadow: none;
+                color: #fff;
+                cursor: pointer;
+                font-weight: bold;
+                line-height: 20px;
+                padding: 6px 16px;
+              "
+            >
+              Reload
+            </button>
+          </p>
+        </div>
+      </form>
+    </noscript>
+    <!-- The root element for your Expo app. -->
+    <div id="root"><div class="css-g5y9jx r-13awgt0"><div class="css-g5y9jx" style="flex: 1 1 0%;"></div></div></div>
+  <script src="/_expo/static/js/web/index-81c1d587bf86edd446021ce3f1c84e71.js" defer=""></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;e78b21b7cb3d4ca68981126890f267cd&quot;}" crossorigin="anonymous"></script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a31bb04619940f17',t:'MTc4Nzg0MDEyOA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; visibility: hidden;"></iframe>
+
+</body></html>

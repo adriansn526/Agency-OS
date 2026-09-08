@@ -1,0 +1,11 @@
+--- Analiza Adnotare 19 Iulie 2026 (inchideriterase.ro) ---
+Perioada Before (12 iul - 18 iul):
+  Clicks: 207 (medie: 29.6/zi)
+  Impresii: 16541 (medie: 2363/zi)
+Perioada After (20 iul - 26 iul):
+  Clicks: 241 (medie: 34.4/zi)
+  Impresii: 17923 (medie: 2560/zi)
+
+IMPACT (7 zile vs 7 zile):
+  Evolutie Clicks: +16.4%
+  Evolutie Afisari: +8.4%

@@ -1917,6 +1917,11 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
   const [wpUsername, setWpUsername] = useState(meta.wpUsername || '')
   const [wpAppPassword, setWpAppPassword] = useState(meta.wpAppPassword || '')
 
+  // SEO Notifications
+  const [seoReportsEnabled, setSeoReportsEnabled] = useState(meta.seoNotifications?.enabled || false)
+  const [seoThreshold, setSeoThreshold] = useState(meta.seoNotifications?.thresholdPct || 15)
+  const [seoTelegramChatId, setSeoTelegramChatId] = useState(meta.seoNotifications?.telegramChatId || '')
+
   // Telnyx phones with DNI
   const [phones, setPhones] = useState<Array<{ number: string; source: string; label: string }>>(() => {
     const raw = meta.telnyxPhoneNumbers || []
@@ -1953,6 +1958,11 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
         wpUrl: wpUrl || undefined,
         wpUsername: wpUsername || undefined,
         wpAppPassword: wpAppPassword || undefined,
+        seoNotifications: {
+          enabled: seoReportsEnabled,
+          thresholdPct: seoThreshold,
+          telegramChatId: seoTelegramChatId || undefined
+        }
       }
       const projRes = await fetch(`/api/projects/${projectId}`, {
         method: 'PATCH',
@@ -2187,6 +2197,50 @@ function SettingsTab({ project, projectId, onProjectUpdate }: { project: APIProj
             fiecare apel la sursa corespunzătoare.
           </p>
         </div>
+      </div>
+
+      {/* SEO Notifications (AI Reports) */}
+      <div className="bg-surface rounded-xl border border-border p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🤖</span>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Rapoarte AI (GSC & PostHog)</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Analiză automată zilnică trimisă pe Telegram în caz de anomalii.</p>
+            </div>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" className="sr-only peer" checked={seoReportsEnabled} onChange={(e) => setSeoReportsEnabled(e.target.checked)} />
+            <div className="w-9 h-5 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+          </label>
+        </div>
+
+        {seoReportsEnabled && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 animate-in fade-in">
+            <div>
+              <label className="block text-xs font-medium text-foreground mb-1">Prag Fluctuație (%)</label>
+              <input 
+                type="number" 
+                value={seoThreshold} 
+                onChange={e => setSeoThreshold(Number(e.target.value))}
+                className="w-full text-xs px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+                placeholder="Ex: 15"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">Declanșează dacă traficul fluctuează cu peste {seoThreshold}%.</p>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-foreground mb-1">Telegram Chat ID</label>
+              <input 
+                type="text" 
+                value={seoTelegramChatId} 
+                onChange={e => setSeoTelegramChatId(e.target.value)}
+                className="w-full text-xs px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
+                placeholder="Ex: -100123456789"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">ID-ul grupului sau utilizatorului de Telegram.</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Current metadata preview */}

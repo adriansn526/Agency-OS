@@ -1,0 +1,12 @@
+--- Analiza Pe Termen Lung (pana azi) ---
+Perioada Before (01 iun - 19 iul, 49 zile):
+  Clicks: 1727 (medie: 35.2/zi)
+  Impresii: 145069 (medie: 2961/zi)
+
+Perioada After (20 iul - 06 sep, 47 zile):
+  Clicks: 1620 (medie: 34.5/zi)
+  Impresii: 131172 (medie: 2791/zi)
+
+IMPACT MEDIU ZILNIC (49 zile vs 47 zile):
+  Evolutie Clicks: -2.2%
+  Evolutie Afisari: -5.7%

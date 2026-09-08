@@ -1,0 +1,233 @@
+nohup: ignoring input
+
+> web@0.1.0 build
+> next build
+
+▲ Next.js 16.2.0 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+./apps/web/app/api/contracts/[id]/pdf/route.ts:34:31
+Module not found: Can't resolve 'puppeteer'
+  [90m32 |[0m     [36mtry[0m {
+  [90m33 |[0m       [90m// @ts-ignore — puppeteer is an optional dependency, falls back to client-side PDF[0m
+[31m[1m>[0m [90m34 |[0m       [36mconst[0m puppeteer = [36mawait[0m [36mimport[0m([32m'puppeteer'[0m)
+  [90m   |[0m                               [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+  [90m35 |[0m       [36mconst[0m browser = [36mawait[0m puppeteer.[36mdefault[0m.launch({
+  [90m36 |[0m         headless: [36mtrue[0m,
+  [90m37 |[0m         args: [[32m'--no-sandbox'[0m, [32m'--disable-setuid-sandbox'[0m],
+
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled successfully in 29.0s
+  Skipping validation of types
+  Finished TypeScript config validation in 18ms ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/120) ...
+  Generating static pages using 11 workers (30/120) 
+  Generating static pages using 11 workers (60/120) 
+  Generating static pages using 11 workers (90/120) 
+✓ Generating static pages using 11 workers (120/120) in 881ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /activity
+├ ƒ /api/activities
+├ ƒ /api/activities/entity/[id]
+├ ƒ /api/activities/recent
+├ ƒ /api/ads/negative-keywords/analyze
+├ ƒ /api/ads/negative-keywords/apply
+├ ƒ /api/ai/brand-dna
+├ ƒ /api/ai/copilot
+├ ƒ /api/ai/copilot/actions/[id]
+├ ƒ /api/ai/copilot/conversations
+├ ƒ /api/ai/copilot/conversations/[id]
+├ ƒ /api/ai/generate
+├ ƒ /api/ai/usage
+├ ƒ /api/analytics/leads
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/google-ads/authorize
+├ ƒ /api/auth/google-ads/callback
+├ ƒ /api/auth/google/callback
+├ ƒ /api/auth/google/connect
+├ ƒ /api/clients
+├ ƒ /api/clients/[id]
+├ ƒ /api/clients/[id]/api-keys
+├ ƒ /api/clients/[id]/domains
+├ ƒ /api/clients/[id]/kpis
+├ ƒ /api/clients/[id]/website-health
+├ ƒ /api/communications
+├ ƒ /api/communications/[id]
+├ ƒ /api/contracts
+├ ƒ /api/contracts/[id]
+├ ƒ /api/contracts/[id]/pdf
+├ ƒ /api/contracts/[id]/send
+├ ƒ /api/contracts/[id]/status
+├ ƒ /api/contracts/next-number
+├ ƒ /api/contracts/public/[id]
+├ ƒ /api/cron/campaigns
+├ ƒ /api/cron/content-scan
+├ ƒ /api/dashboard/crm
+├ ƒ /api/finance/dashboard
+├ ƒ /api/finance/mrr
+├ ƒ /api/finance/overdue
+├ ƒ /api/finance/revenue-history
+├ ƒ /api/import/fudly
+├ ƒ /api/import/fudly/fix-status
+├ ƒ /api/intraconstruct/costs
+├ ƒ /api/intraconstruct/heartbeat
+├ ƒ /api/intraconstruct/license/check
+├ ƒ /api/intraconstruct/tenants
+├ ƒ /api/intraconstruct/tenants/[id]
+├ ƒ /api/intraconstruct/tenants/[id]/backups
+├ ƒ /api/intraconstruct/tenants/[id]/health
+├ ƒ /api/intraconstruct/tenants/[id]/migrate
+├ ƒ /api/intraconstruct/tenants/[id]/modules
+├ ƒ /api/intraconstruct/usage
+├ ƒ /api/intraconstruct/usage/report
+├ ƒ /api/invoices
+├ ƒ /api/invoices/[id]
+├ ƒ /api/invoices/[id]/status
+├ ƒ /api/leads
+├ ƒ /api/leads/[id]
+├ ƒ /api/leads/[id]/convert
+├ ƒ /api/leads/bulk-delete
+├ ƒ /api/leads/filters/custom-fields
+├ ƒ /api/leads/filters/options
+├ ƒ /api/leads/saved-views
+├ ƒ /api/leads/webhook
+├ ƒ /api/marketing/campaigns
+├ ƒ /api/marketing/campaigns/[id]
+├ ƒ /api/marketing/dashboard
+├ ƒ /api/marketing/segments
+├ ƒ /api/marketing/segments/[id]
+├ ƒ /api/marketing/segments/preview
+├ ƒ /api/marketing/templates
+├ ƒ /api/marketing/templates/[id]
+├ ƒ /api/marketing/track/cta
+├ ƒ /api/marketing/track/heartbeat
+├ ƒ /api/marketing/track/open
+├ ƒ /api/monitoring/daily-digest
+├ ƒ /api/monitoring/dataforseo/backlinks
+├ ƒ /api/monitoring/dataforseo/pages
+├ ƒ /api/monitoring/health
+├ ƒ /api/monitoring/overview
+├ ƒ /api/monitoring/pagespeed
+├ ƒ /api/offer-templates
+├ ƒ /api/offers
+├ ƒ /api/offers/[id]
+├ ƒ /api/offers/[id]/duplicate
+├ ƒ /api/offers/[id]/send
+├ ƒ /api/offers/[id]/status
+├ ƒ /api/offers/next-number
+├ ƒ /api/offers/public/[token]
+├ ƒ /api/offers/public/[token]/events
+├ ƒ /api/offers/public/[token]/respond
+├ ƒ /api/offers/stats
+├ ƒ /api/projects
+├ ƒ /api/projects/[id]
+├ ƒ /api/projects/[id]/checklist
+├ ƒ /api/projects/[id]/google-ads/volumes
+├ ƒ /api/projects/[id]/gsc-inspect
+├ ƒ /api/projects/[id]/kpis
+├ ƒ /api/projects/[id]/phase
+├ ƒ /api/projects/[id]/posthog-pages
+├ ƒ /api/projects/[id]/status
+├ ƒ /api/projects/[id]/wp-posts
+├ ƒ /api/projects/[id]/wp-posts/cache
+├ ƒ /api/reports
+├ ƒ /api/reports/[id]
+├ ƒ /api/reports/[id]/send
+├ ƒ /api/reports/[id]/snapshot
+├ ƒ /api/reports/domains
+├ ƒ /api/reports/live
+├ ƒ /api/reports/public/[token]
+├ ƒ /api/reports/public/[token]/data
+├ ƒ /api/retainers
+├ ƒ /api/retainers/[id]
+├ ƒ /api/scrape
+├ ƒ /api/scrape/discover
+├ ƒ /api/seo/analyze
+├ ƒ /api/seo/analyze-content
+├ ƒ /api/seo/audit
+├ ƒ /api/seo/auto-optimize
+├ ƒ /api/seo/competitors
+├ ƒ /api/seo/dashboard
+├ ƒ /api/seo/dataforseo
+├ ƒ /api/seo/generate-article
+├ ƒ /api/seo/generate-meta-bulk
+├ ƒ /api/seo/keyword-volumes
+├ ƒ /api/services
+├ ƒ /api/services/[id]
+├ ƒ /api/settings/business-lines
+├ ƒ /api/settings/company
+├ ƒ /api/settings/contracts
+├ ƒ /api/settings/integrations
+├ ƒ /api/short-links
+├ ƒ /api/uptime/check
+├ ƒ /api/uptime/status
+├ ƒ /api/voice/outbound
+├ ƒ /api/voice/tools/update-lead
+├ ƒ /api/webhooks/elevenlabs
+├ ƒ /api/webhooks/whatsapp
+├ ○ /automations
+├ ○ /communications
+├ ƒ /contract/view/[id]
+├ ○ /contracts
+├ ƒ /contracts/[id]
+├ ○ /contracts/generate
+├ ○ /crm
+├ ○ /crm/clienti
+├ ƒ /crm/clienti/[id]
+├ ○ /crm/lead-uri
+├ ƒ /crm/lead-uri/[id]
+├ ○ /documents
+├ ○ /finance
+├ ○ /hr
+├ ○ /intraconstruct
+├ ○ /intraconstruct/tenants
+├ ƒ /intraconstruct/tenants/[id]
+├ ○ /intraconstruct/usage
+├ ○ /login
+├ ○ /marketing
+├ ○ /marketing/campaigns
+├ ○ /marketing/contacts
+├ ○ /marketing/pipeline
+├ ○ /marketing/segments
+├ ○ /marketing/short-links
+├ ○ /marketing/templates
+├ ○ /monitoring
+├ ƒ /offer/view/[token]
+├ ○ /offers
+├ ƒ /offers/[id]
+├ ƒ /offers/[id]/edit
+├ ○ /offers/new
+├ ○ /projects
+├ ƒ /projects/[id]
+├ ƒ /report/view/[token]
+├ ○ /reports
+├ ƒ /s/[code]
+├ ○ /seo
+├ ○ /settings
+├ ○ /settings/business-lines
+├ ○ /settings/company
+├ ○ /settings/integrations
+├ ○ /settings/language
+├ ○ /settings/pipelines
+├ ○ /settings/roles
+├ ○ /settings/services
+└ ○ /wiki
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -36,6 +36,7 @@ export async function getWPPosts(wpUrl: string, username?: string, appPassword?:
     const postsUrl = new URL(`${cleanUrl}/wp-json/wp/v2/posts`);
     postsUrl.searchParams.append('status', status);
     postsUrl.searchParams.append('per_page', perPage.toString());
+    postsUrl.searchParams.append('orderby', 'modified');
     postsUrl.searchParams.append('_embed', '1');
     
     const postsRes = await fetch(postsUrl.toString(), {
@@ -49,6 +50,7 @@ export async function getWPPosts(wpUrl: string, username?: string, appPassword?:
     const pagesUrl = new URL(`${cleanUrl}/wp-json/wp/v2/pages`);
     pagesUrl.searchParams.append('status', status);
     pagesUrl.searchParams.append('per_page', perPage.toString());
+    pagesUrl.searchParams.append('orderby', 'modified');
     pagesUrl.searchParams.append('_embed', '1');
     
     const pagesRes = await fetch(pagesUrl.toString(), {
@@ -71,8 +73,8 @@ export async function getWPPosts(wpUrl: string, username?: string, appPassword?:
       ...(Array.isArray(pagesData) ? pagesData.map(p => ({...p, type: 'page'})) : [])
     ];
     
-    // Sort by date descending
-    combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    // Sort by modified date descending
+    combined.sort((a, b) => new Date(b.modified || b.date).getTime() - new Date(a.modified || a.date).getTime());
 
     return { data: combined as WPPost[] };
   } catch (err: any) {

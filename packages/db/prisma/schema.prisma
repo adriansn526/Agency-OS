@@ -96,6 +96,7 @@ model Client {
   seoAudits      SeoAudit[]
   apiKeys        ClientApiKey[]
   connectedAccounts ConnectedAccount[]
+  systemAlerts   SystemAlert[]
 
   @@index([businessLineId, entityType])
   @@index([status])
@@ -207,6 +208,7 @@ model Project {
   businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
   client         Client       @relation(fields: [clientId], references: [id])
   activities     Activity[]
+  systemAlerts   SystemAlert[]
 
   @@index([businessLineId, status])
 }
@@ -970,4 +972,34 @@ model ConnectedAccount {
 
   @@unique([provider, providerAccountId])
   @@index([clientId])
+}
+
+// ─── System Alerts (e.g. from PostHog Webhooks) ───
+model SystemAlert {
+  id          String    @id @default(cuid())
+  source      String    @default("posthog") // e.g. 'posthog', 'sentry'
+  title       String
+  description String?   @db.Text
+  url         String?   // link to the alert in PostHog/Sentry
+  domain      String?   // the affected domain if known
+  status      String    @default("new") // 'new', 'acknowledged', 'resolved'
+  severity    String    @default("medium") // 'low', 'medium', 'high', 'critical'
+  metadata    Json?     // Full raw payload
+  
+  // Optional linkage to CRM entities
+  clientId    String?
+  projectId   String?
+  
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  client      Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([clientId])
+  @@index([projectId])
 }
