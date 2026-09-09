@@ -16,6 +16,7 @@ import {
   AdsTimeAnalysis,
   AdsAdGroupPerformance,
 } from "@/components/report/report-ads-extended"
+import { ReportWidgetEditor } from "@/components/report/report-widget-editor"
 
 // ─── Inline Report Widgets (Admin-only, render aggregated data) ───
 
@@ -702,6 +703,7 @@ export default function ReportsPage() {
   const [generatingLink, setGeneratingLink] = useState(false)
   const [generatingAi, setGeneratingAi] = useState(false)
   const [sendModal, setSendModal] = useState(false)
+  const [widgetEditorOpen, setWidgetEditorOpen] = useState(false)
 
   // ─── Fetch clients ───
   useEffect(() => {
@@ -797,18 +799,18 @@ export default function ReportsPage() {
       })
       const json = await res.json()
       if (res.ok) {
-        const url = json.data.publicUrl
+        const url = `${json.data.publicUrl}?from=${dateFrom}&to=${dateTo}`
         navigator.clipboard.writeText(url)
         showToast(`✅ Link generat și copiat: ${url}`)
         setExistingReport({
           id: json.data.id,
           token: json.data.token,
-          publicUrl: url,
+          publicUrl: json.data.publicUrl,
           title: json.data.title,
         })
       } else if (res.status === 409) {
         // Already exists
-        const url = `${window.location.origin}/report/view/${json.existingToken}`
+        const url = `${window.location.origin}/report/view/${json.existingToken}?from=${dateFrom}&to=${dateTo}`
         navigator.clipboard.writeText(url)
         showToast(`📋 Link existent copiat: ${url}`)
       } else {
@@ -1017,8 +1019,8 @@ export default function ReportsPage() {
               {existingReport ? (
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(existingReport.publicUrl)
-                    showToast("📋 Link copiat!")
+                    navigator.clipboard.writeText(`${existingReport.publicUrl}?from=${dateFrom}&to=${dateTo}`)
+                    showToast("📋 Link copiat (inclusiv perioada selectată)!")
                   }}
                   className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border border-border rounded-lg text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
                 >
@@ -1038,7 +1040,7 @@ export default function ReportsPage() {
               {/* View public report */}
               {existingReport && (
                 <a
-                  href={existingReport.publicUrl}
+                  href={`${existingReport.publicUrl}?from=${dateFrom}&to=${dateTo}`}
                   target="_blank"
                   className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 border border-border rounded-lg text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
                 >
@@ -1055,7 +1057,6 @@ export default function ReportsPage() {
                   <Send size={14} /> Trimite Email
                 </button>
               )}
-
               {/* AI Interpretation */}
               <button
                 onClick={generateAiSnapshot}
@@ -1076,6 +1077,35 @@ export default function ReportsPage() {
               </div>
             )}
           </div>
+
+          {/* Widget Editor */}
+          {existingReport && (
+            <div className="space-y-3">
+              <button
+                onClick={() => setWidgetEditorOpen(!widgetEditorOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors w-full justify-center",
+                  widgetEditorOpen
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/30 border border-border text-foreground hover:bg-muted/50"
+                )}
+              >
+                <Settings2 size={14} />
+                {widgetEditorOpen ? "Închide Configurare Widget-uri" : "⚙️ Configurare Widget-uri (Layout Raport Public)"}
+              </button>
+              {widgetEditorOpen && (
+                <ReportWidgetEditor
+                  reportId={existingReport.id}
+                  initialWidgets={existingReport.widgets || []}
+                  onSave={(widgets) => {
+                    setExistingReport((prev: any) => ({ ...prev, widgets }))
+                    showToast("✅ Widget-urile au fost salvate!")
+                  }}
+                  onClose={() => setWidgetEditorOpen(false)}
+                />
+              )}
+            </div>
+          )}
         </>
       )}
     </div>

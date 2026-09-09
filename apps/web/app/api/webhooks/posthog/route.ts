@@ -6,10 +6,16 @@ export async function POST(request: Request) {
     const payload = await request.json();
     console.log("🔔 [PostHog Webhook] Alertă nouă primită:", payload);
 
-    // Extract relevant data (PostHog webhook structure)
-    const title = payload.text || payload.title || "Alertă PostHog necunoscută";
-    const description = JSON.stringify(payload, null, 2);
-    const url = payload.url || payload.actionUrl || null;
+    // Extract relevant data (PostHog webhook structure & Scout events)
+    const title = payload.text || payload.title || payload.event?.properties?.title || payload.event?.properties?.skill_name || "Alertă PostHog necunoscută";
+    
+    // Extrage descrierea (pentru Scout reports folosește 'note')
+    let description = payload.event?.properties?.note;
+    if (!description) {
+      description = JSON.stringify(payload, null, 2);
+    }
+    
+    const url = payload.url || payload.actionUrl || payload.event?.properties?.report_url || null;
     const domain = payload.domain || null; // Daca este prezent
 
     // Save to database

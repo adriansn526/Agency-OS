@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { useParams } from "next/navigation"
+import { useEffect, useState, useCallback, Suspense } from "react"
+import { useParams, useSearchParams } from "next/navigation"
 import { getReportTheme, getThemeCSSVariables } from "@/lib/report-themes"
 import { migrateWidgetConfigs, type WidgetConfig, type WidgetSize } from "@/lib/report-widget-catalog"
 import { ReportHeader } from "@/components/report/report-header"
@@ -91,14 +91,22 @@ function WidgetRenderer({ type, data, dataLoading, meta }: {
   }
 }
 
-export default function PublicReportPage() {
+function PublicReportContent() {
   const { token } = useParams<{ token: string }>()
+  const searchParams = useSearchParams()
+  
   const [meta, setMeta] = useState<ReportMeta | null>(null)
   const [data, setData] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(true)
   const [dataLoading, setDataLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [dateRange, setDateRange] = useState(getDefaultDates)
+  
+  const [dateRange, setDateRange] = useState(() => {
+    const from = searchParams.get("from")
+    const to = searchParams.get("to")
+    if (from && to) return { from, to }
+    return getDefaultDates()
+  })
 
   // Fetch report metadata
   useEffect(() => {
@@ -124,7 +132,7 @@ export default function PublicReportPage() {
     try {
       const enabledWidgets = meta.widgets.filter(w => w.enabled).map(w => w.type)
       const res = await fetch(
-        `/api/reports/public/${token}/data?widgets=${enabledWidgets.join(",")}&from=${dateRange.from}&to=${dateRange.to}`
+        `/api/reports/public/${token}/data?widgets=${enabledWidgets.join(",")}&from=${dateRange.from}&to=${dateRange.to}&t=${Date.now()}`
       )
       if (!res.ok) throw new Error("Eroare la încărcarea datelor")
       const json = await res.json()
@@ -259,5 +267,30 @@ export default function PublicReportPage() {
 
       <ReportFooter businessLine={meta.businessLine} theme={theme} />
     </div>
+  )
+}
+
+export default function PublicReportPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        fontFamily: "Inter, sans-serif",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "100vh", background: "#f8fafc",
+      }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{
+            width: 40, height: 40,
+            border: "3px solid #e2e8f0", borderTopColor: "#3b82f6",
+            borderRadius: "50%", animation: "spin 1s linear infinite",
+            margin: "0 auto 16px",
+          }} />
+          <p style={{ color: "#64748b", fontSize: 14 }}>Se încarcă raportul...</p>
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        </div>
+      </div>
+    }>
+      <PublicReportContent />
+    </Suspense>
   )
 }

@@ -2,12 +2,10 @@
 
 // ─── Report Header ───
 // Logo per BL + Title + Client Name + Global Date Range Picker
+// Now uses ReportTheme for dynamic gradient colors
 
-const BL_LOGOS: Record<string, { logo: string; gradient: string }> = {
-  agency: { logo: "/logos/agency-logo.png", gradient: "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)" },
-  fudly: { logo: "/logos/fudly-logo.png", gradient: "linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f97316 100%)" },
-  climaticpro: { logo: "/logos/climaticpro-logo.png", gradient: "linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%)" },
-}
+import type { ReportTheme } from "@/lib/report-themes"
+import { getReportTheme } from "@/lib/report-themes"
 
 interface ReportHeaderProps {
   title: string
@@ -16,14 +14,15 @@ interface ReportHeaderProps {
   dateRange: { from: string; to: string }
   onDateChange: (range: { from: string; to: string }) => void
   loading?: boolean
+  theme?: ReportTheme
 }
 
-export function ReportHeader({ title, clientName, businessLine, dateRange, onDateChange, loading }: ReportHeaderProps) {
-  const bl = BL_LOGOS[businessLine.slug] ?? BL_LOGOS.agency!
+export function ReportHeader({ title, clientName, businessLine, dateRange, onDateChange, loading, theme: themeProp }: ReportHeaderProps) {
+  const theme = themeProp ?? getReportTheme(businessLine.slug)
 
   return (
     <header style={{
-      background: bl.gradient,
+      background: theme.gradient,
       padding: "32px 20px 28px",
       marginBottom: 28,
       position: "relative",
@@ -41,7 +40,7 @@ export function ReportHeader({ title, clientName, businessLine, dateRange, onDat
           {/* Left: Logo + Title */}
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <img
-              src={bl.logo}
+              src={theme.logo}
               alt={businessLine.name}
               style={{ height: 40, borderRadius: 8, background: "rgba(255,255,255,0.15)", padding: 4 }}
               onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}

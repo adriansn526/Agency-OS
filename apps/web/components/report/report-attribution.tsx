@@ -8,11 +8,11 @@ import { WidgetWrapper } from "./report-widget-wrapper"
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
 
 const COLORS: Record<string, string> = {
-  "Google Ads": "#4285f4",
+  "Google Ads": "var(--rpt-chart-1, #4285f4)",
   "Organic": "#34a853",
   "Social": "#e91e63",
   "Social Ads": "#ea580c",
-  "Direct": "#6366f1",
+  "Direct": "var(--rpt-chart-2, #6366f1)",
   "Email": "#f59e0b",
   "Referral": "#06b6d4",
   "Altele": "#94a3b8",

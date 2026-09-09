@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
+import { migrateWidgetConfigs } from '@/lib/report-widget-catalog'
+import { getReportTheme } from '@/lib/report-themes'
 
 // ─── GET /api/reports/public/[token] ───
 // Public route — no auth required. Returns report metadata + snapshots.
@@ -60,16 +62,13 @@ export async function GET(
       data: updateData as any,
     })
 
-    // Auto-upgrade: add new widgets to legacy reports
-    const reportWidgets = (report.widgets || []) as Array<{ type: string; label?: string; enabled: boolean }>
-    const autoAddWidgets = [
-      { type: 'conversion_details', label: '📊 Conversii Detaliate', enabled: true },
-    ]
-    for (const nw of autoAddWidgets) {
-      if (!reportWidgets.some(w => w.type === nw.type)) {
-        reportWidgets.push(nw)
-      }
-    }
+    // Auto-upgrade: migrate legacy widgets to new format with order/size
+    const reportWidgets = migrateWidgetConfigs(
+      (report.widgets || []) as Array<{ type: string; label?: string; enabled: boolean; order?: number; size?: any }>
+    )
+
+    // Get theme for this business line
+    const theme = report.businessLine ? getReportTheme(report.businessLine.slug) : getReportTheme('agency')
 
     return NextResponse.json({
       data: {
@@ -85,8 +84,21 @@ export async function GET(
           hasGoogleAds: !!report.client.googleAdsCustomerId,
           hasGSC: !!report.client.gscSiteUrl,
         },
-        businessLine: report.businessLine,
+        businessLine: report.businessLine || {
+          id: "default",
+          slug: "agency",
+          name: "Agency",
+          color: theme.primary,
+        },
         snapshots: report.snapshots,
+        theme: {
+          slug: theme.slug,
+          primary: theme.primary,
+          primaryLight: theme.primaryLight,
+          accent: theme.accent,
+          gradient: theme.gradient,
+          surface: theme.surface,
+        },
       },
     })
   } catch (error: any) {

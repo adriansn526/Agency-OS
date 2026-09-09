@@ -2,7 +2,7 @@
 
 // ─── Report Widget Wrapper ───
 // Provides consistent card styling, loading skeleton, and section headers
-// Supports both Lucide icon components (ReactNode) and emoji strings
+// Now uses CSS custom properties from the report theme
 
 import { ReactNode } from "react"
 
@@ -17,7 +17,7 @@ interface WidgetWrapperProps {
 export function WidgetWrapper({ title, icon, loading, children, fullWidth }: WidgetWrapperProps) {
   return (
     <section style={{
-      background: "#ffffff",
+      background: "var(--rpt-surface-card, #ffffff)",
       borderRadius: 16,
       border: "1px solid #e2e8f0",
       boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
@@ -36,11 +36,11 @@ export function WidgetWrapper({ title, icon, loading, children, fullWidth }: Wid
           width: 32,
           height: 32,
           borderRadius: 8,
-          background: "#f1f5f9",
+          background: "var(--rpt-icon-bg, #f1f5f9)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#6366f1",
+          color: "var(--rpt-primary, #6366f1)",
           flexShrink: 0,
         }}>
           {typeof icon === "string" ? (
@@ -53,7 +53,7 @@ export function WidgetWrapper({ title, icon, loading, children, fullWidth }: Wid
         {loading && (
           <div style={{
             width: 16, height: 16, marginLeft: "auto",
-            border: "2px solid #e2e8f0", borderTopColor: "#6366f1",
+            border: "2px solid #e2e8f0", borderTopColor: "var(--rpt-primary, #6366f1)",
             borderRadius: "50%", animation: "spin 1s linear infinite",
           }} />
         )}
@@ -75,21 +75,21 @@ function Skeleton() {
   )
 }
 
-// KPI Card sub-component
+// KPI Card sub-component — uses theme accent
 export function KpiCard({ label, value, sublabel, color }: {
   label: string; value: string | number; sublabel?: string; color?: string
 }) {
   return (
     <div style={{
       padding: "20px 24px",
-      background: "#fafbfc",
+      background: "var(--rpt-surface-card, #fafbfc)",
       borderRadius: 12,
       border: "1px solid #f1f5f9",
       flex: "1 1 0",
       minWidth: 140,
     }}>
       <p style={{ margin: 0, fontSize: 11, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase", letterSpacing: 1 }}>{label}</p>
-      <p style={{ margin: "6px 0 0", fontSize: 28, fontWeight: 800, color: color || "#0f172a", letterSpacing: -1 }}>{value}</p>
+      <p style={{ margin: "6px 0 0", fontSize: 28, fontWeight: 800, color: color || "var(--rpt-kpi-highlight, #0f172a)", letterSpacing: -1 }}>{value}</p>
       {sublabel && <p style={{ margin: "4px 0 0", fontSize: 12, color: "#64748b" }}>{sublabel}</p>}
     </div>
   )

@@ -91,9 +91,14 @@ export function SystemAlertsSidebar({ open, onClose, onAlertsChange }: { open: b
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-sm text-foreground truncate">{alert.title}</h3>
                     {alert.domain && (
-                      <p className="text-xs text-muted-foreground mt-1">Domeniu: {alert.domain}</p>
+                      <p className="text-xs text-muted-foreground mt-1 font-medium">Domeniu: {alert.domain}</p>
                     )}
-                    <div className="text-[10px] text-muted-foreground mt-2">
+                    {alert.description && (
+                      <div className="text-xs text-muted-foreground mt-2 leading-relaxed bg-muted/30 p-2 rounded border border-border/50 line-clamp-4">
+                        {alert.description}
+                      </div>
+                    )}
+                    <div className="text-[10px] text-muted-foreground mt-3">
                       {new Date(alert.createdAt).toLocaleString("ro-RO")}
                     </div>
                   </div>

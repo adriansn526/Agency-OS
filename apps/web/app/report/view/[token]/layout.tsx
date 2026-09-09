@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 export default function PublicReportLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      {/* Force light mode on public report pages */}
+      {/* Force light mode on public report pages — background is set dynamically by the page via theme */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `document.documentElement.classList.remove('dark');document.body.style.background='#f8fafc';document.body.style.color='#0f172a';`,
+          __html: `document.documentElement.classList.remove('dark');document.body.style.color='#0f172a';`,
         }}
       />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
