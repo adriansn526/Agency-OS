@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useParams } from "next/navigation"
+import { getReportTheme, getThemeCSSVariables } from "@/lib/report-themes"
+import { migrateWidgetConfigs, type WidgetConfig, type WidgetSize } from "@/lib/report-widget-catalog"
 import { ReportHeader } from "@/components/report/report-header"
 import { ReportConversions } from "@/components/report/report-conversions"
 import { ReportConversionDetails } from "@/components/report/report-conversion-details"
@@ -25,7 +27,7 @@ import { ReportFooter } from "@/components/report/report-footer"
 interface ReportMeta {
   title: string
   notes: string | null
-  widgets: Array<{ type: string; label: string; enabled: boolean }>
+  widgets: Array<{ type: string; label: string; enabled: boolean; order?: number; size?: string }>
   client: { name: string; contact: string; website: string | null; hasGoogleAds: boolean; hasGSC: boolean }
   businessLine: { slug: string; name: string; color: string }
   snapshots: Array<{ id: string; dateFrom: string; dateTo: string; content: string; highlights: unknown; createdAt: string }>
@@ -38,6 +40,54 @@ function getDefaultDates(): { from: string; to: string } {
   return {
     from: from.toISOString().slice(0, 10),
     to: to.toISOString().slice(0, 10),
+  }
+}
+
+// ─── Widget Renderer ───
+// Maps widget type to the corresponding component
+function WidgetRenderer({ type, data, dataLoading, meta }: {
+  type: string
+  data: Record<string, unknown> | null
+  dataLoading: boolean
+  meta: ReportMeta
+}) {
+  switch (type) {
+    case "conversions_hero":
+      return <ReportConversions data={data?.conversions_hero as any} loading={dataLoading} />
+    case "source_attribution":
+      return <ReportAttribution data={data?.source_attribution as any} loading={dataLoading} />
+    case "conversion_details":
+      return <ReportConversionDetails data={data?.conversion_details as any} loading={dataLoading} />
+    case "google_ads_kpis":
+      return <ReportAdsKpis data={data?.google_ads_kpis as any} loading={dataLoading} />
+    case "google_ads_trend":
+      return <ReportAdsTrend data={data?.google_ads_trend as any} loading={dataLoading} />
+    case "google_ads_tables":
+      return <ReportAdsTables data={data?.google_ads_tables as any} loading={dataLoading} />
+    case "google_ads_extended":
+      return <ReportAdsExtendedWidget data={data?.google_ads_extended as any} loading={dataLoading} />
+    case "seo_kpis":
+      return <ReportSeoKpis data={data?.seo_kpis as any} loading={dataLoading} />
+    case "seo_trend":
+      return <ReportSeoTrend data={data?.seo_trend as any} loading={dataLoading} />
+    case "seo_tables":
+      return <ReportSeoTables data={data?.seo_tables as any} loading={dataLoading} />
+    case "seo_articles":
+      return <ReportSeoArticles data={data?.seo_articles as any} loading={dataLoading} />
+    case "seo_page_keywords":
+      return <ReportSEOPagesKeywords data={data?.seo_page_keywords as any} loading={dataLoading} />
+    case "social_breakdown":
+      return <ReportSocial data={data?.social_breakdown as any} loading={dataLoading} />
+    case "posthog_traffic":
+      return <ReportPosthogTraffic data={data?.posthog_traffic as any} loading={dataLoading} />
+    case "site_health":
+      return <ReportHealth data={data?.site_health as any} loading={dataLoading} />
+    case "uptime":
+      return <ReportUptimeWidget data={data?.uptime as any} loading={dataLoading} />
+    case "interpretation":
+      return meta.snapshots.length > 0 ? <ReportInterpretation snapshots={meta.snapshots} /> : null
+    default:
+      return null
   }
 }
 
@@ -90,14 +140,33 @@ export default function PublicReportPage() {
     fetchData()
   }, [fetchData])
 
-  const isEnabled = (type: string) =>
-    meta?.widgets.some(w => w.type === type && w.enabled) ?? false
+  // ── Resolve theme ──
+  const theme = meta?.businessLine ? getReportTheme(meta.businessLine.slug) : getReportTheme("agency")
+  const themeVars = getThemeCSSVariables(theme)
 
+  // ── Migrate & sort widget configs ──
+  const sortedWidgets: WidgetConfig[] = meta
+    ? migrateWidgetConfigs(meta.widgets as Array<{ type: string; label?: string; enabled: boolean; order?: number; size?: WidgetSize }>)
+        .filter(w => w.enabled)
+        .sort((a, b) => a.order - b.order)
+    : []
+
+  // ── Loading state ──
   if (loading) {
     return (
-      <div style={{ fontFamily: "Inter, sans-serif", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f8fafc" }}>
+      <div style={{
+        fontFamily: "Inter, sans-serif",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "100vh", background: theme.surface,
+        ...themeVars as any,
+      }}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: 40, height: 40, border: "3px solid #e2e8f0", borderTopColor: "#6366f1", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 16px" }} />
+          <div style={{
+            width: 40, height: 40,
+            border: "3px solid #e2e8f0", borderTopColor: theme.spinnerColor,
+            borderRadius: "50%", animation: "spin 1s linear infinite",
+            margin: "0 auto 16px",
+          }} />
           <p style={{ color: "#64748b", fontSize: 14 }}>Se încarcă raportul...</p>
           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
@@ -105,9 +174,14 @@ export default function PublicReportPage() {
     )
   }
 
+  // ── Error state ──
   if (error || !meta) {
     return (
-      <div style={{ fontFamily: "Inter, sans-serif", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f8fafc" }}>
+      <div style={{
+        fontFamily: "Inter, sans-serif",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "100vh", background: "#f8fafc",
+      }}>
         <div style={{ textAlign: "center", padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: "#0f172a", margin: "0 0 8px" }}>Raport Indisponibil</h1>
@@ -118,7 +192,13 @@ export default function PublicReportPage() {
   }
 
   return (
-    <div style={{ fontFamily: "Inter, sans-serif", minHeight: "100vh", background: "#f8fafc", padding: "0 0 40px" }}>
+    <div style={{
+      fontFamily: "Inter, sans-serif",
+      minHeight: "100vh",
+      background: theme.surface,
+      padding: "0 0 40px",
+      ...themeVars as any,
+    }}>
       {/* Header with Logo + Title + Date Range Picker */}
       <ReportHeader
         title={meta.title}
@@ -127,86 +207,57 @@ export default function PublicReportPage() {
         dateRange={dateRange}
         onDateChange={setDateRange}
         loading={dataLoading}
+        theme={theme}
       />
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
-        {/* 🏆 Conversions Hero */}
-        {isEnabled("conversions_hero") && (
-          <ReportConversions data={data?.conversions_hero as any} loading={dataLoading} />
-        )}
+        {/* ── Widget Grid ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          {sortedWidgets.map(widget => {
+            const isFull = widget.size === "full"
 
-        {/* 📊 Source Attribution */}
-        {isEnabled("source_attribution") && (
-          <ReportAttribution data={data?.source_attribution as any} loading={dataLoading} />
-        )}
+            // Hide empty widgets once data is loaded
+            if (!dataLoading && data) {
+              const widgetData = data[widget.type]
+              const isDataEmpty = 
+                widgetData === null || 
+                (Array.isArray(widgetData) && widgetData.length === 0) ||
+                (typeof widgetData === "object" && !Array.isArray(widgetData) && Object.keys(widgetData || {}).length === 0)
+              
+              if (isDataEmpty && [
+                "source_attribution", 
+                "google_ads_tables", 
+                "seo_tables",
+                "seo_articles",
+                "social_breakdown",
+                "google_ads_trend",
+                "seo_trend",
+                "posthog_traffic",
+                "seo_page_keywords"
+              ].includes(widget.type)) {
+                return null
+              }
+            }
 
-        {/* 📊 Conversion Details (Landing Pages + Form Submissions) */}
-        {isEnabled("conversion_details") && (
-          <ReportConversionDetails data={data?.conversion_details as any} loading={dataLoading} />
-        )}
-
-        {/* 📣 Google Ads Breakdown */}
-        {isEnabled("google_ads_kpis") && (
-          <ReportAdsKpis data={data?.google_ads_kpis as any} loading={dataLoading} />
-        )}
-        {isEnabled("google_ads_trend") && (
-          <ReportAdsTrend data={data?.google_ads_trend as any} loading={dataLoading} />
-        )}
-        {isEnabled("google_ads_tables") && (
-          <ReportAdsTables data={data?.google_ads_tables as any} loading={dataLoading} />
-        )}
-        {isEnabled("google_ads_extended") && (
-          <ReportAdsExtendedWidget data={data?.google_ads_extended as any} loading={dataLoading} />
-        )}
-
-        {/* 🔍 SEO Breakdown */}
-        {isEnabled("seo_kpis") && (
-          <ReportSeoKpis data={data?.seo_kpis as any} loading={dataLoading} />
-        )}
-        {isEnabled("seo_trend") && (
-          <ReportSeoTrend data={data?.seo_trend as any} loading={dataLoading} />
-        )}
-        {isEnabled("seo_tables") && (
-          <ReportSeoTables data={data?.seo_tables as any} loading={dataLoading} />
-        )}
-
-        {/* 📝 Articole Noi SEO */}
-        {isEnabled("seo_articles") && (
-          <ReportSeoArticles data={data?.seo_articles as any} loading={dataLoading} />
-        )}
-
-        {/* 🔗 SEO Pagini ↔ Keywords + Recomandări */}
-        {isEnabled("seo_page_keywords") && (
-          <ReportSEOPagesKeywords data={data?.seo_page_keywords as any} loading={dataLoading} />
-        )}
-
-        {/* 🌐 Social Breakdown */}
-        {isEnabled("social_breakdown") && (
-          <ReportSocial data={data?.social_breakdown as any} loading={dataLoading} />
-        )}
-
-        {/* 📊 PostHog Traffic Analytics (NEW) */}
-        {isEnabled("posthog_traffic") && (
-          <ReportPosthogTraffic data={data?.posthog_traffic as any} loading={dataLoading} />
-        )}
-
-        {/* 📈 Site Health & Web Vitals */}
-        {isEnabled("site_health") && (
-          <ReportHealth data={data?.site_health as any} loading={dataLoading} />
-        )}
-
-        {/* ⏱ Uptime (NEW) */}
-        {isEnabled("uptime") && (
-          <ReportUptimeWidget data={data?.uptime as any} loading={dataLoading} />
-        )}
-
-        {/* 💡 AI Interpretation */}
-        {meta.snapshots.length > 0 && (
-          <ReportInterpretation snapshots={meta.snapshots} />
-        )}
+            return (
+              <div
+                key={widget.type}
+                className={isFull ? "col-span-1 md:col-span-2" : "col-span-1"}
+                style={{ minWidth: 0 }}
+              >
+                <WidgetRenderer
+                  type={widget.type}
+                  data={data}
+                  dataLoading={dataLoading}
+                  meta={meta}
+                />
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      <ReportFooter businessLine={meta.businessLine} />
+      <ReportFooter businessLine={meta.businessLine} theme={theme} />
     </div>
   )
 }
