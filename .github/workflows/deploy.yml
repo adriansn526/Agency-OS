@@ -45,7 +45,8 @@ jobs:
           script: |
             cd /home/asns/projects/AdvancedSystems/agency-os
             
-            # Ensure deploy directories exist
+            # Clean up old .next to prevent Next.js manifest corruption
+            rm -rf apps/web/.next
             mkdir -p apps/web/.next
             
             # Copy new files from deploy_temp
