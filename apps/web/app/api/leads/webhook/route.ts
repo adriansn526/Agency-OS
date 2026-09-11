@@ -98,8 +98,9 @@ export async function POST(req: NextRequest) {
   const phone = sanitize(body.phone || body.telefon || body.tel || '')
   const message = sanitize(body.message || body.mesaj || body.details || body.comentariu || '')
   const service = sanitize(body.service || body.serviciu || body.sourceService || '')
-  const city = sanitize(body.city || body.oras || body.localitate || '')
-  const county = sanitize(body.county || body.judet || body.region || '')
+  const extra = body.extra || {}
+  const city = sanitize(body.city || body.oras || body.localitate || extra.city || extra.oras || extra.localitate || '')
+  const county = sanitize(body.county || body.judet || body.region || extra.county || extra.judet || extra.region || '')
 
   // Tracking fields
   const sourcePage = sanitize(body.sourcePage || body.page || body.pageUrl || '')
@@ -112,7 +113,7 @@ export async function POST(req: NextRequest) {
   const utmContent = sanitize(body.utmContent || body.utm_content || '')
 
   // Extract estimated value (e.g. from calculators or forms)
-  const rawValue = body.pret_estimativ || body.value || body.pret || body.estimat || null
+  const rawValue = body.pret_estimativ || body.value || body.pret || body.estimat || extra.pret_estimativ || extra.value || extra.pret || extra.estimat || null
   let estimatedValue: number | null = null
   if (rawValue !== null && rawValue !== undefined) {
     // Remove non-numeric characters (allow dots for decimals)
