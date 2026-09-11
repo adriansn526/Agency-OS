@@ -581,6 +581,7 @@ const DEFAULT_VISIBLE_COLUMNS: Record<string, boolean> = {
   select: true, companyName: true, status: true, email: true, phone: true,
   estimatedValue: true, probability: true,
   priority: true, source: true, city: true, county: true, industry: true,
+  createdAt: true,
   cui: false, caenCode: false, caenDescription: false, revenue: false, employees: false,
   companyStatus: false, foundedYear: false, website: false, contactRole: false,
   phone2: false, phone3: false, email2: false,
@@ -598,7 +599,7 @@ const COLUMN_LABELS: Record<string, string> = {
   companyStatus: 'Stare Firmă', foundedYear: 'An Înființare', website: 'Website',
   contactRole: 'Funcție Contact', phone2: 'Telefon 2', phone3: 'Telefon 3', email2: 'Email 2',
   activityDomain: 'Domeniu Activitate', services: 'Servicii',
-  boltRating: '⭐ Rating', boltReviews: 'Reviews', interestScore: 'Scor', updatedAt: 'Actualizat',
+  boltRating: '⭐ Rating', boltReviews: 'Reviews', interestScore: 'Scor', updatedAt: 'Actualizat', createdAt: 'Data Creării',
 }
 
 function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggleSelect, selectAll, clearSelection, totalCount, serverPage, serverTotalPages, serverPageSize, onServerPageChange, onServerPageSizeChange }: {
@@ -619,6 +620,17 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
     return DEFAULT_VISIBLE_COLUMNS
   })
   const [pageSize, setPageSize] = useState(serverPageSize)
+  const [pickerTab, setPickerTab] = useState<'visibility' | 'order'>('visibility')
+
+  const [columnOrder, setColumnOrder] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('lead-table-column-order')
+        if (saved) return JSON.parse(saved)
+      } catch {}
+    }
+    return []
+  })
 
   // Persist column preferences
   useEffect(() => {
@@ -626,6 +638,12 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
       localStorage.setItem('lead-table-columns', JSON.stringify(columnVisibility))
     } catch {}
   }, [columnVisibility])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('lead-table-column-order', JSON.stringify(columnOrder))
+    } catch {}
+  }, [columnOrder])
 
   const columns: ColumnDef<Lead>[] = useMemo(
     () => [
@@ -961,23 +979,40 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
         header: "Actualizat",
         cell: ({ getValue }) => <span className="text-xs text-foreground-secondary tabular-nums">{formatDate(getValue() as string)}</span>,
       },
+      {
+        accessorKey: "createdAt",
+        header: "Data Creării",
+        cell: ({ getValue }) => <span className="text-xs text-foreground-secondary tabular-nums">{formatDate(getValue() as string)}</span>,
+      },
     ],
     [selectedIds, toggleSelect, selectAll, clearSelection, data]
   )
 
+  const allColumnIds = useMemo(() => columns.map(c => c.id || (c as any).accessorKey), [columns])
+
+  useEffect(() => {
+    if (columnOrder.length > 0) {
+      const missing = allColumnIds.filter(id => !columnOrder.includes(id))
+      if (missing.length > 0) {
+        setColumnOrder([...columnOrder, ...missing])
+      }
+    }
+  }, [allColumnIds, columnOrder])
+
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility },
+    state: { sorting, columnVisibility, columnOrder: columnOrder.length > 0 ? columnOrder : undefined },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
   // Column groups for the picker
   const columnGroups = useMemo(() => [
-    { label: 'General', ids: ['companyName', 'status', 'estimatedValue', 'probability', 'priority', 'source', 'updatedAt'] },
+    { label: 'General', ids: ['companyName', 'status', 'estimatedValue', 'probability', 'priority', 'source', 'updatedAt', 'createdAt'] },
     { label: 'Contact', ids: ['email', 'phone', 'phone2', 'phone3', 'email2', 'contactRole'] },
     { label: 'Locație', ids: ['city', 'county'] },
     { label: 'Business', ids: ['cui', 'industry', 'caenCode', 'caenDescription', 'revenue', 'employees', 'companyStatus', 'foundedYear', 'website', 'activityDomain', 'services'] },
@@ -1018,14 +1053,16 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
               <>
                 <div className="fixed inset-0 z-40" onClick={() => setShowColumnPicker(false)} />
                 <div className="absolute right-0 top-full mt-1 bg-surface border border-border rounded-xl shadow-2xl p-3 z-50 w-72 max-h-80 overflow-y-auto">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-foreground">Alege Coloanele</span>
+                  <div className="flex items-center gap-4 mb-3 border-b border-border/50 pb-2">
+                    <button onClick={() => setPickerTab('visibility')} className={cn("text-xs font-bold transition-colors", pickerTab === 'visibility' ? "text-primary" : "text-muted-foreground")}>Vizibilitate</button>
+                    <button onClick={() => setPickerTab('order')} className={cn("text-xs font-bold transition-colors", pickerTab === 'order' ? "text-primary" : "text-muted-foreground")}>Ordine</button>
+                    <div className="flex-1" />
                     <button
-                      onClick={() => setColumnVisibility(DEFAULT_VISIBLE_COLUMNS)}
+                      onClick={() => { setColumnVisibility(DEFAULT_VISIBLE_COLUMNS); setColumnOrder(allColumnIds) }}
                       className="text-[9px] text-primary hover:underline"
                     >Reset</button>
                   </div>
-                  {columnGroups.map(group => (
+                  {pickerTab === 'visibility' && columnGroups.map(group => (
                     <div key={group.label} className="mb-2">
                       <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{group.label}</p>
                       <div className="space-y-0.5">
@@ -1045,6 +1082,49 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
                       </div>
                     </div>
                   ))}
+                  {pickerTab === 'order' && (
+                    <div className="space-y-1">
+                      {table.getVisibleLeafColumns().filter(c => c.id !== 'select').map((col, idx, arr) => (
+                        <div key={col.id} className="flex items-center justify-between px-2 py-1.5 bg-muted/30 rounded-md">
+                          <span className="text-xs text-foreground font-medium">{COLUMN_LABELS[col.id] || col.id}</span>
+                          <div className="flex gap-1">
+                            <button 
+                              disabled={idx === 0} 
+                              onClick={() => {
+                                const currentOrder = columnOrder.length > 0 ? columnOrder : allColumnIds
+                                const idx1 = currentOrder.indexOf(col.id)
+                                const prevId = arr[idx - 1]!.id
+                                const idx2 = currentOrder.indexOf(prevId)
+                                const newOrder = [...currentOrder]
+                                newOrder[idx1] = prevId
+                                newOrder[idx2] = col.id
+                                setColumnOrder(newOrder)
+                              }}
+                              className="w-5 h-5 flex items-center justify-center rounded bg-muted hover:bg-muted-foreground/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              <ArrowUp size={10} />
+                            </button>
+                            <button 
+                              disabled={idx === arr.length - 1} 
+                              onClick={() => {
+                                const currentOrder = columnOrder.length > 0 ? columnOrder : allColumnIds
+                                const idx1 = currentOrder.indexOf(col.id)
+                                const nextId = arr[idx + 1]!.id
+                                const idx2 = currentOrder.indexOf(nextId)
+                                const newOrder = [...currentOrder]
+                                newOrder[idx1] = nextId
+                                newOrder[idx2] = col.id
+                                setColumnOrder(newOrder)
+                              }}
+                              className="w-5 h-5 flex items-center justify-center rounded bg-muted hover:bg-muted-foreground/20 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              <ArrowDown size={10} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}

@@ -98,6 +98,8 @@ export async function POST(req: NextRequest) {
   const phone = sanitize(body.phone || body.telefon || body.tel || '')
   const message = sanitize(body.message || body.mesaj || body.details || body.comentariu || '')
   const service = sanitize(body.service || body.serviciu || body.sourceService || '')
+  const city = sanitize(body.city || body.oras || body.localitate || '')
+  const county = sanitize(body.county || body.judet || body.region || '')
 
   // Tracking fields
   const sourcePage = sanitize(body.sourcePage || body.page || body.pageUrl || '')
@@ -108,6 +110,17 @@ export async function POST(req: NextRequest) {
   const utmCampaign = sanitize(body.utmCampaign || body.utm_campaign || '')
   const utmTerm = sanitize(body.utmTerm || body.utm_term || '')
   const utmContent = sanitize(body.utmContent || body.utm_content || '')
+
+  // Extract estimated value (e.g. from calculators or forms)
+  const rawValue = body.pret_estimativ || body.value || body.pret || body.estimat || null
+  let estimatedValue: number | null = null
+  if (rawValue !== null && rawValue !== undefined) {
+    // Remove non-numeric characters (allow dots for decimals)
+    const parsed = parseFloat(String(rawValue).replace(/[^0-9.]/g, ''))
+    if (!isNaN(parsed)) {
+      estimatedValue = parsed
+    }
+  }
 
   // Improve Referrer Detection for Google Ads / Organic
   const isGoogleAds = utmSource.toLowerCase().includes('google_ads') || 
@@ -145,6 +158,9 @@ export async function POST(req: NextRequest) {
         status: 'nou',
         source: keyRecord.domain, // domeniul ca sursă
         notes: message || null,
+        value: estimatedValue,
+        city: city || null,
+        county: county || null,
         // Form tracking
         sourceDomain: keyRecord.domain,
         sourcePage: sourcePage || null,
