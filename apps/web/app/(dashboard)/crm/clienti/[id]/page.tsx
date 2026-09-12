@@ -1167,6 +1167,15 @@ function ClientReportsTab({ clientId, clientName }: { clientId: string; clientNa
     setSendCc("")
     setSendMsg("")
     setSendFiles([])
+    
+    fetch(`/api/reports/${report.id}/snapshot`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.data && json.data.length > 0) {
+          setSendMsg(json.data[0].content)
+        }
+      })
+      .catch(console.error)
   }
 
   async function handleSend() {

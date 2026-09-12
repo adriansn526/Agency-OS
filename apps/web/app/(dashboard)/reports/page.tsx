@@ -17,6 +17,7 @@ import {
   AdsAdGroupPerformance,
 } from "@/components/report/report-ads-extended"
 import { ReportWidgetEditor } from "@/components/report/report-widget-editor"
+import { ReportScheduleEditor } from "@/components/report/report-schedule-editor"
 
 // ─── Inline Report Widgets (Admin-only, render aggregated data) ───
 
@@ -593,6 +594,17 @@ function SendReportModal({ reportId, clientEmail, clientName, reportTitle, publi
   const [sending, setSending] = useState(false)
   const fileRef = { current: null as HTMLInputElement | null }
 
+  useEffect(() => {
+    fetch(`/api/reports/${reportId}/snapshot`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.data && json.data.length > 0) {
+          setMessage(json.data[0].content)
+        }
+      })
+      .catch(console.error)
+  }, [reportId])
+
   async function handleSend() {
     if (!to.trim()) return
     setSending(true)
@@ -704,6 +716,7 @@ export default function ReportsPage() {
   const [generatingAi, setGeneratingAi] = useState(false)
   const [sendModal, setSendModal] = useState(false)
   const [widgetEditorOpen, setWidgetEditorOpen] = useState(false)
+  const [scheduleEditorOpen, setScheduleEditorOpen] = useState(false)
 
   // ─── Fetch clients ───
   useEffect(() => {
@@ -1078,32 +1091,62 @@ export default function ReportsPage() {
             )}
           </div>
 
-          {/* Widget Editor */}
+          {/* Widget Editor & Schedule Editor */}
           {existingReport && (
-            <div className="space-y-3">
-              <button
-                onClick={() => setWidgetEditorOpen(!widgetEditorOpen)}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors w-full justify-center",
-                  widgetEditorOpen
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted/30 border border-border text-foreground hover:bg-muted/50"
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="space-y-3">
+                <button
+                  onClick={() => setWidgetEditorOpen(!widgetEditorOpen)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors w-full justify-center",
+                    widgetEditorOpen
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted/30 border border-border text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <Settings2 size={14} />
+                  {widgetEditorOpen ? "Închide Configurare Widget-uri" : "⚙️ Configurare Widget-uri (Layout)"}
+                </button>
+                {widgetEditorOpen && (
+                  <ReportWidgetEditor
+                    reportId={existingReport.id}
+                    initialWidgets={existingReport.widgets || []}
+                    onSave={(widgets) => {
+                      setExistingReport((prev: any) => ({ ...prev, widgets }))
+                      showToast("✅ Widget-urile au fost salvate!")
+                    }}
+                    onClose={() => setWidgetEditorOpen(false)}
+                  />
                 )}
-              >
-                <Settings2 size={14} />
-                {widgetEditorOpen ? "Închide Configurare Widget-uri" : "⚙️ Configurare Widget-uri (Layout Raport Public)"}
-              </button>
-              {widgetEditorOpen && (
-                <ReportWidgetEditor
-                  reportId={existingReport.id}
-                  initialWidgets={existingReport.widgets || []}
-                  onSave={(widgets) => {
-                    setExistingReport((prev: any) => ({ ...prev, widgets }))
-                    showToast("✅ Widget-urile au fost salvate!")
-                  }}
-                  onClose={() => setWidgetEditorOpen(false)}
-                />
-              )}
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => setScheduleEditorOpen(!scheduleEditorOpen)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors w-full justify-center",
+                    scheduleEditorOpen
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted/30 border border-border text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <Calendar size={14} />
+                  {scheduleEditorOpen ? "Închide Programare" : "📅 Programare Trimitere Lunară"}
+                </button>
+                {scheduleEditorOpen && (
+                  <ReportScheduleEditor
+                    reportId={existingReport.id}
+                    initialScheduleEnabled={existingReport.scheduleEnabled}
+                    initialScheduleDay={existingReport.scheduleDay}
+                    initialScheduleHour={existingReport.scheduleHour as number | null}
+                    initialScheduleEmails={existingReport.scheduleEmails}
+                    initialScheduleMessage={existingReport.scheduleMessage}
+                    onSave={(data) => {
+                      setExistingReport((prev: any) => ({ ...prev, ...data }))
+                    }}
+                  />
+                )}
+              </div>
             </div>
           )}
         </>
