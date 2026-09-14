@@ -1,7 +1,7 @@
 import { generateObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
-import pdfParse from 'pdf-parse'
+const pdfParse = require('pdf-parse')
 
 // Schema Zod pentru extracția datelor din factură
 export const invoiceSchema = z.object({
