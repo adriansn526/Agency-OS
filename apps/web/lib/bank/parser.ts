@@ -1,9 +1,8 @@
-const pdfParse = require('pdf-parse')
-
 /**
  * Extrage textul din PDF și returnează doar secțiunea care corespunde IBAN-ului specificat.
  */
 export async function parsePdfForAccount(buffer: Buffer, accountIban: string): Promise<string> {
+  const pdfParse = require('pdf-parse')
   const data = await pdfParse(buffer)
   const fullText = data.text
 

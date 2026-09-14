@@ -1,7 +1,6 @@
 import { generateObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
-const pdfParse = require('pdf-parse')
 
 // Schema Zod pentru extracția datelor din factură
 export const invoiceSchema = z.object({
@@ -15,6 +14,7 @@ export const invoiceSchema = z.object({
 export type ExtractedInvoice = z.infer<typeof invoiceSchema>
 
 export async function parsePdfToText(buffer: Buffer): Promise<string> {
+  const pdfParse = require('pdf-parse')
   try {
     const data = await pdfParse(buffer)
     return data.text
