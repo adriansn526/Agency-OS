@@ -51,6 +51,8 @@ import { AIContentGenerator } from "@/components/ai-content-generator"
 
 import { ProjectSeoImpactTab } from "@/components/project-seo-impact-tab"
 import { ProjectContentSourcesTab } from "@/components/project-content-sources-tab"
+import { getDashboardVariant, getCardsConfig } from "@/lib/project-types/config"
+import { WebDevDashboard } from "@/components/project-dashboards/web-dev-dashboard"
 
 type TabView = "overview" | "tasks" | "time" | "files" | "activity" | "performance" | "keywords" | "financial" | "analytics" | "settings" | "ai-content" | "seo-audit" | "seo-content" | "seo-backlinks" | "seo-impact" | "content-sources"
 
@@ -223,10 +225,14 @@ export default function ProjectSinglePage() {
   )
 
   // Determine project type capabilities
+  const dashboardVariant = getDashboardVariant(project?.templateId)
+  const cardsConfig = getCardsConfig(project?.templateId)
+  const isWebDevProject = dashboardVariant === 'webdev'
+  
   const isSeoProject = ['seo_project', 'seo_programmatic'].includes(project?.templateId || '')
   const isAdsProject = ['ads_campaign', 'linkedin_campaign', 'instagram_campaign', 'facebook_campaign', 'tiktok_campaign'].includes(project?.templateId || '')
   const isMarketingProject = isSeoProject || isAdsProject || ['social_media'].includes(project?.templateId || '')
-  const hasDashboard = isSeoProject || isAdsProject
+  const hasDashboard = isSeoProject || isAdsProject || isWebDevProject
 
   // Local tasks and time entries from metadata
   const localTasks = metadata.tasks || []
@@ -416,6 +422,12 @@ export default function ProjectSinglePage() {
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-4">
+            
+            {/* Web Dev Dashboard */}
+            {isWebDevProject && (
+              <WebDevDashboard project={project} cardsConfig={cardsConfig} />
+            )}
+
             {/* Google Ads KPI Cards */}
             {isAdsProject && liveKPIs?.googleAds && !('error' in liveKPIs.googleAds) && (
               <div className="bg-gradient-to-r from-primary/5 to-success/5 rounded-xl border border-primary/20 p-5">
@@ -533,7 +545,7 @@ export default function ProjectSinglePage() {
             )}
 
             {/* Non-Ads KPI metadata cards */}
-            {!isAdsProject && !isSeoProject && enrichedKpis.length > 0 && (
+            {!isAdsProject && !isSeoProject && !isWebDevProject && enrichedKpis.length > 0 && (
               <div className="bg-surface rounded-xl border border-border p-5">
                 <h3 className="text-sm font-semibold text-foreground mb-3">KPI-uri Proiect</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1170,7 +1182,7 @@ export default function ProjectSinglePage() {
               )}
 
               {/* Fallback — no data */}
-              {!isAdsProject && !isSeoProject && (
+              {!isAdsProject && !isSeoProject && !isWebDevProject && (
                 <div className="bg-surface rounded-xl border border-border p-5 text-center">
                   <p className="text-sm text-muted-foreground">⚠️ Nu sunt configurate integrări de performanță pentru acest tip de proiect.</p>
                 </div>
