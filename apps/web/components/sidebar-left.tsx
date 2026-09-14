@@ -73,7 +73,15 @@ const coreModules: NavItem[] = [
   },
   { title: "Proiecte", href: "/projects", icon: FolderKanban },
   { title: "Financiar", href: "/finance", icon: Receipt },
-  { title: "Furnizori", href: "/suppliers", icon: Building2 },
+  { 
+    title: "Furnizori", href: "/suppliers", icon: Building2,
+    children: [
+      { title: "Toți Furnizorii", href: "/suppliers", icon: Building2 },
+      { title: "Review Facturi", href: "/suppliers/review", icon: FileText },
+      { title: "Extrase Cont (BT)", href: "/suppliers/bank-statements", icon: FileText },
+      { title: "Reconciliere", href: "/suppliers/reconciliation", icon: FileText }
+    ]
+  },
   { title: "Oferte", href: "/offers", icon: Send },
   { title: "Contracte", href: "/contracts", icon: FileText },
 ]

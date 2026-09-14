@@ -1035,24 +1035,25 @@ model Supplier {
 }
 
 model SupplierInvoice {
-  id               String            @id @default(cuid())
-  tenantId         String
-  supplierId       String
-  businessLineId   String? // opțional pt rutare cheltuieli pe linie de business
-  supplier         Supplier          @relation(fields: [supplierId], references: [id])
-  amount           Decimal
-  currency         String            @default("RON")
-  issueDate        DateTime
-  dueDate          DateTime?
-  invoiceNumber    String?
-  pdfUrl           String
-  status           String            @default("unpaid") // unpaid | partial | paid
-  source           String // manual | email | api
-  sourceRef        String? // message-id / api-transaction-id
-  extractionStatus String            @default("confirmed") // pending_review | confirmed | rejected
-  extractedBy      String? // llm | api_native | human
-  createdAt        DateTime          @default(now())
-  payments         SupplierPayment[]
+  id                    String            @id @default(cuid())
+  tenantId              String
+  supplierId            String?
+  extractedSupplierName String? // Numele detectat de LLM pentru facturile orfane
+  businessLineId        String? // opțional pt rutare cheltuieli pe linie de business
+  supplier              Supplier?         @relation(fields: [supplierId], references: [id])
+  amount                Decimal
+  currency              String            @default("RON")
+  issueDate             DateTime
+  dueDate               DateTime?
+  invoiceNumber         String?
+  pdfUrl                String
+  status                String            @default("unpaid") // unpaid | partial | paid
+  source                String // manual | email | api
+  sourceRef             String? // message-id / api-transaction-id
+  extractionStatus      String            @default("confirmed") // pending_review | confirmed | rejected
+  extractedBy           String? // llm | api_native | human
+  createdAt             DateTime          @default(now())
+  payments              SupplierPayment[]
 
   @@unique([supplierId, invoiceNumber])
   @@index([tenantId])

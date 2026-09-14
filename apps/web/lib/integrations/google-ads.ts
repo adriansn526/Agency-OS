@@ -982,3 +982,41 @@ export async function getKeywordVolumes(customerId: string, keywords: string[]):
   }
   return result;
 }
+
+/** 
+ * Fetch billing invoices from Google Ads 
+ * Queries the invoice resource to extract billing history.
+ */
+export async function getBillingInvoices(customerId: string, dateFrom: string, dateTo: string) {
+  try {
+    const customer = getAdsCustomer(customerId);
+    const query = `
+      SELECT
+        invoice.id,
+        invoice.issue_date,
+        invoice.due_date,
+        invoice.amount_micros,
+        invoice.currency_code,
+        invoice.pdf_url
+      FROM invoice
+      WHERE invoice.issue_date >= '${dateFrom}' AND invoice.issue_date <= '${dateTo}'
+    `;
+    
+    const results = await customer.query(query);
+    return results.map(row => {
+      const inv = (row as any).invoice;
+      return {
+        id: inv.id,
+        issueDate: inv.issue_date,
+        dueDate: inv.due_date,
+        amount: (inv.amount_micros || 0) / 1_000_000,
+        currency: inv.currency_code || 'RON',
+        pdfUrl: inv.pdf_url,
+      };
+    });
+  } catch (error) {
+    console.error('[Google Ads] Failed to fetch invoices:', error);
+    return [];
+  }
+}
+
