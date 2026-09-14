@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { endOfMonth, startOfMonth, parseISO } from 'date-fns'
 import { downloadFromS3 } from '@/lib/storage/s3'
-import archiver from 'archiver'
+const archiver = require('archiver')
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
