@@ -82,6 +82,7 @@ const coreModules: NavItem[] = [
       { title: "Reconciliere", href: "/suppliers/reconciliation", icon: FileText }
     ]
   },
+  { title: "Contabilitate", href: "/accounting", icon: FileText },
   { title: "Oferte", href: "/offers", icon: Send },
   { title: "Contracte", href: "/contracts", icon: FileText },
 ]

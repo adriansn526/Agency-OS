@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { extractInvoiceData, parsePdfToText } from '@/lib/invoices/parser'
+import { uploadToS3 } from '@/lib/storage/s3'
 
 // Pentru a rula mock-ul (PDF fake buffer)
 const mockPdfBuffer = Buffer.from('PDF_FAKE_CONTENT_MOCK_123')
@@ -42,6 +43,12 @@ export async function POST(request: NextRequest) {
 
     // 5. Salvare în baza de date
     // Dacă LLM failed (sau OCR fallback a dat return), invoice intră orfan
+    
+    // Încărcăm pe S3 (storage privat real)
+    const pdfBufferToUpload = pdfBase64 ? Buffer.from(pdfBase64, 'base64') : mockPdfBuffer
+    const s3Key = `invoices/${tenant.id}/${Date.now()}-${messageId.replace(/[^a-z0-9]/gi, '_')}.pdf`
+    await uploadToS3(s3Key, pdfBufferToUpload)
+
     if (!data || error === 'OCR_FALLBACK_REQUIRED') {
       const saved = await db.supplierInvoice.create({
         data: {
@@ -49,7 +56,7 @@ export async function POST(request: NextRequest) {
           amount: 0,
           currency: 'RON',
           issueDate: new Date(),
-          pdfUrl: 'https://mock-bucket.s3.eu-central-1.amazonaws.com/mock.pdf', // Stocare R2/S3
+          pdfUrl: s3Key, // Stocare R2/S3
           source: 'email',
           sourceRef: messageId,
           extractionStatus: 'pending_review',
@@ -77,7 +84,7 @@ export async function POST(request: NextRequest) {
         currency: data.currency,
         issueDate: new Date(data.issueDate),
         invoiceNumber: data.invoiceNumber,
-        pdfUrl: 'https://mock-bucket.s3.eu-central-1.amazonaws.com/mock.pdf', // R2/S3
+        pdfUrl: s3Key, // R2/S3
         source: 'email',
         sourceRef: messageId,
         extractionStatus: 'pending_review',

@@ -3,6 +3,7 @@ import { db } from '@repo/db'
 import { decryptPdf } from '@/lib/bank/decrypt'
 import { parsePdfForAccount } from '@/lib/bank/parser'
 import { extractTransactionsFromText } from '@/lib/bank/llm-extractor'
+import { uploadToS3 } from '@/lib/storage/s3'
 import { Decimal } from 'decimal.js'
 
 export async function POST(request: NextRequest) {
@@ -128,6 +129,10 @@ export async function POST(request: NextRequest) {
          extractionStatus = 'pending_review'
       }
 
+      // Încarcă pe S3 PDF-ul original
+      const s3Key = `bank-statements/${tenant.id}/${Date.now()}-statement.pdf`
+      await uploadToS3(s3Key, inputBuffer)
+
       // Salvare în baza de date
       await db.bankTransaction.create({
         data: {
@@ -143,7 +148,7 @@ export async function POST(request: NextRequest) {
           matchedInvoiceId,
           matchStatus,
           extractionStatus,
-          sourcePdfUrl: 'upload-mock-url.pdf' // în prod: upload S3 URL real
+          sourcePdfUrl: s3Key // upload real S3
         }
       })
       

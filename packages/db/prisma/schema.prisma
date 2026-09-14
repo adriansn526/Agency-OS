@@ -1102,3 +1102,31 @@ model BankTransaction {
 
   @@index([tenantId])
 }
+
+// ═══════════════════════════════════════════════════════
+// ACCOUNTING PACKAGE (FAZA 4)
+// ═══════════════════════════════════════════════════════
+
+model AccountingSettings {
+  id              String   @id @default(cuid())
+  tenantId        String   @unique
+  accountantEmail String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model AccountingPackage {
+  id           String   @id @default(cuid())
+  tenantId     String
+  month        String   // e.g., "2026-09"
+  sentAt       DateTime @default(now())
+  sentBy       String   // ID-ul utilizatorului autentificat (nu hardcodat)
+  invoiceCount Int
+  totalAmount  Decimal
+  downloadUrl  String?
+  status       String   @default("sent")
+
+  @@index([tenantId])
+}
