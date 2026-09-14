@@ -20,9 +20,9 @@ const PROVIDERS = [
   {
     value: "gemini" as const,
     label: "Google Gemini",
-    desc: "Gratuit până la 15 req/min — gemini-2.5-flash",
-    models: ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.0-flash-lite"],
-    defaultModel: "gemini-2.5-flash",
+    desc: "Gratuit până la 15 req/min — gemini-3.6-flash",
+    models: ["gemini-3.6-flash", "gemini-2.5-pro", "gemini-2.0-flash-lite"],
+    defaultModel: "gemini-3.6-flash",
   },
   {
     value: "openai" as const,

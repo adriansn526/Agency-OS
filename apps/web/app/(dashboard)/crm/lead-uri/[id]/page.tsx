@@ -370,6 +370,14 @@ export default function SingleLeadPage() {
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Câmpuri specifice formular (Raw Data)</p>
                       <div className="bg-muted/30 rounded-lg p-3 space-y-2">
                         {Object.entries(lead.customFields.rawFormData).map(([key, val]) => {
+                          if (val && typeof val === 'object') {
+                            return Object.entries(val).map(([subKey, subVal]) => (
+                              <div key={`${key}-${subKey}`} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                                <span className="text-[11px] font-medium text-muted-foreground w-1/3 shrink-0 capitalize">{(subKey as string).replace(/_/g, ' ')}:</span>
+                                <span className="text-xs text-foreground font-medium break-words">{String(subVal)}</span>
+                              </div>
+                            ))
+                          }
                           if (typeof val !== 'string' && typeof val !== 'number' && typeof val !== 'boolean') return null;
                           return (
                             <div key={key} className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">

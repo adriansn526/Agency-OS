@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     // Initialize Gemini
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       systemInstruction: systemPrompt,
       tools: [{ functionDeclarations: toGeminiFunctionDeclarations() as any }],
       generationConfig: {
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
           // Log usage
           logUsage({
             provider: 'gemini',
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             promptTokens: 0,
             completionTokens: 0,
             action: 'copilot_chat',

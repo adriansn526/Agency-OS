@@ -22,8 +22,8 @@ export function ReportSeoArticles({ data, loading }: { data?: ArticleData[]; loa
       <div style={{ padding: "16px 24px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
         {data.map((article, i) => {
           // Extract clean title from URL
-          const urlPath = article.page.replace(/^https?:\/\/[^/]+/, "")
-          const slug = urlPath.split("/").filter(Boolean).pop() || urlPath
+          const urlPath = (article.page || "").replace(/^https?:\/\/[^/]+/, "")
+          const slug = urlPath.split("/").filter(Boolean).pop() || ""
           const title = slug.replace(/-/g, " ").replace(/(^|\s)\S/g, l => l.toUpperCase())
 
           return (

@@ -12,12 +12,17 @@ interface Snapshot {
   createdAt: string
 }
 
-export function ReportInterpretation({ snapshots }: { snapshots: Snapshot[] }) {
+export function ReportInterpretation({ snapshots, dateRange }: { snapshots: Snapshot[], dateRange: { from: string, to: string } }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
-  if (snapshots.length === 0) return null
+  // Filter snapshots to only those that match the current date range
+  const relevantSnapshots = snapshots.filter(s => {
+    return s.dateFrom.startsWith(dateRange.from) && s.dateTo.startsWith(dateRange.to)
+  })
 
-  const active = snapshots[activeIndex]
+  if (relevantSnapshots.length === 0) return null
+
+  const active = relevantSnapshots[activeIndex]
   if (!active) return null
   const formatDate = (d: string) => new Date(d).toLocaleDateString("ro-RO", { month: "short", year: "numeric" })
   const highlights = Array.isArray(active.highlights) ? active.highlights as Array<{ label: string; value: string; trend?: string }> : null
@@ -27,7 +32,7 @@ export function ReportInterpretation({ snapshots }: { snapshots: Snapshot[] }) {
       <div style={{ padding: "16px 24px 24px" }}>
         {/* Period tabs */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
-          {snapshots.map((s, i) => (
+          {relevantSnapshots.map((s, i) => (
             <button
               key={s.id}
               onClick={() => setActiveIndex(i)}

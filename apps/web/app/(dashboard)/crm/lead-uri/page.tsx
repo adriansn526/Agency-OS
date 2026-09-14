@@ -25,6 +25,23 @@ import {
   type VisibilityState,
   type SortingState,
 } from "@tanstack/react-table"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 /* ============================================================
    Types & Configs
@@ -602,6 +619,20 @@ const COLUMN_LABELS: Record<string, string> = {
   boltRating: '⭐ Rating', boltReviews: 'Reviews', interestScore: 'Scor', updatedAt: 'Actualizat', createdAt: 'Data Creării',
 }
 
+function SortableColumnItem({ col, label }: { col: any, label: string }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: col.id })
+  const style = { transform: CSS.Transform.toString(transform), transition }
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center justify-between px-2 py-1.5 bg-muted/30 rounded-md border border-transparent hover:border-border/50">
+      <span className="text-xs text-foreground font-medium">{label}</span>
+      <button {...attributes} {...listeners} className="w-5 h-5 flex items-center justify-center rounded text-muted-foreground hover:text-foreground hover:bg-muted-foreground/20 cursor-grab active:cursor-grabbing">
+        <GripVertical size={12} />
+      </button>
+    </div>
+  )
+}
+
 function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggleSelect, selectAll, clearSelection, totalCount, serverPage, serverTotalPages, serverPageSize, onServerPageChange, onServerPageSizeChange }: {
   leads: Lead[]; onClickLead: (lead: Lead) => void; isAll?: boolean
   selectedIds: Set<string>; toggleSelect: (id: string) => void; selectAll: () => void; clearSelection: () => void
@@ -631,6 +662,11 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
     }
     return []
   })
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
 
   // Persist column preferences
   useEffect(() => {
@@ -1083,47 +1119,25 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
                     </div>
                   ))}
                   {pickerTab === 'order' && (
-                    <div className="space-y-1">
-                      {table.getVisibleLeafColumns().filter(c => c.id !== 'select').map((col, idx, arr) => (
-                        <div key={col.id} className="flex items-center justify-between px-2 py-1.5 bg-muted/30 rounded-md">
-                          <span className="text-xs text-foreground font-medium">{COLUMN_LABELS[col.id] || col.id}</span>
-                          <div className="flex gap-1">
-                            <button 
-                              disabled={idx === 0} 
-                              onClick={() => {
-                                const currentOrder = columnOrder.length > 0 ? columnOrder : allColumnIds
-                                const idx1 = currentOrder.indexOf(col.id)
-                                const prevId = arr[idx - 1]!.id
-                                const idx2 = currentOrder.indexOf(prevId)
-                                const newOrder = [...currentOrder]
-                                newOrder[idx1] = prevId
-                                newOrder[idx2] = col.id
-                                setColumnOrder(newOrder)
-                              }}
-                              className="w-5 h-5 flex items-center justify-center rounded bg-muted hover:bg-muted-foreground/20 disabled:opacity-30 disabled:cursor-not-allowed"
-                            >
-                              <ArrowUp size={10} />
-                            </button>
-                            <button 
-                              disabled={idx === arr.length - 1} 
-                              onClick={() => {
-                                const currentOrder = columnOrder.length > 0 ? columnOrder : allColumnIds
-                                const idx1 = currentOrder.indexOf(col.id)
-                                const nextId = arr[idx + 1]!.id
-                                const idx2 = currentOrder.indexOf(nextId)
-                                const newOrder = [...currentOrder]
-                                newOrder[idx1] = nextId
-                                newOrder[idx2] = col.id
-                                setColumnOrder(newOrder)
-                              }}
-                              className="w-5 h-5 flex items-center justify-center rounded bg-muted hover:bg-muted-foreground/20 disabled:opacity-30 disabled:cursor-not-allowed"
-                            >
-                              <ArrowDown size={10} />
-                            </button>
-                          </div>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event) => {
+                      const { active, over } = event
+                      if (over && active.id !== over.id) {
+                        const currentOrder = columnOrder.length > 0 ? columnOrder : allColumnIds
+                        const oldIndex = currentOrder.indexOf(active.id as string)
+                        const newIndex = currentOrder.indexOf(over.id as string)
+                        if (oldIndex !== -1 && newIndex !== -1) {
+                          setColumnOrder(arrayMove(currentOrder, oldIndex, newIndex))
+                        }
+                      }
+                    }}>
+                      <SortableContext items={table.getVisibleLeafColumns().filter(c => c.id !== 'select').map(c => c.id)} strategy={verticalListSortingStrategy}>
+                        <div className="space-y-1">
+                          {table.getVisibleLeafColumns().filter(c => c.id !== 'select').map((col) => (
+                            <SortableColumnItem key={col.id} col={col} label={COLUMN_LABELS[col.id] || col.id} />
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </SortableContext>
+                    </DndContext>
                   )}
                 </div>
               </>

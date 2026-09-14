@@ -31,7 +31,7 @@ export function ReportSeoTables({ data, loading }: { data?: SeoTablesData; loadi
             { key: "ctr", label: "CTR", align: "right" },
             { key: "position", label: "Poz.", align: "right" },
           ]}
-          rows={(data.queries || []).map(q => ({ ...q, ctr: (q.ctr ?? 0).toFixed(1) + "%", position: (q.position ?? 0).toFixed(1) }))}
+          rows={(data.queries || []).map(q => ({ ...q, ctr: ((q.ctr ?? 0) * 100).toFixed(2) + "%", position: (q.position ?? 0).toFixed(1) }))}
           maxRows={20}
         />
       )}
@@ -46,8 +46,8 @@ export function ReportSeoTables({ data, loading }: { data?: SeoTablesData; loadi
           ]}
           rows={(data.pages || []).map(p => ({
             ...p,
-            pageShort: p.page.replace(/^https?:\/\/[^/]+/, "").slice(0, 60),
-            ctr: (p.ctr ?? 0).toFixed(1) + "%",
+            pageShort: (p.page || "").replace(/^https?:\/\/[^/]+/, "").slice(0, 60),
+            ctr: ((p.ctr ?? 0) * 100).toFixed(2) + "%",
           }))}
           maxRows={20}
         />

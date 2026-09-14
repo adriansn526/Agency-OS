@@ -69,6 +69,10 @@ export async function GET(request: NextRequest) {
         viewedAt: true,
         widgets: true,
         showCostData: true,
+        scheduleEnabled: true,
+        scheduleDay: true,
+        scheduleEmails: true,
+        scheduleMessage: true,
         _count: { select: { snapshots: true } },
       },
     })

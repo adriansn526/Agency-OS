@@ -726,6 +726,14 @@ model ClientReport {
   notes          String?   @db.Text
   status         String    @default("active")
   showCostData   Boolean   @default(false) // Whether client can see spend/CPC data
+  
+  // Scheduling fields
+  scheduleEnabled Boolean  @default(false)
+  scheduleDay     Int?     // 1-28
+  scheduleHour    Int?     // 0-23
+  scheduleEmails  String?  // Comma separated list of extra emails
+  scheduleMessage String?  @db.Text // Predefined message for executive summary
+  
   sentAt         DateTime?
   viewedAt       DateTime?
   viewCount      Int       @default(0)

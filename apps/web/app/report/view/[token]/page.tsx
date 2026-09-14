@@ -45,11 +45,12 @@ function getDefaultDates(): { from: string; to: string } {
 
 // ─── Widget Renderer ───
 // Maps widget type to the corresponding component
-function WidgetRenderer({ type, data, dataLoading, meta }: {
+function WidgetRenderer({ type, data, dataLoading, meta, dateRange }: {
   type: string
   data: Record<string, unknown> | null
   dataLoading: boolean
   meta: ReportMeta
+  dateRange: { from: string; to: string }
 }) {
   switch (type) {
     case "conversions_hero":
@@ -85,7 +86,7 @@ function WidgetRenderer({ type, data, dataLoading, meta }: {
     case "uptime":
       return <ReportUptimeWidget data={data?.uptime as any} loading={dataLoading} />
     case "interpretation":
-      return meta.snapshots.length > 0 ? <ReportInterpretation snapshots={meta.snapshots} /> : null
+      return meta.snapshots.length > 0 ? <ReportInterpretation snapshots={meta.snapshots} dateRange={dateRange} /> : null
     default:
       return null
   }
@@ -116,6 +117,16 @@ function PublicReportContent() {
         if (!res.ok) throw new Error("Raport indisponibil")
         const json = await res.json()
         setMeta(json.data)
+
+        // Default to latest snapshot dates if no URL params are present
+        const fromParam = searchParams.get("from")
+        if (!fromParam && json.data.snapshots?.length > 0) {
+          const latest = json.data.snapshots[0]
+          setDateRange({
+            from: latest.dateFrom.slice(0, 10),
+            to: latest.dateTo.slice(0, 10)
+          })
+        }
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -199,6 +210,11 @@ function PublicReportContent() {
     )
   }
 
+  const enabledWidgets = meta?.widgets.filter(w => w.enabled).map(w => w.type) || []
+  const jsonUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/api/reports/public/${token}/data?widgets=${enabledWidgets.join(",")}&from=${dateRange.from}&to=${dateRange.to}`
+    : ""
+
   return (
     <div style={{
       fontFamily: "Inter, sans-serif",
@@ -216,6 +232,7 @@ function PublicReportContent() {
         onDateChange={setDateRange}
         loading={dataLoading}
         theme={theme}
+        jsonUrl={jsonUrl}
       />
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
@@ -258,6 +275,7 @@ function PublicReportContent() {
                   data={data}
                   dataLoading={dataLoading}
                   meta={meta}
+                  dateRange={dateRange}
                 />
               </div>
             )

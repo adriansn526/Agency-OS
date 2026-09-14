@@ -39,13 +39,18 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { title, widgets, notes, status } = body
+    const { title, widgets, notes, status, scheduleEnabled, scheduleDay, scheduleHour, scheduleEmails, scheduleMessage } = body
 
     const updateData: Record<string, unknown> = {}
     if (title !== undefined) updateData.title = title
     if (widgets !== undefined) updateData.widgets = widgets
     if (notes !== undefined) updateData.notes = notes
     if (status !== undefined) updateData.status = status
+    if (scheduleEnabled !== undefined) updateData.scheduleEnabled = scheduleEnabled
+    if (scheduleDay !== undefined) updateData.scheduleDay = scheduleDay
+    if (scheduleHour !== undefined) updateData.scheduleHour = scheduleHour
+    if (scheduleEmails !== undefined) updateData.scheduleEmails = scheduleEmails
+    if (scheduleMessage !== undefined) updateData.scheduleMessage = scheduleMessage
 
     const report = await db.clientReport.update({
       where: { id },

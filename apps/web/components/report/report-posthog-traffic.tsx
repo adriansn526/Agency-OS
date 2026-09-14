@@ -108,7 +108,7 @@ export function ReportPosthogTraffic({ data, loading }: { data?: TrafficData; lo
             ]}
             rows={data.topPages.map(p => ({
               ...p,
-              page: p.page.replace(/^https?:\/\/[^/]+/, ''), // Show path only
+              page: (p.page || "").replace(/^https?:\/\/[^/]+/, ''), // Show path only
             }))}
             maxRows={10}
           />

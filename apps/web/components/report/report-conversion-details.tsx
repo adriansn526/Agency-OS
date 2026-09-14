@@ -157,7 +157,7 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
                   </tr>
                 </thead>
                 <tbody>
-                  {data!.conversionsByPage!.slice(0, 20).map((cp, i) => (
+                  {(data?.conversionsByPage || []).slice(0, 20).map((cp, i) => (
                     <React.Fragment key={i}>
                       <tr 
                         onClick={() => cp.leads?.length ? setExpandedRow(expandedRow === i ? null : i) : undefined}

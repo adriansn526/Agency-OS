@@ -3,6 +3,8 @@ import { db } from '@repo/db'
 import { migrateWidgetConfigs } from '@/lib/report-widget-catalog'
 import { getReportTheme } from '@/lib/report-themes'
 
+export const dynamic = 'force-dynamic'
+
 // ─── GET /api/reports/public/[token] ───
 // Public route — no auth required. Returns report metadata + snapshots.
 export async function GET(

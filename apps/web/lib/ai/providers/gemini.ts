@@ -10,7 +10,7 @@ export class GeminiProvider implements LLMProvider {
 
   constructor(apiKey?: string, model?: string) {
     this.genAI = new GoogleGenerativeAI(apiKey || process.env.GOOGLE_API_KEY || '')
-    this.modelName = model || process.env.GEMINI_MODEL || 'gemini-2.5-flash'
+    this.modelName = model || process.env.GEMINI_MODEL || 'gemini-3.6-flash'
   }
 
   async generate(messages: LLMMessage[], options?: LLMOptions): Promise<LLMResponse> {

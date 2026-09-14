@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState, useCallback } from "react"
 import {
   BarChart3, Plus, Copy, Send, Sparkles, ExternalLink, Eye,
@@ -891,6 +892,13 @@ export default function ReportsPage() {
           </h1>
           <p className="text-sm text-muted-foreground">Dashboard live per domeniu client</p>
         </div>
+        <Link 
+          href="/reports/schedules" 
+          className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-lg text-sm font-semibold hover:bg-muted/30 transition-colors"
+        >
+          <Calendar size={16} className="text-primary" />
+          Programări
+        </Link>
       </div>
 
       {/* Selectors Bar */}

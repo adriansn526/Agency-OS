@@ -16,7 +16,7 @@ export function ReportSeoKpis({ data, loading }: { data?: SeoMetrics; loading?: 
       <div style={{ padding: 24, display: "flex", gap: 16, flexWrap: "wrap" }}>
         <KpiCard label="Clicks Organic" value={(data.clicks ?? 0).toLocaleString("ro-RO")} color="#34a853" />
         <KpiCard label="Impressions" value={(data.impressions ?? 0).toLocaleString("ro-RO")} />
-        <KpiCard label="CTR" value={`${data.ctr}%`} color="#4285f4" />
+        <KpiCard label="CTR" value={`${((data.ctr ?? 0) * 100).toFixed(2)}%`} color="#4285f4" />
         <KpiCard label="Poziție Medie" value={(data.position ?? 0).toFixed(1)} color={posColor} />
       </div>
     </WidgetWrapper>

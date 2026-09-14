@@ -94,8 +94,19 @@ export function SystemAlertsSidebar({ open, onClose, onAlertsChange }: { open: b
                       <p className="text-xs text-muted-foreground mt-1 font-medium">Domeniu: {alert.domain}</p>
                     )}
                     {alert.description && (
-                      <div className="text-xs text-muted-foreground mt-2 leading-relaxed bg-muted/30 p-2 rounded border border-border/50 line-clamp-4">
-                        {alert.description}
+                      <div className="text-xs text-muted-foreground mt-2 leading-relaxed bg-muted/30 p-2 rounded border border-border/50 max-h-60 overflow-y-auto">
+                        {(() => {
+                          try {
+                            const parsed = JSON.parse(alert.description)
+                            return (
+                              <pre className="text-[10px] font-mono whitespace-pre-wrap break-all">
+                                {JSON.stringify(parsed, null, 2)}
+                              </pre>
+                            )
+                          } catch (e) {
+                            return <span className="whitespace-pre-wrap">{alert.description}</span>
+                          }
+                        })()}
                       </div>
                     )}
                     <div className="text-[10px] text-muted-foreground mt-3">

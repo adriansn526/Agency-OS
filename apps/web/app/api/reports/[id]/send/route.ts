@@ -16,12 +16,14 @@ export async function POST(
     let to: string = ''
     let cc: string[] = []
     let message: string = ''
+    let dateRange: string = 'Ultimele 30 zile'
     const attachments: EmailAttachment[] = []
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData()
       to = formData.get('to') as string || ''
       message = formData.get('message') as string || ''
+      if (formData.get('dateRange')) dateRange = formData.get('dateRange') as string
       
       // Parse CC (comma-separated string)
       const ccRaw = formData.get('cc') as string || ''
@@ -44,6 +46,7 @@ export async function POST(
       to = body.to || ''
       cc = body.cc || []
       message = body.message || ''
+      if (body.dateRange) dateRange = body.dateRange
     }
 
     const report = await db.clientReport.findUnique({
@@ -72,10 +75,16 @@ export async function POST(
       }
     }
 
+    const targetName = report.domain ? report.domain : report.client.companyName
+    let finalSubject = report.title
+    if (!finalSubject.toLowerCase().includes(targetName.toLowerCase())) {
+      finalSubject = `${finalSubject} | ${targetName}`
+    }
+
     const result = await sendReportEmailWithAttachments({
       to: recipientEmail,
       cc: cc.length > 0 ? cc : undefined,
-      subject: `${report.title} — ${report.client.companyName}`,
+      subject: finalSubject,
       reportTitle: report.title,
       clientName: report.client.contactPerson || report.client.companyName,
       reportUrl: publicUrl,

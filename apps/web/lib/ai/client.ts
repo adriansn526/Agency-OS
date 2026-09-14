@@ -8,7 +8,7 @@ import { logUsage } from './usage'
 let cachedProvider: LLMProvider | null = null
 let cachedCacheKey: string | null = null
 let resolvedProviderType: ProviderType = 'gemini'
-let resolvedModel: string = 'gemini-2.5-flash'
+let resolvedModel: string = 'gemini-3.6-flash'
 
 /**
  * Resolve the configured LLM provider from Settings store or env vars.
@@ -68,7 +68,7 @@ export async function getLLMProvider(): Promise<LLMProvider> {
 
   cachedCacheKey = cacheKey
   resolvedProviderType = providerType
-  resolvedModel = model || (providerType === 'openai' ? 'gpt-4o' : 'gemini-2.5-flash')
+  resolvedModel = model || (providerType === 'openai' ? 'gpt-4o' : 'gemini-3.6-flash')
   return cachedProvider!
 }
 
