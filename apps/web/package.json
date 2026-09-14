@@ -48,7 +48,8 @@
     "recharts": "^3.8.1",
     "sonner": "^2.0.7",
     "ssh2": "^1.17.0",
-    "tailwind-merge": "^3.2.0"
+    "tailwind-merge": "^3.2.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
