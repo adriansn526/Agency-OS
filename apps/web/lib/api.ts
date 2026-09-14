@@ -123,3 +123,49 @@ export async function fetchContracts(params?: Record<string, string>) {
 export async function fetchActivitiesByEntity(entityId: string) {
   return apiFetch<{ data: any[] }>(`/api/activities/entity/${entityId}`)
 }
+
+// ─── Suppliers ───
+
+export interface APISupplier {
+  id: string
+  tenantId: string
+  name: string
+  cui: string | null
+  iban: string | null
+  category: string | null
+  isRecurring: boolean
+  expectedDay: number | null
+  status: string
+  createdAt: string
+  _count?: {
+    invoices: number
+  }
+}
+
+export async function fetchSuppliers(params?: Record<string, string>) {
+  const qs = params ? '?' + new URLSearchParams(params).toString() : ''
+  return apiFetch<{ data: APISupplier[] }>(`/api/suppliers${qs}`)
+}
+export interface APISupplierInvoice {
+  id: string
+  supplierId: string
+  amount: number
+  currency: string
+  issueDate: string
+  dueDate: string | null
+  invoiceNumber: string | null
+  pdfUrl: string
+  status: string
+  source: string
+  extractionStatus: string
+  createdAt: string
+}
+
+export interface APISupplierDetails extends APISupplier {
+  invoices: APISupplierInvoice[]
+}
+
+export async function fetchSupplier(id: string) {
+  return apiFetch<{ data: APISupplierDetails }>(`/api/suppliers/${id}`)
+}
+

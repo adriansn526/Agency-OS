@@ -73,6 +73,7 @@ const coreModules: NavItem[] = [
   },
   { title: "Proiecte", href: "/projects", icon: FolderKanban },
   { title: "Financiar", href: "/finance", icon: Receipt },
+  { title: "Furnizori", href: "/suppliers", icon: Building2 },
   { title: "Oferte", href: "/offers", icon: Send },
   { title: "Contracte", href: "/contracts", icon: FileText },
 ]
