@@ -95,11 +95,20 @@ export async function POST(
     // Generate AI interpretation
     const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' })
 
+    const dateFormatter = new Intl.DateTimeFormat('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })
+    const fDateFrom = dateFormatter.format(new Date(dateFrom))
+    const fDateTo = dateFormatter.format(new Date(dateTo))
+
     const targetName = report.domain ? report.domain : report.client.companyName
     const prompt = `Ești analist de marketing digital pentru agenția ${report.businessLine.name}. 
-Analizează datele de performanță pentru domeniul / website-ul "${targetName}" în perioada ${dateFrom} — ${dateTo}.
+Analizează datele de performanță pentru brandul / website-ul "${targetName}" în perioada ${fDateFrom} — ${fDateTo}.
 
-IMPORTANT: Acest raport este destinat CLIENTULUI final. Tonul trebuie să fie pozitiv, profesional și axat pe REZULTATE și progres. Concentrează-te pe ce s-a realizat cu succes, pe punctele forte și pe valoarea adusă. EVITĂ detaliile tehnice negative sau problemele interne (precum erori de cod, canibalizare SEO, etc.), deoarece acele informații sunt strict pentru uzul intern al agenției.
+IMPORTANT - REGULI DE REDACTARE:
+1. Nume Client: Folosește exclusiv denumirea comercială a brandului/website-ului, excluzând complet orice formă juridică (SRL, SA, PFA, II, SCS etc.) din numele "${targetName}".
+2. Tonul Raportului: Acest raport este destinat CLIENTULUI final. Tonul trebuie să fie pozitiv, profesional și axat pe REZULTATE și progres. Concentrează-te pe ce s-a realizat cu succes. EVITĂ detaliile tehnice negative (erori de cod etc).
+3. Utilizarea Datelor:
+  - Dacă datele includ metrici cantitative de performanță (trafic, CTR, ROAS, conversii), TREBUIE să menționezi cele mai importante cifre.
+  - Dacă setul de date este complet GOL sau nu are nicio metrică (ex. proiect abia început / zero performanță), NU inventa și NU aproxima nicio cifră (FĂRĂ HALUCINAȚII). Confirmă doar perioada raportată și faptul că proiectul este în faza de setare/început sau fără date.
 
 Date disponibile:
 ${JSON.stringify(reportData, null, 2)}

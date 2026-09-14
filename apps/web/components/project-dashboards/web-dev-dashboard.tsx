@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { ExternalLink, Github, Figma, Database, AlertCircle, Layout, Activity, Server, FileText, CheckCircle2, Cloud, HardDrive, Edit } from "lucide-react"
+import { ExternalLink, Github, Figma, Database, AlertCircle, Layout, Activity, Server, FileText, CheckCircle2, Cloud, HardDrive, Edit, Globe, Calendar, User, History, ShieldAlert, Lock, StickyNote } from "lucide-react"
 import { cn, formatDate } from "@/lib/utils"
 import { ProjectCardConfig } from "@/lib/project-types/config"
 import { EditWebDevMetadataModal } from "./edit-webdev-metadata-modal"
@@ -52,6 +52,27 @@ export function WebDevDashboard({ project, cardsConfig }: WebDevDashboardProps) 
     if (score >= 90) return "text-success border-success"
     if (score >= 50) return "text-warning border-warning"
     return "text-destructive border-destructive"
+  }
+
+  const getDaysUntil = (dateStr?: string) => {
+    if (!dateStr) return null
+    const target = new Date(dateStr)
+    const now = new Date()
+    const diff = target.getTime() - now.getTime()
+    return Math.ceil(diff / (1000 * 3600 * 24))
+  }
+
+  const getExpiryColor = (days: number | null) => {
+    if (days === null) return "text-muted-foreground border-border bg-muted/10"
+    if (days <= 7) return "text-destructive border-destructive/50 bg-destructive/10"
+    if (days <= 30) return "text-warning border-warning/50 bg-warning/10"
+    return "text-success border-success/50 bg-success/10"
+  }
+
+  // Find field visibility based on config
+  const getFieldVisibility = (cardId: string, field: string) => {
+    const card = cardsConfig.find(c => c.id === cardId)
+    return card?.fieldsVisibility?.[field] || 'both'
   }
 
   return (
@@ -192,7 +213,107 @@ export function WebDevDashboard({ project, cardsConfig }: WebDevDashboardProps) 
           </div>
         )}
 
-        {/* Infrastructure Card (Internal Only) */}
+        {/* Domains & SSL Card */}
+        {hasCard('domains-ssl') && (
+          <div className="bg-surface rounded-xl border border-border overflow-hidden col-span-1 lg:col-span-2">
+            <div className="p-4 bg-muted/20 border-b border-border flex items-center justify-between">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <Globe size={16} className="text-primary" /> Domenii & SSL
+              </h3>
+            </div>
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground uppercase font-semibold">Expirare Domeniu</p>
+                <div className={cn("p-3 rounded-lg border flex items-center justify-between", getExpiryColor(getDaysUntil(metadata.domainExpiryDate)))}>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} />
+                    <span className="font-medium text-sm">
+                      {metadata.domainExpiryDate ? formatDate(metadata.domainExpiryDate) : 'Nesetat'}
+                    </span>
+                  </div>
+                  {metadata.domainExpiryDate && (
+                    <span className="text-xs font-bold">
+                      {getDaysUntil(metadata.domainExpiryDate)} zile
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground uppercase font-semibold">Expirare SSL</p>
+                <div className={cn("p-3 rounded-lg border flex items-center justify-between", getExpiryColor(getDaysUntil(metadata.sslExpiryDate)))}>
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert size={16} />
+                    <span className="font-medium text-sm">
+                      {metadata.sslExpiryDate ? formatDate(metadata.sslExpiryDate) : 'Nesetat'}
+                    </span>
+                  </div>
+                  {metadata.sslExpiryDate && (
+                    <span className="text-xs font-bold">
+                      {getDaysUntil(metadata.sslExpiryDate)} zile
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {getFieldVisibility('domains-ssl', 'dnsProvider') !== 'client' && (
+              <div className="px-4 pb-4">
+                <div className="bg-muted/30 border border-border/50 rounded-lg p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Database size={14} className="text-muted-foreground" />
+                    <span className="text-xs font-medium text-muted-foreground">Provider DNS / Hosting:</span>
+                    <span className="text-sm font-semibold">{metadata.dnsProvider || 'Necunoscut'}</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-muted text-muted-foreground uppercase">Intern</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Internal Notes & Stack Card */}
+        {hasCard('internal-notes') && (
+          <div className="bg-surface rounded-xl border border-border overflow-hidden col-span-1">
+             <div className="p-4 bg-muted/20 border-b border-border flex items-center justify-between">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <StickyNote size={16} className="text-muted-foreground" /> Note Interne & Stack
+              </h3>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-muted text-muted-foreground uppercase">Doar Intern</span>
+            </div>
+            
+            <div className="p-4 flex flex-col h-[calc(100%-53px)]">
+              {metadata.stack && metadata.stack.length > 0 && (
+                <div className="mb-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {metadata.stack.map((tech: string, i: number) => (
+                      <span key={i} className="px-2 py-0.5 bg-background border border-border rounded text-xs font-medium text-foreground">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex-1 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 overflow-y-auto">
+                {metadata.internalNotes ? (
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400 whitespace-pre-wrap leading-relaxed">
+                    {metadata.internalNotes}
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground italic text-center mt-4">Nu există note interne.</p>
+                )}
+              </div>
+
+              <div className="mt-3 text-center">
+                <p className="text-[9px] text-destructive flex items-center justify-center gap-1 font-semibold">
+                  <AlertCircle size={10} /> ⚠️ NU stocați parole sau credențiale aici. Datele nu sunt criptate.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {hasCard('infrastructure') && (
           <div className="bg-surface rounded-xl border border-border overflow-hidden col-span-1">
              <div className="p-4 bg-muted/20 border-b border-border flex items-center justify-between">
@@ -266,12 +387,27 @@ export function WebDevDashboard({ project, cardsConfig }: WebDevDashboardProps) 
                         )}>
                           {stage.label}
                         </span>
+                        
+                        {metadata.pipelineDetails?.[stage.id] && (
+                          <div className="absolute top-[calc(100%+24px)] flex flex-col items-center min-w-[80px]">
+                            {metadata.pipelineDetails[stage.id].dueDate && (
+                              <span className="text-[9px] flex items-center gap-1 text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded border border-border/50 mb-1">
+                                <Calendar size={8} /> {formatDate(metadata.pipelineDetails[stage.id].dueDate)}
+                              </span>
+                            )}
+                            {metadata.pipelineDetails[stage.id].assignee && (
+                              <span className="text-[9px] flex items-center gap-1 text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
+                                <User size={8} /> {metadata.pipelineDetails[stage.id].assignee}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )
                   })}
                 </div>
               </div>
-              <div className="mt-12 text-center text-[10px] text-muted-foreground">
+              <div className="mt-16 text-center text-[10px] text-muted-foreground">
                 Progres calculat automat pe baza checklist-ului de proiect.
               </div>
             </div>
@@ -323,6 +459,42 @@ export function WebDevDashboard({ project, cardsConfig }: WebDevDashboardProps) 
                   >
                     Actualizează Scoruri
                   </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Changelog Card */}
+        {hasCard('changelog') && (
+          <div className="bg-surface rounded-xl border border-border overflow-hidden col-span-1 lg:col-span-3 mb-6">
+            <div className="p-4 bg-muted/20 border-b border-border flex items-center justify-between">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <History size={16} className="text-primary" /> Istoric Livrări (Changelog)
+              </h3>
+            </div>
+            <div className="p-4">
+              {metadata.changelog && metadata.changelog.length > 0 ? (
+                <div className="space-y-4">
+                  {[...metadata.changelog]
+                    .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((log: any, i: number) => (
+                    <div key={i} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-1.5"></div>
+                        {i !== metadata.changelog.length - 1 && <div className="w-px h-full bg-border my-1"></div>}
+                      </div>
+                      <div className="pb-3">
+                        <p className="text-[10px] font-bold text-muted-foreground mb-0.5">{formatDate(log.date)}</p>
+                        <p className="text-sm text-foreground">{log.message}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-sm text-foreground font-medium mb-1">Nicio lansare înregistrată</p>
+                  <p className="text-xs text-muted-foreground">Istoricul livrărilor este adăugat manual din setările proiectului.</p>
                 </div>
               )}
             </div>

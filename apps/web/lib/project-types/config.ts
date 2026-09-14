@@ -4,6 +4,7 @@ export type CardVisibility = 'internal' | 'client' | 'both'
 export interface ProjectCardConfig {
   id: string
   visibility: CardVisibility
+  fieldsVisibility?: Record<string, CardVisibility>
 }
 
 export interface ProjectTypeConfig {
@@ -21,7 +22,10 @@ export const PROJECT_TYPES_CONFIG: ProjectTypeConfig[] = [
       { id: 'quick-links', visibility: 'both' }, // Staging/Production are both, Admin/Git/Drive are internal inside the card
       { id: 'pipeline', visibility: 'both' },
       { id: 'lighthouse', visibility: 'both' },
-      { id: 'infrastructure', visibility: 'internal' }
+      { id: 'infrastructure', visibility: 'internal' },
+      { id: 'domains-ssl', visibility: 'both', fieldsVisibility: { dnsProvider: 'internal' } },
+      { id: 'internal-notes', visibility: 'internal' },
+      { id: 'changelog', visibility: 'both' }
     ]
   },
   {
