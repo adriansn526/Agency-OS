@@ -9,14 +9,26 @@ export async function POST(request: Request) {
     // Extract relevant data (PostHog webhook structure & Scout events)
     const title = payload.text || payload.title || payload.event?.properties?.title || payload.event?.properties?.skill_name || "Alertă PostHog necunoscută";
     
-    // Extrage descrierea (pentru Scout reports folosește 'note')
-    let description = payload.event?.properties?.note;
-    if (!description) {
+    // Extrage descrierea (pentru Scout reports combină 'summary' și 'note')
+    let description = "";
+    if (payload.event?.properties?.summary) {
+      description += `**Sumar:**\n${payload.event.properties.summary}\n\n`;
+    }
+    if (payload.event?.properties?.note) {
+      description += `**Notă:**\n${payload.event.properties.note}`;
+    }
+    
+    if (!description.trim()) {
       description = JSON.stringify(payload, null, 2);
     }
     
     const url = payload.url || payload.actionUrl || payload.event?.properties?.report_url || null;
-    const domain = payload.domain || null; // Daca este prezent
+    let domain = payload.domain || payload.event?.properties?.domain || payload.event?.properties?.$host || null;
+    if (!domain && payload.event?.properties?.$current_url) {
+      try {
+        domain = new URL(payload.event.properties.$current_url).hostname;
+      } catch (e) {}
+    }
 
     // Save to database
     await db.systemAlert.create({
