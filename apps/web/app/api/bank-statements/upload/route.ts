@@ -15,8 +15,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Fisierul este necesar' }, { status: 400 })
     }
 
-    const tenant = await db.tenantInstance.findFirst()
-    if (!tenant) return NextResponse.json({ error: 'Fără tenant valid' }, { status: 400 })
+    let tenant;
+    try {
+      tenant = await db.tenantInstance.findFirst()
+    } catch (e: any) {
+      return NextResponse.json({ error: 'Eroare Prisma query: ' + e.message }, { status: 400 })
+    }
+
+    if (!tenant) {
+      const count = await db.tenantInstance.count().catch(e => -1)
+      const url = process.env.DATABASE_URL?.substring(0, 30) + '...'
+      return NextResponse.json({ 
+        error: `Fără tenant valid. DB Count: ${count}, URL: ${url}` 
+      }, { status: 400 })
+    }
 
     // Găsim conexiunea bancară configurată pentru parolă și IBAN (simulată/presupusă aici cu primul găsit)
     const bankConnection = await db.bankConnection.findFirst({ where: { tenantId: tenant.id } })
@@ -106,9 +118,9 @@ export async function POST(request: NextRequest) {
              return diffAmount.lessThanOrEqualTo(1) && diffDays <= 30
            })
 
-           if (candidates.length === 1) {
-             // Match perfect unic
-             matchedInvoiceId = candidates[0].id
+            if (candidates.length === 1 && candidates[0]) {
+              // Match perfect unic
+              matchedInvoiceId = candidates[0].id
              matchStatus = 'auto_matched'
              
              // Update Invoice -> paid
