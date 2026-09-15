@@ -266,7 +266,7 @@ export function SidebarLeft() {
       {/* Footer */}
       <div className="border-t border-sidebar-border">
         {renderSection(settingsModules)}
-        <div className="p-2">
+        <div className="p-2 flex flex-col gap-1">
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="flex items-center justify-center w-full h-8 rounded-lg text-sidebar-fg hover:text-sidebar-fg-active hover:bg-white/[0.04] transition-all"
@@ -274,6 +274,11 @@ export function SidebarLeft() {
           >
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
           </button>
+          {!collapsed && process.env.NEXT_PUBLIC_COMMIT_HASH && (
+            <div className="text-center text-[9px] text-sidebar-fg/30 font-mono select-all" title="Commit version">
+              v{process.env.NEXT_PUBLIC_COMMIT_HASH}
+            </div>
+          )}
         </div>
       </div>
     </aside>

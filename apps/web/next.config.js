@@ -1,5 +1,18 @@
+import { execSync } from 'child_process';
+
+const commitHash = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch (e) {
+    return 'unknown';
+  }
+})();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_COMMIT_HASH: commitHash,
+  },
   output: "standalone",
   transpilePackages: ["@repo/ui", "@repo/mock-data", "@repo/db"],
   serverExternalPackages: ["ssh2"],
