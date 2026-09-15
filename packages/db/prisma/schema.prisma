@@ -292,26 +292,32 @@ model Contract {
 }
 
 model Invoice {
-  id             String       @id @default(cuid())
-  number         String       @unique
-  businessLineId String
-  clientId       String
-  contractId     String?
-  type           String
-  direction      String
-  status         String       @default("emisa")
-  amount         Float
-  currency       String       @default("EUR")
-  issuedAt       DateTime     @default(now())
-  dueDate        DateTime
-  paidAt         DateTime?
-  items          Json
-  notes          String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
-  client         Client       @relation(fields: [clientId], references: [id])
-  contract       Contract?    @relation(fields: [contractId], references: [id])
+  id                  String       @id @default(cuid())
+  number              String       @unique
+  businessLineId      String?
+  clientId            String?
+  extractedClientName String?
+  extractedClientCui  String?
+  contractId          String?
+  type                String
+  direction           String
+  status              String       @default("emisa")
+  amount              Float
+  currency            String       @default("EUR")
+  issuedAt            DateTime     @default(now())
+  dueDate             DateTime
+  paidAt              DateTime?
+  items               Json
+  notes               String?
+  spvId               String?      @unique
+  xmlData             String?
+  source              String       @default("manual")
+  extractionStatus    String       @default("confirmed")
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  businessLine        BusinessLine? @relation(fields: [businessLineId], references: [id])
+  client              Client?       @relation(fields: [clientId], references: [id])
+  contract            Contract?    @relation(fields: [contractId], references: [id])
 
   @@index([businessLineId, status, direction])
   @@index([clientId])

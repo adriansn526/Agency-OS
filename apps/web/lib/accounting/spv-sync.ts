@@ -107,10 +107,17 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
     let errors = 0
 
     for (const msg of mesaje) {
-      if (msg.tip !== 'FACTURA PRIMITA') continue;
+      if (msg.tip !== 'FACTURA PRIMITA' && msg.tip !== 'FACTURA EMISA') continue;
       const spvId = msg.id.toString()
+      const isAP = msg.tip === 'FACTURA PRIMITA'
 
-      const exists = await db.supplierInvoice.findUnique({ where: { spvId } })
+      let exists = false;
+      if (isAP) {
+        exists = !!(await db.supplierInvoice.findUnique({ where: { spvId } }))
+      } else {
+        exists = !!(await db.invoice.findUnique({ where: { spvId } }))
+      }
+
       if (exists) {
         skipped++
         continue
@@ -131,35 +138,79 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
       try {
         const parsedData = parseEFacturaZip(zipBuffer)
         
-        const possibleDuplicate = await db.supplierInvoice.findFirst({
-          where: { tenantId, invoiceNumber: parsedData.numarFactura }
-        })
+        if (isAP) {
+          // FACTURA PRIMITA (Furnizori - AP)
+          const possibleDuplicate = await db.supplierInvoice.findFirst({
+            where: { tenantId, invoiceNumber: parsedData.numarFactura }
+          })
 
-        if (possibleDuplicate) {
-          let noulStatus = possibleDuplicate.status
-          if (possibleDuplicate.status === 'paid' && Number(possibleDuplicate.amount) !== parsedData.total) {
-            noulStatus = 'unpaid'
+          if (possibleDuplicate) {
+            let noulStatus = possibleDuplicate.status
+            if (possibleDuplicate.status === 'paid' && Number(possibleDuplicate.amount) !== parsedData.total) {
+              noulStatus = 'unpaid'
+            }
+            await db.supplierInvoice.update({
+              where: { id: possibleDuplicate.id },
+              data: {
+                spvId, source: 'spv', extractionStatus: 'confirmed',
+                amount: parsedData.total, status: noulStatus,
+                currency: parsedData.moneda, issueDate: parsedData.dataEmitere,
+                xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
+              }
+            })
+          } else {
+            await db.supplierInvoice.create({
+              data: {
+                tenantId, spvId, source: 'spv', extractionStatus: 'confirmed',
+                amount: parsedData.total, currency: parsedData.moneda,
+                issueDate: parsedData.dataEmitere, invoiceNumber: parsedData.numarFactura,
+                extractedSupplierName: parsedData.numeFurnizor, pdfUrl: '',
+                xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
+              }
+            })
           }
-          await db.supplierInvoice.update({
-            where: { id: possibleDuplicate.id },
-            data: {
-              spvId, source: 'spv', extractionStatus: 'confirmed',
-              amount: parsedData.total, status: noulStatus,
-              currency: parsedData.moneda, issueDate: parsedData.dataEmitere,
-              xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
-            }
-          })
         } else {
-          await db.supplierInvoice.create({
-            data: {
-              tenantId, spvId, source: 'spv', extractionStatus: 'confirmed',
-              amount: parsedData.total, currency: parsedData.moneda,
-              issueDate: parsedData.dataEmitere, invoiceNumber: parsedData.numarFactura,
-              extractedSupplierName: parsedData.numeFurnizor, pdfUrl: '',
-              xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
-            }
+          // FACTURA EMISA (Clienți - AR)
+          const possibleDuplicates = await db.invoice.findMany({
+            where: { number: parsedData.numarFactura },
+            include: { client: true }
           })
+          
+          const matchedDup = possibleDuplicates.find(inv => 
+            (inv.client?.cui === parsedData.cuiClient || inv.extractedClientCui === parsedData.cuiClient)
+          )
+
+          if (matchedDup) {
+            await db.invoice.update({
+              where: { id: matchedDup.id },
+              data: { spvId, xmlData: parsedData.rawXml, source: 'spv' }
+            })
+          } else {
+            const clientMatch = await db.client.findFirst({ where: { cui: parsedData.cuiClient } })
+            
+            await db.invoice.create({
+              data: {
+                spvId, source: 'spv',
+                extractionStatus: clientMatch ? 'confirmed' : 'pending_review',
+                clientId: clientMatch ? clientMatch.id : undefined,
+                businessLineId: clientMatch ? clientMatch.businessLineId : undefined,
+                extractedClientName: parsedData.numeClient,
+                extractedClientCui: parsedData.cuiClient,
+                number: parsedData.numarFactura,
+                amount: parsedData.total,
+                currency: parsedData.moneda,
+                issuedAt: parsedData.dataEmitere,
+                dueDate: parsedData.dataEmitere,
+                status: 'emisa',
+                direction: 'emisa',
+                type: 'factura',
+                xmlData: parsedData.rawXml,
+                items: [{ description: 'Factură SPV', quantity: 1, unitPrice: parsedData.sumaNeta, total: parsedData.sumaNeta }]
+              }
+            })
+          }
         }
+        
         processed++
       } catch (e) {
         console.error(`Eroare la parsarea facturii SPV ID ${spvId}:`, e)

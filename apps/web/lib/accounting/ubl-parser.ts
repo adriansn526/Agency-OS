@@ -4,6 +4,8 @@ import { XMLParser } from 'fast-xml-parser'
 export interface ParsedEFactura {
   cuiFurnizor: string
   numeFurnizor: string
+  cuiClient: string
+  numeClient: string
   numarFactura: string
   dataEmitere: Date
   sumaNeta: number
@@ -58,6 +60,14 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
   if (Array.isArray(cuiFurnizor)) cuiFurnizor = cuiFurnizor[0]
   if (typeof cuiFurnizor === 'object' && cuiFurnizor['#text']) cuiFurnizor = cuiFurnizor['#text']
 
+  // AccountingCustomerParty -> Party
+  const customerParty = invoice.AccountingCustomerParty?.Party
+  const numeClient = customerParty?.PartyName?.Name || customerParty?.PartyLegalEntity?.RegistrationName || 'Client Necunoscut'
+  
+  let cuiClient = customerParty?.PartyTaxScheme?.CompanyID || customerParty?.PartyIdentification?.ID
+  if (Array.isArray(cuiClient)) cuiClient = cuiClient[0]
+  if (typeof cuiClient === 'object' && cuiClient['#text']) cuiClient = cuiClient['#text']
+
   cuiFurnizor = (cuiFurnizor || '').toString().replace(/[^A-Z0-9]/gi, '') // RO123456 -> RO123456
 
   // LegalMonetaryTotal
@@ -81,8 +91,10 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
   }
 
   return {
-    cuiFurnizor,
     numeFurnizor,
+    cuiFurnizor: String(cuiFurnizor || '').trim(),
+    numeClient,
+    cuiClient: String(cuiClient || '').trim(),
     numarFactura,
     dataEmitere,
     sumaNeta,
