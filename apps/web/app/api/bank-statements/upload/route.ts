@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
       textChunk = await parsePdfForAccount(decryptedBuffer, bankConnection.accountIban)
     } catch (e: any) {
       // Regex failed to find the configured IBAN section
+      console.error('[UploadBankStatement] Eroare la parsare:', e);
       return NextResponse.json({ error: e.message }, { status: 400 })
     }
 

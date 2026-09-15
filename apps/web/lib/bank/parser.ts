@@ -44,7 +44,10 @@ export async function parsePdfForAccount(buffer: Buffer, accountIban: string): P
   // Primul element este textul de dinainte de primul IBAN, deci îl ignorăm
   for (let i = 1; i < splitByIban.length; i++) {
     const chunk = splitByIban[i]
-    const match = chunk.match(/^(RO[a-zA-Z0-9]{20})/i)
+    if (!chunk) continue
+    
+    // Permite spații, newline-uri sau alte caractere invizibile înainte de RO
+    const match = chunk.match(/^\s*(RO[a-zA-Z0-9]{20})/i)
     if (match) {
       const foundIban = match[1].toUpperCase()
       chunks.push({ iban: foundIban, text: chunk })
