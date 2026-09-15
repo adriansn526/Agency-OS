@@ -1,3 +1,7 @@
+if (typeof global !== 'undefined' && !global.DOMMatrix) {
+  global.DOMMatrix = require('dommatrix');
+}
+
 /**
  * Extrage textul din PDF și returnează doar secțiunea care corespunde IBAN-ului specificat.
  */

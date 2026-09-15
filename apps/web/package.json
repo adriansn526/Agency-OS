@@ -41,6 +41,7 @@
     "date-fns": "^4.4.0",
     "decimal.js": "^10.6.0",
     "diff": "^9.0.0",
+    "dommatrix": "^0.1.1",
     "googleapis": "^171.4.0",
     "lucide-react": "^0.478.0",
     "marked": "^18.0.13",
