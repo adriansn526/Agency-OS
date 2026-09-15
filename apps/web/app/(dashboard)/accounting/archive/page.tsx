@@ -20,10 +20,33 @@ export default function AccountingArchivePage() {
 
   // Filters
   const [statusFilter, setStatusFilter] = useState('all')
+  const [sourceFilter, setSourceFilter] = useState('all')
+  
+  // SPV status
+  const [spvWarning, setSpvWarning] = useState<string | null>(null)
+  const [isSyncing, setIsSyncing] = useState(false)
 
   useEffect(() => {
     fetchData(1)
-  }, [activeTab, month, statusFilter])
+  }, [activeTab, month, statusFilter, sourceFilter])
+
+  useEffect(() => {
+    // Verificăm statusul SPV pentru fereastra de 45 de zile
+    fetch('/api/accounting/spv/settings')
+      .then(res => res.json())
+      .then(json => {
+        if (json?.data?.lastSyncAt) {
+          const lastSync = new Date(json.data.lastSyncAt)
+          const daysSince = Math.floor((new Date().getTime() - lastSync.getTime()) / (1000 * 3600 * 24))
+          if (daysSince > 45) {
+            setSpvWarning(`ATENȚIE: Ultima sincronizare SPV a fost acum ${daysSince} zile! Facturile mai vechi de 60 de zile se vor pierde definitiv.`)
+          }
+        } else {
+          setSpvWarning('ATENȚIE: Nu s-a efectuat nicio sincronizare SPV. Facturile mai vechi de 60 de zile se pierd.')
+        }
+      })
+      .catch(console.error)
+  }, [])
 
   const fetchData = async (page: number) => {
     setLoading(true)
@@ -36,6 +59,7 @@ export default function AccountingArchivePage() {
         params.append('status', statusFilter)
       } else if (activeTab === 'ap') {
         endpoint = '/api/accounting/archive/invoices-in'
+        params.append('source', sourceFilter)
       } else if (activeTab === 'bank') {
         endpoint = '/api/accounting/archive/transactions'
         params.append('status', statusFilter)
@@ -115,6 +139,14 @@ export default function AccountingArchivePage() {
         </AlertDescription>
       </Alert>
 
+      {spvWarning && activeTab === 'ap' && (
+        <Alert variant="destructive" className="bg-red-50 text-red-900 border-red-200">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Fereastră Critică SPV</AlertTitle>
+          <AlertDescription>{spvWarning}</AlertDescription>
+        </Alert>
+      )}
+
       {/* TABS (Manual simple UI) */}
       <div className="flex border-b">
         <button 
@@ -137,18 +169,59 @@ export default function AccountingArchivePage() {
         </button>
       </div>
 
-      {/* FILTER BAR */}
-      <div className="flex items-center gap-4 py-2">
-        {activeTab === 'bank' && (
-          <select 
-            value={statusFilter} 
-            onChange={e => setStatusFilter(e.target.value)}
-            className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+      {/* FILTER BAR & ACTIONS */}
+      <div className="flex items-center justify-between py-2 border-b mb-4">
+        <div className="flex items-center gap-4">
+          {activeTab === 'bank' && (
+            <select 
+              value={statusFilter} 
+              onChange={e => setStatusFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+            >
+              <option value="all">Toate Tranzacțiile</option>
+              <option value="matched">Doar Reconciliate</option>
+              <option value="unmatched">Nereconciliate</option>
+            </select>
+          )}
+          {activeTab === 'ap' && (
+            <select 
+              value={sourceFilter} 
+              onChange={e => setSourceFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+            >
+              <option value="all">Toate Sursele</option>
+              <option value="spv">Doar e-Factura (SPV)</option>
+              <option value="email">Email</option>
+              <option value="manual">Încărcare Manuală</option>
+              <option value="api">Sincronizare API</option>
+            </select>
+          )}
+        </div>
+
+        {activeTab === 'ap' && (
+          <Button 
+            disabled={isSyncing}
+            onClick={async () => {
+              setIsSyncing(true)
+              try {
+                const res = await fetch('/api/accounting/spv/sync', { method: 'POST', body: JSON.stringify({ days: 60 }) })
+                const data = await res.json()
+                if (res.ok) {
+                  alert(data.message)
+                  fetchData(1)
+                } else {
+                  alert(data.error)
+                }
+              } catch (e) {
+                alert('Eroare la sincronizare')
+              }
+              setIsSyncing(false)
+            }}
+            className="bg-[#105C9C] hover:bg-[#0c467a] text-white h-9"
           >
-            <option value="all">Toate Tranzacțiile</option>
-            <option value="matched">Doar Reconciliate</option>
-            <option value="unmatched">Nereconciliate</option>
-          </select>
+            {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            Sincronizează SPV (Acum)
+          </Button>
         )}
       </div>
 
@@ -176,10 +249,10 @@ export default function AccountingArchivePage() {
                     <tr>
                       <th className="p-4 font-medium">Furnizor (OCR)</th>
                       <th className="p-4 font-medium">Data Facturii</th>
-                      <th className="p-4 font-medium">Sumă Brută</th>
-                      <th className="p-4 font-medium">Sumă Cheltuială (Est.)</th>
-                      <th className="p-4 font-medium">TVA Dedus (Est.)</th>
-                      <th className="p-4 font-medium">Regulă %</th>
+                      <th className="p-4 font-medium">Sumă Totală Brută</th>
+                      <th className="p-4 font-medium">Cheltuială Deductibilă</th>
+                      <th className="p-4 font-medium">TVA Dedus</th>
+                      <th className="p-4 font-medium">Sursă & Reguli</th>
                     </tr>
                   )}
                   {activeTab === 'bank' && (
@@ -216,16 +289,18 @@ export default function AccountingArchivePage() {
                           <td className="p-4">{row.extractedSupplierName || row.supplier?.name || '-'}</td>
                           <td className="p-4">{row.issueDate ? new Date(row.issueDate).toLocaleDateString('ro-RO') : '-'}</td>
                           <td className="p-4 font-medium">{Number(row.amount).toLocaleString('ro-RO')} {row.currency}</td>
-                          <td className="p-4 text-rose-600">
-                            {/* Calcul la runtime */}
-                            {((Number(row.netAmount || row.amount)) * (Number(row.expenseDeductiblePercent || 100) / 100)).toLocaleString('ro-RO')} {row.currency}
+                          <td className="p-4 text-rose-600 font-medium">
+                            {Number(row.calculatedExpense || 0).toLocaleString('ro-RO')} {row.currency}
                           </td>
-                          <td className="p-4 text-emerald-600">
-                            {/* Calcul la runtime */}
-                            {((Number(row.vatAmount || 0)) * (Number(row.vatDeductiblePercent || 100) / 100)).toLocaleString('ro-RO')} {row.currency}
+                          <td className="p-4 text-emerald-600 font-medium">
+                            {Number(row.calculatedVat || 0).toLocaleString('ro-RO')} {row.currency}
                           </td>
-                          <td className="p-4 text-xs text-muted-foreground">
-                            Chelt: {row.expenseDeductiblePercent || 100}% <br/> TVA: {row.vatDeductiblePercent || 100}%
+                          <td className="p-4 text-xs">
+                            <span className={`px-2 py-1 rounded-full text-[10px] mb-1 inline-block ${row.source === 'spv' ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'bg-slate-100 text-slate-600'}`}>
+                              {String(row.source).toUpperCase()}
+                            </span>
+                            <br/>
+                            <span className="text-muted-foreground">Chelt: {row.expensePct}% / TVA: {row.vatPct}%</span>
                           </td>
                         </>
                       )}

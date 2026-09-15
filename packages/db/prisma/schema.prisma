@@ -1014,9 +1014,26 @@ model AnafSettings {
   accessToken  String?
   refreshToken String?
   expiresAt    DateTime?
+  lastSyncAt   DateTime?
   updatedAt    DateTime  @updatedAt
 
   tenant       TenantInstance @relation(fields: [tenantId], references: [id])
+}
+
+model SpvSyncLog {
+  id               String    @id @default(cuid())
+  tenantId         String
+  startedAt        DateTime  @default(now())
+  finishedAt       DateTime?
+  daysRequested    Int
+  status           String
+  messagesFound    Int       @default(0)
+  invoicesImported Int       @default(0)
+  invoicesDeduped  Int       @default(0)
+  errorMessage     String?
+  triggeredBy      String?
+
+  @@index([tenantId])
 }
 
 model DeductibilityRule {

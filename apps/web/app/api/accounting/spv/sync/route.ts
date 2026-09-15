@@ -13,11 +13,23 @@ export async function POST(request: NextRequest) {
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
 
-    const result = await syncSpvForTenant(tenant.id)
+    let days = 60
+    try {
+      const body = await request.json()
+      if (body.days) {
+        days = parseInt(body.days)
+      }
+    } catch(e) {} // ignore json parse errors for empty bodies
+
+    if (isNaN(days) || days < 1 || days > 60) {
+      return NextResponse.json({ error: 'Limita legală ANAF este între 1 și 60 de zile.' }, { status: 400 })
+    }
+
+    const result = await syncSpvForTenant(tenant.id, days, session.user.id)
     
     return NextResponse.json({ 
       success: true, 
-      message: `Sincronizare finalizată. ${result.processed} facturi noi adăugate, ${result.skipped} ignorate (existente).`,
+      message: `Sincronizare finalizată. ${result.processed} noi, ${result.skipped} ignorate, ${result.errors} erori.`,
       details: result
     })
 

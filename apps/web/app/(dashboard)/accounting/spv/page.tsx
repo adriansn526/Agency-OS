@@ -11,6 +11,12 @@ export default function SpvSettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isConnected, setIsConnected] = useState(false)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [lastSyncAt, setLastSyncAt] = useState<string | null>(null)
+  
+  // History & Form
+  const [syncHistory, setSyncHistory] = useState<any[]>([])
+  const [daysToSync, setDaysToSync] = useState(60)
+  const [isSyncing, setIsSyncing] = useState(false)
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
@@ -24,6 +30,7 @@ export default function SpvSettingsPage() {
     }
 
     fetchSettings()
+    fetchHistory()
   }, [])
 
   const fetchSettings = async () => {
@@ -33,11 +40,22 @@ export default function SpvSettingsPage() {
       if (json.data && json.data.accessToken) {
         setIsConnected(true)
         setExpiresAt(json.data.expiresAt)
+        setLastSyncAt(json.data.lastSyncAt || null)
       }
     } catch (err) {
       console.error(err)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch('/api/accounting/spv/history?limit=5')
+      const json = await res.json()
+      if (res.ok) setSyncHistory(json.data || [])
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -58,6 +76,26 @@ export default function SpvSettingsPage() {
           Automatizează descărcarea facturilor de la furnizori (AP) conectând aplicația la Spațiul Privat Virtual ANAF.
         </p>
       </div>
+
+      {/* WARNING WINDOW */}
+      {(() => {
+        const daysSince = lastSyncAt ? Math.floor((new Date().getTime() - new Date(lastSyncAt).getTime()) / (1000 * 3600 * 24)) : Infinity;
+        if (isConnected && daysSince > 45) {
+          return (
+            <Alert variant="destructive" className="bg-red-50 text-red-900 border-red-200">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Fereastră Critică SPV</AlertTitle>
+              <AlertDescription>
+                {lastSyncAt 
+                  ? `Ultima sincronizare SPV a fost acum ${daysSince} zile!` 
+                  : 'Nu s-a efectuat nicio sincronizare SPV!'}
+                <br />Facturile mai vechi de 60 de zile din SPV se vor pierde definitiv. Rulați o sincronizare acum.
+              </AlertDescription>
+            </Alert>
+          )
+        }
+        return null;
+      })()}
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* PASUL 1: Configurarea in sistem */}
@@ -99,9 +137,8 @@ export default function SpvSettingsPage() {
                 <CheckCircle2 className="h-4 w-4 stroke-emerald-600" />
                 <AlertTitle>Conectat la SPV</AlertTitle>
                 <AlertDescription>
-                  Sistemul are un token activ. Expiră la: {expiresAt ? new Date(expiresAt).toLocaleString('ro-RO') : '-'}
-                  <br/>
-                  (Token-ul se va reînnoi automat în background).
+                  Token de access valabil (se reînnoiește automat).<br/>
+                  <span className="font-semibold mt-1 block">Atenție:</span> Certificatul digital SPV expiră la aproximativ 365 de zile de la conectare. Trebuie reconectat anual.
                 </AlertDescription>
               </Alert>
             ) : (
@@ -144,26 +181,86 @@ export default function SpvSettingsPage() {
               Descarcă instant cele mai noi mesaje e-Factura de la ANAF.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={async () => {
-                const toastId = toast.loading('Sincronizare în curs...')
-                try {
-                  const res = await fetch('/api/accounting/spv/sync', { method: 'POST' })
-                  const data = await res.json()
-                  if (res.ok) {
-                    toast.success(data.message, { id: toastId })
-                  } else {
-                    toast.error(data.error, { id: toastId })
+          <CardContent className="space-y-4">
+            <div className="flex gap-4 items-center">
+              <label className="text-sm font-medium">Perioadă (zile în urmă):</label>
+              <select 
+                value={daysToSync} 
+                onChange={e => setDaysToSync(Number(e.target.value))}
+                className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm w-32"
+                disabled={isSyncing}
+              >
+                <option value={7}>7 zile</option>
+                <option value={30}>30 zile</option>
+                <option value={60}>60 zile</option>
+              </select>
+              
+              <Button 
+                disabled={isSyncing}
+                onClick={async () => {
+                  setIsSyncing(true)
+                  const toastId = toast.loading('Sincronizare în curs...')
+                  try {
+                    const res = await fetch('/api/accounting/spv/sync', { 
+                      method: 'POST',
+                      body: JSON.stringify({ days: daysToSync })
+                    })
+                    const data = await res.json()
+                    if (res.ok) {
+                      toast.success(data.message, { id: toastId })
+                      fetchHistory()
+                      fetchSettings() // Update lastSyncAt
+                    } else {
+                      toast.error(data.error, { id: toastId })
+                    }
+                  } catch (e) {
+                    toast.error('Eroare rețea.', { id: toastId })
                   }
-                } catch (e) {
-                  toast.error('Eroare rețea.', { id: toastId })
-                }
-              }} 
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-            >
-              Forțează Sincronizarea Acum
-            </Button>
+                  setIsSyncing(false)
+                }} 
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                {isSyncing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                Pornește Sincronizarea
+              </Button>
+            </div>
+            
+            {/* Tabel Istoric scurt */}
+            {syncHistory.length > 0 && (
+              <div className="pt-6">
+                <h4 className="text-sm font-medium mb-3">Istoric Recente</h4>
+                <div className="border rounded-md">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-muted/50 border-b">
+                      <tr>
+                        <th className="p-2 font-medium">Dată</th>
+                        <th className="p-2 font-medium">Perioadă</th>
+                        <th className="p-2 font-medium">Status</th>
+                        <th className="p-2 font-medium">Găsite / Importate</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {syncHistory.map(log => (
+                        <tr key={log.id}>
+                          <td className="p-2">{new Date(log.startedAt).toLocaleString('ro-RO')}</td>
+                          <td className="p-2">{log.daysRequested} zile</td>
+                          <td className="p-2">
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] ${log.status === 'success' ? 'bg-emerald-100 text-emerald-700' : log.status === 'partial' ? 'bg-amber-100 text-amber-700' : log.status === 'running' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>
+                              {/* Fix edge case running blocat */}
+                              {log.status === 'running' && (new Date().getTime() - new Date(log.startedAt).getTime() > 3600000) ? 'interrupted' : log.status}
+                            </span>
+                          </td>
+                          <td className="p-2 text-xs">
+                            {log.messagesFound} mesaje → {log.invoicesImported} facturi <span className="text-muted-foreground">({log.invoicesDeduped} duplicate)</span>
+                            {log.errorMessage && <div className="text-red-500 mt-1">{log.errorMessage}</div>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
