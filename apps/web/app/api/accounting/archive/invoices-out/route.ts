@@ -37,13 +37,19 @@ export async function GET(request: NextRequest) {
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      if (status === 'confirmed' || status === 'pending_review') {
+        where.extractionStatus = status
+      } else {
+        where.status = status
+      }
     }
 
     if (query) {
-      where.client = {
-        name: { contains: query, mode: 'insensitive' }
-      }
+      where.OR = [
+        { client: { companyName: { contains: query, mode: 'insensitive' } } },
+        { extractedClientName: { contains: query, mode: 'insensitive' } },
+        { number: { contains: query, mode: 'insensitive' } }
+      ]
     }
 
     const [items, totalItems] = await Promise.all([

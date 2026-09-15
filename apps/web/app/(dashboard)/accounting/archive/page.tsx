@@ -174,7 +174,7 @@ export default function AccountingArchivePage() {
             className="h-9 w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm"
           />
           
-          {(activeTab === 'ar' || activeTab === 'bank') && (
+          {activeTab === 'bank' && (
             <select 
               value={statusFilter} 
               onChange={e => setStatusFilter(e.target.value)}
@@ -183,6 +183,17 @@ export default function AccountingArchivePage() {
               <option value="all">Toate Tranzacțiile</option>
               <option value="matched">Doar Reconciliate</option>
               <option value="unmatched">Nereconciliate</option>
+            </select>
+          )}
+          {activeTab === 'ar' && (
+            <select 
+              value={statusFilter} 
+              onChange={e => setStatusFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+            >
+              <option value="all">Toate Facturile (AR)</option>
+              <option value="confirmed">Confirmate / Venituri</option>
+              <option value="pending_review">În Așteptare (Review SPV)</option>
             </select>
           )}
           {activeTab === 'ap' && (
@@ -245,7 +256,8 @@ export default function AccountingArchivePage() {
                       <th className="p-4 font-medium">Client</th>
                       <th className="p-4 font-medium">Data Emitere</th>
                       <th className="p-4 font-medium">Sumă</th>
-                      <th className="p-4 font-medium">Status</th>
+                      <th className="p-4 font-medium">Status Plată</th>
+                      <th className="p-4 font-medium">Sursă & Reguli</th>
                     </tr>
                   )}
                   {activeTab === 'ap' && (
@@ -286,6 +298,27 @@ export default function AccountingArchivePage() {
                             <span className={`px-2 py-1 rounded-full text-xs ${row.status === 'emisa' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                               {row.status}
                             </span>
+                          </td>
+                          <td className="p-4 text-xs">
+                            <span className={`px-2 py-1 rounded-full text-[10px] mb-1 inline-block ${row.source === 'spv' ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'bg-slate-100 text-slate-600'}`}>
+                              {String(row.source).toUpperCase()}
+                            </span>
+                            {row.source === 'spv' && row.extractionStatus === 'pending_review' && (
+                              <span className="ml-2 px-2 py-1 rounded-full text-[10px] mb-1 inline-block bg-amber-100 text-amber-700 font-semibold">
+                                ÎN AȘTEPTARE
+                              </span>
+                            )}
+                            {row.source === 'spv' && (
+                              <div className="mt-1 flex flex-col gap-1">
+                                <a 
+                                  href={`/api/accounting/archive/invoices-out/${row.id}/xml`} 
+                                  target="_blank" 
+                                  className="text-[10px] text-blue-600 hover:underline flex items-center gap-1"
+                                >
+                                  <Download className="w-3 h-3" /> Descarcă XML
+                                </a>
+                              </div>
+                            )}
                           </td>
                         </>
                       )}
