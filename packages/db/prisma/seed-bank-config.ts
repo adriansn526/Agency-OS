@@ -9,11 +9,12 @@ async function main() {
   if (!tenant) {
     tenant = await prisma.tenantInstance.create({
       data: {
-        name: 'Agency OS',
-        slug: 'agency-os'
+        tenantId: 'agency-os-default',
+        tenantName: 'Agency OS',
+        tenantSlug: 'agency-os'
       }
     })
-    console.log(`✅ Adăugat tenant: ${tenant.name}`)
+    console.log(`✅ Adăugat tenant: ${tenant.tenantName}`)
   }
 
   let bank = await prisma.bankConnection.findFirst()
