@@ -28,7 +28,7 @@ export type ExtractedTransaction = z.infer<typeof transactionSchema>['transactio
 export async function extractTransactionsFromText(textChunk: string): Promise<ExtractedTransaction[]> {
   try {
     const result = await generateObject({
-      model: openai('gpt-4o'),
+      model: openai('gpt-4o-mini'),
       schema: transactionSchema,
       prompt: `
         Extrage tranzacțiile financiare din următorul text provenit dintr-un extras de cont bancar.
