@@ -211,7 +211,7 @@ export default function AccountingArchivePage() {
           )}
         </div>
 
-        {activeTab === 'ap' && (
+        {(activeTab === 'ap' || activeTab === 'ar') && (
           <Button 
             disabled={isSyncing}
             onClick={async () => {

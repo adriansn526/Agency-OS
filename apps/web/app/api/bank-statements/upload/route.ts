@@ -70,6 +70,25 @@ export async function POST(request: NextRequest) {
 
     // 5. Inserție și Auto-Matching
     for (const trx of transactions) {
+      // Verificare duplicat exact
+      const debitValue = trx.type === 'debit' ? trx.amount : 0
+      const creditValue = trx.type === 'credit' ? trx.amount : 0
+      
+      const existing = await db.bankTransaction.findFirst({
+        where: {
+          tenantId: tenant.id,
+          bankConnectionId: bankConnection.id,
+          date: new Date(trx.date),
+          description: trx.description,
+          debit: debitValue,
+          credit: creditValue
+        }
+      })
+
+      if (existing) {
+        continue // Sărim peste tranzacția dublată
+      }
+
       // Logică de încredere / Categorie
       const isSupplierPayment = trx.category === 'supplier_payment'
       let extractionStatus = 'confirmed'
