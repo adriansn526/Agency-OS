@@ -16,19 +16,37 @@ const s3Config = {
 export const s3 = new S3Client(s3Config)
 export const BUCKET_NAME = process.env.S3_BUCKET_NAME || 'agency-os-bucket'
 
+import * as path from 'path'
+
 /**
- * Încarcă un buffer în S3
+ * Încarcă un buffer în S3, cu fallback la stocare locală dacă AWS nu e configurat
  */
 export async function uploadToS3(key: string, buffer: Buffer, contentType: string = 'application/pdf'): Promise<string> {
-  const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
-    Key: key,
-    Body: buffer,
-    ContentType: contentType
-  })
+  const hasCredentials = process.env.S3_ACCESS_KEY || process.env.AWS_ACCESS_KEY_ID
+  
+  if (hasCredentials) {
+    try {
+      const command = new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType
+      })
 
-  await s3.send(command)
-  return key // Returnăm doar key-ul relativ. Fișierul NU este public, deci nu returnăm un URL public.
+      await s3.send(command)
+      return key // Returnăm doar key-ul relativ.
+    } catch (err) {
+      console.warn('[Storage] Eroare la AWS S3. Se face fallback la stocare locală.', err)
+    }
+  }
+
+  // Fallback local
+  const localDir = path.join(process.cwd(), 'public', 'uploads')
+  const fullPath = path.join(localDir, key)
+  await fs.promises.mkdir(path.dirname(fullPath), { recursive: true })
+  await fs.promises.writeFile(fullPath, buffer)
+  
+  return `/uploads/${key}`
 }
 
 /**
