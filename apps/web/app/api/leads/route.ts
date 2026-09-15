@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
           businessLine: { select: { slug: true, name: true, icon: true, color: true } },
           convertedTo: { select: { id: true, companyName: true } },
         },
-        orderBy: { [sort]: order },
+        orderBy: [{ [sort]: order }, { id: 'asc' }],
         skip: (page - 1) * limit,
         take: limit,
       }),

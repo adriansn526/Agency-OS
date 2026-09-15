@@ -1,19 +1,33 @@
+import { execFile } from 'child_process'
+import { promisify } from 'util'
+import * as fs from 'fs/promises'
+import * as path from 'path'
+import * as os from 'os'
+
+const execFileAsync = promisify(execFile)
+
 /**
  * Extrage textul din PDF și returnează doar secțiunea care corespunde IBAN-ului specificat.
  */
 export async function parsePdfForAccount(buffer: Buffer, accountIban: string): Promise<string> {
-  // Polyfill pentru pdfjs-dist / pdf-parse în medii de server Next.js 14+
-  if (typeof globalThis !== 'undefined' && !(globalThis as any).DOMMatrix) {
-    const DOMMatrix = require('dommatrix');
-    (globalThis as any).DOMMatrix = DOMMatrix;
-    if (typeof global !== 'undefined') global.DOMMatrix = DOMMatrix;
-    if (typeof window !== 'undefined') (window as any).DOMMatrix = DOMMatrix;
+  let tempDir: string | null = null
+  let fullText = ''
+
+  try {
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'pdfparse-'))
+    const inputPath = path.join(tempDir, 'input.pdf')
+    await fs.writeFile(inputPath, buffer)
+
+    // Extrage textul nativ cu pdftotext (fără să depindă de DOMMatrix)
+    const { stdout } = await execFileAsync('pdftotext', ['-layout', inputPath, '-'])
+    fullText = stdout || ''
+  } catch (err) {
+    throw new Error('Eroare la extragerea textului cu pdftotext: ' + (err as Error).message)
+  } finally {
+    if (tempDir) {
+      await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {})
+    }
   }
-
-  const pdfParse = require('pdf-parse')
-  const data = await pdfParse(buffer)
-  const fullText = data.text
-
   // Căutăm secțiuni care încep cu cuvântul "CONT" urmat de alte texte și apoi "IBAN: "
   // Pattern-ul aproximativ: /CONT[\s\S]*?IBAN:\s*(RO[A-Z0-9]+)/ig
   // Vom partiționa textul după aparițiile IBAN-urilor
