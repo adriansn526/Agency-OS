@@ -55,18 +55,19 @@ export async function parsePdfForAccount(buffer: Buffer, accountIban: string, pa
     // Permite spații, newline-uri sau alte caractere invizibile înainte de RO
     // IBAN-urile românești au 24 caractere (RO + 22 caractere)
     const match = chunk.match(/^\s*(RO[a-zA-Z0-9]{22})/i)
-    if (match) {
+    if (match && match[1]) {
       const foundIban = match[1].toUpperCase()
       chunks.push({ iban: foundIban, text: chunk })
     }
   }
 
-  // Căutăm chunk-ul care se potrivește cu IBAN-ul nostru
-  const targetChunk = chunks.find(c => c.iban === accountIban.toUpperCase())
+  // Concatenăm textul din TOATE chunk-urile care se potrivesc cu IBAN-ul
+  // deoarece extrasul poate avea IBAN-ul repetat pe fiecare pagină.
+  const targetChunks = chunks.filter(c => c.iban === accountIban.toUpperCase())
   
-  if (!targetChunk) {
+  if (targetChunks.length === 0) {
     throw new Error(`Cont nerecunoscut: IBAN-ul configurat (${accountIban}) nu a fost găsit în extras. Verifică manual IBAN-ul setat.`)
   }
 
-  return targetChunk.text
+  return targetChunks.map(c => c.text).join('\n')
 }
