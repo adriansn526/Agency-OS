@@ -1,6 +1,7 @@
 import { db } from '@repo/db'
 import { decrypt } from '@/lib/encryption'
 import { parseEFacturaZip } from './ubl-parser'
+import { readSettings } from '@/app/api/settings/_store'
 
 const ANAF_API_BASE = 'https://api.anaf.ro/prod/FCTEL/rest'
 
@@ -86,7 +87,9 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
       throw new Error(`Sincronizarea a eșuat după ${maxRetries} încercări din cauza rate limit-ului ANAF.`)
     }
 
-    const agencyCif = process.env.COMPANY_CIF || '123456'
+    // Extragem CIF-ul din setarile companiei si eliminam prefixul "RO"
+    const companyCifFull = readSettings().company?.cif || process.env.COMPANY_CIF || '123456'
+    const agencyCif = companyCifFull.replace(/^RO/i, '')
     
     const listRes = await fetchAnafWithBackoff(`${ANAF_API_BASE}/listaMesajeFactura?zile=${days}&cif=${agencyCif}`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
