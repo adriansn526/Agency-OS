@@ -37,20 +37,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Configurație bancară lipsă pentru tenant' }, { status: 400 })
     }
 
-    const password = process.env[bankConnection.statementPasswordEnvKey]
-    if (!password) {
-       return NextResponse.json({ error: 'Parola nu este setată în environment' }, { status: 500 })
+    let password = '';
+    if (bankConnection.statementPasswordEnvKey) {
+      password = process.env[bankConnection.statementPasswordEnvKey] || '';
     }
 
-    // 1. Decriptare
+    // 1. Decriptare (doar dacă avem o parolă configurată în sistem)
     const arrayBuffer = await file.arrayBuffer()
     const inputBuffer = Buffer.from(arrayBuffer)
-    let decryptedBuffer: Buffer
+    let decryptedBuffer: Buffer = inputBuffer // Fallback la buffer-ul original
     
-    try {
-      decryptedBuffer = await decryptPdf(inputBuffer, password)
-    } catch (e) {
-      return NextResponse.json({ error: 'Eroare decriptare (parolă invalidă sau PDF corupt)' }, { status: 400 })
+    if (password) {
+      try {
+        decryptedBuffer = await decryptPdf(inputBuffer, password)
+      } catch (e) {
+        console.warn('[UploadBankStatement] Nu s-a putut decripta PDF-ul. Poate nu are parolă sau parola e greșită. Vom încerca direct.')
+        // Rămânem la inputBuffer
+      }
     }
 
     // 2. Parsare și partiționare IBAN
