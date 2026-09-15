@@ -33,6 +33,7 @@ export default function ReconciliationPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [matchAmount, setMatchAmount] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
+  const [filterCategory, setFilterCategory] = useState<string>('all')
 
   const fetchData = async () => {
     setLoading(true)
@@ -55,7 +56,8 @@ export default function ReconciliationPage() {
   // Auto-set the match amount when selecting a transaction
   useEffect(() => {
     if (selectedTx) {
-      setMatchAmount(selectedTx.debit)
+      const isIncome = selectedTx.category === 'incoming_payment' || parseFloat(selectedTx.credit) > 0
+      setMatchAmount(isIncome ? selectedTx.credit : selectedTx.debit)
     }
   }, [selectedTx])
 
@@ -123,11 +125,21 @@ export default function ReconciliationPage() {
     <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
       {/* Lista Tranzactii pe stanga */}
       <div className="w-1/3 border-r border-border bg-surface overflow-y-auto flex flex-col">
-        <div className="p-4 border-b border-border sticky top-0 bg-surface z-10">
+        <div className="p-4 border-b border-border sticky top-0 bg-surface z-10 flex items-center justify-between">
           <h1 className="text-lg font-semibold flex items-center gap-2">
             <AlertCircle size={18} className="text-amber-500" /> 
             Necesită Reconciliere ({transactions.length})
           </h1>
+          <select 
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="text-xs bg-background border border-border rounded px-2 py-1 outline-none focus:border-primary"
+          >
+            <option value="all">Toate</option>
+            <option value="supplier_payment">Plăți Furnizori</option>
+            <option value="incoming_payment">Încasări</option>
+            <option value="bank_fee">Comisioane Bancare</option>
+          </select>
         </div>
         
         {loading ? (
@@ -140,31 +152,37 @@ export default function ReconciliationPage() {
           </div>
         ) : (
           <div className="divide-y divide-border flex-1">
-            {transactions.map(t => (
-               <div 
-                  key={t.id} 
-                  onClick={() => setSelectedTx(t)}
-                  className={`p-4 cursor-pointer hover:bg-muted/30 transition-colors ${selectedTx?.id === t.id ? 'bg-muted/50 border-l-4 border-primary' : ''}`}
-               >
-                 <div className="flex justify-between items-start mb-1">
-                    <div className="font-medium text-sm line-clamp-2 pr-2">{t.description}</div>
-                    <div className="font-bold text-destructive shrink-0">-{parseFloat(t.debit).toFixed(2)} RON</div>
+            {transactions.filter(t => filterCategory === 'all' || t.category === filterCategory).map(t => {
+               const isIncome = t.category === 'incoming_payment' || parseFloat(t.credit) > 0
+               const amountStr = isIncome ? `+${parseFloat(t.credit).toFixed(2)}` : `-${parseFloat(t.debit).toFixed(2)}`
+               const amountColor = isIncome ? 'text-green-500' : 'text-destructive'
+
+               return (
+                 <div 
+                    key={t.id} 
+                    onClick={() => setSelectedTx(t)}
+                    className={`p-4 cursor-pointer hover:bg-muted/30 transition-colors ${selectedTx?.id === t.id ? 'bg-muted/50 border-l-4 border-primary' : ''}`}
+                 >
+                   <div className="flex justify-between items-start mb-1">
+                      <div className="font-medium text-sm line-clamp-2 pr-2">{t.description}</div>
+                      <div className={`font-bold shrink-0 ${amountColor}`}>{amountStr} RON</div>
+                   </div>
+                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{new Date(t.date).toLocaleDateString('ro-RO')}</span>
+                      {t.extractionStatus === 'pending_review' && (
+                        <span className="bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded flex items-center gap-1">
+                          <Info size={12} /> Review
+                        </span>
+                      )}
+                   </div>
+                   {t.extractedMerchant && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Detectat: <span className="font-medium text-foreground">{t.extractedMerchant}</span>
+                      </div>
+                   )}
                  </div>
-                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>{new Date(t.date).toLocaleDateString('ro-RO')}</span>
-                    {t.extractionStatus === 'pending_review' && (
-                      <span className="bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded flex items-center gap-1">
-                        <Info size={12} /> Review
-                      </span>
-                    )}
-                 </div>
-                 {t.extractedMerchant && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      Detectat: <span className="font-medium text-foreground">{t.extractedMerchant}</span>
-                    </div>
-                 )}
-               </div>
-            ))}
+               )
+            })}
           </div>
         )}
       </div>
@@ -185,8 +203,10 @@ export default function ReconciliationPage() {
                   <div className="text-xl font-semibold">{selectedTx.description}</div>
                   <div className="text-muted-foreground mt-1">{new Date(selectedTx.date).toLocaleDateString('ro-RO')}</div>
                 </div>
-                <div className="text-2xl font-bold text-destructive shrink-0">
-                  -{parseFloat(selectedTx.debit).toFixed(2)} RON
+                <div className={`text-2xl font-bold shrink-0 ${(selectedTx.category === 'incoming_payment' || parseFloat(selectedTx.credit) > 0) ? 'text-green-500' : 'text-destructive'}`}>
+                  {(selectedTx.category === 'incoming_payment' || parseFloat(selectedTx.credit) > 0) 
+                    ? `+${parseFloat(selectedTx.credit).toFixed(2)}` 
+                    : `-${parseFloat(selectedTx.debit).toFixed(2)}`} RON
                 </div>
               </div>
             </div>
@@ -209,7 +229,8 @@ export default function ReconciliationPage() {
 
                <div className="grid gap-3">
                  {getSortedInvoices().map(inv => {
-                   const diff = Math.abs(parseFloat(inv.amount) - parseFloat(selectedTx.debit))
+                   const txVal = parseFloat((selectedTx.category === 'incoming_payment' || parseFloat(selectedTx.credit) > 0) ? selectedTx.credit : selectedTx.debit) || 0
+                   const diff = Math.abs(parseFloat(inv.amount) - txVal)
                    const isExactMatch = diff <= 1
 
                    return (
