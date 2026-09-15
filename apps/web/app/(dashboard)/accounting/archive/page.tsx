@@ -21,6 +21,7 @@ export default function AccountingArchivePage() {
   // Filters
   const [statusFilter, setStatusFilter] = useState('all')
   const [sourceFilter, setSourceFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
   
   // SPV status
   const [spvWarning, setSpvWarning] = useState<string | null>(null)
@@ -28,7 +29,7 @@ export default function AccountingArchivePage() {
 
   useEffect(() => {
     fetchData(1)
-  }, [activeTab, month, statusFilter, sourceFilter])
+  }, [activeTab, month, statusFilter, sourceFilter, searchQuery])
 
   useEffect(() => {
     // Verificăm statusul SPV pentru fereastra de 45 de zile
@@ -53,6 +54,7 @@ export default function AccountingArchivePage() {
     try {
       let endpoint = ''
       let params = new URLSearchParams({ page: page.toString(), limit: '50', month })
+      if (searchQuery) params.append('query', searchQuery)
       
       if (activeTab === 'ar') {
         endpoint = '/api/accounting/archive/invoices-out'
@@ -120,8 +122,9 @@ export default function AccountingArchivePage() {
           <input 
             type="month" 
             value={month} 
-            onChange={(e) => setMonth(e.target.value)} 
-            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+            onChange={(e) => setMonth(e.target.value)}
+            onClick={(e) => (e.target as any).showPicker?.()} 
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm [color-scheme:light] dark:[color-scheme:dark] cursor-pointer"
           />
           <Button variant="outline" onClick={exportCsv} disabled={loading || data.length === 0}>
             <Download className="w-4 h-4 mr-2" />
@@ -160,10 +163,18 @@ export default function AccountingArchivePage() {
         </button>
       </div>
 
-      {/* FILTER BAR & ACTIONS */}
-      <div className="flex items-center justify-between py-2 border-b mb-4">
-        <div className="flex items-center gap-4">
-          {activeTab === 'bank' && (
+      {/* FILTERS */}
+      <div className="flex items-center justify-between py-4">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Caută..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-9 w-[200px] rounded-md border border-input bg-background px-3 py-1 text-sm"
+          />
+          
+          {(activeTab === 'ar' || activeTab === 'bank') && (
             <select 
               value={statusFilter} 
               onChange={e => setStatusFilter(e.target.value)}
@@ -229,6 +240,7 @@ export default function AccountingArchivePage() {
                 <thead className="bg-muted/50 border-b">
                   {activeTab === 'ar' && (
                     <tr>
+                      <th className="p-4 font-medium w-16 text-muted-foreground">#</th>
                       <th className="p-4 font-medium">Nr. Factură</th>
                       <th className="p-4 font-medium">Client</th>
                       <th className="p-4 font-medium">Data Emitere</th>
@@ -238,6 +250,7 @@ export default function AccountingArchivePage() {
                   )}
                   {activeTab === 'ap' && (
                     <tr>
+                      <th className="p-4 font-medium w-16 text-muted-foreground">#</th>
                       <th className="p-4 font-medium">Furnizor (OCR)</th>
                       <th className="p-4 font-medium">Data Facturii</th>
                       <th className="p-4 font-medium">Nr. Ctr.</th>
@@ -264,6 +277,7 @@ export default function AccountingArchivePage() {
                     <tr key={i} className="hover:bg-muted/30">
                       {activeTab === 'ar' && (
                         <>
+                          <td className="p-4 text-muted-foreground text-xs">{(pagination.currentPage - 1) * 50 + i + 1}</td>
                           <td className="p-4 font-medium">{row.number}</td>
                           <td className="p-4">{row.client?.name || row.clientId}</td>
                           <td className="p-4">{new Date(row.issuedAt).toLocaleDateString('ro-RO')}</td>
