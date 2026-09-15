@@ -1,11 +1,15 @@
-if (typeof global !== 'undefined' && !global.DOMMatrix) {
-  global.DOMMatrix = require('dommatrix');
-}
-
 /**
  * Extrage textul din PDF și returnează doar secțiunea care corespunde IBAN-ului specificat.
  */
 export async function parsePdfForAccount(buffer: Buffer, accountIban: string): Promise<string> {
+  // Polyfill pentru pdfjs-dist / pdf-parse în medii de server Next.js 14+
+  if (typeof globalThis !== 'undefined' && !(globalThis as any).DOMMatrix) {
+    const DOMMatrix = require('dommatrix');
+    (globalThis as any).DOMMatrix = DOMMatrix;
+    if (typeof global !== 'undefined') global.DOMMatrix = DOMMatrix;
+    if (typeof window !== 'undefined') (window as any).DOMMatrix = DOMMatrix;
+  }
+
   const pdfParse = require('pdf-parse')
   const data = await pdfParse(buffer)
   const fullText = data.text
