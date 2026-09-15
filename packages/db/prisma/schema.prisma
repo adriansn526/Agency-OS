@@ -908,6 +908,7 @@ model SupplierInvoice {
   issueDate                DateTime
   dueDate                  DateTime?
   invoiceNumber            String?
+  contractReference        String?
   pdfUrl                   String
   status                   String            @default("unpaid")
   source                   String            // manual | email | api | spv

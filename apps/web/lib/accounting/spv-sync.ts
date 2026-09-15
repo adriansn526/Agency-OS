@@ -146,6 +146,7 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
               spvId, source: 'spv', extractionStatus: 'confirmed',
               amount: parsedData.total, status: noulStatus,
               currency: parsedData.moneda, issueDate: parsedData.dataEmitere,
+              xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
             }
           })
         } else {
@@ -155,6 +156,7 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
               amount: parsedData.total, currency: parsedData.moneda,
               issueDate: parsedData.dataEmitere, invoiceNumber: parsedData.numarFactura,
               extractedSupplierName: parsedData.numeFurnizor, pdfUrl: '',
+              xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
             }
           })
         }

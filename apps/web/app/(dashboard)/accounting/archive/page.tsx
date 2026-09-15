@@ -12,7 +12,7 @@ type Tab = 'ar' | 'ap' | 'bank'
 
 export default function AccountingArchivePage() {
   const [activeTab, setActiveTab] = useState<Tab>('ar')
-  const [month, setMonth] = useState(format(subMonths(new Date(), 1), 'yyyy-MM'))
+  const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
   
   const [data, setData] = useState<any[]>([])
   const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalItems: 0 })
@@ -249,6 +249,7 @@ export default function AccountingArchivePage() {
                     <tr>
                       <th className="p-4 font-medium">Furnizor (OCR)</th>
                       <th className="p-4 font-medium">Data Facturii</th>
+                      <th className="p-4 font-medium">Nr. Ctr.</th>
                       <th className="p-4 font-medium">Sumă Totală Brută</th>
                       <th className="p-4 font-medium">Cheltuială Deductibilă</th>
                       <th className="p-4 font-medium">TVA Dedus</th>
@@ -288,6 +289,7 @@ export default function AccountingArchivePage() {
                         <>
                           <td className="p-4">{row.extractedSupplierName || row.supplier?.name || '-'}</td>
                           <td className="p-4">{row.issueDate ? new Date(row.issueDate).toLocaleDateString('ro-RO') : '-'}</td>
+                          <td className="p-4 text-slate-500">{row.contractReference || '-'}</td>
                           <td className="p-4 font-medium">{Number(row.amount).toLocaleString('ro-RO')} {row.currency}</td>
                           <td className="p-4 text-rose-600 font-medium">
                             {Number(row.calculatedExpense || 0).toLocaleString('ro-RO')} {row.currency}
@@ -299,6 +301,25 @@ export default function AccountingArchivePage() {
                             <span className={`px-2 py-1 rounded-full text-[10px] mb-1 inline-block ${row.source === 'spv' ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'bg-slate-100 text-slate-600'}`}>
                               {String(row.source).toUpperCase()}
                             </span>
+                            {row.source === 'spv' && (
+                              <div className="mt-1 flex flex-col gap-1">
+                                <a 
+                                  href={`/api/accounting/archive/invoices-in/${row.id}/xml`} 
+                                  target="_blank" 
+                                  className="text-[10px] text-blue-600 hover:underline flex items-center gap-1"
+                                >
+                                  <Download className="w-3 h-3" /> Descarcă XML
+                                </a>
+                                <a 
+                                  href="https://mfinante.gov.ro/ro/web/efactura/validare-xml-factura" 
+                                  target="_blank" 
+                                  className="text-[10px] text-slate-500 hover:underline"
+                                  title="Afișare Lizibilă ANAF"
+                                >
+                                  ANAF Vizualizare ↗
+                                </a>
+                              </div>
+                            )}
                             <br/>
                             <span className="text-muted-foreground">Chelt: {row.expensePct}% / TVA: {row.vatPct}%</span>
                           </td>

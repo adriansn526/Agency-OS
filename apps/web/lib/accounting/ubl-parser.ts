@@ -10,6 +10,8 @@ export interface ParsedEFactura {
   sumaTva: number
   total: number
   moneda: string
+  contractReference?: string
+  rawXml: string
 }
 
 export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
@@ -70,6 +72,14 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
     sumaTva = parseFloat(taxTotal?.TaxAmount?.['#text'] || taxTotal?.TaxAmount || 0)
   }
 
+  // Contract/Order Reference
+  let contractReference = undefined
+  if (invoice.ContractDocumentReference?.ID) {
+    contractReference = invoice.ContractDocumentReference.ID?.['#text'] || invoice.ContractDocumentReference.ID
+  } else if (invoice.OrderReference?.ID) {
+    contractReference = invoice.OrderReference.ID?.['#text'] || invoice.OrderReference.ID
+  }
+
   return {
     cuiFurnizor,
     numeFurnizor,
@@ -78,6 +88,8 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
     sumaNeta,
     sumaTva,
     total,
-    moneda
+    moneda,
+    contractReference,
+    rawXml: xmlContent
   }
 }
