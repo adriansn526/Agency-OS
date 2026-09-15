@@ -101,14 +101,6 @@ export default function AccountingPage() {
         </div>
       </div>
 
-      <Alert variant="default" className="border-amber-500 bg-amber-50">
-        <AlertCircle className="h-4 w-4 text-amber-600" />
-        <AlertTitle className="text-amber-800">Informație Orientativă</AlertTitle>
-        <AlertDescription className="text-amber-700">
-          Cifrele prezentate mai jos sunt estimări interne pe baza regulilor configurate. 
-          Ele nu constituie un calcul fiscal legal și pot diferi de bilanțul oficial calculat de contabil.
-        </AlertDescription>
-      </Alert>
 
       {/* DASHBOARD P&L */}
       {loadingDashboard ? (
