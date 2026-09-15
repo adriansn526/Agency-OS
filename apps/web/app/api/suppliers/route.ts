@@ -7,8 +7,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const search = searchParams.get('search')
-    // Extract tenantId (fallback to default for local dev if not provided by middleware)
-    const tenantId = request.headers.get('x-tenant-id') || 'default_tenant'
+    let tenantId = request.headers.get('x-tenant-id')
+    if (!tenantId || tenantId === 'default_tenant') {
+      const t = await db.tenantInstance.findFirst()
+      tenantId = t ? t.id : 'default_tenant'
+    }
 
     const where: Record<string, unknown> = { tenantId }
     
@@ -40,7 +43,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { name, cui, iban, category, isRecurring, expectedDay } = body
-    const tenantId = request.headers.get('x-tenant-id') || 'default_tenant'
+    let tenantId = request.headers.get('x-tenant-id')
+    if (!tenantId || tenantId === 'default_tenant') {
+      const t = await db.tenantInstance.findFirst()
+      tenantId = t ? t.id : 'default_tenant'
+    }
 
     if (!name) {
       return NextResponse.json({ error: 'Numele furnizorului este obligatoriu' }, { status: 400 })

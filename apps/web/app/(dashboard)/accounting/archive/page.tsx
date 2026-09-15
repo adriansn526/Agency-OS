@@ -367,7 +367,7 @@ export default function AccountingArchivePage() {
                       {activeTab === 'bank' && (
                         <>
                           <td className="p-4 whitespace-nowrap">{new Date(row.date).toLocaleDateString('ro-RO')}</td>
-                          <td className="p-4 text-xs max-w-[300px] truncate" title={row.details}>{row.details}</td>
+                          <td className="p-4 text-xs max-w-xl break-words" title={row.description}>{row.description}</td>
                           <td className="p-4 text-right text-rose-600">{Number(row.debit) > 0 ? Number(row.debit).toLocaleString('ro-RO') : '-'}</td>
                           <td className="p-4 text-right text-emerald-600">{Number(row.credit) > 0 ? Number(row.credit).toLocaleString('ro-RO') : '-'}</td>
                           <td className="p-4">

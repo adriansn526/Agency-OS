@@ -3,7 +3,11 @@ import { db } from '@repo/db'
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const tenantId = request.headers.get('x-tenant-id') || 'default_tenant'
+    let tenantId = request.headers.get('x-tenant-id')
+    if (!tenantId || tenantId === 'default_tenant') {
+      const t = await db.tenantInstance.findFirst()
+      tenantId = t ? t.id : 'default_tenant'
+    }
     const supplierId = params.id
 
     const supplier = await db.supplier.findFirst({
