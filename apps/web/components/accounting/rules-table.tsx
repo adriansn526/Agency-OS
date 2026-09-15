@@ -1,0 +1,179 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
+import { Loader2, Plus, Trash2 } from 'lucide-react'
+
+type Rule = {
+  id: string
+  name: string
+  supplierId?: string | null
+  expenseCategory?: string | null
+  vatDeductiblePercent: string
+  expenseDeductiblePercent: string
+  priority: number
+}
+
+export function RulesTable() {
+  const [rules, setRules] = useState<Rule[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [formData, setFormData] = useState<Partial<Rule>>({
+    name: '',
+    supplierId: '',
+    expenseCategory: '',
+    vatDeductiblePercent: '100',
+    expenseDeductiblePercent: '100',
+    priority: 0
+  })
+
+  useEffect(() => {
+    fetchRules()
+  }, [])
+
+  const fetchRules = async () => {
+    try {
+      const res = await fetch('/api/accounting/rules')
+      const json = await res.json()
+      if (json.data) setRules(json.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const res = await fetch('/api/accounting/rules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      if (!res.ok) throw new Error('Failed to save')
+      
+      toast.success('Regulă adăugată cu succes!')
+      setIsDialogOpen(false)
+      fetchRules()
+      setFormData({
+        name: '', supplierId: '', expenseCategory: '',
+        vatDeductiblePercent: '100', expenseDeductiblePercent: '100', priority: 0
+      })
+    } catch (error) {
+      toast.error('Eroare la salvarea regulii')
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Ești sigur că vrei să invalidezi această regulă? Istoricul facturilor nu va fi afectat.')) return
+    
+    try {
+      const res = await fetch(`/api/accounting/rules/${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete')
+      
+      toast.success('Regula a fost invalidată')
+      fetchRules()
+    } catch (error) {
+      toast.error('Eroare la invalidare')
+    }
+  }
+
+  if (isLoading) {
+    return <div className="flex h-32 items-center justify-center border bg-background rounded-lg"><Loader2 className="animate-spin text-muted-foreground" /></div>
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Reguli Active</CardTitle>
+          <CardDescription>Regulile sunt evaluate în ordinea priorității (cea mai mare câștigă).</CardDescription>
+        </div>
+        <Button size="sm" onClick={() => setIsDialogOpen(!isDialogOpen)}><Plus className="w-4 h-4 mr-2" /> Adaugă Regulă</Button>
+      </CardHeader>
+      
+      {isDialogOpen && (
+        <CardContent className="border-b bg-muted/30">
+          <form onSubmit={handleSave} className="space-y-4 pt-4">
+            <h3 className="font-medium">Formular Regulă Nouă</h3>
+            <div className="space-y-2 flex flex-col">
+              <label className="text-sm font-medium">Nume Regulă (ex: Protocol 50%)</label>
+              <input required className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.name} onChange={(e: any) => setFormData(f => ({...f, name: e.target.value}))} />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Deducere Cheltuială (%)</label>
+                <input type="number" required max="100" min="0" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.expenseDeductiblePercent} onChange={(e: any) => setFormData(f => ({...f, expenseDeductiblePercent: e.target.value}))} />
+              </div>
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Deducere TVA (%)</label>
+                <input type="number" required max="100" min="0" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.vatDeductiblePercent} onChange={(e: any) => setFormData(f => ({...f, vatDeductiblePercent: e.target.value}))} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Categorie Cheltuială</label>
+                <input placeholder="ex: auto, protocol" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.expenseCategory || ''} onChange={(e: any) => setFormData(f => ({...f, expenseCategory: e.target.value}))} />
+              </div>
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Prioritate (mai mare = primul)</label>
+                <input type="number" required className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.priority} onChange={(e: any) => setFormData(f => ({...f, priority: parseInt(e.target.value) || 0}))} />
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Anulează</Button>
+              <Button type="submit">Salvează Regula</Button>
+            </div>
+          </form>
+        </CardContent>
+      )}
+
+      <CardContent className="pt-6">
+        {rules.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">Nu ai configurat nicio regulă. Toate cheltuielile vor fi deduse 100%.</div>
+        ) : (
+          <div className="relative w-full overflow-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="[&_tr]:border-b">
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Nume / Condiție</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Prioritate</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Cheltuială Deductibilă</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">TVA Deductibil</th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground"></th>
+                </tr>
+              </thead>
+              <tbody className="[&_tr:last-child]:border-0">
+                {rules.map(rule => (
+                  <tr key={rule.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td className="p-4 align-middle">
+                      <div className="font-medium">{rule.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {rule.expenseCategory ? `Cat: ${rule.expenseCategory}` : 'Toate categoriile'}
+                      </div>
+                    </td>
+                    <td className="p-4 align-middle">{rule.priority}</td>
+                    <td className="p-4 align-middle">{rule.expenseDeductiblePercent}%</td>
+                    <td className="p-4 align-middle">{rule.vatDeductiblePercent}%</td>
+                    <td className="p-4 align-middle text-right">
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(rule.id)} title="Invalidează">
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}

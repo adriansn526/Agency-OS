@@ -1,5 +1,3 @@
-// packages/db/prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,54 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─── Users ───
 model User {
   id        String    @id @default(cuid())
   name      String
   email     String    @unique
-  password  String? // bcrypt hash
-  role      String    @default("operator") // admin, manager, operator, viewer
+  password  String?
+  role      String    @default("operator")
   avatar    String?
   lastLogin DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
 
-// ─── Business Lines ───
 model BusinessLine {
-  id        String   @id @default(cuid())
-  slug      String   @unique // 'agency', 'fudly', 'climaticpro', 'wertaudit'
-  name      String
-  icon      String
-  color     String
-  domain    String? // 'fudly.ro', 'climaticpro.ro' — used for short links
-  config    Json // entityTypes, projectTemplates, offerTemplates (full config)
-  createdAt DateTime @default(now())
-
+  id                 String              @id @default(cuid())
+  slug               String              @unique
+  name               String
+  icon               String
+  color              String
+  domain             String?
+  config             Json
+  createdAt          DateTime            @default(now())
   clients            Client[]
-  leads              Lead[]
-  projects           Project[]
-  offers             Offer[]
+  clientReports      ClientReport[]
+  communications     Communication[]
   contracts          Contract[]
   invoices           Invoice[]
-  serviceTemplates   ServiceTemplate[]
-  offerTemplates     OfferTemplate[]
-  communications     Communication[]
-  // ─── Marketing ───
+  leads              Lead[]
+  marketingCampaigns MarketingCampaign[]
   marketingSegments  MarketingSegment[]
   marketingTemplates MarketingTemplate[]
-  marketingCampaigns MarketingCampaign[]
-  shortLinks         ShortLink[]
-  // ─── Reporting ───
-  clientReports      ClientReport[]
+  offers             Offer[]
+  offerTemplates     OfferTemplate[]
+  projects           Project[]
   savedViews         SavedView[]
+  serviceTemplates   ServiceTemplate[]
+  shortLinks         ShortLink[]
 }
 
-// ─── CRM: Clients ───
 model Client {
-  id                  String   @id @default(cuid())
+  id                  String               @id @default(cuid())
   businessLineId      String
-  entityType          String // 'clients', 'restaurants', 'end_clients', 'installers', etc.
+  entityType          String
   companyName         String
   cui                 String?
   regCom              String?
@@ -65,114 +57,100 @@ model Client {
   phone               String?
   address             String?
   website             String?
-  websites            String[] @default([]) // all monitored domains
-  status              String   @default("prospect") // activ, inactiv, prospect
+  websites            String[]             @default([])
+  status              String               @default("prospect")
   industry            String?
   notes               String?
-  // ─── Google Integrations ───
-  googleAdsCustomerId String? // Google Ads Customer ID (e.g. "4111955891")
-  ga4PropertyId       String? // GA4 Property ID (e.g. "properties/123456")
-  gscSiteUrl          String? // GSC verified site (e.g. "sc-domain:example.ro")
-  // ─── PostHog Integration ───
-  posthogProjectId    String? // Optional explicit Project ID in PostHog. If missing, filtering is done via domain.
-
-  customFields Json? // câmpuri specifice per entityType
-  deletedAt    DateTime? // soft delete
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  businessLine      BusinessLine         @relation(fields: [businessLineId], references: [id])
-  leads             Lead[]
-  projects          Project[]
-  offers            Offer[]
-  contracts         Contract[]
-  invoices          Invoice[]
-  activities        Activity[]
-  retainers         Retainer[]
-  communications    Communication[]
-  brandDNA          BrandDNA?
-  clientReports     ClientReport[]
-  domainConfigs     ClientDomainConfig[]
-  seoAudits         SeoAudit[]
-  apiKeys           ClientApiKey[]
-  connectedAccounts ConnectedAccount[]
-  systemAlerts      SystemAlert[]
+  googleAdsCustomerId String?
+  ga4PropertyId       String?
+  gscSiteUrl          String?
+  posthogProjectId    String?
+  customFields        Json?
+  deletedAt           DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  activities          Activity[]
+  brandDNA            BrandDNA?
+  businessLine        BusinessLine         @relation(fields: [businessLineId], references: [id])
+  apiKeys             ClientApiKey[]
+  domainConfigs       ClientDomainConfig[]
+  clientReports       ClientReport[]
+  communications      Communication[]
+  connectedAccounts   ConnectedAccount[]
+  contracts           Contract[]
+  invoices            Invoice[]
+  leads               Lead[]
+  offers              Offer[]
+  projects            Project[]
+  retainers           Retainer[]
+  seoAudits           SeoAudit[]
+  systemAlerts        SystemAlert[]
 
   @@index([businessLineId, entityType])
   @@index([status])
 }
 
-// ─── CRM: Leads ───
 model Lead {
-  id              String    @id @default(cuid())
+  id              String         @id @default(cuid())
   businessLineId  String
   entityType      String
   companyName     String
   contactPerson   String
   email           String
   phone           String?
-  status          String // pipeline status (varies per entityType)
-  source          String? // website, referral, linkedin, cold_outreach, google_ads
-  value           Float? // estimated deal value
-  probability     Float? // conversion probability (0-100)
-  priority        String? // low, medium, high, urgent
+  status          String
+  source          String?
+  value           Float?
+  probability     Float?
+  priority        String?
   notes           String?
   customFields    Json?
-  assignedTo      String? // userId
+  assignedTo      String?
   nextAction      String?
   nextActionDate  DateTime?
-  convertedToId   String? // clientId after conversion
-  // External import fields
-  externalId      String? // ID from source system (e.g. Fudly MongoDB _id)
-  externalSource  String? // 'fudly_crm', 'manual', etc.
+  convertedToId   String?
+  externalId      String?
+  externalSource  String?
   city            String?
   address         String?
-  // Business data fields (CSV import)
-  cui             String? // CIF/CUI firma
+  cui             String?
   website         String?
-  county          String? // Județ
-  industry        String? // agricultura, comert, constructii, medical, fonduri, altele
-  caenCode        String? // Cod CAEN
-  caenDescription String? // Descriere CAEN
-  revenue         Float? // Cifra de afaceri
-  employees       Int? // Nr angajați
-  companyStatus   String? // Functiune / Dizolvare / Radiere
-  foundedYear     Int? // An înființare
-  contactRole     String? // Funcție contact
+  county          String?
+  industry        String?
+  caenCode        String?
+  caenDescription String?
+  revenue         Float?
+  employees       Int?
+  companyStatus   String?
+  foundedYear     Int?
+  contactRole     String?
   phone2          String?
   phone3          String?
   email2          String?
-  activityDomain  String? // Domeniu activitate (e.g. "Construcții", "Instalații electrice")
-  services        String? // Servicii oferite (pipe-separated, e.g. "montaj | reparații | mentenanță")
-  // ─── Campaign Suppression ───
-  lastCampaignAt  DateTime? // When was the last campaign sent to this lead
-  lastCampaignId  String? // Which campaign was sent last
-  campaignCount   Int       @default(0) // Total campaigns sent to this lead
-  // ─── Marketing GDPR ───
-  optOut          Boolean   @default(false) // GDPR: a cerut să fie exclus din marketing
-  optOutAt        DateTime? // Când a cerut opt-out
-
-  // ─── Form Tracking ───
-  sourcePage     String? // URL pagina de unde vine cererea: "/contact", "/servicii/web-design"
-  sourceService  String? // Serviciul solicitat: "web-design", "seo", "google-ads"
-  sourceDomain   String? // Domeniul site-ului: "qualitycontrol.com.ro"
-  sourceFormId   String? // ID formular (pt multiple forms pe aceeași pagină)
-  sourceReferrer String? // Referrer URL complet
-  // ─── UTM Tracking ───
-  utmSource      String? // google, facebook, newsletter
-  utmMedium      String? // cpc, email, organic
-  utmCampaign    String? // campaign name
-  utmTerm        String? // keyword
-  utmContent     String? // ad variant
-
-  deletedAt DateTime? // soft delete
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  businessLine  BusinessLine   @relation(fields: [businessLineId], references: [id])
-  convertedTo   Client?        @relation(fields: [convertedToId], references: [id])
-  activities    Activity[]
-  campaignLeads CampaignLead[]
+  activityDomain  String?
+  services        String?
+  lastCampaignAt  DateTime?
+  lastCampaignId  String?
+  campaignCount   Int            @default(0)
+  optOut          Boolean        @default(false)
+  optOutAt        DateTime?
+  sourcePage      String?
+  sourceService   String?
+  sourceDomain    String?
+  sourceFormId    String?
+  sourceReferrer  String?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  deletedAt       DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  activities      Activity[]
+  campaignLeads   CampaignLead[]
+  businessLine    BusinessLine   @relation(fields: [businessLineId], references: [id])
+  convertedTo     Client?        @relation(fields: [convertedToId], references: [id])
 
   @@unique([externalId, externalSource])
   @@index([businessLineId, entityType])
@@ -186,172 +164,159 @@ model Lead {
   @@index([utmSource])
 }
 
-// ─── Projects ───
 model Project {
-  id             String    @id @default(cuid())
+  id             String        @id @default(cuid())
   businessLineId String
   clientId       String
-  templateId     String // reference to projectTemplate in BusinessLine.config
+  templateId     String
   name           String
-  status         String    @default("planificare")
+  status         String        @default("planificare")
   currentPhase   String?
-  progress       Int       @default(0)
+  progress       Int           @default(0)
   startDate      DateTime?
   dueDate        DateTime?
   budget         Float?
-  assignedTo     String? // userId
+  assignedTo     String?
   notes          String?
-  metadata       Json? // phases progress, checklist state, linked entities
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  businessLine BusinessLine  @relation(fields: [businessLineId], references: [id])
-  client       Client        @relation(fields: [clientId], references: [id])
-  activities   Activity[]
-  systemAlerts SystemAlert[]
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  activities     Activity[]
+  businessLine   BusinessLine  @relation(fields: [businessLineId], references: [id])
+  client         Client        @relation(fields: [clientId], references: [id])
+  systemAlerts   SystemAlert[]
 
   @@index([businessLineId, status])
 }
 
-// ─── Offers ───
 model Offer {
-  id             String    @id @default(cuid())
-  number         String    @unique // OF-2026-001
+  id             String          @id @default(cuid())
+  number         String          @unique
   businessLineId String
   entityType     String
   clientId       String?
   entityName     String
   templateId     String
   templateName   String
-  status         String    @default("draft")
+  status         String          @default("draft")
   value          Float
-  currency       String    @default("EUR")
+  currency       String          @default("EUR")
   validUntil     DateTime?
-  blocks         Json // offer blocks (hero, features, pricing, stats)
+  blocks         Json
   customFields   Json?
-  modules        Json? // service modules selected
-  sentAt         DateTime? // când a fost trimisă prima dată
-  viewedAt       DateTime? // primul offer_opened event
-  acceptedAt     DateTime? // când a acceptat clientul
+  modules        Json?
+  sentAt         DateTime?
+  viewedAt       DateTime?
+  acceptedAt     DateTime?
   createdBy      String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  businessLine BusinessLine    @relation(fields: [businessLineId], references: [id])
-  client       Client?         @relation(fields: [clientId], references: [id])
-  contracts    Contract[]
-  deliveries   OfferDelivery[]
-  activities   Activity[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  activities     Activity[]
+  contracts      Contract[]
+  businessLine   BusinessLine    @relation(fields: [businessLineId], references: [id])
+  client         Client?         @relation(fields: [clientId], references: [id])
+  deliveries     OfferDelivery[]
 
   @@index([businessLineId, status])
   @@index([clientId])
 }
 
-// ─── Offer Delivery (Smart Delivery) ───
 model OfferDelivery {
-  id               String    @id @default(cuid())
+  id               String       @id @default(cuid())
   offerId          String
-  token            String    @unique // token unic pentru URL public
-  sentAt           DateTime  @default(now())
-  sentTo           String // email destinatar
-  sentBy           String // userId care a trimis
+  token            String       @unique
+  sentAt           DateTime     @default(now())
+  sentTo           String
+  sentBy           String
   emailSubject     String?
-  emailMessage     String?   @db.Text
-  pdfAttached      Boolean   @default(true)
-  trackingEnabled  Boolean   @default(true)
+  emailMessage     String?
+  pdfAttached      Boolean      @default(true)
+  trackingEnabled  Boolean      @default(true)
   firstOpenedAt    DateTime?
   lastOpenedAt     DateTime?
-  totalViews       Int       @default(0)
-  clientResponse   String? // 'accepted' | 'rejected' | 'pending'
+  totalViews       Int          @default(0)
+  clientResponse   String?
   clientResponseAt DateTime?
-  clientMessage    String?   @db.Text
-  createdAt        DateTime  @default(now())
-
-  offer  Offer        @relation(fields: [offerId], references: [id])
-  events OfferEvent[]
+  clientMessage    String?
+  createdAt        DateTime     @default(now())
+  offer            Offer        @relation(fields: [offerId], references: [id])
+  events           OfferEvent[]
 
   @@index([offerId])
 }
 
-// ─── Offer Tracking Events ───
 model OfferEvent {
-  id         String   @id @default(cuid())
+  id         String        @id @default(cuid())
   deliveryId String
-  type       String // 'opened', 'section_viewed', 'time_on_section', 'scroll_depth', 'accepted', 'rejected', 'pdf_downloaded', 'revisited', 'question_asked'
-  metadata   Json? // { section, duration, depth, message, sessionNumber }
+  type       String
+  metadata   Json?
   ip         String?
   userAgent  String?
-  device     String? // 'desktop' | 'mobile' | 'tablet'
-  timestamp  DateTime @default(now())
-
-  delivery OfferDelivery @relation(fields: [deliveryId], references: [id])
+  device     String?
+  timestamp  DateTime      @default(now())
+  delivery   OfferDelivery @relation(fields: [deliveryId], references: [id])
 
   @@index([deliveryId, type])
   @@index([timestamp(sort: Desc)])
 }
 
-// ─── Contracts ───
 model Contract {
-  id             String    @id @default(cuid())
-  number         String    @unique // ASNS-2026-001
+  id             String       @id @default(cuid())
+  number         String       @unique
   businessLineId String
   offerId        String?
   clientId       String
   templateId     String
-  sections       Json // resolved contract sections (Art. 1-12)
-  anexa2         Json? // Statement of Work (deliverables, phases, reporting)
-  companyDetails Json // prestator details at time of contract
-  clientDetails  Json // beneficiar details at time of contract
-  status         String    @default("draft") // draft, sent, signed, active, expired
+  sections       Json
+  anexa2         Json?
+  companyDetails Json
+  clientDetails  Json
+  status         String       @default("draft")
   value          Float
-  currency       String    @default("EUR")
-  duration       Int // months
+  currency       String       @default("EUR")
+  duration       Int
   startDate      DateTime
   endDate        DateTime
   signedAt       DateTime?
   createdBy      String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  businessLine BusinessLine @relation(fields: [businessLineId], references: [id])
-  offer        Offer?       @relation(fields: [offerId], references: [id])
-  client       Client       @relation(fields: [clientId], references: [id])
-  invoices     Invoice[]
-  activities   Activity[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  activities     Activity[]
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  client         Client       @relation(fields: [clientId], references: [id])
+  offer          Offer?       @relation(fields: [offerId], references: [id])
+  invoices       Invoice[]
 
   @@index([businessLineId, status])
   @@index([clientId])
 }
 
-// ─── Finance: Invoices ───
 model Invoice {
-  id             String    @id @default(cuid())
-  number         String    @unique
+  id             String       @id @default(cuid())
+  number         String       @unique
   businessLineId String
   clientId       String
   contractId     String?
-  type           String // 'proforma', 'fiscala', 'subscriptie'
-  direction      String // 'emisa' (income), 'primita' (expense)
-  status         String    @default("emisa") // emisa, trimisa, platita, restanta
+  type           String
+  direction      String
+  status         String       @default("emisa")
   amount         Float
-  currency       String    @default("EUR")
-  issuedAt       DateTime  @default(now())
+  currency       String       @default("EUR")
+  issuedAt       DateTime     @default(now())
   dueDate        DateTime
   paidAt         DateTime?
-  items          Json // line items [{description, quantity, unitPrice, total}]
+  items          Json
   notes          String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  businessLine BusinessLine @relation(fields: [businessLineId], references: [id])
-  client       Client       @relation(fields: [clientId], references: [id])
-  contract     Contract?    @relation(fields: [contractId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
+  client         Client       @relation(fields: [clientId], references: [id])
+  contract       Contract?    @relation(fields: [contractId], references: [id])
 
   @@index([businessLineId, status, direction])
   @@index([clientId])
 }
 
-// ─── Retainers / Subscriptions ───
 model Retainer {
   id             String    @id @default(cuid())
   clientId       String
@@ -359,147 +324,124 @@ model Retainer {
   serviceName    String
   amount         Float
   currency       String    @default("EUR")
-  billingCycle   String    @default("lunar") // lunar, trimestrial
-  status         String    @default("activ") // activ, inactiv, expirat
+  billingCycle   String    @default("lunar")
+  status         String    @default("activ")
   startDate      DateTime
   endDate        DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-
-  client Client @relation(fields: [clientId], references: [id])
+  client         Client    @relation(fields: [clientId], references: [id])
 
   @@index([businessLineId, status])
 }
 
-// ─── Activity Log ───
 model Activity {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   businessLineId String?
   userId         String?
   userName       String?
-  action         String // 'created', 'updated', 'status_changed', 'note_added', etc.
-  entityType     String // 'client', 'lead', 'project', 'offer', 'contract', 'invoice'
+  action         String
+  entityType     String
   entityId       String
   entityName     String
-  details        Json? // { oldStatus, newStatus, field, oldValue, newValue }
-  createdAt      DateTime @default(now())
-
-  // Optional relations for querying
-  clientId   String?
-  leadId     String?
-  projectId  String?
-  offerId    String?
-  contractId String?
-
-  client   Client?   @relation(fields: [clientId], references: [id])
-  lead     Lead?     @relation(fields: [leadId], references: [id])
-  project  Project?  @relation(fields: [projectId], references: [id])
-  offer    Offer?    @relation(fields: [offerId], references: [id])
-  contract Contract? @relation(fields: [contractId], references: [id])
+  details        Json?
+  createdAt      DateTime  @default(now())
+  clientId       String?
+  leadId         String?
+  projectId      String?
+  offerId        String?
+  contractId     String?
+  client         Client?   @relation(fields: [clientId], references: [id])
+  contract       Contract? @relation(fields: [contractId], references: [id])
+  lead           Lead?     @relation(fields: [leadId], references: [id])
+  offer          Offer?    @relation(fields: [offerId], references: [id])
+  project        Project?  @relation(fields: [projectId], references: [id])
 
   @@index([entityType, entityId])
   @@index([createdAt(sort: Desc)])
 }
 
-// ─── CRM: Saved Views ───
 model SavedView {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   businessLineId String
-  userId         String? // Dacă e null, e view global
+  userId         String?
   name           String
   icon           String?
   color          String?
-  filters        Json // FilterCondition[]
-  entityType     String   @default("lead")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  businessLine BusinessLine @relation(fields: [businessLineId], references: [id])
+  filters        Json
+  entityType     String       @default("lead")
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
 
   @@index([businessLineId, entityType])
 }
 
-// ─── Service Catalog ───
 model ServiceTemplate {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   businessLineId String
-  name           String // "SEO Optimization", "Plan Pro"
-  shortName      String // "SEO", "Pro"
-  icon           String? // Lucide icon name
+  name           String
+  shortName      String
+  icon           String?
   description    String?
-  category       String // "development", "marketing", "saas", "consultancy"
+  category       String
   defaultPrice   Float
-  pricingUnit    String // "fix", "lunar", "per_hour", "one_time"
-  setupFee       Float? // one-time setup fee
-  currency       String   @default("EUR")
-  includedWith   String[] // IDs of parent services that bundle this one free
-  defaultBlocks  Json? // Pre-built offer blocks [{type, title, data}]
-  isActive       Boolean  @default(true)
-  sortOrder      Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  businessLine BusinessLine @relation(fields: [businessLineId], references: [id])
+  pricingUnit    String
+  setupFee       Float?
+  currency       String       @default("EUR")
+  includedWith   String[]
+  defaultBlocks  Json?
+  isActive       Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
 
   @@index([businessLineId, isActive])
 }
 
-// ─── Offer Templates (pre-defined combos of services) ───
 model OfferTemplate {
-  id             String   @id @default(cuid())
+  id             String       @id @default(cuid())
   businessLineId String
-  name           String // "Pachet Digital Start", "Propunere Subscripție Fudly"
+  name           String
   description    String?
-  serviceIds     String[] // ServiceTemplate IDs included
-  defaultBlocks  Json? // Extra blocks specific to this template combo
-  isActive       Boolean  @default(true)
-  sortOrder      Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  businessLine BusinessLine @relation(fields: [businessLineId], references: [id])
+  serviceIds     String[]
+  defaultBlocks  Json?
+  isActive       Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id])
 
   @@index([businessLineId, isActive])
 }
 
-// ─── Communications ───
 model Communication {
-  id             String  @id @default(cuid())
+  id             String        @id @default(cuid())
   businessLineId String?
   clientId       String?
-
-  channel   String // email | call | whatsapp | sms | video
-  direction String // inbound | outbound
-  subject   String
-  body      String  @db.Text
-  fromAddr  String? // sender (email or phone)
-  toAddr    String? // recipient (email or phone)
-
-  // Email-specific
-  emailStatus String? // sent | delivered | opened | bounced
-
-  // Call-specific
-  phone      String?
-  callResult String? // answered | no_answer | voicemail | busy
-  duration   Int? // minutes
-
-  // Video-specific
-  meetingType  String? // review | demo | kickoff
-  meetingUrl   String?
-  participants String[] @default([])
-
-  // Metadata
-  userId      String?
-  userName    String?
-  tags        String[] @default([])
-  attachments String[] @default([])
-  metadata    Json? // contractId, offerId, invoiceId, etc.
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  businessLine BusinessLine? @relation(fields: [businessLineId], references: [id])
-  client       Client?       @relation(fields: [clientId], references: [id])
+  channel        String
+  direction      String
+  subject        String
+  body           String
+  fromAddr       String?
+  toAddr         String?
+  emailStatus    String?
+  phone          String?
+  callResult     String?
+  duration       Int?
+  meetingType    String?
+  meetingUrl     String?
+  participants   String[]      @default([])
+  userId         String?
+  userName       String?
+  tags           String[]      @default([])
+  attachments    String[]      @default([])
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  businessLine   BusinessLine? @relation(fields: [businessLineId], references: [id])
+  client         Client?       @relation(fields: [clientId], references: [id])
 
   @@index([clientId])
   @@index([businessLineId])
@@ -507,15 +449,14 @@ model Communication {
   @@index([createdAt])
 }
 
-// ─── Uptime Monitoring ───
 model UptimeCheck {
   id         String   @id @default(cuid())
   domain     String
   clientId   String?
-  statusCode Int // HTTP status code (200, 503, 0=timeout)
-  responseMs Int // response time in ms
+  statusCode Int
+  responseMs Int
   isUp       Boolean
-  error      String? // error message if down
+  error      String?
   checkedAt  DateTime @default(now())
 
   @@index([domain, checkedAt(sort: Desc)])
@@ -528,134 +469,118 @@ model UptimeIncident {
   clientId    String?
   startedAt   DateTime  @default(now())
   resolvedAt  DateTime?
-  durationMin Int? // downtime in minutes
-  cause       String? // HTTP status or error message
+  durationMin Int?
+  cause       String?
   notified    Boolean   @default(false)
 
   @@index([domain, resolvedAt])
 }
 
-// ─── Marketing: Segments ───
 model MarketingSegment {
-  id              String   @id @default(cuid())
+  id              String              @id @default(cuid())
   businessLineId  String
-  name            String // "Instalatori Cluj", "Restaurante fără website"
+  name            String
   description     String?
-  filters         Json // FilterCondition[] — exact formatul din lead-filters.tsx
-  excludedLeadIds Json? // String[] — lead IDs excluded manually
-  contactCount    Int      @default(0) // recalculat la salvare
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  businessLine BusinessLine        @relation(fields: [businessLineId], references: [id])
-  campaigns    MarketingCampaign[]
+  filters         Json
+  excludedLeadIds Json?
+  contactCount    Int                 @default(0)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  campaigns       MarketingCampaign[]
+  businessLine    BusinessLine        @relation(fields: [businessLineId], references: [id])
 
   @@index([businessLineId])
 }
 
-// ─── Marketing: Templates ───
 model MarketingTemplate {
-  id             String   @id @default(cuid())
+  id             String              @id @default(cuid())
   businessLineId String
-  name           String // "Invitație Instalatori", "Promo Restaurant"
-  channel        String // Extensibil: 'sms' | 'email' | 'linkedin' | 'facebook' | 'instagram' | 'tiktok'
-  subject        String? // pentru email / linkedin
-  body           String   @db.Text // Corp mesaj cu {{variabile}}
-  mediaUrl       String? // URL imagine/video pentru social campaigns
-  mediaType      String? // 'image' | 'video' | 'carousel'
-  variables      String[] @default([]) // autodetectate: ["company_name", "city"]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  businessLine BusinessLine        @relation(fields: [businessLineId], references: [id])
-  campaigns    MarketingCampaign[]
+  name           String
+  channel        String
+  subject        String?
+  body           String
+  mediaUrl       String?
+  mediaType      String?
+  variables      String[]            @default([])
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  campaigns      MarketingCampaign[]
+  businessLine   BusinessLine        @relation(fields: [businessLineId], references: [id])
 
   @@index([businessLineId, channel])
 }
 
-// ─── Marketing: Campaigns ───
 model MarketingCampaign {
-  id             String    @id @default(cuid())
+  id             String            @id @default(cuid())
   businessLineId String
   name           String
-  channel        String // Extensibil: 'sms' | 'email' | 'linkedin' | 'facebook' | 'instagram' | 'tiktok'
-  campaignType   String    @default("outbound") // 'outbound' (sms/email) | 'social' (platforms)
+  channel        String
+  campaignType   String            @default("outbound")
   segmentId      String?
   templateId     String
-  status         String    @default("draft")
-  // draft | scheduled | running | completed | paused
+  status         String            @default("draft")
   scheduledAt    DateTime?
   sentAt         DateTime?
   completedAt    DateTime?
-  // ─── Social Campaign extras (extensibil) ───
-  socialConfig   Json? // { platform_campaign_id, adSetId, budget, targeting, objective }
-  socialMetrics  Json? // { reach, impressions, engagement, cpl, cpc, ctr } — populated by sync
-  totalLeads     Int       @default(0)
-  totalSent      Int       @default(0)
-  totalOpened    Int       @default(0)
-  totalConverted Int       @default(0)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-
-  businessLine  BusinessLine      @relation(fields: [businessLineId], references: [id])
-  segment       MarketingSegment? @relation(fields: [segmentId], references: [id])
-  template      MarketingTemplate @relation(fields: [templateId], references: [id])
-  campaignLeads CampaignLead[]
-  shortLinks    ShortLink[]
+  socialConfig   Json?
+  socialMetrics  Json?
+  totalLeads     Int               @default(0)
+  totalSent      Int               @default(0)
+  totalOpened    Int               @default(0)
+  totalConverted Int               @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  campaignLeads  CampaignLead[]
+  businessLine   BusinessLine      @relation(fields: [businessLineId], references: [id])
+  segment        MarketingSegment? @relation(fields: [segmentId], references: [id])
+  template       MarketingTemplate @relation(fields: [templateId], references: [id])
+  shortLinks     ShortLink[]
 
   @@index([businessLineId, status])
   @@index([scheduledAt])
 }
 
-// ─── Marketing: Campaign ↔ Lead junction ───
 model CampaignLead {
-  id             String    @id @default(cuid())
+  id             String            @id @default(cuid())
   campaignId     String
   leadId         String
-  uniqueCode     String    @unique // cod unic pentru LP tracking (UUID scurt)
-  lpUrl          String? // URL LP personalizat generat
-  messageBody    String?   @db.Text // mesajul final după populare variabile
+  uniqueCode     String            @unique
+  lpUrl          String?
+  messageBody    String?
   sentAt         DateTime?
-  // ─── LP Tracking ───
   lpOpenedAt     DateTime?
-  lpOpenCount    Int       @default(0)
-  lpTimeSpent    Int       @default(0) // secunde
-  // ─── Status ───
-  status         String    @default("pending")
-  // pending | sent | delivered | opened | interested | converted
+  lpOpenCount    Int               @default(0)
+  lpTimeSpent    Int               @default(0)
+  status         String            @default("pending")
   followUpSentAt DateTime?
   convertedAt    DateTime?
-  notes          String?   @db.Text
-  createdAt      DateTime  @default(now())
+  notes          String?
+  createdAt      DateTime          @default(now())
+  campaign       MarketingCampaign @relation(fields: [campaignId], references: [id])
+  lead           Lead              @relation(fields: [leadId], references: [id])
 
-  campaign MarketingCampaign @relation(fields: [campaignId], references: [id])
-  lead     Lead              @relation(fields: [leadId], references: [id])
-
-  @@unique([campaignId, leadId]) // un lead nu poate fi de 2 ori în aceeași campanie
+  @@unique([campaignId, leadId])
   @@index([campaignId, status])
   @@index([leadId])
   @@index([uniqueCode])
 }
 
-// ─── Marketing: Short Links ───
 model ShortLink {
-  id             String   @id @default(cuid())
-  code           String   @unique // "a3Kx9Z" — 6 chars alfanumeric
-  targetUrl      String // URL-ul complet de destinatie
-  title          String? // label scurt: "Demo Fudly", "Promo Vara"
-  clicks         Int      @default(0) // click counter
+  id             String             @id @default(cuid())
+  code           String             @unique
+  targetUrl      String
+  title          String?
+  clicks         Int                @default(0)
   businessLineId String
   campaignId     String?
-  createdAt      DateTime @default(now())
-
-  businessLine BusinessLine       @relation(fields: [businessLineId], references: [id])
-  campaign     MarketingCampaign? @relation(fields: [campaignId], references: [id])
+  createdAt      DateTime           @default(now())
+  businessLine   BusinessLine       @relation(fields: [businessLineId], references: [id])
+  campaign       MarketingCampaign? @relation(fields: [campaignId], references: [id])
 
   @@index([businessLineId])
   @@index([code])
 }
 
-// ─── AI: Brand DNA ───
 model BrandDNA {
   id        String   @id @default(cuid())
   clientId  String   @unique
@@ -665,43 +590,40 @@ model BrandDNA {
   logoUrl   String?
   favicon   String?
   ogImage   String?
-  logos     Json     @default("[]") // LogoInfo[]
-  colors    Json     @default("[]") // ColorInfo[]
-  fonts     Json     @default("[]") // FontInfo[]
-  tone      Json // ToneProfile
-  audience  Json // AudienceProfile
+  logos     Json     @default("[]")
+  colors    Json     @default("[]")
+  fonts     Json     @default("[]")
+  tone      Json
+  audience  Json
   industry  String?
   category  String?
   keywords  String[] @default([])
-  rawText   String?  @db.Text
+  rawText   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  client Client @relation(fields: [clientId], references: [id])
+  client    Client   @relation(fields: [clientId], references: [id])
 }
 
-// ─── AI Copilot: Conversation History ───
 model CopilotConversation {
   id         String          @id @default(cuid())
-  title      String? // Auto-generated from first user message
-  messages   Json // Array: [{role, content, toolsUsed?, actionsPerformed?, timestamp}]
-  pathname   String? // Last active page
+  title      String?
+  messages   Json
+  pathname   String?
   tokenCount Int             @default(0)
-  cost       Float           @default(0) // Estimated USD cost
+  cost       Float           @default(0)
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
   actions    CopilotAction[]
 }
 
-// ─── AI Copilot: Action Log ───
 model CopilotAction {
   id             String              @id @default(cuid())
   conversationId String
-  actionType     String // 'update_lead_status', 'navigate_to', etc.
-  status         String              @default("pending") // pending, approved, rejected, executed, failed
-  payload        Json // { leadId, oldStatus, newStatus, reasoning, ... }
-  reasoning      String?             @db.Text // AI's motivation text
-  result         Json? // Execution result after approval
+  actionType     String
+  status         String              @default("pending")
+  payload        Json
+  reasoning      String?
+  result         Json?
   approvedAt     DateTime?
   executedAt     DateTime?
   createdAt      DateTime            @default(now())
@@ -711,312 +633,253 @@ model CopilotAction {
   @@index([status])
 }
 
-// ─── Client Reporting Portal ───
-
 model ClientReport {
-  id             String  @id @default(cuid())
-  token          String  @unique @default(cuid())
-  businessLineId String
-  clientId       String
-  domain         String? // Target domain for multi-site clients (e.g. "inchideriterase.ro")
-  domainConfigId String? // Reference to ClientDomainConfig for data sources
-  title          String  @default("Raport Performanță")
-  widgets        Json    @default("[]")
-  notes          String? @db.Text
-  status         String  @default("active")
-  showCostData   Boolean @default(false) // Whether client can see spend/CPC data
-
-  // Scheduling fields
-  scheduleEnabled Boolean @default(false)
-  scheduleDay     Int? // 1-28
-  scheduleHour    Int? // 0-23
-  scheduleEmails  String? // Comma separated list of extra emails
-  scheduleMessage String? @db.Text // Predefined message for executive summary
-
-  sentAt    DateTime?
-  viewedAt  DateTime?
-  viewCount Int       @default(0)
-  createdBy String    @default("admin")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  businessLine BusinessLine        @relation(fields: [businessLineId], references: [id])
-  client       Client              @relation(fields: [clientId], references: [id])
-  domainConfig ClientDomainConfig? @relation(fields: [domainConfigId], references: [id])
-  snapshots    ReportSnapshot[]
+  id              String              @id @default(cuid())
+  token           String              @unique @default(cuid())
+  businessLineId  String
+  clientId        String
+  domain          String?
+  domainConfigId  String?
+  title           String              @default("Raport Performanță")
+  widgets         Json                @default("[]")
+  notes           String?
+  status          String              @default("active")
+  showCostData    Boolean             @default(false)
+  scheduleEnabled Boolean             @default(false)
+  scheduleDay     Int?
+  scheduleHour    Int?
+  scheduleEmails  String?
+  scheduleMessage String?
+  sentAt          DateTime?
+  viewedAt        DateTime?
+  viewCount       Int                 @default(0)
+  createdBy       String              @default("admin")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  businessLine    BusinessLine        @relation(fields: [businessLineId], references: [id])
+  client          Client              @relation(fields: [clientId], references: [id])
+  domainConfig    ClientDomainConfig? @relation(fields: [domainConfigId], references: [id])
+  snapshots       ReportSnapshot[]
 
   @@index([clientId])
   @@index([token])
   @@index([domainConfigId])
 }
 
-// ─── Client Domain Configuration ───
-// Stores per-domain data source configuration for clients with multiple sites
 model ClientDomainConfig {
-  id       String @id @default(cuid())
-  clientId String
-  domain   String // e.g. "autorulate.ro", "inchideriterase.ro"
-
-  // ─── Data Sources ───
-  googleAdsCustomerId  String? // Google Ads CID specific to this domain
-  googleAdsCampaignIds String[] @default([]) // Filter only relevant campaigns
-  gscSiteUrl           String? // GSC verified site URL (e.g. "sc-domain:autorulate.ro")
-  posthogProjectId     String? // PostHog project ID (null = use default project)
-
-  isActive  Boolean  @default(true)
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  client  Client         @relation(fields: [clientId], references: [id])
-  reports ClientReport[]
+  id                   String         @id @default(cuid())
+  clientId             String
+  domain               String
+  googleAdsCustomerId  String?
+  googleAdsCampaignIds String[]       @default([])
+  gscSiteUrl           String?
+  posthogProjectId     String?
+  isActive             Boolean        @default(true)
+  notes                String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  client               Client         @relation(fields: [clientId], references: [id])
+  reports              ClientReport[]
 
   @@unique([clientId, domain])
   @@index([clientId])
 }
 
 model ReportSnapshot {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   reportId    String
   dateFrom    DateTime
   dateTo      DateTime
-  content     String   @db.Text
+  content     String
   highlights  Json?
-  generatedBy String   @default("ai-copilot")
-  createdAt   DateTime @default(now())
-
-  report ClientReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  generatedBy String       @default("ai-copilot")
+  createdAt   DateTime     @default(now())
+  report      ClientReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
   @@unique([reportId, dateFrom, dateTo])
   @@index([reportId, dateFrom])
 }
 
-// ═══════════════════════════════════════════════════════
-// IntraConstruct — Single-Tenant Instance Management
-// ═══════════════════════════════════════════════════════
-
-// ─── Tenant Instance (remote deployment) ───
 model TenantInstance {
-  id         String @id @default(cuid())
-  tenantId   String @unique // IntraConstruct-ERP tenant ID
-  tenantName String // Display name
-  tenantSlug String // e.g. "aeroductr"
-
-  // ─── Deployment ───
-  deploymentType String  @default("shared") // 'shared' | 'single-tenant'
-  serverHost     String? // IP or hostname (e.g. "185.x.x.x")
-  serverPort     Int     @default(22)
-  sshUser        String? // e.g. "deploy"
-  sshPrivateKey  String? @db.Text // AES-256 encrypted
-  apiEndpoint    String? // e.g. "https://erp.aeroduct.ro"
-  internalApiKey String? // API key for /api/internal/* on remote instance
-
-  // ─── Status ───
-  status        String    @default("active") // 'active' | 'migrating' | 'suspended' | 'offline'
-  version       String? // e.g. "1.2.0"
-  lastHeartbeat DateTime?
-  lastUpdate    DateTime?
-
-  // ─── License ───
-  plan            String @default("pro") // 'starter' | 'pro' | 'enterprise'
-  licenseKey      String @unique @default(cuid()) // License key sent to remote instance
-  gracePeriodDays Int    @default(7)
-
-  // ─── Update Schedule ───
-  updateWindow String? // Cron-like: "SAT 03:00-05:00"
-  autoUpdate   Boolean @default(false)
-
-  // ─── Credits (current balance) ───
-  balanceCredits Int @default(0) // Universal Agency Credits
-
-  // ─── Contact ───
-  accountingEmail String? // Adresa la care se trimite pachetul contabil
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  creditPackages CreditPackage[]
-  creditUsage    CreditUsage[]
-  heartbeats     TenantHeartbeat[]
+  id              String            @id @default(cuid())
+  tenantId        String            @unique
+  tenantName      String
+  tenantSlug      String
+  deploymentType  String            @default("shared")
+  serverHost      String?
+  serverPort      Int               @default(22)
+  sshUser         String?
+  sshPrivateKey   String?
+  apiEndpoint     String?
+  internalApiKey  String?
+  status          String            @default("active")
+  version         String?
+  lastHeartbeat   DateTime?
+  lastUpdate      DateTime?
+  plan            String            @default("pro")
+  licenseKey      String            @unique @default(cuid())
+  gracePeriodDays Int               @default(7)
+  updateWindow    String?
+  autoUpdate      Boolean           @default(false)
+  balanceCredits  Int               @default(0)
+  accountingEmail String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  creditPackages  CreditPackage[]
+  creditUsage     CreditUsage[]
+  heartbeats      TenantHeartbeat[]
+  anafSettings    AnafSettings?
 
   @@index([tenantSlug])
   @@index([status])
 }
 
-// ─── Credit Configuration ───
 model CreditPricingRule {
   id              String   @id @default(cuid())
-  serviceName     String   @unique // 'sms', 'openai_rtc', 'elevenlabs', 'twilio_sip', 'gpt4o_tokens_1m'
-  costPerUnitEur  Float    @default(0) // How much it costs you
-  creditsPerUnit  Int      @default(1) // How many credits the tenant consumes
-  unitDescription String // 'per 1 SMS', 'per 1 Minute', 'per 1M Tokens'
+  serviceName     String   @unique
+  costPerUnitEur  Float    @default(0)
+  creditsPerUnit  Int      @default(1)
+  unitDescription String
   updatedAt       DateTime @updatedAt
 }
 
 model CreditPackageConfig {
   id           String   @id @default(cuid())
-  name         String // e.g. "Pro 10k Credits"
+  name         String
   priceEur     Float    @default(0)
   totalCredits Int      @default(0)
   createdAt    DateTime @default(now())
 }
 
-// ─── Credit Packages (purchased prepaid packs) ───
 model CreditPackage {
-  id          String    @id @default(cuid())
+  id          String         @id @default(cuid())
   instanceId  String
-  type        String    @default("universal") // 'universal' or legacy 'ai' | 'sms' | 'voice' | 'calls'
-  packageName String // 'AI Starter', 'SMS 500', etc.
-  credits     Int // Amount of credits purchased
-  priceEur    Float // Amount paid by client
-  costEur     Float // Our actual cost
-  status      String    @default("active") // 'active' | 'exhausted' | 'expired'
-  expiresAt   DateTime? // Optional expiry
-  purchasedAt DateTime  @default(now())
-
-  instance TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  type        String         @default("universal")
+  packageName String
+  credits     Int
+  priceEur    Float
+  costEur     Float
+  status      String         @default("active")
+  expiresAt   DateTime?
+  purchasedAt DateTime       @default(now())
+  instance    TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@index([instanceId, type])
   @@index([status])
 }
 
-// ─── Credit Usage (consumption log) ───
 model CreditUsage {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   instanceId String
-  type       String // 'ai' | 'sms' | 'voice' | 'calls'
-  amount     Int // Credits consumed
-  detail     String? // 'copilot_chat', 'sms_notification', 'voice_call', etc.
-  provider   String? // 'gemini', 'openai', 'smso', 'telnyx'
-  rawCostUsd Float? // Actual provider cost
-  metadata   Json? // Extra info (model, tokens, duration, etc.)
-  reportedAt DateTime @default(now())
-
-  instance TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  type       String
+  amount     Int
+  detail     String?
+  provider   String?
+  rawCostUsd Float?
+  metadata   Json?
+  reportedAt DateTime       @default(now())
+  instance   TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@index([instanceId, type, reportedAt])
   @@index([reportedAt(sort: Desc)])
 }
 
-// ─── Tenant Heartbeat (health reports from remote instances) ───
 model TenantHeartbeat {
-  id           String    @id @default(cuid())
-  instanceId   String
-  version      String?
-  uptime       Int? // seconds
-  dbSize       String? // e.g. "245MB"
-  activeUsers  Int?
-  lastActivity DateTime?
-
-  // ─── Resource usage since last heartbeat ───
-  aiTokensUsed Int   @default(0)
-  smsUsed      Int   @default(0)
-  voiceMinutes Float @default(0)
-  callMinutes  Float @default(0)
-
-  // ─── System health ───
+  id            String         @id @default(cuid())
+  instanceId    String
+  version       String?
+  uptime        Int?
+  dbSize        String?
+  activeUsers   Int?
+  lastActivity  DateTime?
+  aiTokensUsed  Int            @default(0)
+  smsUsed       Int            @default(0)
+  voiceMinutes  Float          @default(0)
+  callMinutes   Float          @default(0)
   cpuPercent    Float?
   memoryPercent Float?
   diskPercent   Float?
-  healthy       Boolean @default(true)
-  errors        Json? // Recent error summary
-
-  receivedAt DateTime @default(now())
-
-  instance TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  healthy       Boolean        @default(true)
+  errors        Json?
+  receivedAt    DateTime       @default(now())
+  instance      TenantInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
 
   @@index([instanceId, receivedAt(sort: Desc)])
 }
 
-// ─── SEO Audits ───
 model SeoAudit {
   id        String   @id @default(cuid())
   domain    String
   clientId  String?
-  score     Int // Overall score 0-100
-  results   Json // SeoPageAnalysis[] — per-page results
-  summary   Json // SiteAuditSummary
+  score     Int
+  results   Json
+  summary   Json
   createdAt DateTime @default(now())
-
-  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  client    Client?  @relation(fields: [clientId], references: [id])
 
   @@index([domain, createdAt(sort: Desc)])
   @@index([clientId, createdAt(sort: Desc)])
 }
 
-// ─── Client API Keys (Form Tracking) ───
 model ClientApiKey {
   id        String   @id @default(cuid())
   clientId  String
-  key       String   @unique // UUID v4 generat automat
-  domain    String // domeniu autorizat (CORS): "qualitycontrol.com.ro"
-  label     String? // "site principal", "landing page X"
+  key       String   @unique
+  domain    String
+  label     String?
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([key])
   @@index([clientId])
   @@index([domain])
 }
 
-// ─── External Integrations ───
 model ConnectedAccount {
-  id                String  @id @default(cuid())
-  provider          String // e.g., "google", "posthog"
-  providerAccountId String? // External account ID (email for Google, or just a generic ID)
-  accessToken       String  @db.Text // Can be API key for PostHog or actual token for Google
-  refreshToken      String? @db.Text
-  expiresAt         Int? // Expiration timestamp for accessToken
+  id                String   @id @default(cuid())
+  provider          String
+  providerAccountId String?
+  accessToken       String
+  refreshToken      String?
+  expiresAt         Int?
   tokenType         String?
   scope             String?
-  email             String? // Email associated with the account
-
-  clientId String?
-  client   Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  email             String?
+  clientId          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  client            Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([clientId])
 }
 
-// ─── System Alerts (e.g. from PostHog Webhooks) ───
 model SystemAlert {
-  id          String  @id @default(cuid())
-  source      String  @default("posthog") // e.g. 'posthog', 'sentry'
+  id          String    @id @default(cuid())
+  source      String    @default("posthog")
   title       String
-  description String? @db.Text
-  url         String? // link to the alert in PostHog/Sentry
-  domain      String? // the affected domain if known
-  status      String  @default("new") // 'new', 'acknowledged', 'resolved'
-  severity    String  @default("medium") // 'low', 'medium', 'high', 'critical'
-  metadata    Json? // Full raw payload
-
-  // Optional linkage to CRM entities
-  clientId  String?
-  projectId String?
-
-  resolvedAt DateTime?
-  resolvedBy String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  client  Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  project Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  description String?
+  url         String?
+  domain      String?
+  status      String    @default("new")
+  severity    String    @default("medium")
+  metadata    Json?
+  clientId    String?
+  projectId   String?
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  client      Client?   @relation(fields: [clientId], references: [id])
+  project     Project?  @relation(fields: [projectId], references: [id])
 
   @@index([status])
   @@index([createdAt(sort: Desc)])
   @@index([clientId])
   @@index([projectId])
 }
-
-// ═══════════════════════════════════════════════════════
-// SUPPLIER & INVOICE MANAGEMENT
-// ═══════════════════════════════════════════════════════
 
 model Supplier {
   id          String            @id @default(cuid())
@@ -1026,8 +889,8 @@ model Supplier {
   iban        String?
   category    String?
   isRecurring Boolean           @default(false)
-  expectedDay Int? // ziua din lună la care se așteaptă factura, dacă recurent
-  status      String            @default("active") // active | inactive
+  expectedDay Int?
+  status      String            @default("active")
   createdAt   DateTime          @default(now())
   invoices    SupplierInvoice[]
 
@@ -1035,41 +898,51 @@ model Supplier {
 }
 
 model SupplierInvoice {
-  id                    String            @id @default(cuid())
-  tenantId              String
-  supplierId            String?
-  extractedSupplierName String? // Numele detectat de LLM pentru facturile orfane
-  businessLineId        String? // opțional pt rutare cheltuieli pe linie de business
-  supplier              Supplier?         @relation(fields: [supplierId], references: [id])
-  amount                Decimal
-  currency              String            @default("RON")
-  issueDate             DateTime
-  dueDate               DateTime?
-  invoiceNumber         String?
-  pdfUrl                String
-  status                String            @default("unpaid") // unpaid | partial | paid
-  source                String // manual | email | api
-  sourceRef             String? // message-id / api-transaction-id
-  extractionStatus      String            @default("confirmed") // pending_review | confirmed | rejected
-  extractedBy           String? // llm | api_native | human
-  createdAt             DateTime          @default(now())
-  payments              SupplierPayment[]
+  id                       String            @id @default(cuid())
+  tenantId                 String
+  supplierId               String?
+  extractedSupplierName    String?
+  businessLineId           String?
+  amount                   Decimal
+  currency                 String            @default("RON")
+  issueDate                DateTime
+  dueDate                  DateTime?
+  invoiceNumber            String?
+  pdfUrl                   String
+  status                   String            @default("unpaid")
+  source                   String            // manual | email | api | spv
+  spvId                    String?           @unique
+  xmlData                  String?
+  sourceRef                String?
+  extractionStatus         String            @default("confirmed") // pending_review | confirmed
+  extractedBy              String?
+  createdAt                DateTime          @default(now())
+  appliedRuleId            String?
+  deductibilityOverride    Boolean           @default(false)
+  expenseCategory          String?
+  expenseDeductiblePercent Decimal?
+  netAmount                Decimal?
+  vatAmount                Decimal?
+  vatDeductiblePercent     Decimal?
+  vatRate                  Decimal?
+  supplier                 Supplier?         @relation(fields: [supplierId], references: [id])
+  payments                 SupplierPayment[]
 
   @@unique([supplierId, invoiceNumber])
   @@index([tenantId])
 }
 
 model SupplierPayment {
-  id                String           @id @default(cuid())
+  id                String          @id @default(cuid())
   tenantId          String
   invoiceId         String
-  invoice           SupplierInvoice  @relation(fields: [invoiceId], references: [id])
   amount            Decimal
   paidAt            DateTime
   method            String?
-  bankTransactionId String?          // Legătura explicită către BankTransaction (opțional, doar dacă e match din extras)
-  matchedByUserId   String?          // ID-ul utilizatorului care a aprobat match-ul manual
-  createdAt         DateTime         @default(now())
+  createdAt         DateTime        @default(now())
+  bankTransactionId String?
+  matchedByUserId   String?
+  invoice           SupplierInvoice @relation(fields: [invoiceId], references: [id])
 
   @@index([tenantId])
 }
@@ -1078,8 +951,8 @@ model BankConnection {
   id                      String   @id @default(cuid())
   tenantId                String
   bankName                String
-  accountIban             String // contul operațional relevant, restul secțiunilor din PDF sunt ignorate
-  statementPasswordEnvKey String? // numele variabilei de mediu care conține parola, NU parola însăși
+  accountIban             String
+  statementPasswordEnvKey String?
   createdAt               DateTime @default(now())
 
   @@index([tenantId])
@@ -1093,28 +966,30 @@ model BankTransaction {
   description       String
   debit             Decimal  @default(0)
   credit            Decimal  @default(0)
-  category          String? // supplier_payment | bank_fee | internal_transfer | legal_payment | incoming_payment
+  category          String?
   extractedMerchant String?
   matchedSupplierId String?
   matchedInvoiceId  String?
-  matchStatus       String   @default("unmatched") // unmatched | auto_matched | manually_matched
-  extractionStatus  String   @default("confirmed") // pending_review | confirmed
+  matchStatus       String   @default("unmatched")
+  extractionStatus  String   @default("confirmed")
   sourcePdfUrl      String
   createdAt         DateTime @default(now())
 
   @@index([tenantId])
 }
 
-// ═══════════════════════════════════════════════════════
-// ACCOUNTING PACKAGE (FAZA 4)
-// ═══════════════════════════════════════════════════════
-
 model AccountingSettings {
-  id              String   @id @default(cuid())
-  tenantId        String   @unique
+  id              String    @id @default(cuid())
+  tenantId        String
   accountantEmail String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  defaultVatRate  Decimal?
+  isVatPayer      Boolean   @default(false)
+  taxRate         Decimal?
+  taxRegime       String?
+  validFrom       DateTime  @default(now())
+  validTo         DateTime?
 
   @@index([tenantId])
 }
@@ -1122,13 +997,40 @@ model AccountingSettings {
 model AccountingPackage {
   id           String   @id @default(cuid())
   tenantId     String
-  month        String   // e.g., "2026-09"
+  month        String
   sentAt       DateTime @default(now())
-  sentBy       String   // ID-ul utilizatorului autentificat (nu hardcodat)
+  sentBy       String
   invoiceCount Int
   totalAmount  Decimal
   downloadUrl  String?
   status       String   @default("sent")
+
+  @@index([tenantId])
+}
+
+model AnafSettings {
+  id           String    @id @default(cuid())
+  tenantId     String    @unique
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  updatedAt    DateTime  @updatedAt
+
+  tenant       TenantInstance @relation(fields: [tenantId], references: [id])
+}
+
+model DeductibilityRule {
+  id                       String    @id
+  tenantId                 String
+  name                     String
+  supplierId               String?
+  expenseCategory          String?
+  vatDeductiblePercent     Decimal
+  expenseDeductiblePercent Decimal
+  validFrom                DateTime  @default(now())
+  validTo                  DateTime?
+  priority                 Int       @default(0)
+  createdAt                DateTime  @default(now())
 
   @@index([tenantId])
 }

@@ -23,6 +23,8 @@ const publicPaths = [
   "/api/short-links/resolve",
   "/api/cron",               // Cron jobs (authenticated via CRON_SECRET header)
   "/api/intraconstruct",     // IntraConstruct remote API (authenticated via X-License-Key)
+  "/api/accounting/spv/auth",     // Public redirect to ANAF for external accountants
+  "/api/accounting/spv/callback", // Public ANAF callback URL
   "/projects",
 ]
 

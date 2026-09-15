@@ -1,18 +1,47 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { AlertCircle, CheckCircle2, FileText, Send, Download } from 'lucide-react'
+import { AlertCircle, CheckCircle2, FileText, Send, Loader2, ArrowUpRight, ArrowDownRight, Calculator } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { format, subMonths } from 'date-fns'
+import Link from 'next/link'
 
 export default function AccountingPage() {
   const [month, setMonth] = useState(format(subMonths(new Date(), 1), 'yyyy-MM')) // default last month
+  
+  // Dashboard state
+  const [loadingDashboard, setLoadingDashboard] = useState(false)
+  const [dashboardData, setDashboardData] = useState<any>(null)
+
+  // Generator state
   const [loading, setLoading] = useState(false)
   const [preview, setPreview] = useState<any>(null)
   const [sending, setSending] = useState(false)
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    fetchDashboard()
+    // reset generator when month changes
+    setPreview(null)
+    setSuccess(false)
+  }, [month])
+
+  const fetchDashboard = async () => {
+    setLoadingDashboard(true)
+    try {
+      const res = await fetch(`/api/accounting/dashboard?month=${month}`)
+      const json = await res.json()
+      if (res.ok && json.data) {
+        setDashboardData(json.data)
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoadingDashboard(false)
+    }
+  }
 
   const handlePreview = async () => {
     setLoading(true)
@@ -51,31 +80,109 @@ export default function AccountingPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Contabilitate</h1>
-        <p className="text-muted-foreground mt-2">
-          Generează și trimite automat arhiva cu facturi și extrase de cont către contabil.
-        </p>
+    <div className="p-6 space-y-6 max-w-6xl mx-auto">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Contabilitate & P&L</h1>
+          <p className="text-muted-foreground mt-2">
+            Situația financiară estimativă și generarea pachetului lunar pentru contabil.
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <input 
+            type="month" 
+            value={month} 
+            onChange={(e) => setMonth(e.target.value)} 
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+          <Link href="/accounting/settings">
+            <Button variant="outline">Setări Fiscale</Button>
+          </Link>
+        </div>
       </div>
 
+      <Alert variant="default" className="border-amber-500 bg-amber-50">
+        <AlertCircle className="h-4 w-4 text-amber-600" />
+        <AlertTitle className="text-amber-800">Informație Orientativă</AlertTitle>
+        <AlertDescription className="text-amber-700">
+          Cifrele prezentate mai jos sunt estimări interne pe baza regulilor configurate. 
+          Ele nu constituie un calcul fiscal legal și pot diferi de bilanțul oficial calculat de contabil.
+        </AlertDescription>
+      </Alert>
+
+      {/* DASHBOARD P&L */}
+      {loadingDashboard ? (
+        <div className="h-32 flex items-center justify-center border rounded-xl bg-card">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : dashboardData ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Venituri Facturate</CardTitle>
+              <ArrowUpRight className="h-4 w-4 text-emerald-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{dashboardData.venituriTotal.toLocaleString('ro-RO')} RON</div>
+              <p className="text-xs text-muted-foreground mt-1">Facturi emise luna {month}</p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Cheltuieli Recunoscute</CardTitle>
+              <ArrowDownRight className="h-4 w-4 text-rose-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{dashboardData.cheltuieliRecunoscute.toLocaleString('ro-RO')} RON</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Ajustate prin regulile de deducere 
+                {dashboardData.tvaDeductibil > 0 && ` (+${dashboardData.tvaDeductibil.toLocaleString('ro-RO')} TVA)`}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Cashflow Real</CardTitle>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {(dashboardData.cashIn - dashboardData.cashOut).toLocaleString('ro-RO')} RON
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                In: {dashboardData.cashIn.toLocaleString()} / Out: {dashboardData.cashOut.toLocaleString()}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-primary/5 border-primary/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-primary">Estimator Taxe</CardTitle>
+              <Calculator className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary">{dashboardData.estimatedTax.toLocaleString('ro-RO')} RON</div>
+              <p className="text-xs text-primary/80 mt-1">{dashboardData.taxDisclaimer}</p>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
+
+      <div className="h-8"></div>
+
+      {/* PACHET CONTABIL */}
       <Card>
         <CardHeader>
-          <CardTitle>Generare Pachet</CardTitle>
-          <CardDescription>Selectează luna pentru care dorești să generezi arhiva (an-lună).</CardDescription>
+          <CardTitle>Arhivă și Pachet Contabil</CardTitle>
+          <CardDescription>Validează și trimite extrasele și facturile aferente lunii {month}.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <input 
-              type="month" 
-              value={month} 
-              onChange={(e) => setMonth(e.target.value)} 
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background max-w-[200px]"
-            />
-            <Button onClick={handlePreview} disabled={loading}>
-              {loading ? 'Se încarcă...' : 'Generează preview pachet'}
-            </Button>
-          </div>
+          <Button onClick={handlePreview} disabled={loading} size="lg">
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
+            {loading ? 'Se verifică documentele...' : 'Analizează și Validează Pachetul'}
+          </Button>
         </CardContent>
       </Card>
 
@@ -90,9 +197,9 @@ export default function AccountingPage() {
       )}
 
       {preview && !success && (
-        <Card>
+        <Card className="border-primary">
           <CardHeader>
-            <CardTitle>Preview Pachet: {month}</CardTitle>
+            <CardTitle>Raport Verificare Pachet ({month})</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-3 gap-4">
@@ -121,22 +228,8 @@ export default function AccountingPage() {
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Atenție: Există documente în Pending Review!</AlertTitle>
                 <AlertDescription>
-                  Ai {preview.pendingInvoices} facturi și {preview.pendingTransactions} tranzacții bancare neconfirmate în această lună. 
-                  Nu poți trimite pachetul până nu le revizuiești pe toate.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {preview.missingRecurring?.length > 0 && (
-              <Alert variant="default" className="border-amber-500 bg-amber-50">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <AlertTitle className="text-amber-800">Avertisment: Lipsesc facturi recurente</AlertTitle>
-                <AlertDescription className="text-amber-700">
-                  Nu au fost găsite facturi în această lună pentru următorii furnizori cu abonament:
-                  <ul className="list-disc ml-5 mt-2">
-                    {preview.missingRecurring.map((sup: string) => <li key={sup}>{sup}</li>)}
-                  </ul>
-                  Acest avertisment nu blochează trimiterea.
+                  Ai {preview.pendingInvoices} facturi și {preview.pendingTransactions} tranzacții bancare neconfirmate. 
+                  Nu poți trimite pachetul până nu finalizezi reconcilierea.
                 </AlertDescription>
               </Alert>
             )}
@@ -145,7 +238,7 @@ export default function AccountingPage() {
               <div className="flex justify-end pt-4 border-t">
                 <Button size="lg" onClick={handleSend} disabled={sending}>
                   <Send className="w-4 h-4 mr-2" />
-                  {sending ? 'Se trimite...' : 'Trimite la contabilitate'}
+                  {sending ? 'Se trimite...' : 'Trimite Arhiva Contabilului'}
                 </Button>
               </div>
             )}

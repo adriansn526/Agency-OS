@@ -1,0 +1,285 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { AlertCircle, Download, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { format, subMonths } from 'date-fns'
+import Link from 'next/link'
+
+type Tab = 'ar' | 'ap' | 'bank'
+
+export default function AccountingArchivePage() {
+  const [activeTab, setActiveTab] = useState<Tab>('ar')
+  const [month, setMonth] = useState(format(subMonths(new Date(), 1), 'yyyy-MM'))
+  
+  const [data, setData] = useState<any[]>([])
+  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalItems: 0 })
+  const [loading, setLoading] = useState(false)
+
+  // Filters
+  const [statusFilter, setStatusFilter] = useState('all')
+
+  useEffect(() => {
+    fetchData(1)
+  }, [activeTab, month, statusFilter])
+
+  const fetchData = async (page: number) => {
+    setLoading(true)
+    try {
+      let endpoint = ''
+      let params = new URLSearchParams({ page: page.toString(), limit: '50', month })
+      
+      if (activeTab === 'ar') {
+        endpoint = '/api/accounting/archive/invoices-out'
+        params.append('status', statusFilter)
+      } else if (activeTab === 'ap') {
+        endpoint = '/api/accounting/archive/invoices-in'
+      } else if (activeTab === 'bank') {
+        endpoint = '/api/accounting/archive/transactions'
+        params.append('status', statusFilter)
+      }
+
+      const res = await fetch(`${endpoint}?${params.toString()}`)
+      const json = await res.json()
+      if (res.ok) {
+        setData(json.data || [])
+        setPagination(json.pagination || { currentPage: 1, totalPages: 1, totalItems: 0 })
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const exportCsv = () => {
+    if (data.length === 0) return
+
+    let csvContent = "DISCLAIMER: Estimari orientative, fara valoare legala fiscala.\n"
+    
+    // Antet
+    const headers = Object.keys(data[0]).filter(k => typeof data[0][k] !== 'object')
+    csvContent += headers.join(",") + "\n"
+
+    // Rânduri
+    data.forEach(row => {
+      const rowData = headers.map(header => {
+        let val = row[header]
+        if (val === null || val === undefined) val = ''
+        return `"${String(val).replace(/"/g, '""')}"`
+      })
+      csvContent += rowData.join(",") + "\n"
+    })
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement("a")
+    const url = URL.createObjectURL(blob)
+    link.setAttribute("href", url)
+    link.setAttribute("download", `export_${activeTab}_${month}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  return (
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Rapoarte & Arhivă</h1>
+          <p className="text-muted-foreground mt-2">
+            Istoricul documentelor finalizate (Read-Only). Pentru documente în așteptare, folosește <Link href="/accounting/reconciliation" className="text-blue-500 hover:underline">Reconciliere</Link>.
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <input 
+            type="month" 
+            value={month} 
+            onChange={(e) => setMonth(e.target.value)} 
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+          <Button variant="outline" onClick={exportCsv} disabled={loading || data.length === 0}>
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
+        </div>
+      </div>
+
+      <Alert className="bg-slate-50">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Zonă Read-Only</AlertTitle>
+        <AlertDescription>
+          Aceasta este arhiva istorică. Nu se pot face modificări asupra documentelor de aici. 
+          Exportul include doar rezultatele filtrate curente.
+        </AlertDescription>
+      </Alert>
+
+      {/* TABS (Manual simple UI) */}
+      <div className="flex border-b">
+        <button 
+          onClick={() => { setActiveTab('ar'); setStatusFilter('all'); }} 
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'ar' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          Facturi Emise (Clienți / AR)
+        </button>
+        <button 
+          onClick={() => { setActiveTab('ap'); setStatusFilter('all'); }} 
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'ap' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          Facturi Primite (Furnizori / AP)
+        </button>
+        <button 
+          onClick={() => { setActiveTab('bank'); setStatusFilter('all'); }} 
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'bank' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+        >
+          Extrase de Cont (Trezorerie)
+        </button>
+      </div>
+
+      {/* FILTER BAR */}
+      <div className="flex items-center gap-4 py-2">
+        {activeTab === 'bank' && (
+          <select 
+            value={statusFilter} 
+            onChange={e => setStatusFilter(e.target.value)}
+            className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+          >
+            <option value="all">Toate Tranzacțiile</option>
+            <option value="matched">Doar Reconciliate</option>
+            <option value="unmatched">Nereconciliate</option>
+          </select>
+        )}
+      </div>
+
+      {/* CONTENT */}
+      <Card>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-muted/50 border-b">
+                  {activeTab === 'ar' && (
+                    <tr>
+                      <th className="p-4 font-medium">Nr. Factură</th>
+                      <th className="p-4 font-medium">Client</th>
+                      <th className="p-4 font-medium">Data Emitere</th>
+                      <th className="p-4 font-medium">Sumă</th>
+                      <th className="p-4 font-medium">Status</th>
+                    </tr>
+                  )}
+                  {activeTab === 'ap' && (
+                    <tr>
+                      <th className="p-4 font-medium">Furnizor (OCR)</th>
+                      <th className="p-4 font-medium">Data Facturii</th>
+                      <th className="p-4 font-medium">Sumă Brută</th>
+                      <th className="p-4 font-medium">Sumă Cheltuială (Est.)</th>
+                      <th className="p-4 font-medium">TVA Dedus (Est.)</th>
+                      <th className="p-4 font-medium">Regulă %</th>
+                    </tr>
+                  )}
+                  {activeTab === 'bank' && (
+                    <tr>
+                      <th className="p-4 font-medium">Data</th>
+                      <th className="p-4 font-medium">Detalii</th>
+                      <th className="p-4 font-medium text-right">Debit (Out)</th>
+                      <th className="p-4 font-medium text-right">Credit (In)</th>
+                      <th className="p-4 font-medium">Reconciliat</th>
+                    </tr>
+                  )}
+                </thead>
+                <tbody className="divide-y">
+                  {data.length === 0 ? (
+                    <tr><td colSpan={6} className="p-8 text-center text-muted-foreground">Nu s-au găsit rezultate.</td></tr>
+                  ) : data.map((row, i) => (
+                    <tr key={i} className="hover:bg-muted/30">
+                      {activeTab === 'ar' && (
+                        <>
+                          <td className="p-4 font-medium">{row.number}</td>
+                          <td className="p-4">{row.client?.name || row.clientId}</td>
+                          <td className="p-4">{new Date(row.issuedAt).toLocaleDateString('ro-RO')}</td>
+                          <td className="p-4 font-medium">{Number(row.amount).toLocaleString('ro-RO')} {row.currency}</td>
+                          <td className="p-4">
+                            <span className={`px-2 py-1 rounded-full text-xs ${row.status === 'emisa' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                              {row.status}
+                            </span>
+                          </td>
+                        </>
+                      )}
+                      
+                      {activeTab === 'ap' && (
+                        <>
+                          <td className="p-4">{row.extractedSupplierName || row.supplier?.name || '-'}</td>
+                          <td className="p-4">{row.issueDate ? new Date(row.issueDate).toLocaleDateString('ro-RO') : '-'}</td>
+                          <td className="p-4 font-medium">{Number(row.amount).toLocaleString('ro-RO')} {row.currency}</td>
+                          <td className="p-4 text-rose-600">
+                            {/* Calcul la runtime */}
+                            {((Number(row.netAmount || row.amount)) * (Number(row.expenseDeductiblePercent || 100) / 100)).toLocaleString('ro-RO')} {row.currency}
+                          </td>
+                          <td className="p-4 text-emerald-600">
+                            {/* Calcul la runtime */}
+                            {((Number(row.vatAmount || 0)) * (Number(row.vatDeductiblePercent || 100) / 100)).toLocaleString('ro-RO')} {row.currency}
+                          </td>
+                          <td className="p-4 text-xs text-muted-foreground">
+                            Chelt: {row.expenseDeductiblePercent || 100}% <br/> TVA: {row.vatDeductiblePercent || 100}%
+                          </td>
+                        </>
+                      )}
+
+                      {activeTab === 'bank' && (
+                        <>
+                          <td className="p-4 whitespace-nowrap">{new Date(row.date).toLocaleDateString('ro-RO')}</td>
+                          <td className="p-4 text-xs max-w-[300px] truncate" title={row.details}>{row.details}</td>
+                          <td className="p-4 text-right text-rose-600">{Number(row.debit) > 0 ? Number(row.debit).toLocaleString('ro-RO') : '-'}</td>
+                          <td className="p-4 text-right text-emerald-600">{Number(row.credit) > 0 ? Number(row.credit).toLocaleString('ro-RO') : '-'}</td>
+                          <td className="p-4">
+                            {row.matchedByUserId ? (
+                              <span className="text-emerald-500 text-xs font-medium">Reconciliat</span>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">Pending</span>
+                            )}
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* PAGINATION */}
+      {pagination.totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Afișare pagină {pagination.currentPage} din {pagination.totalPages} ({pagination.totalItems} intrări totale)
+          </p>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              disabled={pagination.currentPage === 1 || loading}
+              onClick={() => fetchData(pagination.currentPage - 1)}
+            >
+              <ChevronLeft className="w-4 h-4 mr-1" /> Înapoi
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              disabled={pagination.currentPage === pagination.totalPages || loading}
+              onClick={() => fetchData(pagination.currentPage + 1)}
+            >
+              Următoarea <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
