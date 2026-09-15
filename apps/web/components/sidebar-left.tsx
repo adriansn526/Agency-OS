@@ -77,12 +77,17 @@ const coreModules: NavItem[] = [
     title: "Furnizori", href: "/suppliers", icon: Building2,
     children: [
       { title: "Toți Furnizorii", href: "/suppliers", icon: Building2 },
-      { title: "Review Facturi", href: "/suppliers/review", icon: FileText },
-      { title: "Extrase Cont (BT)", href: "/suppliers/bank-statements", icon: FileText },
-      { title: "Reconciliere", href: "/suppliers/reconciliation", icon: FileText }
+      { title: "Review Facturi", href: "/suppliers/review", icon: FileText }
     ]
   },
-  { title: "Contabilitate", href: "/accounting", icon: FileText },
+  { 
+    title: "Contabilitate", href: "/accounting", icon: FileText,
+    children: [
+      { title: "Dashboard", href: "/accounting", icon: LayoutDashboard },
+      { title: "Extrase Cont (BT)", href: "/accounting/bank-statements", icon: FileText },
+      { title: "Reconciliere", href: "/accounting/reconciliation", icon: FileText }
+    ]
+  },
   { title: "Oferte", href: "/offers", icon: Send },
   { title: "Contracte", href: "/contracts", icon: FileText },
 ]

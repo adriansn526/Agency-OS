@@ -19,12 +19,13 @@
     "db:reset": "prisma migrate reset --force"
   },
   "dependencies": {
-    "@prisma/client": "^6.8.2"
+    "@prisma/client": "^6.8.2",
+    "csv-parse": "^7.0.2"
   },
   "devDependencies": {
-    "prisma": "^6.8.2",
-    "tsx": "^4.19.0",
     "@repo/mock-data": "*",
-    "@repo/typescript-config": "*"
+    "@repo/typescript-config": "*",
+    "prisma": "^6.8.2",
+    "tsx": "^4.19.0"
   }
 }
