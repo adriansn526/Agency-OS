@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
-import { decryptPdf } from '@/lib/bank/decrypt'
 import { parsePdfForAccount } from '@/lib/bank/parser'
 import { extractTransactionsFromText } from '@/lib/bank/llm-extractor'
 import { uploadToS3 } from '@/lib/storage/s3'
@@ -45,23 +44,14 @@ export async function POST(request: NextRequest) {
     // 1. Decriptare (doar dacă avem o parolă configurată în sistem)
     const arrayBuffer = await file.arrayBuffer()
     const inputBuffer = Buffer.from(arrayBuffer)
-    let decryptedBuffer: Buffer = inputBuffer // Fallback la buffer-ul original
-    
-    if (password) {
-      try {
-        decryptedBuffer = await decryptPdf(inputBuffer, password)
-      } catch (e) {
-        console.warn('[UploadBankStatement] Nu s-a putut decripta PDF-ul. Poate nu are parolă sau parola e greșită. Vom încerca direct.')
-        // Rămânem la inputBuffer
-      }
-    }
 
     // 2. Parsare și partiționare IBAN
     let textChunk = ''
     try {
-      textChunk = await parsePdfForAccount(decryptedBuffer, bankConnection.accountIban)
+      // Pass original encrypted buffer and password to pdftotext
+      textChunk = await parsePdfForAccount(inputBuffer, bankConnection.accountIban, password)
     } catch (e: any) {
-      // Regex failed to find the configured IBAN section
+      // Regex failed or pdftotext failed (incorrect password)
       console.error('[UploadBankStatement] Eroare la parsare:', e);
       return NextResponse.json({ error: e.message }, { status: 400 })
     }

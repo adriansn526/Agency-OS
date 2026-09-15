@@ -9,7 +9,7 @@ const execFileAsync = promisify(execFile)
 /**
  * Extrage textul din PDF și returnează doar secțiunea care corespunde IBAN-ului specificat.
  */
-export async function parsePdfForAccount(buffer: Buffer, accountIban: string): Promise<string> {
+export async function parsePdfForAccount(buffer: Buffer, accountIban: string, password?: string): Promise<string> {
   let tempDir: string | null = null
   let fullText = ''
 
@@ -18,8 +18,14 @@ export async function parsePdfForAccount(buffer: Buffer, accountIban: string): P
     const inputPath = path.join(tempDir, 'input.pdf')
     await fs.writeFile(inputPath, buffer)
 
-    // Extrage textul nativ cu pdftotext (fără să depindă de DOMMatrix)
-    const { stdout } = await execFileAsync('pdftotext', ['-layout', inputPath, '-'])
+    // Extrage textul nativ cu pdftotext
+    const args = ['-layout']
+    if (password) {
+      args.push('-upw', password)
+    }
+    args.push(inputPath, '-')
+
+    const { stdout } = await execFileAsync('pdftotext', args)
     fullText = stdout || ''
   } catch (err) {
     throw new Error('Eroare la extragerea textului cu pdftotext: ' + (err as Error).message)
