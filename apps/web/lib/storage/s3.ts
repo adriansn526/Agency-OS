@@ -4,11 +4,11 @@ import { pipeline } from 'stream/promises'
 
 // Configurația S3 din Environment
 const s3Config = {
-  endpoint: process.env.S3_ENDPOINT || '',
-  region: process.env.S3_REGION || 'eu-central-1',
+  endpoint: process.env.S3_ENDPOINT || undefined,
+  region: process.env.S3_REGION || process.env.AWS_REGION || 'eu-central-1',
   credentials: {
-    accessKeyId: process.env.S3_ACCESS_KEY || '',
-    secretAccessKey: process.env.S3_SECRET_KEY || ''
+    accessKeyId: process.env.S3_ACCESS_KEY || process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.S3_SECRET_KEY || process.env.AWS_SECRET_ACCESS_KEY || ''
   },
   forcePathStyle: true // necesar pt MinIO/R2 uneori
 }
