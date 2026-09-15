@@ -1,6 +1,13 @@
 import { generateObject } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { z } from 'zod'
+import { execFile } from 'child_process'
+import { promisify } from 'util'
+import * as fs from 'fs/promises'
+import * as path from 'path'
+import * as os from 'os'
+
+const execFileAsync = promisify(execFile)
 
 // Schema Zod pentru extracția datelor din factură
 export const invoiceSchema = z.object({
@@ -14,13 +21,22 @@ export const invoiceSchema = z.object({
 export type ExtractedInvoice = z.infer<typeof invoiceSchema>
 
 export async function parsePdfToText(buffer: Buffer): Promise<string> {
-  const pdfParse = require('pdf-parse')
+  let tempDir = ''
   try {
-    const data = await pdfParse(buffer)
-    return data.text
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'invoice-parse-'))
+    const inputPath = path.join(tempDir, 'input.pdf')
+    await fs.writeFile(inputPath, buffer)
+
+    // Apelează utilitarul nativ pdftotext (fără layout, doar textul pur pentru facturi)
+    const { stdout } = await execFileAsync('pdftotext', [inputPath, '-'])
+    return stdout
   } catch (error) {
     console.error('[Parser] Failed to extract text from PDF:', error)
     return ''
+  } finally {
+    if (tempDir) {
+      await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {})
+    }
   }
 }
 
