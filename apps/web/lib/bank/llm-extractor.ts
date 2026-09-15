@@ -1,5 +1,5 @@
 import { generateObject } from 'ai'
-import { openai } from '@ai-sdk/openai'
+import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 
 export const transactionSchema = z.object({
@@ -28,7 +28,7 @@ export type ExtractedTransaction = z.infer<typeof transactionSchema>['transactio
 export async function extractTransactionsFromText(textChunk: string): Promise<ExtractedTransaction[]> {
   try {
     const result = await generateObject({
-      model: openai('gpt-4o-mini'),
+      model: google('gemini-1.5-flash'),
       schema: transactionSchema,
       prompt: `
         Extrage tranzacțiile financiare din următorul text provenit dintr-un extras de cont bancar.

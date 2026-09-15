@@ -214,10 +214,10 @@ export async function POST(request: NextRequest) {
       data: {
         id: invoice.id,
         number: invoice.number,
-        businessLine: invoice.businessLine.slug,
-        businessLineName: invoice.businessLine.name,
+        businessLine: invoice.businessLine?.slug || 'spv',
+        businessLineName: invoice.businessLine?.name || 'SPV',
         clientId: invoice.clientId,
-        clientName: invoice.client.companyName,
+        clientName: invoice.client?.companyName || invoice.extractedClientName || 'Necunoscut',
         contractId: invoice.contractId,
         type: invoice.type,
         direction: invoice.direction,
