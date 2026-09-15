@@ -1060,14 +1060,16 @@ model SupplierInvoice {
 }
 
 model SupplierPayment {
-  id        String          @id @default(cuid())
-  tenantId  String
-  invoiceId String
-  invoice   SupplierInvoice @relation(fields: [invoiceId], references: [id])
-  amount    Decimal
-  paidAt    DateTime
-  method    String?
-  createdAt DateTime        @default(now())
+  id                String           @id @default(cuid())
+  tenantId          String
+  invoiceId         String
+  invoice           SupplierInvoice  @relation(fields: [invoiceId], references: [id])
+  amount            Decimal
+  paidAt            DateTime
+  method            String?
+  bankTransactionId String?          // Legătura explicită către BankTransaction (opțional, doar dacă e match din extras)
+  matchedByUserId   String?          // ID-ul utilizatorului care a aprobat match-ul manual
+  createdAt         DateTime         @default(now())
 
   @@index([tenantId])
 }

@@ -23,9 +23,8 @@ export async function POST(request: NextRequest) {
 
     if (!tenant) {
       const count = await db.tenantInstance.count().catch(e => -1)
-      const url = process.env.DATABASE_URL?.substring(0, 30) + '...'
       return NextResponse.json({ 
-        error: `Fără tenant valid. DB Count: ${count}, URL: ${url}` 
+        error: `Fără tenant valid. DB Count: ${count}` 
       }, { status: 400 })
     }
 
@@ -65,7 +64,11 @@ export async function POST(request: NextRequest) {
     let savedCount = 0
     let autoMatchedCount = 0
 
-    // 4. Inserție și Auto-Matching
+    // 4. Încarcă pe S3 PDF-ul original O SINGURĂ DATĂ
+    const s3Key = `bank-statements/${tenant.id}/${Date.now()}-statement.pdf`
+    await uploadToS3(s3Key, inputBuffer)
+
+    // 5. Inserție și Auto-Matching
     for (const trx of transactions) {
       // Logică de încredere / Categorie
       const isSupplierPayment = trx.category === 'supplier_payment'
@@ -134,10 +137,6 @@ export async function POST(request: NextRequest) {
          // Confidence mic
          extractionStatus = 'pending_review'
       }
-
-      // Încarcă pe S3 PDF-ul original
-      const s3Key = `bank-statements/${tenant.id}/${Date.now()}-statement.pdf`
-      await uploadToS3(s3Key, inputBuffer)
 
       // Salvare în baza de date
       await db.bankTransaction.create({

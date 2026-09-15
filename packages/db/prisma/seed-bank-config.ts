@@ -23,7 +23,7 @@ async function main() {
       data: {
         tenantId: tenant.id,
         bankName: 'Banca Transilvania',
-        accountIban: 'RO99BTRL1111222233334444', // IBAN dummy pt test
+        accountIban: 'RO59BTRLRONCRT0549484001', // IBAN dummy pt test
         statementPasswordEnvKey: 'BT_STATEMENT_PASSWORD'
       }
     })
