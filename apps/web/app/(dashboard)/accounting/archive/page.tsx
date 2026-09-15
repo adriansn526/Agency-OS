@@ -130,15 +130,6 @@ export default function AccountingArchivePage() {
         </div>
       </div>
 
-      <Alert className="bg-slate-50">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Zonă Read-Only</AlertTitle>
-        <AlertDescription>
-          Aceasta este arhiva istorică. Nu se pot face modificări asupra documentelor de aici. 
-          Exportul include doar rezultatele filtrate curente.
-        </AlertDescription>
-      </Alert>
-
       {spvWarning && activeTab === 'ap' && (
         <Alert variant="destructive" className="bg-red-50 text-red-900 border-red-200">
           <AlertCircle className="h-4 w-4" />

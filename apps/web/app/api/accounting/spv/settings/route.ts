@@ -20,13 +20,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ data: null })
     }
 
-    // Mask the client secret for security, only send if it exists
     return NextResponse.json({
       data: {
-        clientId: settings.clientId,
-        clientSecret: settings.clientSecret ? '********' : '', // Don't expose actual secret
         accessToken: settings.accessToken ? true : false,
-        expiresAt: settings.expiresAt
+        expiresAt: settings.expiresAt,
+        lastSyncAt: settings.lastSyncAt
       }
     })
   } catch (error) {
