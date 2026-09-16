@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     let tenantId = request.headers.get('x-tenant-id')
     if (!tenantId || tenantId === 'default_tenant') {
       const t = await db.tenantInstance.findFirst()
       tenantId = t ? t.id : 'default_tenant'
     }
-    const supplierId = params.id
+    const resolvedParams = await params;
+    const supplierId = resolvedParams.id
 
     const supplier = await db.supplier.findFirst({
       where: { id: supplierId, tenantId },

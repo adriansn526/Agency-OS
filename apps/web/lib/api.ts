@@ -6,6 +6,7 @@ const BASE = ''  // Same origin
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${url}`, {
     headers: { 'Content-Type': 'application/json', ...options?.headers },
+    cache: 'no-store',
     ...options,
   })
   if (!res.ok) throw new Error(`API ${res.status}: ${url}`)

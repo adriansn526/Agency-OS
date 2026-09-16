@@ -171,12 +171,41 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
               }
             })
           } else {
+            // Încercăm să găsim un furnizor existent (pe baza CUI sau nume)
+            let matchedSupplier = null
+            
+            if (parsedData.cuiFurnizor) {
+              matchedSupplier = await db.supplier.findFirst({
+                where: { tenantId, cui: parsedData.cuiFurnizor }
+              })
+            }
+            
+            if (!matchedSupplier && parsedData.numeFurnizor) {
+              matchedSupplier = await db.supplier.findFirst({
+                where: {
+                  tenantId,
+                  OR: [
+                    { name: { equals: parsedData.numeFurnizor, mode: 'insensitive' } },
+                    { name: { contains: parsedData.numeFurnizor.substring(0, 5), mode: 'insensitive' } }
+                  ]
+                }
+              })
+              // Dacă l-am găsit după nume, dar nu avea CUI, îi updatăm CUI-ul (seeding)
+              if (matchedSupplier && !matchedSupplier.cui && parsedData.cuiFurnizor) {
+                await db.supplier.update({
+                  where: { id: matchedSupplier.id },
+                  data: { cui: parsedData.cuiFurnizor }
+                })
+              }
+            }
+
             await db.supplierInvoice.create({
               data: {
                 tenantId, spvId, source: 'spv', extractionStatus: 'confirmed',
+                supplierId: matchedSupplier?.id || null,
                 amount: parsedData.total, currency: parsedData.moneda,
                 issueDate: parsedData.dataEmitere, invoiceNumber: parsedData.numarFactura,
-                extractedSupplierName: parsedData.numeFurnizor, pdfUrl: '',
+                extractedSupplierName: matchedSupplier ? null : parsedData.numeFurnizor, pdfUrl: '',
                 xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
                 lines: {
                   create: parsedData.lines?.map(l => ({
