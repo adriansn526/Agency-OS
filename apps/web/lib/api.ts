@@ -147,6 +147,13 @@ export async function fetchSuppliers(params?: Record<string, string>) {
   const qs = params ? '?' + new URLSearchParams(params).toString() : ''
   return apiFetch<{ data: APISupplier[] }>(`/api/suppliers${qs}`)
 }
+export interface APISupplierPayment {
+  id: string
+  amount: number
+  paidAt: string
+  method: string | null
+}
+
 export interface APISupplierInvoice {
   id: string
   supplierId: string
@@ -160,6 +167,7 @@ export interface APISupplierInvoice {
   source: string
   extractionStatus: string
   createdAt: string
+  payments?: APISupplierPayment[]
 }
 
 export interface APISupplierDetails extends APISupplier {

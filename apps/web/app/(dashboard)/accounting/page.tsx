@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { AlertCircle, CheckCircle2, FileText, Send, Loader2, ArrowUpRight, ArrowDownRight, Calculator } from 'lucide-react'
+import { AlertCircle, CheckCircle2, FileText, Send, Download, Loader2, ArrowUpRight, ArrowDownRight, Calculator, Calendar as CalendarIcon } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { format, subMonths } from 'date-fns'
 import Link from 'next/link'
@@ -77,6 +77,10 @@ export default function AccountingPage() {
     } finally {
       setSending(false)
     }
+  }
+
+  const handleDownloadCsv = () => {
+    window.open(`/api/accounting/report/csv?month=${month}`, '_blank')
   }
 
   return (
@@ -250,7 +254,11 @@ export default function AccountingPage() {
             )}
 
             {!preview.hasPending && (
-              <div className="flex justify-end pt-4 border-t">
+              <div className="flex justify-end pt-4 border-t gap-3">
+                <Button size="lg" variant="outline" onClick={handleDownloadCsv}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Descarcă Raport CSV
+                </Button>
                 <Button size="lg" onClick={handleSend} disabled={sending}>
                   <Send className="w-4 h-4 mr-2" />
                   {sending ? 'Se trimite...' : 'Trimite Arhiva Contabilului'}

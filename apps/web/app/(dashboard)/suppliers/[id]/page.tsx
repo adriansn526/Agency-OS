@@ -3,8 +3,21 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { fetchSupplier, type APISupplierDetails } from "@/lib/api"
-import { ArrowLeft, Building2, Calendar, FileText, Upload, Plus } from "lucide-react"
+import { ArrowLeft, Building2, Calendar, FileText, Upload, Plus, CreditCard, ArrowDownRight, ArrowUpRight } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/utils"
+
+interface LedgerEntry {
+  id: string
+  date: Date
+  type: 'debit' | 'credit' // debit = invoice (we owe them), credit = payment (we paid them)
+  description: string
+  amount: number
+  currency: string
+  balance?: number
+  status?: string
+  source?: string
+  extractionStatus?: string
+}
 
 export default function SupplierDetailsPage() {
   const params = useParams()
@@ -46,6 +59,56 @@ export default function SupplierDetailsPage() {
       </div>
     )
   }
+
+  // Build ledger entries
+  const ledgerEntries: LedgerEntry[] = []
+  if (supplier.invoices) {
+    supplier.invoices.forEach(inv => {
+      // Add Invoice (Debit)
+      ledgerEntries.push({
+        id: `inv-${inv.id}`,
+        date: new Date(inv.issueDate),
+        type: 'debit',
+        description: `Factură ${inv.invoiceNumber || 'F.N.'}`,
+        amount: Number(inv.amount),
+        currency: inv.currency,
+        status: inv.status,
+        source: inv.source,
+        extractionStatus: inv.extractionStatus
+      })
+
+      // Add Payments (Credit)
+      if (inv.payments) {
+        inv.payments.forEach(p => {
+          ledgerEntries.push({
+            id: `pay-${p.id}`,
+            date: new Date(p.paidAt),
+            type: 'credit',
+            description: `Plată factură ${inv.invoiceNumber || 'F.N.'}${p.method ? ` (${p.method})` : ''}`,
+            amount: Number(p.amount),
+            currency: inv.currency
+          })
+        })
+      }
+    })
+  }
+
+  // Sort chronological (oldest to newest)
+  ledgerEntries.sort((a, b) => a.date.getTime() - b.date.getTime())
+
+  // Calculate running balance (Debit - Credit)
+  let currentBalance = 0
+  ledgerEntries.forEach(entry => {
+    if (entry.type === 'debit') {
+      currentBalance += entry.amount
+    } else {
+      currentBalance -= entry.amount
+    }
+    entry.balance = currentBalance
+  })
+
+  // We probably want to show newest first in the UI, but balance must be calculated oldest to newest
+  const displayEntries = [...ledgerEntries].reverse()
 
   return (
     <div className="flex flex-col h-full bg-background overflow-auto">
@@ -92,16 +155,19 @@ export default function SupplierDetailsPage() {
       {/* Content */}
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground">Istoric Facturi</h2>
+          <h2 className="text-lg font-bold text-foreground">Fișă Furnizor (Ledger)</h2>
+          <div className="text-sm font-medium">
+            Sold Curent: <span className={currentBalance > 0 ? "text-destructive" : "text-success"}>{formatCurrency(currentBalance, false, "RON")}</span>
+          </div>
         </div>
 
         <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
-          {supplier.invoices.length === 0 ? (
+          {displayEntries.length === 0 ? (
             <div className="p-8 text-center flex flex-col items-center justify-center">
               <FileText className="w-10 h-10 text-muted-foreground/30 mb-3" />
-              <p className="text-foreground font-medium mb-1">Nicio factură înregistrată</p>
+              <p className="text-foreground font-medium mb-1">Nicio înregistrare pe fișă</p>
               <p className="text-sm text-muted-foreground max-w-sm mb-4">
-                Nu există nicio factură atașată acestui furnizor. Încarcă o factură manual sau așteaptă ingestia automată.
+                Nu există facturi sau plăți atașate acestui furnizor.
               </p>
               <button 
                 onClick={() => setShowUploadModal(true)}
@@ -115,44 +181,55 @@ export default function SupplierDetailsPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
-                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nr. Factură</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dată Emitere</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-right">Sumă</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sursă</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dată</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tranzacție</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-right">Debit (Facturat)</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-right">Credit (Plătit)</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider text-right">Sold</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Extra</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {supplier.invoices.map(inv => (
-                    <tr key={inv.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium">
-                        {inv.invoiceNumber || <span className="text-muted-foreground italic">Fără număr</span>}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-foreground-secondary">
+                  {displayEntries.map(entry => (
+                    <tr key={entry.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                      <td className="px-4 py-3 text-sm text-foreground-secondary whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-muted-foreground" />
-                          {formatDate(inv.issueDate)}
+                          {formatDate(entry.date.toISOString())}
                         </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium flex items-center gap-2">
+                        {entry.type === 'debit' ? (
+                          <ArrowUpRight size={16} className="text-destructive shrink-0" />
+                        ) : (
+                          <ArrowDownRight size={16} className="text-success shrink-0" />
+                        )}
+                        {entry.description}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-bold text-right tabular-nums text-destructive">
+                        {entry.type === 'debit' ? formatCurrency(entry.amount, false, entry.currency) : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-bold text-right tabular-nums text-success">
+                        {entry.type === 'credit' ? formatCurrency(entry.amount, false, entry.currency) : '-'}
                       </td>
                       <td className="px-4 py-3 text-sm font-bold text-right tabular-nums">
-                        {formatCurrency(inv.amount, inv.currency)}
+                        {formatCurrency(entry.balance || 0, false, entry.currency)}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2.5 py-1 text-[11px] font-bold uppercase rounded-full ${
-                          inv.status === 'paid' ? 'bg-success/10 text-success' :
-                          inv.status === 'partial' ? 'bg-warning/10 text-warning' :
-                          'bg-destructive/10 text-destructive'
-                        }`}>
-                          {inv.status === 'paid' ? 'Plătit' : inv.status === 'partial' ? 'Parțial' : 'Neplătit'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex flex-col">
-                          <span className="text-xs uppercase font-bold text-muted-foreground">{inv.source}</span>
-                          {inv.extractionStatus === 'pending_review' && (
-                            <span className="text-[10px] text-warning font-semibold">Necesită Review</span>
-                          )}
-                        </div>
+                        {entry.type === 'debit' && entry.status && (
+                          <div className="flex flex-col gap-1 items-start">
+                            <span className={`px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${
+                              entry.status === 'paid' ? 'bg-success/10 text-success' :
+                              entry.status === 'partial' ? 'bg-warning/10 text-warning' :
+                              'bg-destructive/10 text-destructive'
+                            }`}>
+                              {entry.status === 'paid' ? 'Plătit' : entry.status === 'partial' ? 'Parțial' : 'Neplătit'}
+                            </span>
+                            {entry.extractionStatus === 'pending_review' && (
+                              <span className="text-[10px] text-warning font-semibold">Necesită Review</span>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
