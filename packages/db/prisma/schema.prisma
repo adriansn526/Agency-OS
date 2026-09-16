@@ -909,6 +909,7 @@ model SupplierInvoice {
   supplierId               String?
   extractedSupplierName    String?
   businessLineId           String?
+  lines                    SupplierInvoiceLine[]
   amount                   Decimal
   currency                 String            @default("RON")
   issueDate                DateTime
@@ -980,6 +981,9 @@ model BankTransaction {
   matchStatus       String   @default("unmatched")
   extractionStatus  String   @default("confirmed")
   sourcePdfUrl      String
+  dismissReason     String?
+  dismissedAt       DateTime?
+  dismissedBy       String?
   createdAt         DateTime @default(now())
 
   @@index([tenantId])
@@ -1057,4 +1061,21 @@ model DeductibilityRule {
   createdAt                DateTime  @default(now())
 
   @@index([tenantId])
+}
+
+
+model SupplierInvoiceLine {
+  id                  String          @id @default(cuid())
+  invoiceId           String
+  name                String
+  description         String?
+  quantity            Decimal?
+  unitPrice           Decimal?
+  totalAmount         Decimal
+  periodStart         DateTime?
+  periodEnd           DateTime?
+  
+  invoice             SupplierInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  @@index([invoiceId])
 }

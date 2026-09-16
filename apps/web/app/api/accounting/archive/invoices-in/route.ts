@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     const [items, totalItems] = await Promise.all([
       db.supplierInvoice.findMany({
         where,
-        include: { supplier: true },
+        include: { supplier: true, lines: true },
         orderBy: { issueDate: 'desc' },
         skip,
         take: limit,

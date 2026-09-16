@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
       include: {
         supplier: {
           select: { id: true, name: true, cui: true }
-        }
+        },
+        lines: true
       },
       orderBy: { issueDate: 'desc' }
     })

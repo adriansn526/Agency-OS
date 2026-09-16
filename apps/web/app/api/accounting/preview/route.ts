@@ -35,6 +35,25 @@ export async function GET(request: NextRequest) {
 
   const hasPending = (pendingInvoices + pendingTransactions) > 0
 
+  // Informative checks (non-blocking)
+  const unmatchedTransactions = await db.bankTransaction.count({
+    where: {
+      tenantId: tenant.id,
+      date: { gte: startDate, lte: endDate },
+      matchedSupplierId: null,
+      dismissReason: null,
+      matchStatus: 'unmatched'
+    }
+  })
+
+  const invoicesWithoutDeductibility = await db.supplierInvoice.count({
+    where: {
+      tenantId: tenant.id,
+      issueDate: { gte: startDate, lte: endDate },
+      expenseDeductiblePercent: null
+    }
+  })
+
   // 2. Extragem facturile validate pt preview
   const validInvoices = await db.supplierInvoice.findMany({
     where: {
@@ -66,6 +85,8 @@ export async function GET(request: NextRequest) {
     hasPending,
     pendingInvoices,
     pendingTransactions,
+    unmatchedTransactions,
+    invoicesWithoutDeductibility,
     missingRecurring,
     invoiceCount: validInvoices.length,
     totalAmount,

@@ -1,6 +1,16 @@
 import AdmZip from 'adm-zip'
 import { XMLParser } from 'fast-xml-parser'
 
+export interface ParsedInvoiceLine {
+  name: string
+  description?: string
+  quantity?: number
+  unitPrice?: number
+  totalAmount: number
+  periodStart?: Date
+  periodEnd?: Date
+}
+
 export interface ParsedEFactura {
   cuiFurnizor: string
   numeFurnizor: string
@@ -14,18 +24,26 @@ export interface ParsedEFactura {
   moneda: string
   contractReference?: string
   rawXml: string
+  lines: ParsedInvoiceLine[]
 }
 
 export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
-  // 1. Unzip the file and find the actual XML (ignoring the signature XML)
-  const zip = new AdmZip(zipBuffer)
-  const zipEntries = zip.getEntries()
-
   let xmlContent = ''
-  for (const entry of zipEntries) {
-    if (!entry.isDirectory && entry.entryName.endsWith('.xml') && !entry.entryName.toLowerCase().includes('semnatura')) {
-      xmlContent = entry.getData().toString('utf8')
-      break
+  
+  // Uneori ANAF returnează direct XML-ul (pentru FACTURA EMISA), nu un ZIP.
+  const bufferString = zipBuffer.toString('utf8', 0, 50).trim()
+  if (bufferString.startsWith('<?xml') || bufferString.startsWith('<Invoice')) {
+    xmlContent = zipBuffer.toString('utf8')
+  } else {
+    // 1. Unzip the file and find the actual XML (ignoring the signature XML)
+    const zip = new AdmZip(zipBuffer)
+    const zipEntries = zip.getEntries()
+
+    for (const entry of zipEntries) {
+      if (!entry.isDirectory && entry.entryName.endsWith('.xml') && !entry.entryName.toLowerCase().includes('semnatura')) {
+        xmlContent = entry.getData().toString('utf8')
+        break
+      }
     }
   }
 
@@ -90,6 +108,46 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
     contractReference = invoice.OrderReference.ID?.['#text'] || invoice.OrderReference.ID
   }
 
+  // Invoice Lines
+  const parsedLines: ParsedInvoiceLine[] = []
+  if (invoice.InvoiceLine) {
+    const linesArray = Array.isArray(invoice.InvoiceLine) ? invoice.InvoiceLine : [invoice.InvoiceLine]
+    for (const line of linesArray) {
+      const item = line.Item
+      const price = line.Price
+      
+      const name = item?.Name?.['#text'] || item?.Name || 'Nespecificat'
+      const description = item?.Description?.['#text'] || item?.Description || undefined
+      
+      const quantityRaw = line.InvoicedQuantity?.['#text'] || line.InvoicedQuantity
+      const quantity = quantityRaw !== undefined ? parseFloat(quantityRaw) : undefined
+      
+      const unitPriceRaw = price?.PriceAmount?.['#text'] || price?.PriceAmount
+      const unitPrice = unitPriceRaw !== undefined ? parseFloat(unitPriceRaw) : undefined
+      
+      const totalAmountRaw = line.LineExtensionAmount?.['#text'] || line.LineExtensionAmount
+      const totalAmount = totalAmountRaw !== undefined ? parseFloat(totalAmountRaw) : 0
+      
+      let periodStart: Date | undefined = undefined
+      let periodEnd: Date | undefined = undefined
+      
+      if (line.InvoicePeriod) {
+        if (line.InvoicePeriod.StartDate) periodStart = new Date(line.InvoicePeriod.StartDate)
+        if (line.InvoicePeriod.EndDate) periodEnd = new Date(line.InvoicePeriod.EndDate)
+      }
+
+      parsedLines.push({
+        name,
+        description,
+        quantity,
+        unitPrice,
+        totalAmount,
+        periodStart,
+        periodEnd
+      })
+    }
+  }
+
   return {
     numeFurnizor,
     cuiFurnizor: String(cuiFurnizor || '').trim(),
@@ -102,6 +160,7 @@ export function parseEFacturaZip(zipBuffer: Buffer): ParsedEFactura {
     total,
     moneda,
     contractReference,
-    rawXml: xmlContent
+    rawXml: xmlContent,
+    lines: parsedLines
   }
 }

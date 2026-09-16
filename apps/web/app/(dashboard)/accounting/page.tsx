@@ -221,7 +221,30 @@ export default function AccountingPage() {
                 <AlertTitle>Atenție: Există documente în Pending Review!</AlertTitle>
                 <AlertDescription>
                   Ai {preview.pendingInvoices} facturi și {preview.pendingTransactions} tranzacții bancare neconfirmate. 
-                  Nu poți trimite pachetul până nu finalizezi reconcilierea.
+                  Nu poți trimite pachetul până nu finalizezi verificarea acestora.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Informative yellow warnings (non-blocking) */}
+            {preview.unmatchedTransactions > 0 && (
+              <Alert className="border-amber-500 bg-amber-50">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="text-amber-800">Atenționare: Tranzacții nereconciliate</AlertTitle>
+                <AlertDescription className="text-amber-700">
+                  Ai {preview.unmatchedTransactions} tranzacții bancare fără factură asociată sau motiv de respingere. 
+                  Acest lucru nu blochează trimiterea pachetului.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {preview.invoicesWithoutDeductibility > 0 && (
+              <Alert className="border-amber-500 bg-amber-50">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="text-amber-800">Atenționare: Reguli de deductibilitate lipsă</AlertTitle>
+                <AlertDescription className="text-amber-700">
+                  Ai {preview.invoicesWithoutDeductibility} facturi fără regulă de deductibilitate setată.
+                  Acest lucru nu blochează trimiterea pachetului.
                 </AlertDescription>
               </Alert>
             )}

@@ -30,10 +30,14 @@ export async function GET(request: NextRequest) {
     }
 
     if (month && /^\d{4}-\d{2}$/.test(month)) {
-      const [year, monthStr] = month.split('-')
-      const startDate = new Date(parseInt(year), parseInt(monthStr) - 1, 1)
-      const endDate = new Date(parseInt(year), parseInt(monthStr), 0, 23, 59, 59, 999)
-      where.date = { gte: startDate, lte: endDate }
+      const parts = month.split('-')
+      const yearStr = parts[0]
+      const monthStr = parts[1]
+      if (yearStr && monthStr) {
+        const startDate = new Date(parseInt(yearStr), parseInt(monthStr) - 1, 1)
+        const endDate = new Date(parseInt(yearStr), parseInt(monthStr), 0, 23, 59, 59, 999)
+        where.date = { gte: startDate, lte: endDate }
+      }
     }
 
     if (type === 'in') {
@@ -43,9 +47,9 @@ export async function GET(request: NextRequest) {
     }
 
     if (status === 'matched') {
-      where.matchedByUserId = { not: null }
+      where.matchedSupplierId = { not: null }
     } else if (status === 'unmatched') {
-      where.matchedByUserId = null
+      where.matchedSupplierId = null
     }
 
     const [items, totalItems] = await Promise.all([
@@ -59,7 +63,12 @@ export async function GET(request: NextRequest) {
     ])
 
     return NextResponse.json({
-      data: items,
+      data: items.map(item => ({
+        ...item,
+        date: item.date.toISOString(),
+        debit: Number(item.debit),
+        credit: Number(item.credit)
+      })),
       pagination: {
         totalItems,
         totalPages: Math.ceil(totalItems / limit),

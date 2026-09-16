@@ -107,7 +107,7 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
     let errors = 0
 
     for (const msg of mesaje) {
-      if (msg.tip !== 'FACTURA PRIMITA' && msg.tip !== 'FACTURA EMISA') continue;
+      if (msg.tip !== 'FACTURA PRIMITA' && msg.tip !== 'FACTURA TRIMISA' && msg.tip !== 'FACTURA EMISA') continue;
       const spvId = msg.id.toString()
       const isAP = msg.tip === 'FACTURA PRIMITA'
 
@@ -156,6 +156,18 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
                 amount: parsedData.total, status: noulStatus,
                 currency: parsedData.moneda, issueDate: parsedData.dataEmitere,
                 xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
+                lines: {
+                  deleteMany: {},
+                  create: parsedData.lines?.map(l => ({
+                    name: l.name,
+                    description: l.description,
+                    quantity: l.quantity,
+                    unitPrice: l.unitPrice,
+                    totalAmount: l.totalAmount,
+                    periodStart: l.periodStart,
+                    periodEnd: l.periodEnd,
+                  })) || []
+                }
               }
             })
           } else {
@@ -166,6 +178,17 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
                 issueDate: parsedData.dataEmitere, invoiceNumber: parsedData.numarFactura,
                 extractedSupplierName: parsedData.numeFurnizor, pdfUrl: '',
                 xmlData: parsedData.rawXml, contractReference: parsedData.contractReference || null,
+                lines: {
+                  create: parsedData.lines?.map(l => ({
+                    name: l.name,
+                    description: l.description,
+                    quantity: l.quantity,
+                    unitPrice: l.unitPrice,
+                    totalAmount: l.totalAmount,
+                    periodStart: l.periodStart,
+                    periodEnd: l.periodEnd,
+                  })) || []
+                }
               }
             })
           }
@@ -212,8 +235,14 @@ export async function syncSpvForTenant(tenantId: string, days: number = 60, trig
         }
         
         processed++
-      } catch (e) {
-        console.error(`Eroare la parsarea facturii SPV ID ${spvId}:`, e)
+      } catch (e: any) {
+        const errorMsg = e.message || e.toString()
+        if (errorMsg.includes('Invalid or unsupported zip format')) {
+          const preview = zipBuffer.toString('utf8', 0, Math.min(zipBuffer.length, 200))
+          console.error(`[SPV] ID ${spvId} nu e un ZIP valid. Primele 200 caractere din raspuns:\n`, preview)
+        } else {
+          console.error(`Eroare la parsarea facturii SPV ID ${spvId}:`, e)
+        }
         errors++
       }
     }

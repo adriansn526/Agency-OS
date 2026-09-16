@@ -131,7 +131,8 @@ export async function POST(request: NextRequest) {
              const diffTime = Math.abs(trxDate.getTime() - invDate.getTime())
              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-             return diffAmount.lessThanOrEqualTo(1) && diffDays <= 30
+              // Auto-match DOAR la potrivire exactă de sumă + proximitate dată (max 60 zile)
+              return diffAmount.equals(0) && diffDays <= 60
            })
 
             if (candidates.length === 1 && candidates[0]) {

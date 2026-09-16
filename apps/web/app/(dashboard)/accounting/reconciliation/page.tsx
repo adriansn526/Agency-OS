@@ -35,6 +35,11 @@ export default function ReconciliationPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>('all')
 
+  // Bulk dismiss state
+  const [selectedForDismiss, setSelectedForDismiss] = useState<string[]>([])
+  const [dismissReason, setDismissReason] = useState<string>('no_invoice_expected')
+  const [isDismissing, setIsDismissing] = useState(false)
+
   const fetchData = async () => {
     setLoading(true)
     try {
@@ -91,6 +96,33 @@ export default function ReconciliationPage() {
     }
   }
 
+  const handleBulkDismiss = async () => {
+    if (selectedForDismiss.length === 0) return
+    setIsDismissing(true)
+    try {
+      const res = await fetch('/api/accounting/reconciliation/dismiss', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transactionIds: selectedForDismiss,
+          reason: dismissReason
+        })
+      })
+      if (res.ok) {
+        setSelectedForDismiss([])
+        await fetchData()
+      } else {
+        const err = await res.json()
+        alert('Eroare: ' + err.error)
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Eroare rețea')
+    } finally {
+      setIsDismissing(false)
+    }
+  }
+
   // Sort invoices: first those matching the name, then by amount closeness
   const getSortedInvoices = () => {
     if (!selectedTx) return []
@@ -142,6 +174,32 @@ export default function ReconciliationPage() {
           </select>
         </div>
         
+        {selectedForDismiss.length > 0 && (
+          <div className="p-3 bg-muted/30 border-b border-border flex items-center justify-between text-sm">
+            <span className="font-medium">{selectedForDismiss.length} selectate</span>
+            <div className="flex gap-2 items-center">
+              <select
+                value={dismissReason}
+                onChange={e => setDismissReason(e.target.value)}
+                className="bg-background border border-border rounded px-2 py-1 text-xs"
+              >
+                <option value="no_invoice_expected">Fără factură</option>
+                <option value="bank_fee">Comision bancar</option>
+                <option value="tax">Taxă</option>
+                <option value="internal_transfer">Transfer intern</option>
+                <option value="other">Alt motiv</option>
+              </select>
+              <button 
+                onClick={handleBulkDismiss}
+                disabled={isDismissing}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1 rounded text-xs font-medium"
+              >
+                {isDismissing ? 'Se aplică...' : 'Marchează'}
+              </button>
+            </div>
+          </div>
+        )}
+        
         {loading ? (
           <div className="p-8 text-center text-muted-foreground">Se încarcă...</div>
         ) : transactions.length === 0 ? (
@@ -157,16 +215,31 @@ export default function ReconciliationPage() {
                const amountStr = isIncome ? `+${parseFloat(t.credit).toFixed(2)}` : `-${parseFloat(t.debit).toFixed(2)}`
                const amountColor = isIncome ? 'text-green-500' : 'text-destructive'
 
-               return (
-                 <div 
-                    key={t.id} 
-                    onClick={() => setSelectedTx(t)}
-                    className={`p-4 cursor-pointer hover:bg-muted/30 transition-colors ${selectedTx?.id === t.id ? 'bg-muted/50 border-l-4 border-primary' : ''}`}
-                 >
-                   <div className="flex justify-between items-start mb-1">
-                      <div className="font-medium text-sm line-clamp-2 pr-2">{t.description}</div>
-                      <div className={`font-bold shrink-0 ${amountColor}`}>{amountStr} RON</div>
-                   </div>
+                 return (
+                   <div 
+                      key={t.id} 
+                      onClick={() => setSelectedTx(t)}
+                      className={`p-4 cursor-pointer hover:bg-muted/30 transition-colors border-l-4 ${selectedTx?.id === t.id ? 'bg-muted/50 border-primary' : 'border-transparent'}`}
+                   >
+                     <div className="flex justify-between items-start mb-1">
+                        <div className="flex gap-3 items-start">
+                          <input 
+                            type="checkbox" 
+                            className="mt-1 w-4 h-4 rounded border-gray-300 text-primary cursor-pointer" 
+                            checked={selectedForDismiss.includes(t.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedForDismiss(prev => [...prev, t.id])
+                              } else {
+                                setSelectedForDismiss(prev => prev.filter(id => id !== t.id))
+                              }
+                            }}
+                          />
+                          <div className="font-medium text-sm line-clamp-2 pr-2">{t.description}</div>
+                        </div>
+                        <div className={`font-bold shrink-0 ${amountColor}`}>{amountStr} RON</div>
+                     </div>
                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>{new Date(t.date).toLocaleDateString('ro-RO')}</span>
                       {t.extractionStatus === 'pending_review' && (
@@ -230,26 +303,59 @@ export default function ReconciliationPage() {
                <div className="grid gap-3">
                  {getSortedInvoices().map(inv => {
                    const txVal = parseFloat((selectedTx.category === 'incoming_payment' || parseFloat(selectedTx.credit) > 0) ? selectedTx.credit : selectedTx.debit) || 0
-                   const diff = Math.abs(parseFloat(inv.amount) - txVal)
-                   const isExactMatch = diff <= 1
+                   const rawDiff = parseFloat(inv.amount) - txVal
+                   const diff = Math.abs(rawDiff)
+                   const isExactMatch = diff === 0
+                   const isApproxMatch = diff > 0 && diff <= 1
+                   
+                   const hasLines = inv.lines && inv.lines.length > 0
+                   const firstLines = hasLines ? inv.lines.slice(0, 2) : []
 
                    return (
                      <div key={inv.id} className="border border-border rounded-lg p-4 flex justify-between items-center bg-surface hover:border-primary/50 transition-colors">
-                       <div>
-                         <div className="font-semibold text-lg">{inv.supplier?.name || 'Furnizor Necunoscut'}</div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-3">
+                           <div className="font-semibold text-lg">{inv.supplier?.name || inv.extractedSupplierName || 'Furnizor Necunoscut'}</div>
+                             {inv.pdfUrl && (
+                              <a href={inv.pdfUrl.startsWith('http') ? inv.pdfUrl : `/api/accounting/files/${inv.pdfUrl.startsWith('/') ? inv.pdfUrl.slice(1) : inv.pdfUrl}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                               <FileText size={14} /> PDF
+                             </a>
+                           )}
+                         </div>
                          <div className="text-sm text-muted-foreground flex gap-3 mt-1">
                            <span>Factura: #{inv.invoiceNumber || '-'}</span>
                            <span>Data: {new Date(inv.issueDate).toLocaleDateString('ro-RO')}</span>
                            <span className={inv.status === 'partial' ? 'text-amber-500 font-medium' : ''}>Status: {inv.status}</span>
                          </div>
+                         
+                         {firstLines.length > 0 && (
+                           <div className="mt-2 text-xs text-muted-foreground bg-background rounded p-2 inline-block">
+                             {firstLines.map(line => (
+                               <div key={line.id}>
+                                 <span className="font-medium text-foreground">{line.name}</span>
+                                 {line.periodStart && line.periodEnd && (
+                                   <span className="ml-1 opacity-80">
+                                     ({new Date(line.periodStart).toLocaleDateString('ro-RO')} - {new Date(line.periodEnd).toLocaleDateString('ro-RO')})
+                                   </span>
+                                 )}
+                               </div>
+                             ))}
+                             {inv.lines.length > 2 && <div className="mt-1 opacity-70">... și încă {inv.lines.length - 2}</div>}
+                           </div>
+                         )}
                        </div>
                        
-                       <div className="flex items-center gap-6">
+                       <div className="flex items-center gap-6 ml-4">
                          <div className="text-right">
                             <div className="font-bold text-lg">{parseFloat(inv.amount).toFixed(2)} RON</div>
                             {isExactMatch && (
                               <div className="text-xs text-green-500 font-medium flex items-center justify-end gap-1">
-                                <Check size={12} /> Match Perfect
+                                <Check size={12} /> Potrivire exactă
+                              </div>
+                            )}
+                            {isApproxMatch && (
+                              <div className="text-xs text-amber-500 font-medium flex items-center justify-end gap-1">
+                                <AlertCircle size={12} /> Aproximativ ({rawDiff > 0 ? '+' : ''}{rawDiff.toFixed(2)})
                               </div>
                             )}
                          </div>

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
     }
 
-    if (bankTx.matchStatus !== 'unmatched') {
+    if (bankTx.matchStatus !== 'unmatched' && bankTx.matchStatus !== 'auto_matched') {
       return NextResponse.json({ error: 'Transaction is already matched' }, { status: 400 })
     }
 
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
           paidAt: bankTx.date,
           method: 'bank_transfer',
           bankTransactionId: transactionId,
-          matchedByUserId: session.user.id
+          matchedByUserId: session.user!.id
         }
       })
 

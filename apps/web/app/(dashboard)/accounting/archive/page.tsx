@@ -325,7 +325,24 @@ export default function AccountingArchivePage() {
                       
                       {activeTab === 'ap' && (
                         <>
-                          <td className="p-4">{row.extractedSupplierName || row.supplier?.name || '-'}</td>
+                          <td className="p-4">
+                            <div className="font-medium">{row.extractedSupplierName || row.supplier?.name || '-'}</div>
+                            {row.lines && row.lines.length > 0 && (
+                              <div className="mt-2 text-xs text-muted-foreground bg-muted/20 rounded p-2 border border-border inline-block max-w-sm">
+                                {row.lines.slice(0, 2).map((line: any) => (
+                                  <div key={line.id} className="mb-1 last:mb-0 break-words whitespace-normal">
+                                    <span className="text-foreground">{line.name}</span>
+                                    {line.periodStart && line.periodEnd && (
+                                      <span className="ml-1 opacity-80">
+                                        ({new Date(line.periodStart).toLocaleDateString('ro-RO')} - {new Date(line.periodEnd).toLocaleDateString('ro-RO')})
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                                {row.lines.length > 2 && <div className="mt-1 opacity-70">... și încă {row.lines.length - 2}</div>}
+                              </div>
+                            )}
+                          </td>
                           <td className="p-4">{row.issueDate ? new Date(row.issueDate).toLocaleDateString('ro-RO') : '-'}</td>
                           <td className="p-4 text-slate-500">{row.contractReference || '-'}</td>
                           <td className="p-4 font-medium">{Number(row.amount).toLocaleString('ro-RO')} {row.currency}</td>
@@ -371,7 +388,7 @@ export default function AccountingArchivePage() {
                           <td className="p-4 text-right text-rose-600">{Number(row.debit) > 0 ? Number(row.debit).toLocaleString('ro-RO') : '-'}</td>
                           <td className="p-4 text-right text-emerald-600">{Number(row.credit) > 0 ? Number(row.credit).toLocaleString('ro-RO') : '-'}</td>
                           <td className="p-4">
-                            {row.matchedByUserId ? (
+                            {row.matchStatus === 'auto_matched' || row.matchedSupplierId ? (
                               <span className="text-emerald-500 text-xs font-medium">Reconciliat</span>
                             ) : (
                               <span className="text-muted-foreground text-xs">Pending</span>
