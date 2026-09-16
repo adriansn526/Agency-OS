@@ -132,6 +132,11 @@ export interface APISupplier {
   tenantId: string
   name: string
   cui: string | null
+  vatNumber: string | null
+  country: string
+  vatRegime: string
+  invoiceFetchMethod: string
+  invoiceSenderEmails: string[]
   iban: string | null
   category: string | null
   isRecurring: boolean
@@ -163,6 +168,7 @@ export interface APISupplierInvoice {
   dueDate: string | null
   invoiceNumber: string | null
   pdfUrl: string
+  receiptUrl?: string | null
   status: string
   source: string
   extractionStatus: string
@@ -176,5 +182,12 @@ export interface APISupplierDetails extends APISupplier {
 
 export async function fetchSupplier(id: string) {
   return apiFetch<{ data: APISupplierDetails }>(`/api/suppliers/${id}`)
+}
+
+export async function updateSupplier(id: string, data: Partial<APISupplier>) {
+  return apiFetch<{ success: boolean }>(`/api/suppliers/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  })
 }
 

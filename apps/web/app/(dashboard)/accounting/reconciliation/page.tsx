@@ -34,6 +34,7 @@ export default function ReconciliationPage() {
   const [matchAmount, setMatchAmount] = useState<string>('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [searchTx, setSearchTx] = useState<string>('')
 
   // Bulk dismiss state
   const [selectedForDismiss, setSelectedForDismiss] = useState<string[]>([])
@@ -157,21 +158,35 @@ export default function ReconciliationPage() {
     <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-background">
       {/* Lista Tranzactii pe stanga */}
       <div className="w-1/3 border-r border-border bg-surface overflow-y-auto flex flex-col">
-        <div className="p-4 border-b border-border sticky top-0 bg-surface z-10 flex items-center justify-between">
-          <h1 className="text-lg font-semibold flex items-center gap-2">
-            <AlertCircle size={18} className="text-amber-500" /> 
-            Necesită Reconciliere ({transactions.length})
-          </h1>
-          <select 
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="text-xs bg-background border border-border rounded px-2 py-1 outline-none focus:border-primary"
-          >
-            <option value="all">Toate</option>
-            <option value="supplier_payment">Plăți Furnizori</option>
-            <option value="incoming_payment">Încasări</option>
-            <option value="bank_fee">Comisioane Bancare</option>
-          </select>
+        <div className="p-4 border-b border-border sticky top-0 bg-surface z-10 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold flex items-center gap-2">
+              <AlertCircle size={18} className="text-amber-500" /> 
+              Necesită Reconciliere ({transactions.length})
+            </h1>
+          </div>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input 
+                type="text" 
+                placeholder="Caută în tranzacții..." 
+                value={searchTx}
+                onChange={(e) => setSearchTx(e.target.value)}
+                className="w-full pl-8 pr-3 py-1.5 bg-background border border-border rounded-md text-sm outline-none focus:border-primary transition-colors"
+              />
+            </div>
+            <select 
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="text-sm bg-background border border-border rounded-md px-2 py-1.5 outline-none focus:border-primary shrink-0 w-32"
+            >
+              <option value="all">Toate</option>
+              <option value="supplier_payment">Plăți</option>
+              <option value="incoming_payment">Încasări</option>
+              <option value="bank_fee">Comisioane</option>
+            </select>
+          </div>
         </div>
         
         {selectedForDismiss.length > 0 && (
@@ -210,7 +225,10 @@ export default function ReconciliationPage() {
           </div>
         ) : (
           <div className="divide-y divide-border flex-1">
-            {transactions.filter(t => filterCategory === 'all' || t.category === filterCategory).map(t => {
+            {transactions
+              .filter(t => filterCategory === 'all' || t.category === filterCategory)
+              .filter(t => searchTx === '' || t.description.toLowerCase().includes(searchTx.toLowerCase()) || (t.extractedMerchant && t.extractedMerchant.toLowerCase().includes(searchTx.toLowerCase())) || t.credit.includes(searchTx) || t.debit.includes(searchTx))
+              .map(t => {
                const isIncome = t.category === 'incoming_payment' || parseFloat(t.credit) > 0
                const amountStr = isIncome ? `+${parseFloat(t.credit).toFixed(2)}` : `-${parseFloat(t.debit).toFixed(2)}`
                const amountColor = isIncome ? 'text-green-500' : 'text-destructive'

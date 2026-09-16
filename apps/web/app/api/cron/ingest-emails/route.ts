@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // 1. Preluăm datele de test
-    const { messageId, sender, pdfBase64, overrideText } = await request.json()
+    const { messageId, sender, pdfBase64, receiptPdfBase64, isOnlyReceipt, overrideText } = await request.json()
     if (!messageId) {
       return NextResponse.json({ error: 'Missing messageId' }, { status: 400 })
     }
@@ -49,6 +49,15 @@ export async function POST(request: NextRequest) {
     const s3Key = `invoices/${tenant.id}/${Date.now()}-${messageId.replace(/[^a-z0-9]/gi, '_')}.pdf`
     await uploadToS3(s3Key, pdfBufferToUpload)
 
+    let receiptS3Key = null
+    if (receiptPdfBase64) {
+      const receiptBuffer = Buffer.from(receiptPdfBase64, 'base64')
+      receiptS3Key = `invoices/${tenant.id}/receipt-${Date.now()}-${messageId.replace(/[^a-z0-9]/gi, '_')}.pdf`
+      await uploadToS3(receiptS3Key, receiptBuffer)
+    }
+
+    const finalStatus = isOnlyReceipt ? 'missing_invoice' : 'pending_review'
+
     if (!data || error === 'OCR_FALLBACK_REQUIRED') {
       const saved = await db.supplierInvoice.create({
         data: {
@@ -56,38 +65,91 @@ export async function POST(request: NextRequest) {
           amount: 0,
           currency: 'RON',
           issueDate: new Date(),
-          pdfUrl: s3Key, // Stocare R2/S3
+          pdfUrl: s3Key, 
+          receiptUrl: receiptS3Key,
           source: 'email',
           sourceRef: messageId,
-          extractionStatus: 'pending_review',
-          extractedBy: 'human' // necesită verificare umană
+          extractionStatus: finalStatus,
+          extractedBy: 'human' 
         }
       })
       return NextResponse.json({ success: true, saved, status: 'OCR_FALLBACK' })
     }
 
-    // 6. Fuzzy Matching pentru a găsi Furnizorul (Supplier)
-    const matchedSupplier = await db.supplier.findFirst({
-      where: { 
-        tenantId: tenant.id,
-        name: { contains: data.supplierName.substring(0, 5), mode: 'insensitive' }
-      }
-    })
+    // 6. Determinist Matching by Sender Email, then Fuzzy Matching by Name
+    let matchedSupplier = null;
+    
+    if (sender) {
+      matchedSupplier = await db.supplier.findFirst({
+        where: {
+          tenantId: tenant.id,
+          invoiceSenderEmails: { has: sender }
+        }
+      });
+    }
 
-    // 7. Salvăm factura "pending_review" cu sau fără supplier găsit
+    if (!matchedSupplier && data.supplierName) {
+      matchedSupplier = await db.supplier.findFirst({
+        where: { 
+          tenantId: tenant.id,
+          name: { contains: data.supplierName.substring(0, 5), mode: 'insensitive' }
+        }
+      });
+    }
+
+    // 7. Dedup inteligent: Dacă intră factură nouă și există deja o chitanță orfană
+    if (!isOnlyReceipt && data.amount > 0) {
+      const issueDate = new Date(data.issueDate)
+      const startDate = new Date(issueDate)
+      startDate.setDate(startDate.getDate() - 14)
+      const endDate = new Date(issueDate)
+      endDate.setDate(endDate.getDate() + 14)
+
+      const orphanReceipt = await db.supplierInvoice.findFirst({
+        where: {
+          tenantId: tenant.id,
+          extractionStatus: 'missing_invoice',
+          supplierId: matchedSupplier?.id || undefined,
+          amount: data.amount,
+          issueDate: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
+        orderBy: { issueDate: 'desc' }
+      })
+
+      if (orphanReceipt) {
+        // Am găsit chitanța! O completăm cu factura nouă
+        const updated = await db.supplierInvoice.update({
+          where: { id: orphanReceipt.id },
+          data: {
+            pdfUrl: s3Key, // suprascriem pdfUrl (care era chitanța provizoriu) cu factura reală
+            receiptUrl: orphanReceipt.pdfUrl, // mutăm vechiul PDF la receiptUrl
+            extractionStatus: 'pending_review', // O trimitem la validare
+            invoiceNumber: data.invoiceNumber || orphanReceipt.invoiceNumber,
+            sourceRef: messageId // Actualizăm cu noul messageId
+          }
+        })
+        return NextResponse.json({ success: true, saved: updated, matchedSupplier: !!matchedSupplier, status: 'MERGED_WITH_RECEIPT' })
+      }
+    }
+
+    // 8. Salvăm factura/chitanța nouă
     const saved = await db.supplierInvoice.create({
       data: {
         tenantId: tenant.id,
-        supplierId: matchedSupplier?.id || null, // Poate fi null (orfană)
+        supplierId: matchedSupplier?.id || null, 
         extractedSupplierName: matchedSupplier ? null : data.supplierName,
         amount: data.amount,
         currency: data.currency,
         issueDate: new Date(data.issueDate),
         invoiceNumber: data.invoiceNumber,
-        pdfUrl: s3Key, // R2/S3
+        pdfUrl: s3Key, 
+        receiptUrl: receiptS3Key,
         source: 'email',
         sourceRef: messageId,
-        extractionStatus: 'pending_review',
+        extractionStatus: finalStatus,
         extractedBy: 'llm'
       }
     })

@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
     const search = searchParams.get('search')
+    const vatRegime = searchParams.get('vatRegime')
     let tenantId = request.headers.get('x-tenant-id')
     if (!tenantId || tenantId === 'default_tenant') {
       const t = await db.tenantInstance.findFirst()
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = { tenantId }
     
     if (status && status !== 'all') where.status = status
+    if (vatRegime && vatRegime !== 'all') where.vatRegime = vatRegime
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },

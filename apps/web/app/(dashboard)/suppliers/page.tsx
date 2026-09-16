@@ -21,6 +21,7 @@ export default function SuppliersPage() {
   const router = useRouter()
   const [globalFilter, setGlobalFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [vatRegimeFilter, setVatRegimeFilter] = useState<string>("all")
   const [suppliers, setSuppliers] = useState<APISupplier[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -29,6 +30,7 @@ export default function SuppliersPage() {
     try {
       const params: Record<string, string> = {}
       if (statusFilter !== "all") params.status = statusFilter
+      if (vatRegimeFilter !== "all") params.vatRegime = vatRegimeFilter
       if (globalFilter) params.search = globalFilter
       const res = await fetchSuppliers(params)
       setSuppliers(res.data || [])
@@ -37,7 +39,7 @@ export default function SuppliersPage() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter, globalFilter])
+  }, [statusFilter, vatRegimeFilter, globalFilter])
 
   useEffect(() => {
     loadSuppliers()
@@ -159,15 +161,27 @@ export default function SuppliersPage() {
             />
           </div>
           
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-9 bg-background border border-border rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer"
-          >
-            <option value="all">Toate statusurile</option>
-            <option value="active">Activ</option>
-            <option value="inactive">Inactiv</option>
-          </select>
+          <div className="flex gap-2">
+            <select
+              className="h-9 rounded-xl bg-background border border-border/50 text-sm px-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground min-w-[140px]"
+              value={vatRegimeFilter}
+              onChange={(e) => setVatRegimeFilter(e.target.value)}
+            >
+              <option value="all">Toate Tările</option>
+              <option value="domestic">Național (RO)</option>
+              <option value="intracommunity">Intracomunitar (UE)</option>
+              <option value="extracommunity">Extra-comunitar (Non-UE)</option>
+            </select>
+            <select
+              className="h-9 rounded-xl bg-background border border-border/50 text-sm px-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground min-w-[120px]"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">Toate statusurile</option>
+              <option value="active">Activ</option>
+              <option value="inactive">Inactiv</option>
+            </select>
+          </div>
 
           <button className="h-9 px-4 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm">
             <Plus size={16} /> Adaugă Furnizor

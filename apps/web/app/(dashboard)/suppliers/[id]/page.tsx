@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { fetchSupplier, type APISupplierDetails } from "@/lib/api"
-import { ArrowLeft, Building2, Calendar, FileText, Upload, Plus, CreditCard, ArrowDownRight, ArrowUpRight } from "lucide-react"
+import { ArrowLeft, Building2, Calendar, FileText, Upload, Plus, CreditCard, ArrowDownRight, ArrowUpRight, Edit2 } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/utils"
+import { SupplierEditModal } from "@/components/supplier-edit-modal"
 
 interface LedgerEntry {
   id: string
@@ -17,6 +18,8 @@ interface LedgerEntry {
   status?: string
   source?: string
   extractionStatus?: string
+  pdfUrl?: string
+  receiptUrl?: string | null
 }
 
 export default function SupplierDetailsPage() {
@@ -25,6 +28,7 @@ export default function SupplierDetailsPage() {
   const [supplier, setSupplier] = useState<APISupplierDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -74,7 +78,9 @@ export default function SupplierDetailsPage() {
         currency: inv.currency,
         status: inv.status,
         source: inv.source,
-        extractionStatus: inv.extractionStatus
+        extractionStatus: inv.extractionStatus,
+        pdfUrl: inv.pdfUrl,
+        receiptUrl: inv.receiptUrl
       })
 
       // Add Payments (Credit)
@@ -126,9 +132,23 @@ export default function SupplierDetailsPage() {
               <Building2 size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">{supplier.name}</h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-1">
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">{supplier.name}</h1>
+                <button 
+                  onClick={() => setShowEditModal(true)}
+                  className="p-1.5 text-muted-foreground hover:bg-muted rounded-md transition-colors"
+                  title="Editează Fiscalitate"
+                >
+                  <Edit2 size={16} />
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-2">
                 {supplier.cui && <span>CUI: <span className="text-foreground">{supplier.cui}</span></span>}
+                {supplier.vatNumber && <span>VAT: <span className="text-foreground">{supplier.vatNumber}</span></span>}
+                {supplier.country && <span>Țara: <span className="text-foreground font-medium">{supplier.country}</span></span>}
+                {supplier.vatRegime && (
+                  <span>Regim: <span className="text-foreground font-medium capitalize">{supplier.vatRegime === 'intracommunity' ? 'Intracomunitar (UE)' : supplier.vatRegime === 'extracommunity' ? 'Extra-comunitar (Non-UE)' : 'Național (RO)'}</span></span>
+                )}
                 {supplier.iban && <span>IBAN: <span className="text-foreground font-mono">{supplier.iban}</span></span>}
                 <span className="px-2 py-0.5 rounded-full bg-muted text-xs uppercase font-bold">
                   {supplier.status}
@@ -139,6 +159,18 @@ export default function SupplierDetailsPage() {
                   </span>
                 )}
               </div>
+              {supplier.invoiceSenderEmails && supplier.invoiceSenderEmails.length > 0 && (
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Adrese email validare facturi:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {supplier.invoiceSenderEmails.map((email: string) => (
+                      <span key={email} className="px-2.5 py-1 rounded-md bg-accent/20 border border-accent/30 text-accent-foreground text-[11px] font-medium">
+                        {email}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -226,8 +258,38 @@ export default function SupplierDetailsPage() {
                               {entry.status === 'paid' ? 'Plătit' : entry.status === 'partial' ? 'Parțial' : 'Neplătit'}
                             </span>
                             {entry.extractionStatus === 'pending_review' && (
-                              <span className="text-[10px] text-warning font-semibold">Necesită Review</span>
+                              <span className="text-[10px] text-warning font-semibold mt-1">Necesită Review</span>
                             )}
+                            {entry.extractionStatus === 'missing_invoice' && (
+                              <span className="text-[10px] bg-warning/20 text-warning px-1.5 py-0.5 rounded-sm font-semibold mt-1 flex items-center gap-1">
+                                ⚠️ Doar Chitanță
+                              </span>
+                            )}
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                              {entry.pdfUrl && (
+                                <a 
+                                  href={`/api/accounting/files/${entry.pdfUrl}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-primary hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {entry.extractionStatus === 'missing_invoice' ? 'Vezi Chitanța' : 'Vezi Factura'}
+                                </a>
+                              )}
+                              {entry.receiptUrl && entry.extractionStatus !== 'missing_invoice' && (
+                                <a 
+                                  href={`/api/accounting/files/${entry.receiptUrl}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  Dovadă Plată
+                                </a>
+                              )}
+                            </div>
                           </div>
                         )}
                       </td>
@@ -284,6 +346,18 @@ export default function SupplierDetailsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modals */}
+      {showEditModal && (
+        <SupplierEditModal 
+          supplier={supplier} 
+          onClose={() => setShowEditModal(false)}
+          onSuccess={() => {
+            setShowEditModal(false)
+            loadData() // refresh
+          }}
+        />
       )}
     </div>
   )

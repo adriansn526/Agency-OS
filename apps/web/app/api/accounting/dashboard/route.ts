@@ -50,7 +50,8 @@ export async function GET(request: NextRequest) {
     const supplierInvoices = await db.supplierInvoice.findMany({
       where: {
         tenantId: tenant.id,
-        issueDate: { gte: startDate, lte: endDate }
+        issueDate: { gte: startDate, lte: endDate },
+        extractionStatus: { notIn: ['pending_review', 'missing_invoice'] }
       }
     })
 

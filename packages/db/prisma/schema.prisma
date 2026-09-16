@@ -890,8 +890,13 @@ model SystemAlert {
 model Supplier {
   id          String            @id @default(cuid())
   tenantId    String
-  name        String
-  cui         String?
+  name                String
+  cui                 String?
+  vatNumber           String?
+  country             String            @default("RO")
+  vatRegime           String            @default("domestic") // domestic | intracommunity | extracommunity
+  invoiceFetchMethod  String            @default("efactura") // efactura | email_parsing | api | manual
+  invoiceSenderEmails String[]
   iban        String?
   category    String?
   isRecurring Boolean           @default(false)
@@ -917,6 +922,7 @@ model SupplierInvoice {
   invoiceNumber            String?
   contractReference        String?
   pdfUrl                   String
+  receiptUrl               String?
   status                   String            @default("unpaid")
   source                   String            // manual | email | api | spv
   spvId                    String?           @unique
