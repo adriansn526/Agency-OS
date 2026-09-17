@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { Loader2, Plus, Trash2, Pencil } from 'lucide-react'
 
 type Rule = {
   id: string
@@ -22,6 +22,7 @@ export function RulesTable() {
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [formData, setFormData] = useState<Partial<Rule>>({
     name: '',
     supplierId: '',
@@ -57,15 +58,19 @@ export function RulesTable() {
     e.preventDefault()
     
     try {
-      const res = await fetch('/api/accounting/rules', {
-        method: 'POST',
+      const url = editingId ? `/api/accounting/rules/${editingId}` : '/api/accounting/rules'
+      const method = editingId ? 'PUT' : 'POST'
+      
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       })
       if (!res.ok) throw new Error('Failed to save')
       
-      toast.success('Regulă adăugată cu succes!')
+      toast.success(`Regulă ${editingId ? 'actualizată' : 'adăugată'} cu succes!`)
       setIsDialogOpen(false)
+      setEditingId(null)
       loadData()
       setFormData({
         name: '', supplierId: '', expenseCategory: '',
@@ -75,6 +80,15 @@ export function RulesTable() {
     } catch (error) {
       toast.error('Eroare la salvarea regulii')
     }
+  }
+
+  const handleEdit = (rule: Rule) => {
+    setFormData({
+      ...rule,
+      validFrom: rule.validFrom ? new Date(rule.validFrom).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    })
+    setEditingId(rule.id)
+    setIsDialogOpen(true)
   }
 
   const handleDelete = async (id: string) => {
@@ -102,13 +116,21 @@ export function RulesTable() {
           <CardTitle>Reguli Active</CardTitle>
           <CardDescription>Regulile sunt evaluate în ordinea priorității (cea mai mare câștigă).</CardDescription>
         </div>
-        <Button size="sm" onClick={() => setIsDialogOpen(!isDialogOpen)}><Plus className="w-4 h-4 mr-2" /> Adaugă Regulă</Button>
+        <Button size="sm" onClick={() => {
+          setEditingId(null)
+          setFormData({
+            name: '', supplierId: '', expenseCategory: '',
+            vatDeductiblePercent: '100', expenseDeductiblePercent: '100', priority: 0,
+            validFrom: new Date().toISOString().split('T')[0]
+          })
+          setIsDialogOpen(!isDialogOpen)
+        }}><Plus className="w-4 h-4 mr-2" /> Adaugă Regulă</Button>
       </CardHeader>
       
       {isDialogOpen && (
         <CardContent className="border-b bg-muted/30">
           <form onSubmit={handleSave} className="space-y-4 pt-4">
-            <h3 className="font-medium">Formular Regulă Nouă</h3>
+            <h3 className="font-medium">{editingId ? 'Editare Regulă' : 'Formular Regulă Nouă'}</h3>
             <div className="space-y-2 flex flex-col">
               <label className="text-sm font-medium">Nume Regulă (ex: Protocol 50%)</label>
               <input required className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.name} onChange={(e: any) => setFormData(f => ({...f, name: e.target.value}))} />
@@ -158,7 +180,10 @@ export function RulesTable() {
             </div>
 
             <div className="flex gap-2 justify-end pt-2">
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Anulează</Button>
+              <Button type="button" variant="outline" onClick={() => {
+                setIsDialogOpen(false)
+                setEditingId(null)
+              }}>Anulează</Button>
               <Button type="submit">Salvează Regula</Button>
             </div>
           </form>
@@ -193,6 +218,9 @@ export function RulesTable() {
                     <td className="p-4 align-middle">{rule.expenseDeductiblePercent}%</td>
                     <td className="p-4 align-middle">{rule.vatDeductiblePercent}%</td>
                     <td className="p-4 align-middle text-right">
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit(rule)} title="Editează">
+                        <Pencil className="w-4 h-4 text-primary" />
+                      </Button>
                       <Button variant="ghost" size="sm" onClick={() => handleDelete(rule.id)} title="Invalidează">
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>

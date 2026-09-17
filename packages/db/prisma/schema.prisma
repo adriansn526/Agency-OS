@@ -43,6 +43,7 @@ model BusinessLine {
   savedViews         SavedView[]
   serviceTemplates   ServiceTemplate[]
   shortLinks         ShortLink[]
+  contractTemplates  ContractTemplate[]
 }
 
 model Client {
@@ -1103,7 +1104,8 @@ model ContractTemplate {
   tenantId      String
   name          String
   description   String?
-  businessLines Json
+  isGlobal      Boolean        @default(true)
+  businessLines BusinessLine[]
   sections      Json
   anexa2        Json?
   isDefault     Boolean  @default(false)
