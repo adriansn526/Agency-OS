@@ -118,6 +118,9 @@ export async function POST(request: NextRequest) {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS || process.env.SMTP_PASSWORD,
         },
+        tls: {
+          rejectUnauthorized: false
+        }
       })
 
       const mailOptions = {
