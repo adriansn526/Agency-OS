@@ -18,6 +18,7 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
     cui: supplier.cui || "",
     invoiceFetchMethod: supplier.invoiceFetchMethod || "efactura",
     invoiceSenderEmails: (supplier.invoiceSenderEmails || []).join(", "),
+    category: supplier.category || "",
   })
   const [loading, setLoading] = useState(false)
 
@@ -98,18 +99,31 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Metodă preluare facturi</label>
-            <select 
-              value={formData.invoiceFetchMethod} 
-              onChange={e => setFormData({ ...formData, invoiceFetchMethod: e.target.value })}
-              className="w-full h-10 px-3 bg-background border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-            >
-              <option value="efactura">SPV e-Factura</option>
-              <option value="email_parsing">Email Auto-Fetch</option>
-              <option value="manual">Manual</option>
-              <option value="api">API / Integrări</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Metodă preluare facturi</label>
+              <select 
+                value={formData.invoiceFetchMethod} 
+                onChange={e => setFormData({ ...formData, invoiceFetchMethod: e.target.value })}
+                className="w-full h-10 px-3 bg-background border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              >
+                <option value="efactura">SPV e-Factura</option>
+                <option value="email_parsing">Email Auto-Fetch</option>
+                <option value="manual">Manual</option>
+                <option value="api">API / Integrări</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Categorie Cheltuială</label>
+              <input 
+                type="text" 
+                value={formData.category} 
+                onChange={e => setFormData({ ...formData, category: e.target.value })}
+                className="w-full h-10 px-3 bg-background border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                placeholder="Ex: Auto, Protocol, IT"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
