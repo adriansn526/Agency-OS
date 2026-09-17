@@ -19,6 +19,7 @@ type Rule = {
 
 export function RulesTable() {
   const [rules, setRules] = useState<Rule[]>([])
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [formData, setFormData] = useState<Partial<Rule>>({
@@ -31,21 +32,26 @@ export function RulesTable() {
     validFrom: new Date().toISOString().split('T')[0]
   })
 
-  useEffect(() => {
-    fetchRules()
-  }, [])
-
-  const fetchRules = async () => {
+  const loadData = async () => {
     try {
-      const res = await fetch('/api/accounting/rules')
-      const json = await res.json()
-      if (json.data) setRules(json.data)
+      const [rulesRes, catsRes] = await Promise.all([
+        fetch('/api/accounting/rules'),
+        fetch('/api/accounting/expense-categories?activeOnly=true')
+      ])
+      const rulesJson = await rulesRes.json()
+      const catsJson = await catsRes.json()
+      if (rulesJson.data) setRules(rulesJson.data)
+      if (catsJson.data) setCategories(catsJson.data)
     } catch (err) {
       console.error(err)
     } finally {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadData()
+  }, [])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,7 +66,7 @@ export function RulesTable() {
       
       toast.success('Regulă adăugată cu succes!')
       setIsDialogOpen(false)
-      fetchRules()
+      loadData()
       setFormData({
         name: '', supplierId: '', expenseCategory: '',
         vatDeductiblePercent: '100', expenseDeductiblePercent: '100', priority: 0,
@@ -79,7 +85,7 @@ export function RulesTable() {
       if (!res.ok) throw new Error('Failed to delete')
       
       toast.success('Regula a fost invalidată')
-      fetchRules()
+      loadData()
     } catch (error) {
       toast.error('Eroare la invalidare')
     }
@@ -122,7 +128,16 @@ export function RulesTable() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2 flex flex-col">
                 <label className="text-sm font-medium">Categorie Cheltuială</label>
-                <input placeholder="ex: auto, protocol" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.expenseCategory || ''} onChange={(e: any) => setFormData(f => ({...f, expenseCategory: e.target.value}))} />
+                <select
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm"
+                  value={formData.expenseCategory || ''}
+                  onChange={(e: any) => setFormData(f => ({...f, expenseCategory: e.target.value}))}
+                >
+                  <option value="">-- Toate categoriile --</option>
+                  {categories.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2 flex flex-col">
                 <label className="text-sm font-medium">Prioritate (mai mare = primul)</label>

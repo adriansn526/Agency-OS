@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { updateSupplier, type APISupplier } from "@/lib/api"
 import { X, Save } from "lucide-react"
 
@@ -21,6 +21,16 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
     category: supplier.category || "",
   })
   const [loading, setLoading] = useState(false)
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([])
+
+  useEffect(() => {
+    fetch('/api/accounting/expense-categories?activeOnly=true')
+      .then(res => res.json())
+      .then(json => {
+        if (json.data) setCategories(json.data)
+      })
+      .catch(console.error)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -116,13 +126,16 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
             
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Categorie Cheltuială</label>
-              <input 
-                type="text" 
+              <select 
                 value={formData.category} 
                 onChange={e => setFormData({ ...formData, category: e.target.value })}
                 className="w-full h-10 px-3 bg-background border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                placeholder="Ex: Auto, Protocol, IT"
-              />
+              >
+                <option value="">-- Fără Categorie --</option>
+                {categories.map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 

@@ -292,8 +292,8 @@ model Contract {
 }
 
 model Invoice {
-  id                  String       @id @default(cuid())
-  number              String       @unique
+  id                  String        @id @default(cuid())
+  number              String        @unique
   businessLineId      String?
   clientId            String?
   extractedClientName String?
@@ -301,23 +301,23 @@ model Invoice {
   contractId          String?
   type                String
   direction           String
-  status              String       @default("emisa")
+  status              String        @default("emisa")
   amount              Float
-  currency            String       @default("EUR")
-  issuedAt            DateTime     @default(now())
+  currency            String        @default("EUR")
+  issuedAt            DateTime      @default(now())
   dueDate             DateTime
   paidAt              DateTime?
   items               Json
   notes               String?
-  spvId               String?      @unique
+  spvId               String?       @unique
   xmlData             String?
-  source              String       @default("manual")
-  extractionStatus    String       @default("confirmed")
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
+  source              String        @default("manual")
+  extractionStatus    String        @default("confirmed")
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
   businessLine        BusinessLine? @relation(fields: [businessLineId], references: [id])
   client              Client?       @relation(fields: [clientId], references: [id])
-  contract            Contract?    @relation(fields: [contractId], references: [id])
+  contract            Contract?     @relation(fields: [contractId], references: [id])
 
   @@index([businessLineId, status, direction])
   @@index([clientId])
@@ -888,8 +888,8 @@ model SystemAlert {
 }
 
 model Supplier {
-  id          String            @id @default(cuid())
-  tenantId    String
+  id                  String            @id @default(cuid())
+  tenantId            String
   name                String
   cui                 String?
   vatNumber           String?
@@ -897,49 +897,49 @@ model Supplier {
   vatRegime           String            @default("domestic") // domestic | intracommunity | extracommunity
   invoiceFetchMethod  String            @default("efactura") // efactura | email_parsing | api | manual
   invoiceSenderEmails String[]
-  iban        String?
-  category    String?
-  isRecurring Boolean           @default(false)
-  expectedDay Int?
-  status      String            @default("active")
-  createdAt   DateTime          @default(now())
-  invoices    SupplierInvoice[]
+  iban                String?
+  category            String?
+  isRecurring         Boolean           @default(false)
+  expectedDay         Int?
+  status              String            @default("active")
+  createdAt           DateTime          @default(now())
+  invoices            SupplierInvoice[]
 
   @@index([tenantId])
 }
 
 model SupplierInvoice {
-  id                       String            @id @default(cuid())
+  id                       String                @id @default(cuid())
   tenantId                 String
   supplierId               String?
   extractedSupplierName    String?
   businessLineId           String?
   lines                    SupplierInvoiceLine[]
   amount                   Decimal
-  currency                 String            @default("RON")
+  currency                 String                @default("RON")
   issueDate                DateTime
   dueDate                  DateTime?
   invoiceNumber            String?
   contractReference        String?
   pdfUrl                   String
   receiptUrl               String?
-  status                   String            @default("unpaid")
-  source                   String            // manual | email | api | spv
-  spvId                    String?           @unique
+  status                   String                @default("unpaid")
+  source                   String // manual | email | api | spv
+  spvId                    String?               @unique
   xmlData                  String?
   sourceRef                String?
-  extractionStatus         String            @default("confirmed") // pending_review | confirmed
+  extractionStatus         String                @default("confirmed") // pending_review | confirmed
   extractedBy              String?
-  createdAt                DateTime          @default(now())
+  createdAt                DateTime              @default(now())
   appliedRuleId            String?
-  deductibilityOverride    Boolean           @default(false)
+  deductibilityOverride    Boolean               @default(false)
   expenseCategory          String?
   expenseDeductiblePercent Decimal?
   netAmount                Decimal?
   vatAmount                Decimal?
   vatDeductiblePercent     Decimal?
   vatRate                  Decimal?
-  supplier                 Supplier?         @relation(fields: [supplierId], references: [id])
+  supplier                 Supplier?             @relation(fields: [supplierId], references: [id])
   payments                 SupplierPayment[]
 
   @@unique([supplierId, invoiceNumber])
@@ -973,24 +973,24 @@ model BankConnection {
 }
 
 model BankTransaction {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   tenantId          String
   bankConnectionId  String
   date              DateTime
   description       String
-  debit             Decimal  @default(0)
-  credit            Decimal  @default(0)
+  debit             Decimal   @default(0)
+  credit            Decimal   @default(0)
   category          String?
   extractedMerchant String?
   matchedSupplierId String?
   matchedInvoiceId  String?
-  matchStatus       String   @default("unmatched")
-  extractionStatus  String   @default("confirmed")
+  matchStatus       String    @default("unmatched")
+  extractionStatus  String    @default("confirmed")
   sourcePdfUrl      String
   dismissReason     String?
   dismissedAt       DateTime?
   dismissedBy       String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime  @default(now())
 
   @@index([tenantId])
 }
@@ -1034,7 +1034,7 @@ model AnafSettings {
   lastSyncAt   DateTime?
   updatedAt    DateTime  @updatedAt
 
-  tenant       TenantInstance @relation(fields: [tenantId], references: [id])
+  tenant TenantInstance @relation(fields: [tenantId], references: [id])
 }
 
 model SpvSyncLog {
@@ -1069,19 +1069,44 @@ model DeductibilityRule {
   @@index([tenantId])
 }
 
-
 model SupplierInvoiceLine {
-  id                  String          @id @default(cuid())
-  invoiceId           String
-  name                String
-  description         String?
-  quantity            Decimal?
-  unitPrice           Decimal?
-  totalAmount         Decimal
-  periodStart         DateTime?
-  periodEnd           DateTime?
-  
-  invoice             SupplierInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  
+  id          String    @id @default(cuid())
+  invoiceId   String
+  name        String
+  description String?
+  quantity    Decimal?
+  unitPrice   Decimal?
+  totalAmount Decimal
+  periodStart DateTime?
+  periodEnd   DateTime?
+
+  invoice SupplierInvoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
   @@index([invoiceId])
+}
+
+model ExpenseCategory {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  accountCode String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId])
+}
+
+model ContractTemplate {
+  id            String   @id @default(cuid())
+  tenantId      String
+  name          String
+  description   String?
+  businessLines Json
+  sections      Json
+  anexa2        Json?
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([tenantId])
 }
