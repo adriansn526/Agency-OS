@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { endOfMonth, startOfMonth, parseISO } from 'date-fns'
 import { downloadFromS3 } from '@/lib/storage/s3'
+import { ZipArchive } from 'archiver'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
+import nodemailer from 'nodemailer'
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,8 +62,7 @@ export async function POST(request: NextRequest) {
     let total = 0
     
     const output = fs.createWriteStream(zipPath)
-    const archiver = eval("require('archiver')")
-    const archive = archiver('zip', { zlib: { level: 9 } })
+    const archive = new ZipArchive({ zlib: { level: 9 } })
     
     const zipPromise = new Promise((resolve, reject) => {
       output.on('close', () => resolve(true))
@@ -109,7 +110,6 @@ export async function POST(request: NextRequest) {
       await zipPromise
 
       // TRIMITERE EMAIL (SMTP)
-      const nodemailer = eval("require('nodemailer')")
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT || 587),
