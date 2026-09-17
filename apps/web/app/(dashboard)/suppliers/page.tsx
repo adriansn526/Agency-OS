@@ -137,7 +137,12 @@ export default function SuppliersPage() {
     const savedVisibility = localStorage.getItem('agencyos-suppliers-col-visibility')
     const savedOrder = localStorage.getItem('agencyos-suppliers-col-order')
     if (savedVisibility) setColumnVisibility(JSON.parse(savedVisibility))
-    if (savedOrder) setColumnOrder(JSON.parse(savedOrder))
+    if (savedOrder) {
+      const parsed = JSON.parse(savedOrder)
+      // Ensure any new columns from defaultColumnOrder are appended if missing
+      const missing = defaultColumnOrder.filter(c => !parsed.includes(c))
+      setColumnOrder([...parsed, ...missing])
+    }
   }, [])
 
   const saveColumnVisibility = (updaterOrValue: any) => {

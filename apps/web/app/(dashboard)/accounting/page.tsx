@@ -222,15 +222,25 @@ export default function AccountingPage() {
             {preview.hasPending && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Atenție: Există documente în Pending Review!</AlertTitle>
+                <AlertTitle>Atenție: Există facturi în Pending Review!</AlertTitle>
                 <AlertDescription>
-                  Ai {preview.pendingInvoices} facturi și {preview.pendingTransactions} tranzacții bancare neconfirmate. 
-                  Nu poți trimite pachetul până nu finalizezi verificarea acestora.
+                  Ai {preview.pendingInvoices} facturi neconfirmate. 
+                  Nu poți trimite pachetul până nu finalizezi verificarea lor.
                 </AlertDescription>
               </Alert>
             )}
 
             {/* Informative yellow warnings (non-blocking) */}
+            {preview.pendingTransactions > 0 && (
+              <Alert className="border-amber-500 bg-amber-50">
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+                <AlertTitle className="text-amber-800">Atenționare: Tranzacții bancare în Pending</AlertTitle>
+                <AlertDescription className="text-amber-700">
+                  Ai {preview.pendingTransactions} tranzacții bancare neconfirmate. 
+                  Acest lucru nu blochează trimiterea pachetului, deoarece contabilul se va ocupa de asociere.
+                </AlertDescription>
+              </Alert>
+            )}
             {preview.unmatchedTransactions > 0 && (
               <Alert className="border-amber-500 bg-amber-50">
                 <AlertCircle className="h-4 w-4 text-amber-600" />

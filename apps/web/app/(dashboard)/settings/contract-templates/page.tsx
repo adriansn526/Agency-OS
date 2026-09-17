@@ -5,7 +5,7 @@ import Link from "next/link"
 import {
   ArrowLeft, Plus, FileText, Pencil, Trash2, Save,
   ChevronDown, ChevronRight, Copy, Star, Check, X,
-  GripVertical, Settings, Eye,
+  GripVertical, Settings, Eye, Building2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +21,8 @@ interface ContractTemplate {
   id: string
   name: string
   description: string
-  businessLines: string[]
+  isGlobal: boolean
+  businessLines: { id: string, name: string, slug: string }[]
   sections: ContractSection[]
   anexa2: any | null
   isDefault: boolean
@@ -302,9 +303,13 @@ export default function ContractTemplatesPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">{t.description}</p>
-                <p className="text-[9px] text-muted-foreground/60 mt-1">
-                  {t.sections.length} secțiuni • {t.businessLines.includes('*') ? 'Toate BL' : t.businessLines.join(', ')}
+                <p className="text-[10px] text-muted-foreground mt-1 flex items-center gap-2">
+                  <span className="flex items-center gap-1"><FileText size={10} /> {t.sections.length} secțiuni</span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Building2 size={10} /> 
+                    {t.isGlobal ? 'Toate BL' : (t.businessLines?.map(b => b.name).join(', ') || 'Niciun BL')}
+                  </span>
                 </p>
               </button>
             ))}

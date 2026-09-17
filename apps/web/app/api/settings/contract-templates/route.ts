@@ -9,8 +9,18 @@ export async function GET() {
 
     const templates = await db.contractTemplate.findMany({
       where: { tenantId: tenant.id },
+      include: {
+        businessLines: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     })
+
     return NextResponse.json({ data: templates })
   } catch (error) {
     console.error('[API] GET /api/settings/contract-templates error:', error)
@@ -22,30 +32,17 @@ export async function GET() {
 }
 
 // ─── POST /api/settings/contract-templates ───
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
+    const body = await req.json()
+    const { name, description, isGlobal, businessLines, sections, anexa2, isDefault } = body
 
-    const body = await request.json()
-    const { name, description, businessLines, sections, anexa2, isDefault } = body
-
-    if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      return NextResponse.json({ error: 'Missing required field: name' }, { status: 400 })
+    if (!name || !sections || !Array.isArray(sections)) {
+      return NextResponse.json({ error: 'Numele și secțiunile sunt obligatorii.' }, { status: 400 })
     }
 
-    if (!sections || !Array.isArray(sections) || sections.length === 0) {
-      return NextResponse.json({ error: 'Missing required field: sections (must be non-empty array)' }, { status: 400 })
-    }
-
-    // Validation
-    for (const s of sections) {
-      if (!s.id || !s.title || typeof s.content !== 'string') {
-        return NextResponse.json({ error: 'Invalid section: each must have id, title, content' }, { status: 400 })
-      }
-    }
-
-    // If setting as default, unset others
     if (isDefault) {
       await db.contractTemplate.updateMany({
         where: { tenantId: tenant.id, isDefault: true },
@@ -58,10 +55,16 @@ export async function POST(request: NextRequest) {
         tenantId: tenant.id,
         name: name.trim(),
         description: description?.trim() || null,
-        businessLines: Array.isArray(businessLines) && businessLines.length > 0 ? businessLines : ['*'],
+        isGlobal: typeof isGlobal === 'boolean' ? isGlobal : true,
+        businessLines: (isGlobal !== true && Array.isArray(businessLines) && businessLines.length > 0) ? {
+          connect: businessLines.map((id: string) => ({ id }))
+        } : undefined,
         sections,
         anexa2: anexa2 || null,
         isDefault: !!isDefault
+      },
+      include: {
+        businessLines: true
       }
     })
 
@@ -76,53 +79,59 @@ export async function POST(request: NextRequest) {
 }
 
 // ─── PATCH /api/settings/contract-templates ───
-export async function PATCH(request: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
+    const body = await req.json()
+    const { id, name, description, isGlobal, businessLines, sections, anexa2, isDefault } = body
 
-    const body = await request.json()
-    const { id, name, description, businessLines, sections, anexa2, isDefault } = body
-
-    if (!id || typeof id !== 'string') {
-      return NextResponse.json({ error: 'Missing required field: id' }, { status: 400 })
+    if (!id) {
+      return NextResponse.json({ error: 'ID-ul șablonului este obligatoriu.' }, { status: 400 })
     }
 
     const existing = await db.contractTemplate.findFirst({
       where: { id, tenantId: tenant.id }
     })
-    if (!existing) {
-      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
-    }
 
-    if (sections && Array.isArray(sections)) {
-      for (const s of sections) {
-        if (!s.id || !s.title || typeof s.content !== 'string') {
-          return NextResponse.json({ error: 'Invalid section: each must have id, title, content' }, { status: 400 })
-        }
-      }
+    if (!existing) {
+      return NextResponse.json({ error: 'Șablonul nu a fost găsit.' }, { status: 404 })
     }
 
     if (isDefault) {
       await db.contractTemplate.updateMany({
-        where: { tenantId: tenant.id, id: { not: id }, isDefault: true },
+        where: { tenantId: tenant.id, isDefault: true, id: { not: id } },
         data: { isDefault: false }
       })
     }
 
-    const updatedTemplate = await db.contractTemplate.update({
+    // Prepare connection logic for many-to-many
+    let businessLinesUpdate = undefined
+    if (typeof isGlobal === 'boolean') {
+      if (isGlobal === true) {
+        businessLinesUpdate = { set: [] }
+      } else if (Array.isArray(businessLines)) {
+        businessLinesUpdate = { set: businessLines.map((bId: string) => ({ id: bId })) }
+      }
+    }
+
+    const updated = await db.contractTemplate.update({
       where: { id },
       data: {
-        name: name !== undefined ? String(name).trim() : undefined,
-        description: description !== undefined ? String(description).trim() : undefined,
-        businessLines: businessLines !== undefined && Array.isArray(businessLines) ? businessLines : undefined,
-        sections: sections !== undefined ? sections : undefined,
-        anexa2: anexa2 !== undefined ? anexa2 : undefined,
+        name: name?.trim(),
+        description: description?.trim(),
+        isGlobal: isGlobal,
+        businessLines: businessLinesUpdate,
+        sections: sections,
+        anexa2: anexa2,
         isDefault: isDefault !== undefined ? !!isDefault : undefined
+      },
+      include: {
+        businessLines: true
       }
     })
 
-    return NextResponse.json({ data: updatedTemplate })
+    return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('[API] PATCH /api/settings/contract-templates error:', error)
     return NextResponse.json(

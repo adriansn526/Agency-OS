@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     }
   })
 
-  const hasPending = (pendingInvoices + pendingTransactions) > 0
+  const hasPending = pendingInvoices > 0
 
   // Informative checks (non-blocking)
   const unmatchedTransactions = await db.bankTransaction.count({
