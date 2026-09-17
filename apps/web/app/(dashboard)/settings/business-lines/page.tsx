@@ -250,7 +250,7 @@ function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; b
         <span className="text-sm">{et.icon}</span>
         <div className="flex-1">
           <p className="text-xs font-semibold text-foreground">{et.namePlural}</p>
-          <p className="text-[10px] text-muted-foreground">{et.pipeline.length} stages • {et.customFields.length} câmpuri</p>
+          <p className="text-[10px] text-muted-foreground">{et.pipeline?.length || 0} stages • {et.customFields?.length || 0} câmpuri</p>
         </div>
         <span
           className={cn(
@@ -273,7 +273,7 @@ function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; b
           <div>
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Pipeline</p>
             <div className="flex items-center gap-1 flex-wrap">
-              {et.pipeline.map((stage, i) => (
+              {(et.pipeline || []).map((stage: any, i: number) => (
                 <div key={stage.key} className="flex items-center gap-1">
                   <span
                     className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-surface border border-border/50"
@@ -281,7 +281,7 @@ function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; b
                   >
                     {stage.label}
                   </span>
-                  {i < et.pipeline.length - 1 && <span className="text-muted-foreground text-[10px]">→</span>}
+                  {i < (et.pipeline || []).length - 1 && <span className="text-muted-foreground text-[10px]">→</span>}
                 </div>
               ))}
             </div>
@@ -291,7 +291,7 @@ function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; b
           <div>
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Câmpuri Custom</p>
             <div className="grid grid-cols-2 gap-1">
-              {et.customFields.map((f) => (
+              {(et.customFields || []).map((f: any) => (
                 <div key={f.key} className="flex items-center gap-1.5 text-[10px] text-foreground-secondary bg-surface rounded px-2 py-1 border border-border/30">
                   <span className="font-medium">{f.label}</span>
                   <span className="text-muted-foreground">{f.type}</span>
