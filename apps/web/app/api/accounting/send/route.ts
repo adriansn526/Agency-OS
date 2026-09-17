@@ -104,6 +104,12 @@ export async function POST(request: NextRequest) {
              console.error(`S3 Download failed pt factura ${inv.id} key: ${inv.pdfUrl}`, err)
           }
         }
+
+        if (inv.xmlData) {
+           const supNameClean = supName.replace(/[^a-z0-9]/gi, '_');
+           const invNameClean = inv.invoiceNumber ? inv.invoiceNumber.replace(/[^a-z0-9]/gi, '_') : inv.id;
+           archive.append(inv.xmlData, { name: `e-Factura-XML/${supNameClean}_${invNameClean}.xml` });
+        }
       }
       csvContent += `\nTOTAL,,,${total}\n`
       archive.append(csvContent, { name: 'index.csv' })
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest) {
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: accountantEmail,
         subject: `Pachet Contabilitate - ${month}`,
-        text: `Salut,\n\nAtașat găsești pachetul contabil pentru luna ${month}.\nAcesta conține ${validInvoices.length} facturi și ${uniqueStatements.length} extrase de cont (decriptate).\n\nGenerat automat.`,
+        text: `Salut,\n\nAtașat găsești pachetul contabil pentru luna ${month}.\nAcesta conține ${validInvoices.length} facturi (dintre care cele e-Factura sunt în format XML gata de import în SAGA) și ${uniqueStatements.length} extrase de cont (decriptate).\n\nGenerat automat.`,
         attachments: [
           {
             filename: `Pachet-Contabilitate-${month}.zip`,
