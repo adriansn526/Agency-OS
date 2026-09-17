@@ -22,6 +22,17 @@ export default function SuppliersPage() {
   const [globalFilter, setGlobalFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [vatRegimeFilter, setVatRegimeFilter] = useState<string>("all")
+  
+  // Default date range: start of current month to end of current month
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date()
+    return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
+  })
+  const [endDate, setEndDate] = useState(() => {
+    const d = new Date()
+    return new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0]
+  })
+
   const [suppliers, setSuppliers] = useState<APISupplier[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -32,6 +43,8 @@ export default function SuppliersPage() {
       if (statusFilter !== "all") params.status = statusFilter
       if (vatRegimeFilter !== "all") params.vatRegime = vatRegimeFilter
       if (globalFilter) params.search = globalFilter
+      if (startDate) params.startDate = startDate
+      if (endDate) params.endDate = endDate
       const res = await fetchSuppliers(params)
       setSuppliers(res.data || [])
     } catch (err) {
@@ -39,7 +52,7 @@ export default function SuppliersPage() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter, vatRegimeFilter, globalFilter])
+  }, [statusFilter, vatRegimeFilter, globalFilter, startDate, endDate])
 
   useEffect(() => {
     loadSuppliers()
@@ -116,6 +129,25 @@ export default function SuppliersPage() {
         },
       },
       {
+        id: "totalAmount",
+        header: () => (
+          <div className="group relative inline-flex items-center gap-1 cursor-help">
+            <span>Suma Totală</span>
+            <div className="hidden group-hover:block absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-2 bg-popover text-popover-foreground text-[10px] rounded shadow-lg w-48 whitespace-normal z-10 border">
+              Suma brută a facturilor confirmate în perioada selectată (exclude facturile în așteptare).
+            </div>
+          </div>
+        ),
+        cell: ({ row }) => {
+          const amount = (row.original as any).totalAmount || 0
+          return (
+            <span className="text-sm font-semibold text-foreground">
+              {Number(amount).toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}
+            </span>
+          )
+        },
+      },
+      {
         accessorKey: "createdAt",
         header: "Adăugat",
         cell: ({ getValue }) => (
@@ -159,6 +191,12 @@ export default function SuppliersPage() {
               onChange={(e) => setGlobalFilter(e.target.value)}
               className="h-9 w-[200px] bg-background border border-border rounded-lg pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
+          </div>
+          
+          <div className="flex gap-2 items-center bg-background border border-border rounded-lg px-2">
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="h-9 bg-transparent border-none text-xs outline-none focus:ring-0 text-muted-foreground" />
+            <span className="text-muted-foreground text-xs">-</span>
+            <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="h-9 bg-transparent border-none text-xs outline-none focus:ring-0 text-muted-foreground" />
           </div>
           
           <div className="flex gap-2">

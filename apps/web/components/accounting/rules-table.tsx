@@ -14,6 +14,7 @@ type Rule = {
   vatDeductiblePercent: string
   expenseDeductiblePercent: string
   priority: number
+  validFrom?: string
 }
 
 export function RulesTable() {
@@ -26,7 +27,8 @@ export function RulesTable() {
     expenseCategory: '',
     vatDeductiblePercent: '100',
     expenseDeductiblePercent: '100',
-    priority: 0
+    priority: 0,
+    validFrom: new Date().toISOString().split('T')[0]
   })
 
   useEffect(() => {
@@ -61,7 +63,8 @@ export function RulesTable() {
       fetchRules()
       setFormData({
         name: '', supplierId: '', expenseCategory: '',
-        vatDeductiblePercent: '100', expenseDeductiblePercent: '100', priority: 0
+        vatDeductiblePercent: '100', expenseDeductiblePercent: '100', priority: 0,
+        validFrom: new Date().toISOString().split('T')[0]
       })
     } catch (error) {
       toast.error('Eroare la salvarea regulii')
@@ -124,6 +127,18 @@ export function RulesTable() {
               <div className="space-y-2 flex flex-col">
                 <label className="text-sm font-medium">Prioritate (mai mare = primul)</label>
                 <input type="number" required className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.priority} onChange={(e: any) => setFormData(f => ({...f, priority: parseInt(e.target.value) || 0}))} />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Valabil de la</label>
+                <input type="date" required className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.validFrom as string} onChange={(e: any) => setFormData(f => ({...f, validFrom: e.target.value}))} />
+                <span className="text-[10px] text-muted-foreground">Pentru a aplica regulilor facturilor istorice, setează o dată în trecut (ex: 01.01.2024).</span>
+              </div>
+              <div className="space-y-2 flex flex-col">
+                <label className="text-sm font-medium">Furnizor ID (Opțional)</label>
+                <input placeholder="CUID-ul furnizorului" className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm" value={formData.supplierId || ''} onChange={(e: any) => setFormData(f => ({...f, supplierId: e.target.value}))} />
               </div>
             </div>
 

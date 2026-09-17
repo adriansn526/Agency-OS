@@ -6,6 +6,8 @@ import { fetchSupplier, type APISupplierDetails } from "@/lib/api"
 import { ArrowLeft, Building2, Calendar, FileText, Upload, Plus, CreditCard, ArrowDownRight, ArrowUpRight, Edit2 } from "lucide-react"
 import { formatCurrency, formatDate } from "@/lib/utils"
 import { SupplierEditModal } from "@/components/supplier-edit-modal"
+import { toast } from "sonner"
+import Link from "next/link"
 
 interface LedgerEntry {
   id: string
@@ -29,12 +31,29 @@ export default function SupplierDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [activeRule, setActiveRule] = useState<any>(null)
 
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetchSupplier(params.id as string)
       setSupplier(res.data)
+      
+      // Fetch rules and find the matching one
+      const rulesRes = await fetch('/api/accounting/rules')
+      const rulesJson = await rulesRes.json()
+      if (rulesJson.data && res.data) {
+         const s = res.data as any
+         const rule = rulesJson.data.find((r: any) => 
+            (r.supplierId === s.id) || 
+            (r.expenseCategory && s.category && r.expenseCategory.toLowerCase() === s.category.toLowerCase())
+         )
+         setActiveRule(rule || {
+            name: 'Implicit',
+            expenseDeductiblePercent: 100,
+            vatDeductiblePercent: 100
+         })
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -116,6 +135,40 @@ export default function SupplierDetailsPage() {
   // We probably want to show newest first in the UI, but balance must be calculated oldest to newest
   const displayEntries = [...ledgerEntries].reverse()
 
+  const handleDeactivate = async () => {
+    if (!confirm('Sigur vrei să dezactivezi acest furnizor? Va dispărea din liste, dar facturile rămân intacte.')) return
+    try {
+      const res = await fetch(`/api/suppliers/${supplier.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'inactive' })
+      })
+      if (!res.ok) throw new Error('Eroare')
+      toast.success('Furnizor dezactivat cu succes')
+      router.push('/suppliers')
+    } catch (err) {
+      toast.error('Eroare la dezactivare')
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!confirm('Sigur vrei să ștergi definitiv acest furnizor? Această acțiune este ireversibilă.')) return
+    try {
+      const res = await fetch(`/api/suppliers/${supplier.id}`, {
+        method: 'DELETE'
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        toast.error(json.error || 'Eroare la ștergere')
+        return
+      }
+      toast.success('Furnizor șters definitiv')
+      router.push('/suppliers')
+    } catch (err) {
+      toast.error('Eroare la ștergere')
+    }
+  }
+
   return (
     <div className="flex flex-col h-full bg-background overflow-auto">
       {/* Header */}
@@ -180,18 +233,36 @@ export default function SupplierDetailsPage() {
             >
               <Upload size={16} /> Încarcă Factură
             </button>
+            <div className="h-9 border-l border-border mx-1"></div>
+            <button
+              onClick={handleDeactivate}
+              className="h-9 px-3 bg-muted text-foreground rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors"
+              title="Dezactivează furnizorul"
+            >
+              Dezactivează
+            </button>
+            {ledgerEntries.length === 0 && (
+              <button
+                onClick={handleDelete}
+                className="h-9 px-3 bg-destructive/10 text-destructive rounded-lg text-sm font-medium hover:bg-destructive/20 transition-colors"
+                title="Șterge definitiv"
+              >
+                Șterge
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-foreground">Fișă Furnizor (Ledger)</h2>
-          <div className="text-sm font-medium">
-            Sold Curent: <span className={currentBalance > 0 ? "text-destructive" : "text-success"}>{formatCurrency(currentBalance, false, "RON")}</span>
+      <div className="p-6 grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground">Fișă Furnizor (Ledger)</h2>
+            <div className="text-sm font-medium">
+              Sold Curent: <span className={currentBalance > 0 ? "text-destructive" : "text-success"}>{formatCurrency(currentBalance, false, "RON")}</span>
+            </div>
           </div>
-        </div>
 
         <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
           {displayEntries.length === 0 ? (
@@ -299,6 +370,46 @@ export default function SupplierDetailsPage() {
               </table>
             </div>
           )}
+        </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-surface border border-border rounded-xl shadow-sm p-5">
+            <h3 className="font-semibold text-base mb-4 flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-primary" />
+              Regim Fiscal & Deductibilitate
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <span className="text-xs text-muted-foreground block mb-1">Categorie Asignată</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-sm px-2 py-1 bg-muted rounded-md">
+                    {supplier.category || 'Fără categorie'}
+                  </span>
+                  <button onClick={() => setShowEditModal(true)} className="text-xs text-primary hover:underline">Modifică</button>
+                </div>
+              </div>
+
+              {activeRule && (
+                <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
+                  <span className="text-xs text-primary font-semibold block mb-2">Regulă Aplicată: {activeRule.name}</span>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Deducere Cheltuială:</span>
+                    <span className="font-bold">{activeRule.expenseDeductiblePercent}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span className="text-muted-foreground">Deducere TVA:</span>
+                    <span className="font-bold">{activeRule.vatDeductiblePercent}%</span>
+                  </div>
+                </div>
+              )}
+
+              <Link href="/accounting/settings" className="block text-center w-full py-2 bg-muted hover:bg-muted/80 text-sm font-medium rounded-lg transition-colors">
+                Gestionează Regulile
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 

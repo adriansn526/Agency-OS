@@ -13,6 +13,10 @@ export async function applyDeductibilityRuleToInvoice(invoiceId: string, tenantI
     return invoice
   }
 
+  // Get supplier to fallback on category
+  const supplier = invoice.supplierId ? await db.supplier.findUnique({ where: { id: invoice.supplierId } }) : null
+  const effectiveCategory = invoice.expenseCategory || supplier?.category
+
   // Obținem setările curente (sau cele valabile la data facturii)
   const settings = await db.accountingSettings.findFirst({
     where: { 
@@ -42,7 +46,7 @@ export async function applyDeductibilityRuleToInvoice(invoiceId: string, tenantI
     if (rule.supplierId && rule.supplierId !== invoice.supplierId) continue
     
     // Dacă regula e specifică pe categorie și nu se potrivește
-    if (rule.expenseCategory && invoice.expenseCategory && rule.expenseCategory.toLowerCase() !== invoice.expenseCategory.toLowerCase()) continue
+    if (rule.expenseCategory && effectiveCategory && rule.expenseCategory.toLowerCase() !== effectiveCategory.toLowerCase()) continue
     
     // Altfel, e un match
     matchedRule = rule

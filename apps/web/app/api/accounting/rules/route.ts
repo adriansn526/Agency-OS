@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
       expenseCategory, 
       vatDeductiblePercent, 
       expenseDeductiblePercent,
-      priority 
+      priority,
+      validFrom
     } = body
 
     if (!name || vatDeductiblePercent === undefined || expenseDeductiblePercent === undefined) {
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
         vatDeductiblePercent: Number(vatDeductiblePercent),
         expenseDeductiblePercent: Number(expenseDeductiblePercent),
         priority: priority ? Number(priority) : 0,
+        ...(validFrom && { validFrom: new Date(validFrom) }),
       }
     })
 

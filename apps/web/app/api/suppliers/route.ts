@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const search = searchParams.get('search')
     const vatRegime = searchParams.get('vatRegime')
+    const startDateStr = searchParams.get('startDate')
+    const endDateStr = searchParams.get('endDate')
+    
     let tenantId = request.headers.get('x-tenant-id')
     if (!tenantId || tenantId === 'default_tenant') {
       const t = await db.tenantInstance.findFirst()
@@ -33,7 +36,33 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json({ data })
+    // Compute sums based on date range
+    const invoiceWhere: any = {
+      tenantId,
+      extractionStatus: 'confirmed',
+      supplierId: { in: data.map(s => s.id) }
+    }
+    
+    if (startDateStr && endDateStr) {
+      invoiceWhere.issueDate = {
+        gte: new Date(startDateStr),
+        lte: new Date(endDateStr)
+      }
+    }
+
+    const sums = await db.supplierInvoice.groupBy({
+      by: ['supplierId'],
+      where: invoiceWhere,
+      _sum: { amount: true }
+    })
+
+    const sumMap = Object.fromEntries(sums.map(s => [s.supplierId, s._sum.amount || 0]))
+    const dataWithSums = data.map(s => ({
+      ...s,
+      totalAmount: sumMap[s.id] || 0
+    }))
+
+    return NextResponse.json({ data: dataWithSums })
   } catch (error) {
     console.error('[API] GET /api/suppliers error:', error)
     return NextResponse.json({ error: 'Failed to fetch suppliers' }, { status: 500 })
