@@ -4,10 +4,10 @@ import { db, businessLineConfigSchema } from '@repo/db'
 // ─── PATCH /api/settings/business-lines/[id] ───
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
     const body = await req.json()
     
     // We expect { name, icon, color, config }
@@ -42,10 +42,10 @@ export async function PATCH(
 // ─── DELETE /api/settings/business-lines/[id] ───
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // Check if it's referenced anywhere to decide if we can hard-delete
     // For now, to be safe, we just SOFT delete it
