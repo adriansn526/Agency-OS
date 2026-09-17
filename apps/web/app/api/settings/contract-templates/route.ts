@@ -50,15 +50,24 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    const finalIsGlobal = typeof isGlobal === 'boolean' ? isGlobal : true;
+
+    let businessLinesConnect = undefined;
+    if (!finalIsGlobal && Array.isArray(businessLines) && businessLines.length > 0) {
+      businessLinesConnect = {
+        connect: businessLines
+          .map((b: any) => ({ id: typeof b === 'string' ? b : b.id }))
+          .filter((b: any) => b.id && b.id !== '*')
+      }
+    }
+
     const newTemplate = await db.contractTemplate.create({
       data: {
         tenantId: tenant.id,
         name: name.trim(),
         description: description?.trim() || null,
-        isGlobal: typeof isGlobal === 'boolean' ? isGlobal : true,
-        businessLines: (isGlobal !== true && Array.isArray(businessLines) && businessLines.length > 0) ? {
-          connect: businessLines.map((id: string) => ({ id }))
-        } : undefined,
+        isGlobal: finalIsGlobal,
+        businessLines: businessLinesConnect,
         sections,
         anexa2: anexa2 || null,
         isDefault: !!isDefault
@@ -111,7 +120,11 @@ export async function PATCH(req: NextRequest) {
       if (isGlobal === true) {
         businessLinesUpdate = { set: [] }
       } else if (Array.isArray(businessLines)) {
-        businessLinesUpdate = { set: businessLines.map((bId: string) => ({ id: bId })) }
+        businessLinesUpdate = {
+          set: businessLines
+            .map((b: any) => ({ id: typeof b === 'string' ? b : b.id }))
+            .filter((b: any) => b.id && b.id !== '*')
+        }
       }
     }
 
@@ -120,7 +133,7 @@ export async function PATCH(req: NextRequest) {
       data: {
         name: name?.trim(),
         description: description?.trim(),
-        isGlobal: isGlobal,
+        isGlobal: isGlobal !== undefined ? isGlobal : undefined,
         businessLines: businessLinesUpdate,
         sections: sections,
         anexa2: anexa2,

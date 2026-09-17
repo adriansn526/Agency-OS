@@ -56,6 +56,7 @@ const AVAILABLE_VARIABLES = [
 
 export default function ContractTemplatesPage() {
   const [templates, setTemplates] = useState<ContractTemplate[]>([])
+  const [availableBusinessLines, setAvailableBusinessLines] = useState<{id: string, name: string}[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -63,19 +64,20 @@ export default function ContractTemplatesPage() {
   const [showVarRef, setShowVarRef] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
-  // ─── Fetch templates ───
+  // ─── Fetch templates & business lines ───
   useEffect(() => {
-    fetch('/api/settings/contract-templates')
-      .then(r => r.json())
-      .then(json => {
-        const data = json.data || []
-        setTemplates(data)
-        if (data.length > 0 && !selectedId) {
-          setSelectedId(data[0].id)
-        }
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    Promise.all([
+      fetch('/api/settings/contract-templates').then(r => r.json()),
+      fetch('/api/settings/business-lines').then(r => r.json())
+    ]).then(([templatesJson, blJson]) => {
+      const data = templatesJson.data || []
+      setTemplates(data)
+      if (data.length > 0 && !selectedId) {
+        setSelectedId(data[0].id)
+      }
+      setAvailableBusinessLines(blJson.data || [])
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const selected = templates.find(t => t.id === selectedId) || null
@@ -123,7 +125,8 @@ export default function ContractTemplatesPage() {
         body: JSON.stringify({
           name: 'Șablon Nou',
           description: 'Contract de prestări servicii',
-          businessLines: ['*'],
+          isGlobal: true,
+          businessLines: [],
           sections: [
             { id: 'art-1', title: 'Art. 1 — Părțile Contractante', content: '1.1. **{{company_legal_name}}** ... în calitate de PRESTATOR,\n\nși\n\n1.2. **{{client_legal_name}}** ... în calitate de BENEFICIAR.', editable: true },
             { id: 'art-2', title: 'Art. 2 — Obiectul Contractului', content: '2.1. Obiectul prezentului contract îl constituie ...', editable: true },
@@ -150,6 +153,7 @@ export default function ContractTemplatesPage() {
         body: JSON.stringify({
           name: `${selected.name} (Copie)`,
           description: selected.description,
+          isGlobal: selected.isGlobal,
           businessLines: selected.businessLines,
           sections: selected.sections.map(s => ({ ...s, id: `${s.id}-copy-${Date.now()}` })),
           anexa2: selected.anexa2,
@@ -356,6 +360,54 @@ export default function ContractTemplatesPage() {
                       onChange={e => updateTemplate({ description: e.target.value })}
                       className="w-full px-3 py-2 text-xs bg-muted/30 border border-border rounded-lg text-foreground outline-none focus:ring-1 focus:ring-primary"
                     />
+                  </div>
+                </div>
+                
+                {/* Business Lines Selector */}
+                <div className="pt-2">
+                  <label className="text-[9px] font-bold uppercase text-muted-foreground mb-2 block">Disponibilitate Șablon</label>
+                  <div className="flex flex-col gap-3">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selected.isGlobal}
+                        onChange={e => updateTemplate({ isGlobal: e.target.checked })}
+                        className="w-3.5 h-3.5 rounded border-border text-primary"
+                      />
+                      <span className="text-xs font-bold">Global (valabil pentru toate liniile de business)</span>
+                    </label>
+                    
+                    {!selected.isGlobal && (
+                      <div className="p-3 rounded-lg border border-border bg-muted/20">
+                        <p className="text-[10px] text-muted-foreground mb-2">Selectează liniile de business pentru care este disponibil acest șablon:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {availableBusinessLines.map(bl => {
+                            const isSelected = selected.businessLines?.some(b => b.id === bl.id)
+                            return (
+                              <label key={bl.id} className={cn(
+                                "flex items-center gap-1.5 px-2 py-1.5 rounded-md text-[10px] font-medium cursor-pointer border transition-colors",
+                                isSelected ? "bg-primary/10 border-primary/20 text-primary" : "bg-background border-border text-foreground hover:bg-muted"
+                              )}>
+                                <input
+                                  type="checkbox"
+                                  className="hidden"
+                                  checked={isSelected}
+                                  onChange={e => {
+                                    if (e.target.checked) {
+                                      updateTemplate({ businessLines: [...(selected.businessLines || []), { id: bl.id, name: bl.name, slug: '' }] })
+                                    } else {
+                                      updateTemplate({ businessLines: (selected.businessLines || []).filter(b => b.id !== bl.id) })
+                                    }
+                                  }}
+                                />
+                                {isSelected ? <Check size={10} /> : <div className="w-[10px] h-[10px]" />}
+                                {bl.name}
+                              </label>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

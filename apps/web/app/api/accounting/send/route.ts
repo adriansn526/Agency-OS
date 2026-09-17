@@ -17,8 +17,9 @@ export async function POST(request: NextRequest) {
     if (!tenant) return NextResponse.json({ error: 'No tenant' }, { status: 400 })
 
     // Preluare setări
-    const settings = await db.accountingSettings.findUnique({
-      where: { tenantId: tenant.id }
+    const settings = await db.accountingSettings.findFirst({
+      where: { tenantId: tenant.id },
+      orderBy: { createdAt: 'desc' }
     })
     
     const accountantEmail = settings?.accountantEmail || process.env.ACCOUNTANT_EMAIL_FALLBACK
