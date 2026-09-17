@@ -499,7 +499,11 @@ function ContractGeneratorPage() {
               if (res.ok && (json.data?.id || json.id)) {
                 router.push(`/contracts/${json.data?.id || json.id}`)
               } else {
-                alert(`Eroare la salvare: ${json.error || 'Unknown error'}`)
+                if (res.status === 400 && json.missing) {
+                  alert(`Eroare de validare: Lipsesc următoarele date obligatorii:\n\n${json.missing.join(', ')}\n\nVă rugăm să le completați în detaliile clientului/companiei sau contractului.`)
+                } else {
+                  alert(`Eroare la salvare: ${json.error || 'Unknown error'}`)
+                }
               }
             } catch {
               alert('Eroare de rețea la salvarea contractului')
@@ -540,13 +544,18 @@ function ContractGeneratorPage() {
                 body: JSON.stringify(payload),
               })
               const json = await res.json()
+
               if (res.ok && (json.data?.id || json.id)) {
                 router.push(`/contracts/${json.data?.id || json.id}?send=true`)
               } else {
-                alert(`Eroare la salvare: ${json.error || 'Unknown error'}`)
+                if (res.status === 400 && json.missing) {
+                  alert(`Eroare de validare: Lipsesc următoarele date obligatorii:\n\n${json.missing.join(', ')}\n\nVă rugăm să le completați în detaliile clientului/companiei sau contractului.`)
+                } else {
+                  alert(`Eroare la creare contract: ${json.error || 'Unknown error'}`)
+                }
               }
             } catch (err) {
-              alert('Eroare de rețea la salvarea contractului')
+              alert('Eroare de rețea la salvare/trimitere contract')
             }
           }}
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-success text-white rounded-lg hover:bg-success/90 transition-colors">

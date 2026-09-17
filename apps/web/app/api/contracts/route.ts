@@ -217,6 +217,71 @@ export async function POST(request: NextRequest) {
       })
     }
 
+    // ─── Variable Rendering Logic ───
+    const MANDATORY_VARS = [
+      'client_legal_name', 'client_cif', 'client_reg_com', 'client_address',
+      'company_legal_name', 'company_cif', 'company_reg_com', 'company_address',
+      'contract_value', 'currency', 'start_date'
+    ]
+
+    const optClient = clientDetails || {}
+    const optCompany = companyDetails || {}
+
+    const vars: Record<string, string> = {
+      client_legal_name: optClient.companyName || '',
+      client_cif: optClient.cif || '',
+      client_reg_com: optClient.regCom || '',
+      client_address: optClient.address || '',
+      client_iban: optClient.iban || '',
+      client_bank: optClient.bank || '',
+      client_representative: optClient.contactPerson || '',
+      company_legal_name: optCompany.legalName || '',
+      company_cif: optCompany.cif || '',
+      company_reg_com: optCompany.regCom || '',
+      company_address: optCompany.address || '',
+      contract_value: value ? String(value) : '',
+      currency: currency || '',
+      start_date: startDate ? new Date(startDate).toLocaleDateString('ro-RO') : '',
+      end_date: endDate ? new Date(endDate).toLocaleDateString('ro-RO') : '',
+      duration: duration ? String(duration) : '',
+      offer_number: offerId ? 'OFERTA' : '' // Ideally fetched if needed
+    }
+
+    const missingMandatory = new Set<string>()
+
+    resolvedSections = resolvedSections.map((s: any) => {
+      let content = s.content || ''
+      const matches = content.match(/\{\{[a-z_]+\}\}/g) || []
+
+      for (const match of matches) {
+        const varName = match.slice(2, -2)
+        const val = vars[varName]
+
+        if (!val || val.trim() === '') {
+          if (MANDATORY_VARS.includes(varName)) {
+            missingMandatory.add(varName)
+          } else {
+            // Optional missing: remove the entire line/fragment containing it
+            // Regex to match the line, being careful with whitespace
+            const lineRegex = new RegExp(`^.*\\{\\{${varName}\\}\\}.*\\r?\\n?`, 'gm')
+            content = content.replace(lineRegex, '')
+          }
+        } else {
+          // Replace variable with value
+          content = content.replace(new RegExp(`\\{\\{${varName}\\}\\}`, 'g'), val)
+        }
+      }
+      return { ...s, content }
+    })
+
+    if (missingMandatory.size > 0) {
+      return NextResponse.json({
+        error: 'Variabile obligatorii nerezolvate',
+        missing: Array.from(missingMandatory)
+      }, { status: 400 })
+    }
+    // ─── End Variable Rendering ───
+
     // Create contract
     const contract = await db.contract.create({
       data: {

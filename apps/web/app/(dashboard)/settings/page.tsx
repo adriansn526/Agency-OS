@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { Settings, User, Palette, Shield, Database, Bell, Building2, Package, Bot } from "lucide-react"
+import { Settings, User, Palette, Shield, Database, Bell, Building2, Package, Bot, FileText } from "lucide-react"
 
 const settingsSections = [
   { icon: <Building2 size={18} />, title: "Firmă Prestator", desc: "Denumire, CUI, adresă, IBAN, reprezentant legal — date preluate automat în contracte", href: "/settings/company", highlight: true },
   { icon: <Building2 size={18} />, title: "Business Lines", desc: "Gestionează liniile de business, entity types, și pipeline-uri", href: "/settings/business-lines", highlight: true },
+  { icon: <FileText size={18} />, title: "Șabloane Contracte", desc: "Editor vizual șabloane contractuale, variabile PDF și Anexa 2", href: "/settings/contract-templates", highlight: true },
   { icon: <Package size={18} />, title: "Catalog Servicii", desc: "Serviciile disponibile per linie de business, utilizate la crearea ofertelor", href: "/settings/services", highlight: true },
   { icon: <Bot size={18} />, title: "Integrări & AI", desc: "Configurare AI Provider (Gemini / OpenAI), chei API, Brand DNA, Content Generation", href: "/settings/integrations", highlight: true },
   { icon: <User size={18} />, title: "Profil", desc: "Informații cont, avatar, preferințe personale", href: "#" },
