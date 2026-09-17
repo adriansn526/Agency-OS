@@ -19,9 +19,11 @@ type SupplierInvoice = {
   id: string
   invoiceNumber: string | null
   amount: string
+  currency: string
   issueDate: string
   status: string
   supplier?: { id: string, name: string, cui: string | null }
+  lines: any[]
 }
 
 export default function ReconciliationPage() {
