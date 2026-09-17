@@ -3,8 +3,7 @@ import { db as prisma } from '@repo/db'
 import { auth } from '@/lib/auth'
 
 export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const id = id;
+  const { id } = await props.params;
   try {
     const session = await auth()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -76,8 +75,7 @@ export async function PATCH(request: Request, props: { params: Promise<{ id: str
 }
 
 export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
-  const params = await props.params;
-  const id = id;
+  const { id } = await props.params;
   try {
     const session = await auth()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
