@@ -3,11 +3,12 @@ import { db } from '@repo/db'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const updated = await db.supplierInvoice.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         extractionStatus: 'rejected',
       }

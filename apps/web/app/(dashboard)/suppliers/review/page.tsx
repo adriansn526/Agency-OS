@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react'
 import { FileText, CheckCircle, XCircle, Search, AlertCircle, Building2 } from 'lucide-react'
 
-
-
-
+import { Button } from "@/components/ui/button"
 // Tip local pentru date
 type PendingInvoice = {
   id: string
@@ -23,6 +21,9 @@ export default function ReviewInvoicesPage() {
   const [invoices, setInvoices] = useState<PendingInvoice[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showSupplierModal, setShowSupplierModal] = useState(false)
+  const [searchSupplier, setSearchSupplier] = useState('')
+  const [allSuppliers, setAllSuppliers] = useState<any[]>([])
 
   // Fetch pending
   useEffect(() => {
@@ -40,15 +41,45 @@ export default function ReviewInvoicesPage() {
 
   const selectedInvoice = invoices.find(i => i.id === selectedId)
 
+  const updateSelectedInvoice = (field: keyof PendingInvoice, value: any) => {
+    setInvoices(prev => prev.map(inv => inv.id === selectedId ? { ...inv, [field]: value } : inv))
+  }
+
+  const openSupplierModal = async () => {
+    setShowSupplierModal(true)
+    setSearchSupplier(selectedInvoice?.extractedSupplierName || '')
+    const res = await fetch('/api/suppliers')
+    const data = await res.json()
+    if (data.data) setAllSuppliers(data.data)
+  }
+
+  const handleAssociate = (supplier: { id: string, name: string }) => {
+    updateSelectedInvoice('supplierId', supplier.id)
+    updateSelectedInvoice('supplier', { id: supplier.id, name: supplier.name })
+    setShowSupplierModal(false)
+  }
+
+  const handleCreateSupplier = async () => {
+    const res = await fetch('/api/suppliers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: searchSupplier || selectedInvoice?.extractedSupplierName || 'Furnizor Nou' })
+    })
+    const data = await res.json()
+    if (data.data) handleAssociate(data.data)
+  }
+
   const handleConfirm = async () => {
     if (!selectedInvoice) return
     const res = await fetch(`/api/suppliers/review/${selectedInvoice.id}/confirm`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        // Aici am trimite supplierId ales sau nou creat din UI
-        // Pentru mockup trimitem supplierId existent dacă a fost matched, altfel cere UI (simplificat)
-        supplierId: selectedInvoice.supplierId 
+        supplierId: selectedInvoice.supplierId,
+        amount: selectedInvoice.amount,
+        currency: selectedInvoice.currency,
+        issueDate: selectedInvoice.issueDate,
+        invoiceNumber: selectedInvoice.invoiceNumber
       })
     })
 
@@ -112,7 +143,7 @@ export default function ReviewInvoicesPage() {
               </div>
               {!inv.supplierId && (
                 <div className="mt-2">
-                  <Badge variant="outline" className="text-amber-500 border-amber-500/30 bg-amber-500/10">Furnizor Nou Detectat</Badge>
+                  <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-500 border border-amber-500/30 px-2 py-0.5 rounded-full text-xs font-medium">Furnizor Nou Detectat</span>
                 </div>
               )}
             </div>
@@ -160,7 +191,7 @@ export default function ReviewInvoicesPage() {
                         {selectedInvoice.extractedSupplierName}
                       </div>
                       <p className="text-xs text-muted-foreground">Acest furnizor nu există în sistem.</p>
-                      <Button size="sm" variant="outline" className="w-full text-xs">Asociază sau Creează</Button>
+                      <Button size="sm" variant="outline" className="w-full text-xs" onClick={openSupplierModal}>Asociază sau Creează</Button>
                     </div>
                   )}
                 </div>
@@ -168,30 +199,61 @@ export default function ReviewInvoicesPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Sumă</label>
-                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" defaultValue={selectedInvoice.amount} type="number" />
+                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" value={selectedInvoice.amount} onChange={e => updateSelectedInvoice('amount', Number(e.target.value))} type="number" step="0.01" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Monedă</label>
-                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" defaultValue={selectedInvoice.currency} />
+                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" value={selectedInvoice.currency} onChange={e => updateSelectedInvoice('currency', e.target.value)} />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Data Emiterii</label>
-                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" defaultValue={new Date(selectedInvoice.issueDate).toISOString().split('T')[0]} type="date" />
+                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" value={selectedInvoice.issueDate ? new Date(selectedInvoice.issueDate).toISOString().split('T')[0] : ''} onChange={e => updateSelectedInvoice('issueDate', e.target.value)} type="date" />
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground mb-1 block">Nr. Factură</label>
-                    <Input defaultValue={selectedInvoice.invoiceNumber || ''} />
+                    <input className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" value={selectedInvoice.invoiceNumber || ''} onChange={e => updateSelectedInvoice('invoiceNumber', e.target.value)} />
                   </div>
                 </div>
               </div>
             </div>
             
             {/* PDF Viewer pe dreapta */}
-            <div className="flex-1 bg-neutral-900 flex items-center justify-center relative">
-              {/* Presupunem generare Signed URL - mock pentru UI */}
-              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30 font-semibold text-2xl text-center px-8">
-                PDF Viewer <br/> <span className="text-sm">(Signed URL: {selectedInvoice.pdfUrl})</span>
-              </div>
+            <div className="flex-1 bg-neutral-900 relative">
+              <iframe 
+                src={`/api/accounting/files/${selectedInvoice.pdfUrl}`}
+                className="w-full h-full border-0"
+                title="PDF Viewer"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Supplier Modal Overlay */}
+      {showSupplierModal && (
+        <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+          <div className="bg-surface border border-border rounded-lg shadow-xl w-full max-w-md p-6 relative">
+            <h3 className="text-lg font-semibold mb-4">Asociază sau Creează Furnizor</h3>
+            <input 
+              autoFocus
+              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary mb-4" 
+              placeholder="Caută furnizor..." 
+              value={searchSupplier}
+              onChange={e => setSearchSupplier(e.target.value)}
+            />
+            <div className="max-h-60 overflow-y-auto mb-4 border border-border rounded-md divide-y divide-border">
+              {allSuppliers.filter(s => s.name.toLowerCase().includes(searchSupplier.toLowerCase())).map(s => (
+                <div key={s.id} onClick={() => handleAssociate(s)} className="p-3 hover:bg-muted/10 cursor-pointer text-sm">
+                  {s.name} <span className="text-xs text-muted-foreground block">{s.cui ? `CUI: ${s.cui}` : ''}</span>
+                </div>
+              ))}
+              {allSuppliers.filter(s => s.name.toLowerCase().includes(searchSupplier.toLowerCase())).length === 0 && (
+                <div className="p-3 text-sm text-muted-foreground text-center">Niciun furnizor găsit.</div>
+              )}
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowSupplierModal(false)}>Anulează</Button>
+              <Button onClick={handleCreateSupplier}>Creează Nou</Button>
             </div>
           </div>
         </div>

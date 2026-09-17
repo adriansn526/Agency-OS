@@ -15,7 +15,8 @@ export async function GET(
 
     // 2. Reconstruire key din URL
     // ex: /api/accounting/files/bank-statements/123/456.pdf -> bank-statements/123/456.pdf
-    const key = params.path.join('/')
+    const resolvedParams = await params
+    const key = resolvedParams.path.join('/')
     if (!key) {
       return new NextResponse('Missing file path', { status: 400 })
     }
@@ -34,7 +35,7 @@ export async function GET(
         'Content-Type': fileData.contentType,
         'Content-Length': fileData.contentLength.toString(),
         // Inline pentru vizualizare directă în browser
-        'Content-Disposition': `inline; filename="${params.path[params.path.length - 1]}"`,
+        'Content-Disposition': `inline; filename="${resolvedParams.path[resolvedParams.path.length - 1]}"`,
         'Cache-Control': 'private, max-age=3600',
       },
     })

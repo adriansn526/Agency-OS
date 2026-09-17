@@ -5,7 +5,7 @@ import { applyDeductibilityRuleToInvoice } from '@/lib/accounting/rules'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
@@ -16,11 +16,21 @@ export async function POST(
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
 
-    const invoiceId = params.id
+    const { id: invoiceId } = await params
+    
+    // Parse body for updated fields
+    const body = await request.json().catch(() => ({}))
+    const { supplierId, amount, currency, issueDate, invoiceNumber } = body
+
     const invoice = await db.supplierInvoice.update({
       where: { id: invoiceId, tenantId: tenant.id },
       data: {
         extractionStatus: 'confirmed',
+        ...(supplierId && { supplierId }),
+        ...(amount !== undefined && { amount: Number(amount) }),
+        ...(currency && { currency }),
+        ...(issueDate && { issueDate: new Date(issueDate) }),
+        ...(invoiceNumber !== undefined && { invoiceNumber: invoiceNumber === '' ? null : invoiceNumber }),
       }
     })
 

@@ -1,4 +1,3 @@
-import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
@@ -28,28 +27,22 @@ const publicPaths = [
   "/projects",
 ]
 
-const authMiddleware = auth((req) => {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   const isPublic = publicPaths.some((p) => pathname.startsWith(p))
   if (isPublic) return NextResponse.next()
 
-  // If not authenticated, redirect to login
-  if (!req.auth) {
+  // If not authenticated (no session token cookie), redirect to login
+  const hasSessionCookie = req.cookies.has("authjs.session-token") || req.cookies.has("__Secure-authjs.session-token")
+  
+  if (!hasSessionCookie) {
     const loginUrl = new URL("/login", req.url)
     loginUrl.searchParams.set("callbackUrl", pathname)
     return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()
-})
-
-export default function middleware(req: NextRequest) {
-  // Bypass auth entirely for uptime API (cron calls without session)
-  if (req.nextUrl.pathname.startsWith("/api/uptime")) {
-    return NextResponse.next()
-  }
-  return (authMiddleware as any)(req)
 }
 
 export const config = {

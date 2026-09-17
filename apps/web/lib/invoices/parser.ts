@@ -1,5 +1,5 @@
 import { generateObject } from 'ai'
-import { openai } from '@ai-sdk/openai'
+import { google } from '@ai-sdk/google'
 import { z } from 'zod'
 import { execFile } from 'child_process'
 import { promisify } from 'util'
@@ -12,7 +12,7 @@ const execFileAsync = promisify(execFile)
 // Schema Zod pentru extracția datelor din factură
 export const invoiceSchema = z.object({
   supplierName: z.string().describe('Numele complet al furnizorului care a emis factura'),
-  amount: z.number().describe('Suma totală de plată de pe factură'),
+  amount: z.number().describe('Suma totală FINALĂ de plată de pe factură (inclusiv TVA/taxe). Caută "Total", "Amount due" sau "Grand Total".'),
   currency: z.string().describe('Moneda în care este emisă factura (ex: RON, EUR, USD)'),
   issueDate: z.string().describe('Data emiterii facturii în format YYYY-MM-DD'),
   invoiceNumber: z.string().describe('Numărul facturii (serie și număr sau doar număr)'),
@@ -48,12 +48,12 @@ export async function extractInvoiceData(pdfText: string): Promise<{ data: Extra
 
   try {
     const result = await generateObject({
-      model: openai('gpt-4o'),
+      model: google('gemini-3.5-flash'),
       schema: invoiceSchema,
       prompt: `
         Extrage următoarele informații din textul acestei facturi:
         - Numele furnizorului emitent (caută "Furnizor", "Vânzător", "Emis de" etc.)
-        - Suma totală de plată
+        - Suma totală de plată (ATENȚIE: trebuie să fie suma finală care include taxele/TVA. NU extrage subtotalul. Caută "Total", "Amount due", "Grand Total")
         - Moneda (RON, EUR, USD, etc)
         - Data emiterii facturii (transformă în format YYYY-MM-DD)
         - Numărul facturii (serie și număr)

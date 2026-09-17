@@ -1,5 +1,7 @@
 import { google } from 'googleapis'
 import { simpleParser } from 'mailparser'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
 const pdfParse = require('pdf-parse')
 import * as dotenv from 'dotenv'
 import * as path from 'path'
@@ -15,7 +17,7 @@ const LABEL_ID = process.env.GMAIL_LABEL_ID
 // În producție, endpoint-ul aplicației. Pentru script-ul local de cron, localhost e suficient
 const INGEST_API_URL = process.env.NEXT_PUBLIC_APP_URL 
   ? `${process.env.NEXT_PUBLIC_APP_URL}/api/cron/ingest-emails`
-  : 'http://localhost:3000/api/cron/ingest-emails'
+  : 'http://localhost:3100/api/cron/ingest-emails'
 
 if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN || !LABEL_ID) {
   console.error("❌ EROARE: Lipsesc variabilele de mediu GMAIL_*. Rulează setup-gmail-oauth.cjs mai întâi.")
@@ -31,11 +33,11 @@ async function fetchUnreadInvoices() {
   try {
     console.log("🔍 Caut emailuri necitite cu eticheta:", LABEL_ID)
     
-    // Căutăm mesaje necitite din eticheta specificată, care au atașament
     const res = await gmail.users.messages.list({
       userId: 'me',
-      q: `is:unread has:attachment`,
-      labelIds: [LABEL_ID as string]
+      q: `has:attachment`,
+      labelIds: [LABEL_ID as string],
+      maxResults: 50 // process up to 50 at a time
     })
 
     const messages = res.data.messages || []
