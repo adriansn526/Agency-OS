@@ -991,6 +991,7 @@ model BankTransaction {
   matchStatus       String    @default("unmatched")
   extractionStatus  String    @default("confirmed")
   sourcePdfUrl      String
+  sourceRef         String?
   dismissReason     String?
   dismissedAt       DateTime?
   dismissedBy       String?
