@@ -1,4 +1,5 @@
 {
+  "_DEPRECATED_COMPANY": "Setarile companiei (company block) au fost mutate in baza de date PostgreSQL (tabelul CompanySettings). Acest bloc este ignorat de sistem.",
   "company": {
     "name": "ASNS",
     "legalName": "ADVANCED SYSTEMS & NETWORK SOLUTIONS SRL",

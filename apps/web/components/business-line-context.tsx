@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useMemo, type ReactNode } from "react"
+import { createContext, useContext, useState, useMemo, useEffect, type ReactNode } from "react"
 import { businessLines, hasMultipleEntityTypes, type BusinessLine, type EntityType } from "@repo/mock-data"
 
 type BusinessLineId = string | "all"
@@ -30,7 +30,32 @@ const BusinessLineContext = createContext<BusinessLineContextType | null>(null)
 
 export function BusinessLineProvider({ children }: { children: ReactNode }) {
   const [activeLineId, setActiveLineIdRaw] = useState<BusinessLineId>("all")
-  const [activeEntityTypeId, setActiveEntityTypeId] = useState<EntityTypeId>("all")
+  const [activeEntityTypeId, setActiveEntityTypeIdRaw] = useState<EntityTypeId>("all")
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedBl = localStorage.getItem("agencyos_active_bl")
+      const savedEt = localStorage.getItem("agencyos_active_et")
+      if (savedBl) setActiveLineIdRaw(savedBl)
+      if (savedEt) setActiveEntityTypeIdRaw(savedEt)
+    } catch { /* silent */ }
+    setIsLoaded(true)
+  }, [])
+
+  // Save to localStorage when changed
+  useEffect(() => {
+    if (!isLoaded) return
+    try {
+      localStorage.setItem("agencyos_active_bl", activeLineId)
+      localStorage.setItem("agencyos_active_et", activeEntityTypeId)
+    } catch { /* silent */ }
+  }, [activeLineId, activeEntityTypeId, isLoaded])
+
+  const setActiveEntityTypeId = (id: EntityTypeId) => {
+    setActiveEntityTypeIdRaw(id)
+  }
 
   // When switching business line, auto-select entity type
   const setActiveLineId = (id: BusinessLineId) => {

@@ -10,6 +10,8 @@ export interface PipelineStage {
   color: string // Tailwind color token
 }
 
+export type PipelineStageColor = 'default' | 'primary' | 'success' | 'warning' | 'destructive' | 'info'
+
 export interface CustomField {
   key: string
   label: string

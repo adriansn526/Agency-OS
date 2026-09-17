@@ -26,6 +26,7 @@ model BusinessLine {
   icon               String
   color              String
   domain             String?
+  isActive           Boolean             @default(true)
   config             Json
   createdAt          DateTime            @default(now())
   clients            Client[]
@@ -1111,6 +1112,29 @@ model ContractTemplate {
   isDefault     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model CompanySettings {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  name               String
+  legalName          String
+  regCom             String
+  cif                String
+  address            String
+  iban               String?
+  bank               String?
+  representative     String?
+  representativeRole String?
+  email              String?
+  phone              String?
+  website            String?
+  contractsConfig    Json?    // Pentru structura contracts din settings.json
+  integrationsConfig Json?    // Pentru integrari (AI, SMSO, etc.)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@index([tenantId])
 }

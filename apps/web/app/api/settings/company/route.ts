@@ -1,47 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { readSettings, writeSettings } from '../_store'
+import { NextResponse } from 'next/server'
+import { db } from '@repo/db'
 
-// ─── GET /api/settings/company ───
-// Date prestator (CompanySettings) pentru pre-populare contracte
+const tenantId = "default-tenant";
+
 export async function GET() {
   try {
-    const settings = readSettings()
-
-    return NextResponse.json({
-      data: settings.company,
+    const settings = await db.companySettings.findUnique({
+      where: { tenantId }
     })
+
+    if (!settings) {
+      return NextResponse.json({ data: null })
+    }
+
+    return NextResponse.json({ data: settings })
   } catch (error) {
     console.error('[API] GET /api/settings/company error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch company settings' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch company settings' }, { status: 500 })
   }
 }
 
-// ─── PATCH /api/settings/company ───
-// Update date prestator
-export async function PATCH(request: NextRequest) {
+export async function PATCH(req: Request) {
   try {
-    const body = await request.json()
-    const settings = readSettings()
-
-    // Merge updates into existing company settings
-    settings.company = {
-      ...settings.company,
-      ...body,
+    const body = await req.json()
+    
+    // Simplistic validation / extraction
+    const payload = {
+      name: body.name,
+      legalName: body.legalName,
+      regCom: body.regCom,
+      cif: body.cif,
+      address: body.address,
+      iban: body.iban,
+      bank: body.bank,
+      representative: body.representative,
+      representativeRole: body.representativeRole,
+      email: body.email,
+      phone: body.phone,
+      website: body.website,
+      contractsConfig: body.contractsConfig,
+      integrationsConfig: body.integrationsConfig,
     }
 
-    writeSettings(settings)
-
-    return NextResponse.json({
-      data: settings.company,
+    const updated = await db.companySettings.upsert({
+      where: { tenantId },
+      update: payload,
+      create: { ...payload, tenantId } as any, // fallback if not exists
     })
+
+    return NextResponse.json({ data: updated })
   } catch (error) {
     console.error('[API] PATCH /api/settings/company error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update company settings' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update company settings' }, { status: 500 })
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { businessLines, type BusinessLine, type EntityType, type PipelineStage } from "@repo/mock-data"
 import { cn } from "@/lib/utils"
@@ -26,14 +26,57 @@ import {
    ============================================================ */
 
 export default function BusinessLinesSettings() {
-  const [lines, setLines] = useState<BusinessLine[]>(businessLines)
+  const [lines, setLines] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [expandedLine, setExpandedLine] = useState<string | null>(null)
   const [showNewLineModal, setShowNewLineModal] = useState(false)
 
-  const handleDeleteLine = (id: string) => {
-    if (confirm("Ești sigur că vrei să ștergi această linie de business?")) {
-      setLines((prev) => prev.filter((bl) => bl.id !== id))
+  const fetchLines = async () => {
+    try {
+      const res = await fetch("/api/settings/business-lines")
+      const json = await res.json()
+      if (json.data) {
+        setLines(json.data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch business lines:", error)
+    } finally {
+      setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    fetchLines()
+  }, [])
+
+  const handleDeleteLine = async (id: string) => {
+    if (confirm("Ești sigur că vrei să ștergi această linie de business?")) {
+      try {
+        const res = await fetch(`/api/settings/business-lines/${id}`, {
+          method: "DELETE"
+        })
+        const json = await res.json()
+        if (res.ok) {
+          // If it was soft-deleted, it might still return ok but we filter it out of view
+          setLines((prev) => prev.filter((bl) => bl.id !== id))
+          if (json.message) {
+            alert(json.message)
+          }
+        } else {
+          alert("Eroare la ștergere: " + json.error)
+        }
+      } catch (e) {
+        alert("Eroare rețea la ștergere.")
+      }
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
   }
 
   return (
@@ -50,7 +93,7 @@ export default function BusinessLinesSettings() {
           <div>
             <h1 className="text-xl font-bold text-foreground">Business Lines</h1>
             <p className="text-sm text-muted-foreground">
-              {lines.length} linii de business • {lines.reduce((s, bl) => s + bl.entityTypes.length, 0)} tipuri de entități
+              {lines.length} linii de business • {lines.reduce((s, bl) => s + (bl.config?.entityTypes?.length || 0), 0)} tipuri de entități
             </p>
           </div>
         </div>
@@ -80,8 +123,9 @@ export default function BusinessLinesSettings() {
       <div className="space-y-3">
         {lines.map((bl) => {
           const isExpanded = expandedLine === bl.id
-          const incomeTypes = bl.entityTypes.filter((et) => et.financialFlow === "income")
-          const expenseTypes = bl.entityTypes.filter((et) => et.financialFlow === "expense")
+          const entityTypes = bl.config?.entityTypes || []
+          const incomeTypes = entityTypes.filter((et: any) => et.financialFlow === "income")
+          const expenseTypes = entityTypes.filter((et: any) => et.financialFlow === "expense")
 
           return (
             <div
@@ -109,11 +153,11 @@ export default function BusinessLinesSettings() {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-semibold text-foreground">{bl.name}</p>
                     <span className="text-[10px] text-muted-foreground bg-muted rounded-full px-1.5 py-0.5">
-                      {bl.entityTypes.length} {bl.entityTypes.length === 1 ? "tip" : "tipuri"}
+                      {entityTypes.length} {entityTypes.length === 1 ? "tip" : "tipuri"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {bl.entityTypes.map((et) => `${et.icon} ${et.namePlural}`).join(" • ")}
+                    {entityTypes.map((et: any) => `${et.icon} ${et.namePlural}`).join(" • ")}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -135,7 +179,7 @@ export default function BusinessLinesSettings() {
               {/* Expanded: Entity Types */}
               {isExpanded && (
                 <div className="border-t border-border px-4 pb-4 pt-3 space-y-3">
-                  {bl.entityTypes.map((et) => (
+                  {entityTypes.map((et: any) => (
                     <EntityTypeCard key={et.id} entityType={et} blColor={bl.color} />
                   ))}
 
@@ -166,7 +210,28 @@ export default function BusinessLinesSettings() {
 
       {/* New Business Line Modal */}
       {showNewLineModal && (
-        <NewBusinessLineModal onClose={() => setShowNewLineModal(false)} onSave={(bl) => { setLines((prev) => [...prev, bl]); setShowNewLineModal(false) }} />
+        <NewBusinessLineModal 
+          onClose={() => setShowNewLineModal(false)} 
+          onSave={async (blData) => { 
+            // Save via API
+            try {
+              const res = await fetch("/api/settings/business-lines", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(blData)
+              })
+              const json = await res.json()
+              if (res.ok) {
+                setLines((prev) => [...prev, json.data].sort((a, b) => a.name.localeCompare(b.name)))
+                setShowNewLineModal(false)
+              } else {
+                alert("Eroare la creare: " + json.error)
+              }
+            } catch(e) {
+              alert("Eroare rețea la creare.")
+            }
+          }} 
+        />
       )}
     </div>
   )
