@@ -365,7 +365,7 @@ export default function ReconciliationPage() {
                        
                        <div className="flex items-center gap-6 ml-4">
                          <div className="text-right">
-                            <div className="font-bold text-lg">{parseFloat(inv.amount).toFixed(2)} RON</div>
+                            <div className="font-bold text-lg">{parseFloat(inv.amount).toFixed(2)} {inv.currency || 'RON'}</div>
                             {isExactMatch && (
                               <div className="text-xs text-green-500 font-medium flex items-center justify-end gap-1">
                                 <Check size={12} /> Potrivire exactă
