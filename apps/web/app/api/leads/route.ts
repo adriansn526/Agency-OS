@@ -94,8 +94,12 @@ export async function GET(request: NextRequest) {
     const andConditions: Record<string, any>[] = []
 
     if (businessLine) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
-      if (bl) andConditions.push({ businessLineId: bl.id })
+      andConditions.push({
+        OR: [
+          { businessLineId: businessLine },
+          { businessLine: { slug: businessLine } }
+        ]
+      })
     }
     if (entityType) andConditions.push({ entityType })
     if (status) andConditions.push({ status })

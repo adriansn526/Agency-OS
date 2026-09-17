@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = { status: 'restanta' }
 
     if (businessLine) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (bl) {
         where.businessLineId = bl.id
       } else {

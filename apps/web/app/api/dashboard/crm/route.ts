@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     // Resolve business line filter
     let businessLineId: string | undefined
     if (businessLine && businessLine !== 'all') {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (bl) businessLineId = bl.id
     }
 

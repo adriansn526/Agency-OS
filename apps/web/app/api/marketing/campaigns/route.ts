@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     const where: any = {}
     if (businessLine !== 'all') {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (!bl) return NextResponse.json({ error: 'Business line not found' }, { status: 404 })
       where.businessLineId = bl.id
     }

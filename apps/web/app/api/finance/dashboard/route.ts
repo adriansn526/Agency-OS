@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     // ── Step 2: Resolve businessLine filter ──
     let blFilter: string | undefined
     if (businessLine) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (bl) {
         blFilter = bl.id
       } else {

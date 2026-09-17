@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify BL exists
-    const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+    const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
     if (!bl) {
       return NextResponse.json(
         { error: `Business line "${businessLine}" not found` },

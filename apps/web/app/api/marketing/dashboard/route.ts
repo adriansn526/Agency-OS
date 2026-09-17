@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'businessLine required' }, { status: 400 })
     }
 
-    const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+    const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
     if (!bl) return NextResponse.json({ error: 'Business line not found' }, { status: 404 })
 
     const blId = bl.id

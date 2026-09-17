@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     // Filter by businessLine slug → resolve to businessLineId
     if (businessLine) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (bl) {
         where.businessLineId = bl.id
       } else {
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     // Resolve businessLineId: accept either slug or direct id
     let businessLineId = rawBLId
     if (!businessLineId && businessLine) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLine } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLine }, { slug: businessLine }] } })
       if (!bl) {
         return NextResponse.json(
           { error: `Business line "${businessLine}" not found` },
