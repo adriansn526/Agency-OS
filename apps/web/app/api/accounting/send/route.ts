@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
         secure: process.env.SMTP_PORT === '465',
         auth: {
           user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
+          pass: process.env.SMTP_PASS || process.env.SMTP_PASSWORD,
         },
       })
 
