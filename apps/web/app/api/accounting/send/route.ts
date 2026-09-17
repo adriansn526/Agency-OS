@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { endOfMonth, startOfMonth, parseISO } from 'date-fns'
 import { downloadFromS3 } from '@/lib/storage/s3'
-const archiverModule = require('archiver')
-const createArchiver = archiverModule.default || archiverModule
+import archiver from 'archiver'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
@@ -63,7 +62,7 @@ export async function POST(request: NextRequest) {
     let total = 0
     
     const output = fs.createWriteStream(zipPath)
-    const archive = createArchiver('zip', { zlib: { level: 9 } })
+    const archive = archiver('zip', { zlib: { level: 9 } })
     
     const zipPromise = new Promise((resolve, reject) => {
       output.on('close', () => resolve(true))

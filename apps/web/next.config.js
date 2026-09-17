@@ -15,7 +15,7 @@ const nextConfig = {
   },
   output: "standalone",
   transpilePackages: ["@repo/ui", "@repo/mock-data", "@repo/db"],
-  serverExternalPackages: ["ssh2"],
+  serverExternalPackages: ["ssh2", "archiver", "nodemailer"],
   devIndicators: false,
   typescript: {
     ignoreBuildErrors: true,
