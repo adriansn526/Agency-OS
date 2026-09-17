@@ -15,7 +15,7 @@ export async function PUT(
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
 
-    const ruleId = params.id
+    const ruleId = id
     const existingRule = await db.deductibilityRule.findUnique({
       where: { id: ruleId }
     })
@@ -77,7 +77,7 @@ export async function DELETE(
     const tenant = await db.tenantInstance.findFirst()
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
 
-    const ruleId = params.id
+    const ruleId = id
     
     // În loc să ștergem, doar setăm validTo = now(), oprindu-i valabilitatea.
     // Facturile din trecut nu sunt afectate.

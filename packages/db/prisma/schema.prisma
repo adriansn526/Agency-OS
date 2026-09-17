@@ -1056,7 +1056,7 @@ model SpvSyncLog {
 }
 
 model DeductibilityRule {
-  id                       String    @id
+  id                       String    @id @default(cuid())
   tenantId                 String
   name                     String
   supplierId               String?

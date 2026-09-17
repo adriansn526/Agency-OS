@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { db as prisma } from '@repo/db'
 import { auth } from '@/lib/auth'
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const id = id;
   try {
     const session = await auth()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -11,7 +13,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     if (!tenant) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const category = await prisma.expenseCategory.findUnique({
-      where: { id: params.id, tenantId: tenant.id }
+      where: { id: id, tenantId: tenant.id }
     })
 
     if (!category) {
@@ -33,7 +35,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
       await prisma.$transaction([
         prisma.expenseCategory.update({
-          where: { id: params.id },
+          where: { id: id },
           data: {
             name: newName,
             accountCode: body.accountCode !== undefined ? body.accountCode : category.accountCode,
@@ -59,7 +61,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     // Otherwise just update standard fields
     const updated = await prisma.expenseCategory.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         accountCode: body.accountCode !== undefined ? body.accountCode : category.accountCode,
         isActive: body.isActive !== undefined ? body.isActive : category.isActive
@@ -73,7 +75,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const id = id;
   try {
     const session = await auth()
     if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -82,7 +86,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     if (!tenant) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const category = await prisma.expenseCategory.findUnique({
-      where: { id: params.id, tenantId: tenant.id }
+      where: { id: id, tenantId: tenant.id }
     })
 
     if (!category) {
@@ -103,7 +107,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.expenseCategory.delete({
-      where: { id: params.id }
+      where: { id: id }
     })
 
     return NextResponse.json({ success: true })
