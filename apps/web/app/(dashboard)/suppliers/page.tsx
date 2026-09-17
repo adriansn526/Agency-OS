@@ -11,6 +11,7 @@ import {
 import { fetchSuppliers, type APISupplier } from "@/lib/api"
 import { cn, formatDate, getInitials } from "@/lib/utils"
 import { Eye, Plus, Search, Building2 } from "lucide-react"
+import { toast } from "sonner"
 import { GripVertical, Columns, RefreshCw } from "lucide-react"
 import {
   DndContext,
@@ -38,6 +39,14 @@ const DraggableTableHeader = ({ header }: { header: Header<APISupplier, unknown>
     id: header.column.id,
   })
 
+  if (header.column.id === 'select') {
+    return (
+      <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap bg-muted/30 w-10">
+        {flexRender(header.column.columnDef.header, header.getContext())}
+      </th>
+    )
+  }
+
   const style: React.CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     position: "relative",
@@ -64,7 +73,7 @@ const DraggableTableHeader = ({ header }: { header: Header<APISupplier, unknown>
   )
 }
 
-const defaultColumnOrder = ["name", "category", "status", "recurrence", "stats", "totalAmount", "createdAt"]
+const defaultColumnOrder = ["select", "name", "category", "status", "recurrence", "stats", "totalAmount", "createdAt"]
 
 const statusConfig: Record<string, { label: string; class: string }> = {
   active: { label: "Activ", class: "bg-success/10 text-success" },
@@ -86,6 +95,36 @@ export default function SuppliersPage() {
     const d = new Date()
     return new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0]
   })
+
+    const [rowSelection, setRowSelection] = useState({})
+  const [categories, setCategories] = useState<{name: string}[]>([])
+  
+  useEffect(() => {
+    fetch('/api/accounting/expense-categories?activeOnly=true')
+      .then(res => res.json())
+      .then(json => {
+        if (json.data) setCategories(json.data)
+      })
+  }, [])
+
+  const handleBulkAssignCategory = async (category: string) => {
+    const selectedIds = Object.keys(rowSelection)
+    if (!selectedIds.length || !category) return
+    
+    try {
+      const res = await fetch('/api/suppliers/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supplierIds: selectedIds, data: { category } })
+      })
+      if (!res.ok) throw new Error('Failed to bulk assign')
+      toast.success(`${selectedIds.length} furnizori actualizați cu succes!`)
+      setRowSelection({})
+      loadSuppliers()
+    } catch (err) {
+      toast.error('Eroare la actualizarea furnizorilor')
+    }
+  }
 
   const [suppliers, setSuppliers] = useState<APISupplier[]>([])
   const [loading, setLoading] = useState(true)
@@ -164,6 +203,29 @@ export default function SuppliersPage() {
 
   const columns: ColumnDef<APISupplier>[] = useMemo(
     () => [
+      {
+        id: "select",
+        header: ({ table }) => (
+          <div className="px-1" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+              checked={table.getIsAllPageRowsSelected()}
+              onChange={table.getToggleAllPageRowsSelectedHandler()}
+            />
+          </div>
+        ),
+        cell: ({ row }) => (
+          <div className="px-1" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
+              checked={row.getIsSelected()}
+              onChange={row.getToggleSelectedHandler()}
+            />
+          </div>
+        ),
+      },
       {
         accessorKey: "name",
         header: "Furnizor",
@@ -263,9 +325,13 @@ export default function SuppliersPage() {
   const table = useReactTable({
     data: suppliers,
     columns,
+    getRowId: row => row.id,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
     state: {
       columnVisibility,
       columnOrder,
+      rowSelection,
     },
     onColumnVisibilityChange: saveColumnVisibility,
     onColumnOrderChange: setColumnOrder,
@@ -368,6 +434,38 @@ export default function SuppliersPage() {
           </button>
         </div>
       </div>
+
+      
+      {Object.keys(rowSelection).length > 0 && (
+        <div className="bg-primary/5 border-b border-primary/20 px-6 py-3 flex items-center justify-between animate-in slide-in-from-top-2">
+          <div className="text-sm font-medium text-primary">
+            {Object.keys(rowSelection).length} furnizori selectați
+          </div>
+          <div className="flex items-center gap-3">
+            <select 
+              className="h-8 rounded-lg bg-background border border-border text-sm px-2 outline-none focus:ring-1 focus:ring-primary min-w-[150px]"
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleBulkAssignCategory(e.target.value)
+                  e.target.value = ""
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled>Atribuie Categorie...</option>
+              {categories.map(c => (
+                <option key={c.name} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <button 
+              onClick={() => setRowSelection({})} 
+              className="text-xs text-muted-foreground hover:text-foreground hover:underline"
+            >
+              Anulează
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Table Content */}
       <div className="flex-1 overflow-auto p-6">
