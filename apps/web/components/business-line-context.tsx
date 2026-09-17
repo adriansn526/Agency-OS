@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useMemo, useEffect, type ReactNode } from "react"
-import { businessLines, hasMultipleEntityTypes, type BusinessLine, type EntityType } from "@repo/mock-data"
+import { businessLines as mockBusinessLines, hasMultipleEntityTypes, type BusinessLine, type EntityType } from "@repo/mock-data"
 
 type BusinessLineId = string | "all"
 type EntityTypeId = string | "all"
@@ -32,6 +32,32 @@ export function BusinessLineProvider({ children }: { children: ReactNode }) {
   const [activeLineId, setActiveLineIdRaw] = useState<BusinessLineId>("all")
   const [activeEntityTypeId, setActiveEntityTypeIdRaw] = useState<EntityTypeId>("all")
   const [isLoaded, setIsLoaded] = useState(false)
+  const [lines, setLines] = useState<BusinessLine[]>(mockBusinessLines)
+
+  // Fetch real business lines from DB
+  useEffect(() => {
+    fetch("/api/settings/business-lines")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.data && Array.isArray(json.data)) {
+          const dbLines: BusinessLine[] = json.data.map((dbBl: any) => ({
+            id: dbBl.id,
+            name: dbBl.name,
+            shortName: dbBl.name,
+            icon: dbBl.icon || "🏢",
+            color: dbBl.color || "#2563eb",
+            bgClass: "bg-muted", 
+            textClass: "text-foreground",
+            entityTypes: dbBl.config?.entityTypes || [],
+            projectTemplates: dbBl.config?.projectTemplates || [],
+            offerTemplates: dbBl.config?.offerTemplates || [],
+            metrics: dbBl.config?.metrics || [],
+          }))
+          setLines(dbLines)
+        }
+      })
+      .catch((err) => console.error("Failed to fetch business lines for context:", err))
+  }, [])
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -63,7 +89,7 @@ export function BusinessLineProvider({ children }: { children: ReactNode }) {
     if (id === "all") {
       setActiveEntityTypeId("all")
     } else {
-      const bl = businessLines.find((bl) => bl.id === id)
+      const bl = lines.find((bl) => bl.id === id)
       if (bl && bl.entityTypes.length === 1) {
         // Single entity type → auto-select
         setActiveEntityTypeId(bl.entityTypes[0]!.id)
@@ -76,7 +102,7 @@ export function BusinessLineProvider({ children }: { children: ReactNode }) {
 
   const activeLine = activeLineId === "all"
     ? null
-    : businessLines.find((bl) => bl.id === activeLineId) || null
+    : lines.find((bl) => bl.id === activeLineId) || null
 
   const entityTypes = activeLine?.entityTypes ?? []
   const hasMultipleTypes = entityTypes.length > 1
@@ -105,7 +131,7 @@ export function BusinessLineProvider({ children }: { children: ReactNode }) {
         activeLineId,
         setActiveLineId,
         activeLine,
-        lines: businessLines,
+        lines,
         isAll: activeLineId === "all",
         activeEntityTypeId,
         setActiveEntityTypeId,
