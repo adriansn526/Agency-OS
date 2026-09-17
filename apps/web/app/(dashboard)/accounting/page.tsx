@@ -205,7 +205,7 @@ export default function AccountingPage() {
               </div>
               <div className="p-4 bg-muted rounded-lg border">
                 <p className="text-sm text-muted-foreground">Total Facturi</p>
-                <p className="text-2xl font-bold">{preview.totalAmount} RON</p>
+                <p className="text-2xl font-bold">{Number(preview.totalAmount).toLocaleString('ro-RO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RON</p>
               </div>
               <div className="p-4 bg-muted rounded-lg border">
                 <p className="text-sm text-muted-foreground">Status Pachet</p>
