@@ -150,7 +150,21 @@ export default function LeadPage() {
   const router = useRouter()
   const { openLead } = usePanel()
   const { activeLineId, activeLine, isAll, activeEntityTypeId } = useBusinessLine()
-  const [viewMode, setViewMode] = useState<ViewMode>("kanban")
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("agencyos_leads_view_mode")
+        if (saved === "kanban" || saved === "table" || saved === "pipeline") return saved as ViewMode
+      } catch {}
+    }
+    return "kanban"
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("agencyos_leads_view_mode", viewMode)
+    } catch {}
+  }, [viewMode])
   const [leadsState, setLeadsState] = useState<Lead[]>([])
   const [totalCount, setTotalCount] = useState(0)
   const [serverPage, setServerPage] = useState(1)
