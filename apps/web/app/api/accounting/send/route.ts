@@ -42,14 +42,30 @@ export async function POST(request: NextRequest) {
       include: { supplier: true }
     })
 
-    // Colectare extrase unice
+    // Colectare extrase unice si parole
     const transactions = await db.bankTransaction.findMany({
       where: { tenantId: tenant.id, date: { gte: startDate, lte: endDate } },
-      select: { sourcePdfUrl: true }
+      select: { sourcePdfUrl: true, bankConnectionId: true }
     })
-    const uniqueStatementUrls = Array.from(new Set(transactions.map(t => t.sourcePdfUrl).filter(Boolean))) as string[]
+    
+    const bankConns = await db.bankConnection.findMany({ where: { tenantId: tenant.id } })
+    const bankPasswords = new Map()
+    for (const bc of bankConns) {
+      if (bc.statementPasswordEnvKey) {
+         bankPasswords.set(bc.id, process.env[bc.statementPasswordEnvKey] || '')
+      }
+    }
 
-    if (validInvoices.length === 0 && uniqueStatementUrls.length === 0) {
+    const statementMap = new Map<string, string>()
+    for (const t of transactions) {
+      if (t.sourcePdfUrl) {
+         const pwd = t.bankConnectionId ? (bankPasswords.get(t.bankConnectionId) || '') : ''
+         statementMap.set(t.sourcePdfUrl, pwd)
+      }
+    }
+    const uniqueStatements = Array.from(statementMap.entries())
+
+    if (validInvoices.length === 0 && uniqueStatements.length === 0) {
       return NextResponse.json({ error: 'Nimic de trimis pentru această lună.' }, { status: 400 })
     }
 
@@ -93,16 +109,30 @@ export async function POST(request: NextRequest) {
       archive.append(csvContent, { name: 'index.csv' })
 
       // 2. Download & add statements
-      for (let i = 0; i < uniqueStatementUrls.length; i++) {
+      const exec = require('util').promisify(require('child_process').exec)
+      for (let i = 0; i < uniqueStatements.length; i++) {
+        const stmtInfo = uniqueStatements[i]
+        if (!stmtInfo) continue
+        const [stmtUrl, pwd] = stmtInfo
         const localStmt = path.join(tempDir, `stmt_${i}.pdf`)
+        const decryptedStmt = path.join(tempDir, `decrypted_${i}.pdf`)
          try {
-           const stmtUrl = uniqueStatementUrls[i]
            if (stmtUrl) {
              await downloadFromS3(stmtUrl, localStmt)
-             archive.file(localStmt, { name: `Extras-Cont/extras_${i+1}.pdf` })
+             if (pwd) {
+               try {
+                 await exec(`qpdf --password="${pwd}" --decrypt "${localStmt}" "${decryptedStmt}"`)
+                 archive.file(decryptedStmt, { name: `Extras-Cont/extras_${i+1}.pdf` })
+               } catch(e) {
+                 console.error(`Eroare decriptare qpdf pentru ${stmtUrl}`, e)
+                 archive.file(localStmt, { name: `Extras-Cont/extras_${i+1}.pdf` })
+               }
+             } else {
+               archive.file(localStmt, { name: `Extras-Cont/extras_${i+1}.pdf` })
+             }
            }
         } catch(err) {
-           console.error(`S3 Download failed pt extras ${uniqueStatementUrls[i]}`, err)
+           console.error(`S3 Download failed pt extras ${stmtUrl}`, err)
         }
       }
 
@@ -127,7 +157,7 @@ export async function POST(request: NextRequest) {
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: accountantEmail,
         subject: `Pachet Contabilitate - ${month}`,
-        text: `Salut,\n\nAtașat găsești pachetul contabil pentru luna ${month}.\nAcesta conține ${validInvoices.length} facturi și ${uniqueStatementUrls.length} extrase de cont.\n\nGenerat automat.`,
+        text: `Salut,\n\nAtașat găsești pachetul contabil pentru luna ${month}.\nAcesta conține ${validInvoices.length} facturi și ${uniqueStatements.length} extrase de cont (decriptate).\n\nGenerat automat.`,
         attachments: [
           {
             filename: `Pachet-Contabilitate-${month}.zip`,
