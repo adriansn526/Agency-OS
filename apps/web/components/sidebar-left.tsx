@@ -87,7 +87,8 @@ const coreModules: NavItem[] = [
       { title: "Reconciliere", href: "/accounting/reconciliation", icon: FileText },
       { title: "Extrase Cont (BT)", href: "/accounting/bank-statements", icon: FileText },
       { title: "Arhivă & Rapoarte", href: "/accounting/archive", icon: FileText },
-      { title: "Sincronizare SPV", href: "/accounting/spv", icon: FileText }
+      { title: "Sincronizare SPV", href: "/accounting/spv", icon: FileText },
+      { title: "Setări", href: "/accounting/settings", icon: Settings }
     ]
   },
   { title: "Oferte", href: "/offers", icon: Send },
