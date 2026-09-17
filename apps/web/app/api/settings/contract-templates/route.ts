@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@agency-os/db'
+import { db } from "@repo/db"
 
 // ─── GET /api/settings/contract-templates ───
 export async function GET() {
