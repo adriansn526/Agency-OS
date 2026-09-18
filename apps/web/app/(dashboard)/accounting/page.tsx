@@ -97,7 +97,7 @@ export default function AccountingPage() {
             type="month" 
             value={month} 
             onChange={(e) => setMonth(e.target.value)} 
-            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className="flex h-10 w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm dark:[color-scheme:dark]"
           />
           <Link href="/accounting/settings">
             <Button variant="outline">Setări Fiscale</Button>
