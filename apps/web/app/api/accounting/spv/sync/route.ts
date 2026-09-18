@@ -5,9 +5,17 @@ import { syncSpvForTenant } from '@/lib/accounting/spv-sync'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const authHeader = request.headers.get('authorization')
+    let userId = 'cron-system'
+    
+    if (process.env.NODE_ENV === 'production' && authHeader === `Bearer ${process.env.CRON_SECRET || 'local_cron'}`) {
+      // Cron bypass authenticated
+    } else {
+      const session = await auth()
+      if (!session?.user?.id) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+      userId = session.user.id
     }
 
     const tenant = await db.tenantInstance.findFirst()
@@ -25,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Limita legală ANAF este între 1 și 60 de zile.' }, { status: 400 })
     }
 
-    const result = await syncSpvForTenant(tenant.id, days, session.user.id)
+    const result = await syncSpvForTenant(tenant.id, days, userId)
     
     return NextResponse.json({ 
       success: true, 

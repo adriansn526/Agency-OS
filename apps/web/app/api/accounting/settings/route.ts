@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
           taxRate,
           isVatPayer,
           defaultVatRate,
-          autoSendEnabled: autoSendEnabled ?? false,
-          autoSendDay: autoSendDay ?? 5
+          autoSendEnabled: autoSendEnabled === true || autoSendEnabled === 'true',
+          autoSendDay: autoSendDay ? parseInt(autoSendDay.toString(), 10) : 5
         }
       })
     })
