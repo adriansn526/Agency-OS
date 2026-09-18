@@ -112,7 +112,7 @@ export default function AccountingPage() {
           <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       ) : dashboardData ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Venituri Facturate</CardTitle>
@@ -155,12 +155,23 @@ export default function AccountingPage() {
 
           <Card className="bg-primary/5 border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-primary">Estimator Taxe</CardTitle>
+              <CardTitle className="text-sm font-medium text-primary">Estimator Taxe Lunare</CardTitle>
               <Calculator className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-primary">{dashboardData.estimatedTax.toLocaleString('ro-RO')} RON</div>
               <p className="text-xs text-primary/80 mt-1">{dashboardData.taxDisclaimer}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-primary/10 border-primary/40">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-primary">Estimator Taxe Trimestru</CardTitle>
+              <CalendarIcon className="h-4 w-4 text-primary" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-primary">{dashboardData.quarterEstimatedTax?.toLocaleString('ro-RO')} RON</div>
+              <p className="text-xs text-primary/80 mt-1">{dashboardData.quarterTaxDisclaimer}</p>
             </CardContent>
           </Card>
         </div>

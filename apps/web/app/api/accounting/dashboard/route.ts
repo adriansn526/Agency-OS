@@ -18,18 +18,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid month parameter' }, { status: 400 })
     }
 
-    const [year, monthStr] = month.split('-')
+    const year = month.split('-')[0] as string
+    const monthStr = month.split('-')[1] as string
     const startDate = new Date(parseInt(year), parseInt(monthStr) - 1, 1)
     const endDate = new Date(parseInt(year), parseInt(monthStr), 0, 23, 59, 59, 999)
 
     // 1. Get settings valid for this period (the most recent setting created before or during this month)
-    const settings = await db.accountingSettings.findFirst({
+    // Daca nu exista o setare valida pentru luna respectiva (ex: creata azi, dar privim luna trecuta), o luam pe prima disponibila.
+    let settings = await db.accountingSettings.findFirst({
       where: {
         tenantId: tenant.id,
         validFrom: { lte: endDate },
       },
       orderBy: { validFrom: 'desc' }
     })
+
+    if (!settings) {
+      settings = await db.accountingSettings.findFirst({
+        where: { tenantId: tenant.id },
+        orderBy: { validFrom: 'asc' }
+      })
+    }
 
     const isVatPayer = settings?.isVatPayer ?? false
 
@@ -96,6 +105,48 @@ export async function GET(request: NextRequest) {
       taxDisclaimer = `Profit ${rate}% din (Venituri - Cheltuieli)`
     }
 
+    // 6. Quarterly Tax Estimator (Q1/Q2/Q3/Q4)
+    const quarter = Math.floor((parseInt(monthStr) - 1) / 3) + 1
+    const qStartDate = new Date(parseInt(year), (quarter - 1) * 3, 1)
+    const qEndDate = new Date(parseInt(year), quarter * 3, 0, 23, 59, 59, 999)
+
+    const qClientInvoices = await db.invoice.findMany({
+      where: {
+        direction: 'emisa',
+        issuedAt: { gte: qStartDate, lte: qEndDate }
+      }
+    })
+    const qVenituriTotal = qClientInvoices.reduce((sum, inv) => sum + inv.amount, 0)
+
+    const qSupplierInvoices = await db.supplierInvoice.findMany({
+      where: {
+        tenantId: tenant.id,
+        issueDate: { gte: qStartDate, lte: qEndDate },
+        extractionStatus: { notIn: ['pending_review', 'missing_invoice'] }
+      }
+    })
+    
+    let qCheltuieliRecunoscute = 0
+    qSupplierInvoices.forEach(inv => {
+      const baseAmount = (isVatPayer && inv.netAmount) ? Number(inv.netAmount) : Number(inv.amount)
+      const expensePercent = inv.expenseDeductiblePercent ? Number(inv.expenseDeductiblePercent) : 100
+      qCheltuieliRecunoscute += baseAmount * (expensePercent / 100)
+    })
+
+    let quarterEstimatedTax = 0
+    let quarterTaxDisclaimer = 'Fără regim setat'
+    
+    if (settings?.taxRegime?.startsWith('micro')) {
+      const rate = Number(settings.taxRate || 1)
+      quarterEstimatedTax = qVenituriTotal * (rate / 100)
+      quarterTaxDisclaimer = `Total Q${quarter}: ${rate}% din Venituri`
+    } else if (settings?.taxRegime?.startsWith('profit')) {
+      const rate = Number(settings.taxRate || 16)
+      const profit = Math.max(0, qVenituriTotal - qCheltuieliRecunoscute)
+      quarterEstimatedTax = profit * (rate / 100)
+      quarterTaxDisclaimer = `Total Q${quarter}: ${rate}% din Profit`
+    }
+
     return NextResponse.json({
       data: {
         venituriTotal,
@@ -105,6 +156,8 @@ export async function GET(request: NextRequest) {
         cashOut,
         estimatedTax,
         taxDisclaimer,
+        quarterEstimatedTax,
+        quarterTaxDisclaimer,
         isVatPayer
       }
     })
