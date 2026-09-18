@@ -121,7 +121,7 @@ export default function OfferEditorPage() {
         const svc = serviceCatalog.find(s => s.id === m.serviceId)
         return {
           serviceId: m.serviceId,
-          service: svc || { id: m.serviceId, name: m.serviceName, shortName: m.serviceName, icon: m.icon, description: '', category: 'marketing' as const, defaultPrice: m.price, pricingUnit: m.pricingUnit, defaultBlocks: m.blocks },
+          service: svc || { id: m.serviceId, name: m.serviceName, shortName: m.serviceName, icon: m.icon, description: '', category: 'marketing' as const, defaultPrice: m.price, pricingUnit: m.pricingUnit, defaultBlocks: m.blocks || [] },
           price: m.price,
           pricingUnit: m.pricingUnit,
           setupFee: m.setupFee || 0,
