@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     const data = offers.map((offer) => ({
       id: offer.id,
       number: offer.number,
-      businessLine: offer.businessLine.slug,
+      businessLine: offer.businessLine.id,
       businessLineName: offer.businessLine.name,
       entityType: offer.entityType,
       clientId: offer.clientId,
