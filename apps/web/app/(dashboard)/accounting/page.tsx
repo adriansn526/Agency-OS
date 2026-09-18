@@ -164,7 +164,7 @@ export default function AccountingPage() {
               
               <div className="mt-3 pt-3 border-t border-primary/10">
                 <p className="text-xs font-medium text-primary/70">
-                  Total {dashboardData.quarterTaxDisclaimer?.split(':')[0] || 'Q'}: 
+                  {dashboardData.quarterTaxDisclaimer?.split(':')[0] || 'Q'}: 
                   <span className="font-bold ml-1">{dashboardData.quarterEstimatedTax?.toLocaleString('ro-RO')} RON</span>
                 </p>
               </div>
