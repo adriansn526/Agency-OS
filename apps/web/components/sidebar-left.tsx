@@ -36,6 +36,7 @@ import {
   Building2,
   Search,
   Radar,
+  Package,
 } from "lucide-react"
 
 interface NavItem {
@@ -128,6 +129,7 @@ const settingsModules: NavItem[] = [
       { title: "Companie", href: "/settings/company", icon: Contact },
       { title: "Business Lines", href: "/settings/business-lines", icon: LayoutDashboard },
       { title: "Șabloane Contracte", href: "/settings/contract-templates", icon: FileText },
+      { title: "Catalog Servicii", href: "/settings/services", icon: Package },
       { title: "Pipeline-uri", href: "/settings/pipelines", icon: GitBranch },
       { title: "Integrări & AI", href: "/settings/integrations", icon: Bot },
       { title: "Roluri & Permisiuni", href: "/settings/roles", icon: Shield },

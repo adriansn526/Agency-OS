@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     if (businessLineId) {
       where.businessLineId = businessLineId
     } else if (businessLineSlug) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLineSlug } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLineSlug }, { slug: businessLineSlug }] } })
       if (!bl) return NextResponse.json({ error: 'Business line not found' }, { status: 404 })
       where.businessLineId = bl.id
     }
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Resolve business line
     if (businessLineSlug && !data.businessLineId) {
-      const bl = await db.businessLine.findUnique({ where: { slug: businessLineSlug } })
+      const bl = await db.businessLine.findFirst({ where: { OR: [{ id: businessLineSlug }, { slug: businessLineSlug }] } })
       if (!bl) return NextResponse.json({ error: 'Business line not found' }, { status: 404 })
       data.businessLineId = bl.id
     }

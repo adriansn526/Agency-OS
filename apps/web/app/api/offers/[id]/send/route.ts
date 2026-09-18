@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { logActivity } from '@repo/db'
-import { randomUUID } from 'crypto'
+import { randomBytes } from 'crypto'
 import { sendOfferEmail } from '@/lib/email'
 
 // POST /api/offers/[id]/send — Trimite oferta (generează token, creează delivery, schimbă status)
@@ -44,8 +44,11 @@ export async function POST(
       return NextResponse.json({ error: 'Offer not found' }, { status: 404 })
     }
 
-    // Generate unique token: UUID + short hash
-    const token = `${randomUUID().split('-')[0]}-${Date.now().toString(36)}`
+    // Generate secure cryptographic token
+    const token = randomBytes(32).toString('hex')
+
+    // Determine expiration (offer.validUntil or +30 days)
+    const expiresAt = offer.validUntil || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
     // Create delivery record
     const delivery = await db.offerDelivery.create({
@@ -58,6 +61,7 @@ export async function POST(
         emailMessage: message,
         pdfAttached: attachPdf,
         trackingEnabled: enableTracking,
+        expiresAt,
       },
     })
 
@@ -93,7 +97,7 @@ export async function POST(
 
     // Construct public URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3100'
-    const publicUrl = `${baseUrl}/offer/view/${token}`
+    const publicUrl = `${baseUrl}/o/${token}`
 
     // Send email via AWS SES
     let emailSent = false

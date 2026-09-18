@@ -236,6 +236,7 @@ model OfferDelivery {
   emailMessage     String?
   pdfAttached      Boolean      @default(true)
   trackingEnabled  Boolean      @default(true)
+  expiresAt        DateTime?
   firstOpenedAt    DateTime?
   lastOpenedAt     DateTime?
   totalViews       Int          @default(0)
