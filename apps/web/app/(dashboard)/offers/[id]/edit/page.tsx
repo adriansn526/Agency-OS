@@ -6,6 +6,11 @@ import Link from "next/link"
 import { serviceCatalog } from "@repo/mock-data"
 import type { ServiceCatalogItem, OfferBlock, OfferBlockData, TextBlockData, FeaturesBlockData, StatsBlockData, ServicesBlockData, FAQBlockData, TimelineBlockData, PricingUnit } from "@repo/mock-data"
 import { BlockRenderer } from "@/components/block-renderer"
+import { Archivo, Source_Serif_4 } from "next/font/google"
+import "../../../o/[token]/oferta.css"
+
+const archivo = Archivo({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-archivo" })
+const sourceSerif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-source-serif" })
 import { ClientAutocomplete, type ClientOption } from "@/components/client-autocomplete"
 import { cn, formatCurrency } from "@/lib/utils"
 import {
@@ -866,12 +871,28 @@ interface EditableBlockProps {
   onDelete?: () => void
 }
 
-function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle, onDelete }: EditableBlockProps) {
+function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle, onDelete, idx }: EditableBlockProps & { idx?: number }) {
   if (!isEditing) {
-    // Read-only view with edit hover overlay
+    const isFeatures = block.type === "features" || (block.data as any)?.categories
     return (
-      <div className="group relative cursor-pointer" onClick={(e) => { e.stopPropagation(); onStartEdit() }}>
-        <BlockRenderer block={block} variant="public" />
+      <div className="group relative cursor-pointer hover:bg-[rgba(18,37,58,0.03)] p-4 -mx-4 rounded-xl transition-all" onClick={(e) => { e.stopPropagation(); onStartEdit() }}>
+        <section className="pointer-events-none mb-0">
+          <h2><i>{idx !== undefined ? idx + 1 : '*'}</i> {block.title}</h2>
+          {isFeatures ? (
+            (block.data as any)?.categories?.map((cat: any, cIdx: number) => (
+              <div key={cIdx}>
+                <h3>{cat.name}</h3>
+                <ul className="list">
+                  {cat.items?.map((item: string, iIdx: number) => (
+                    <li key={iIdx}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: (block.data as any)?.content || "" }} />
+          )}
+        </section>
         {/* Edit overlay on hover */}
         <div className="absolute inset-0 bg-primary/5 border-2 border-primary/20 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none flex items-start justify-end p-2">
           <span className="flex items-center gap-1 px-2 py-1 text-[9px] font-bold uppercase bg-primary text-primary-foreground rounded-md shadow-sm pointer-events-auto">
