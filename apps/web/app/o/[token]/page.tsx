@@ -85,10 +85,8 @@ export default async function PublicOfferPage({
     }
   }
 
-  // We need company details from CompanySettings matching the business line
-  const companySettings = await db.companySettings.findUnique({
-    where: { businessLineId: offer!.businessLineId },
-  })
+  // We need company details from CompanySettings
+  const companySettings = await db.companySettings.findFirst()
 
   return (
     <PublicOfferClient
