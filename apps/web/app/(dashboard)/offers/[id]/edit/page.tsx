@@ -68,6 +68,7 @@ export default function OfferEditorPage() {
   const [showMetaPanel, setShowMetaPanel] = useState(false)
 
   // ─── Modules State ──────────────────────────
+  const [generalBlocks, setGeneralBlocks] = useState<OfferBlock[]>([])
   const [modules, setModules] = useState<ModuleDraft[]>([])
   const [activeModuleIdx, setActiveModuleIdx] = useState<number | null>(null)
   const [editingBlockId, setEditingBlockId] = useState<string | null>(null)
@@ -95,6 +96,7 @@ export default function OfferEditorPage() {
         setOfferValue(data.value || 0)
         setCurrency(data.currency || 'EUR')
         setValidUntil(data.validUntil ? data.validUntil.split('T')[0] : '')
+        setGeneralBlocks(data.blocks || [])
         if (data.client) {
           setSelectedClient({
             id: data.client.id,
@@ -177,11 +179,6 @@ export default function OfferEditorPage() {
         }, 0)
       }
 
-      // Build blocks from all enabled module blocks
-      const allBlocks = modules.flatMap(m =>
-        m.blocks.filter(b => m.enabledBlocks.has(b.id))
-      )
-
       // Build modules data for API
       const modulesData = modules.map(m => ({
         serviceId: m.serviceId,
@@ -205,7 +202,7 @@ export default function OfferEditorPage() {
           value: totalValue,
           currency,
           validUntil: validUntil || null,
-          blocks: allBlocks,
+          blocks: generalBlocks,
           modules: modulesData,
         }),
       })
@@ -246,12 +243,6 @@ export default function OfferEditorPage() {
     })
     return blocks
   }, [modules])
-
-  // Also include legacy blocks from the offer
-  const legacyBlocks: OfferBlock[] = useMemo(() => {
-    if (modules.length > 0) return []
-    return (offer?.blocks as OfferBlock[]) || []
-  }, [modules, offer])
 
   // Totals
   const totals = useMemo(() => {
@@ -710,6 +701,27 @@ export default function OfferEditorPage() {
               )}
             </div>
 
+            {/* General Blocks (Intro, etc) */}
+            {generalBlocks.length > 0 && (
+              <div className="space-y-4 mb-8">
+                {generalBlocks.map(block => (
+                  <EditableBlock
+                    key={block.id}
+                    block={block}
+                    isEditing={editingBlockId === block.id}
+                    onStartEdit={() => setEditingBlockId(block.id)}
+                    onStopEdit={() => setEditingBlockId(null)}
+                    onUpdateData={(data: OfferBlockData) => {
+                      setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, data } : b))
+                    }}
+                    onUpdateTitle={(title: string) => {
+                      setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, title } : b))
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
             {/* Module sections */}
             {modules.length > 0 ? (
               modules.map((m, mIdx) => {
@@ -754,12 +766,7 @@ export default function OfferEditorPage() {
                   </div>
                 )
               })
-            ) : legacyBlocks.length > 0 ? (
-              /* Legacy: render existing blocks */
-              legacyBlocks.map(block => (
-                <BlockRenderer key={block.id} block={block} variant="public" />
-              ))
-            ) : (
+            ) : generalBlocks.length === 0 && (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <div className="w-20 h-20 rounded-2xl bg-muted/30 flex items-center justify-center mb-4">
                   <Eye size={28} className="text-muted-foreground/40" />
