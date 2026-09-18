@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+export const dynamic = "force-dynamic"
 import { db } from "@repo/db"
 import PublicOfferClient from "./client"
 

@@ -208,7 +208,7 @@ export default function PublicOfferClient({
                       </div>
                     ))
                   ) : (
-                    <div dangerouslySetInnerHTML={{ __html: block.data?.content || "" }} />
+                    <div style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: block.data?.content || "" }} />
                   )}
                 </section>
               )

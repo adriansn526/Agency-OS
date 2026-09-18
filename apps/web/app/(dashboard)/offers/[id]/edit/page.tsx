@@ -953,7 +953,7 @@ function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData
               </div>
             ))
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: (block.data as any)?.content || "" }} />
+            <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: (block.data as any)?.content || "" }} />
           )}
         </section>
         {/* Edit overlay on hover */}
