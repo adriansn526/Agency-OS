@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     // Configurare zone temp
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `accounting-${month}-`))
-    const zipPath = path.join(tempDir, `Pachet-Contabilitate-${month}.zip`)
+    const zipPath = path.join(tempDir, `Documente-Financiare-${month}.zip`)
     
     // Generăm CSV
     let csvContent = 'Furnizor,Data,Numar,Suma\n'
@@ -159,14 +159,16 @@ export async function POST(request: NextRequest) {
         }
       })
 
+      const statementText = uniqueStatements.length === 1 ? '1 extras de cont' : `${uniqueStatements.length} extrase de cont`
+
       const mailOptions = {
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: accountantEmail,
-        subject: `Pachet Contabilitate - ${month}`,
-        text: `Salut,\n\nAtașat găsești pachetul contabil pentru luna ${month}.\nAcesta conține ${validInvoices.length} facturi (dintre care cele e-Factura sunt în format XML gata de import în SAGA) și ${uniqueStatements.length} extrase de cont (decriptate).\n\nGenerat automat.`,
+        subject: `Documente Financiare - ${month}`,
+        text: `Salut,\n\nAtașat găsești documentele financiare pentru luna ${month}.\nAcestea conțin ${validInvoices.length} facturi (dintre care cele e-Factura sunt incluse în format XML) și ${statementText}.\n\nGenerat automat.`,
         attachments: [
           {
-            filename: `Pachet-Contabilitate-${month}.zip`,
+            filename: `Documente-Financiare-${month}.zip`,
             path: zipPath,
             contentType: 'application/zip'
           }
