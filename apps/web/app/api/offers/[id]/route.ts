@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
 import { db, logActivity } from '@repo/db'
 import type { Prisma } from '@repo/db'
