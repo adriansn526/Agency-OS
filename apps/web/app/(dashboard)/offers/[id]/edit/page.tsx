@@ -554,6 +554,26 @@ export default function OfferEditorPage() {
                         {m.discount && <span className="text-success ml-1">−{m.discount.value}%</span>}
                       </p>
                     </div>
+                    <div className="flex flex-col gap-0 border-r border-border pr-2 mr-1" onClick={e => e.stopPropagation()}>
+                      <button disabled={idx === 0} onClick={() => {
+                        setModules(prev => {
+                          const newArr = [...prev];
+                          if (idx > 0) { const temp = newArr[idx]; newArr[idx] = newArr[idx - 1] as any; newArr[idx - 1] = temp as any; }
+                          return newArr;
+                        });
+                        if (activeModuleIdx === idx) setActiveModuleIdx(idx - 1);
+                        else if (activeModuleIdx === idx - 1) setActiveModuleIdx(idx);
+                      }} className="hover:bg-muted text-muted-foreground disabled:opacity-30 rounded"><ChevronUp size={12} /></button>
+                      <button disabled={idx === modules.length - 1} onClick={() => {
+                        setModules(prev => {
+                          const newArr = [...prev];
+                          if (idx < newArr.length - 1) { const temp = newArr[idx]; newArr[idx] = newArr[idx + 1] as any; newArr[idx + 1] = temp as any; }
+                          return newArr;
+                        });
+                        if (activeModuleIdx === idx) setActiveModuleIdx(idx + 1);
+                        else if (activeModuleIdx === idx + 1) setActiveModuleIdx(idx);
+                      }} className="hover:bg-muted text-muted-foreground disabled:opacity-30 rounded"><ChevronDown size={12} /></button>
+                    </div>
                     <ChevronDown size={14} className={cn("text-muted-foreground transition-transform", activeModuleIdx === idx && "rotate-180")} />
                   </button>
 
