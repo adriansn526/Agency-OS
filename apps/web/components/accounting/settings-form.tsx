@@ -17,7 +17,9 @@ export function SettingsForm() {
     taxRegime: 'micro_1',
     taxRate: '1',
     isVatPayer: false,
-    defaultVatRate: '19'
+    defaultVatRate: '19',
+    autoSendEnabled: false,
+    autoSendDay: '5'
   })
 
   useEffect(() => {
@@ -30,7 +32,9 @@ export function SettingsForm() {
             taxRegime: res.data.taxRegime || 'micro_1',
             taxRate: res.data.taxRate?.toString() || '',
             isVatPayer: res.data.isVatPayer || false,
-            defaultVatRate: res.data.defaultVatRate?.toString() || ''
+            defaultVatRate: res.data.defaultVatRate?.toString() || '',
+            autoSendEnabled: res.data.autoSendEnabled || false,
+            autoSendDay: res.data.autoSendDay?.toString() || '5'
           })
         }
       })
@@ -141,6 +145,39 @@ export function SettingsForm() {
                   onChange={(e: any) => setSettings(s => ({ ...s, defaultVatRate: e.target.value }))}
                   placeholder="Ex: 19"
                 />
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-lg border p-4 space-y-4 border-primary/20 bg-primary/5">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium leading-none">Trimitere Automată (Cron)</label>
+                <p className="text-sm text-muted-foreground">În fiecare lună, sistemul va genera și trimite pachetul contabil automat (fără a mai aștepta validarea manuală a tranzacțiilor din dashboard).</p>
+              </div>
+              <input 
+                type="checkbox"
+                className="h-4 w-4"
+                checked={settings.autoSendEnabled}
+                onChange={(e: any) => setSettings(s => ({ ...s, autoSendEnabled: e.target.checked }))}
+              />
+            </div>
+            
+            {settings.autoSendEnabled && (
+              <div className="space-y-2 pt-2 border-t border-primary/20 flex flex-col">
+                <label className="text-sm font-medium leading-none">Ziua din lună pentru expediere (1-28)</label>
+                <input 
+                  type="number" 
+                  min="1"
+                  max="28"
+                  step="1"
+                  required={settings.autoSendEnabled}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
+                  value={settings.autoSendDay}
+                  onChange={(e: any) => setSettings(s => ({ ...s, autoSendDay: e.target.value }))}
+                  placeholder="Ex: 5"
+                />
+                <p className="text-xs text-muted-foreground">Dacă pui 5, pe data de 5 a fiecărei luni se va trimite automat pachetul cu facturile și extrasele lunii anterioare.</p>
               </div>
             )}
           </div>

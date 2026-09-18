@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     if (!tenant) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 })
 
     const body = await request.json()
-    const { taxRegime, taxRate, isVatPayer, defaultVatRate, accountantEmail } = body
+    const { taxRegime, taxRate, isVatPayer, defaultVatRate, accountantEmail, autoSendEnabled, autoSendDay } = body
 
     if (!accountantEmail) {
       return NextResponse.json({ error: 'Accountant email is required' }, { status: 400 })
@@ -60,7 +60,9 @@ export async function POST(request: NextRequest) {
           taxRegime,
           taxRate,
           isVatPayer,
-          defaultVatRate
+          defaultVatRate,
+          autoSendEnabled: autoSendEnabled ?? false,
+          autoSendDay: autoSendDay ?? 5
         }
       })
     })
