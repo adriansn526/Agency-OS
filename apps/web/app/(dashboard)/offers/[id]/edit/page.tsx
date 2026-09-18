@@ -7,7 +7,7 @@ import { serviceCatalog } from "@repo/mock-data"
 import type { ServiceCatalogItem, OfferBlock, OfferBlockData, TextBlockData, FeaturesBlockData, StatsBlockData, ServicesBlockData, FAQBlockData, TimelineBlockData, PricingUnit } from "@repo/mock-data"
 import { BlockRenderer } from "@/components/block-renderer"
 import { Archivo, Source_Serif_4 } from "next/font/google"
-import "../../../o/[token]/oferta.css"
+import "../../../../o/[token]/oferta.css"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-archivo" })
 const sourceSerif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600"], variable: "--font-source-serif" })
