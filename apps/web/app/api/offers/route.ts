@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db, logActivity } from '@repo/db'
 import type { Prisma } from '@repo/db'
 
+export const dynamic = 'force-dynamic'
+
 // ─── Helper: generate next offer number ───
 async function generateOfferNumber(): Promise<string> {
   const year = new Date().getFullYear()

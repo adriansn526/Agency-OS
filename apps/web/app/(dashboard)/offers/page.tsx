@@ -113,7 +113,7 @@ export default function OffersPage() {
       if (activeLine) params.set("businessLine", activeLine.id)
       if (statusFilter !== "all") params.set("status", statusFilter)
       if (search) params.set("search", search)
-      const res = await fetch(`/api/offers?${params}`)
+      const res = await fetch(`/api/offers?${params}`, { cache: 'no-store' })
       if (res.ok) {
         const json = await res.json()
         setOffers(json.data || [])
