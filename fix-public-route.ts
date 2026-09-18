@@ -1,4 +1,7 @@
-import { notFound } from "next/navigation"
+import fs from 'fs'
+
+const path = 'apps/web/app/o/[token]/page.tsx'
+const newContent = `import { notFound } from "next/navigation"
 import { db } from "@repo/db"
 import PublicOfferClient from "./client"
 
@@ -98,3 +101,5 @@ export default async function PublicOfferPage({
     />
   )
 }
+`
+fs.writeFileSync(path, newContent)
