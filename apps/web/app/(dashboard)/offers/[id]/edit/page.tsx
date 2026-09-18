@@ -14,7 +14,7 @@ const sourceSerif = Source_Serif_4({ subsets: ["latin"], weight: ["400", "600"],
 import { ClientAutocomplete, type ClientOption } from "@/components/client-autocomplete"
 import { cn, formatCurrency } from "@/lib/utils"
 import {
-  ArrowLeft, Save, Send, Eye, Plus, Minus, Trash2, ChevronDown, ChevronRight, Pencil,
+  ArrowLeft, Save, Send, Eye, Plus, Minus, Trash2, ChevronDown, ChevronUp, ChevronRight, Pencil,
   CheckCircle2, GripVertical, Settings, Package, Gift, X, Loader2,
   Globe, TrendingUp, Target, FileText, Search, Shield, Calendar, DollarSign,
   Palette, MessageSquare, BarChart3, Sparkles,
