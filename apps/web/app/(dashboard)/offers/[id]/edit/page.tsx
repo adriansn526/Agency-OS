@@ -221,7 +221,7 @@ export default function OfferEditorPage() {
     } finally {
       setSaving(false)
     }
-  }, [offer, id, entityName, projectName, selectedClient, offerValue, currency, validUntil, modules])
+  }, [offer, id, entityName, projectName, selectedClient, offerValue, currency, validUntil, generalBlocks, modules])
 
   // ─── Derived ────────────────────────
   const selectedServiceIds = useMemo(() => new Set(modules.map(m => m.serviceId)), [modules])
