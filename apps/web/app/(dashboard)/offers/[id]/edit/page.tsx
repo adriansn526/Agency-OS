@@ -702,25 +702,51 @@ export default function OfferEditorPage() {
             </div>
 
             {/* General Blocks (Intro, etc) */}
-            {generalBlocks.length > 0 && (
-              <div className="space-y-4 mb-8">
-                {generalBlocks.map(block => (
-                  <EditableBlock
-                    key={block.id}
-                    block={block}
-                    isEditing={editingBlockId === block.id}
-                    onStartEdit={() => setEditingBlockId(block.id)}
-                    onStopEdit={() => setEditingBlockId(null)}
-                    onUpdateData={(data: OfferBlockData) => {
-                      setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, data } : b))
-                    }}
-                    onUpdateTitle={(title: string) => {
-                      setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, title } : b))
-                    }}
-                  />
-                ))}
+            <div className="space-y-4 mb-8">
+              {generalBlocks.length > 0 && <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Conținut General</h3>}
+              {generalBlocks.map(block => (
+                <EditableBlock
+                  key={block.id}
+                  block={block}
+                  isEditing={editingBlockId === block.id}
+                  onStartEdit={() => setEditingBlockId(block.id)}
+                  onStopEdit={() => setEditingBlockId(null)}
+                  onUpdateData={(data: OfferBlockData) => {
+                    setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, data } : b))
+                  }}
+                  onUpdateTitle={(title: string) => {
+                    setGeneralBlocks(prev => prev.map(b => b.id === block.id ? { ...b, title } : b))
+                  }}
+                  onDelete={() => {
+                    setGeneralBlocks(prev => prev.filter(b => b.id !== block.id))
+                    setEditingBlockId(null)
+                  }}
+                />
+              ))}
+
+              <div className="flex justify-center gap-2 mt-4">
+                <button
+                  onClick={() => {
+                    const newId = `gen-${Date.now()}`
+                    setGeneralBlocks(prev => [...prev, { id: newId, type: 'text', title: 'Text Nou', data: { content: '' } }])
+                    setEditingBlockId(newId)
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/50 hover:bg-muted text-xs font-medium text-foreground rounded-lg border border-border transition-colors border-dashed"
+                >
+                  <Plus size={12} /> Bloc Text
+                </button>
+                <button
+                  onClick={() => {
+                    const newId = `gen-${Date.now()}`
+                    setGeneralBlocks(prev => [...prev, { id: newId, type: 'features', title: 'Listă Nouă', data: { categories: [{ name: 'Categorie', items: ['Item 1'] }] } }])
+                    setEditingBlockId(newId)
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/50 hover:bg-muted text-xs font-medium text-foreground rounded-lg border border-border transition-colors border-dashed"
+                >
+                  <Plus size={12} /> Bloc Listă
+                </button>
               </div>
-            )}
+            </div>
 
             {/* Module sections */}
             {modules.length > 0 ? (
@@ -837,9 +863,10 @@ interface EditableBlockProps {
   onStopEdit: () => void
   onUpdateData: (data: OfferBlockData) => void
   onUpdateTitle: (title: string) => void
+  onDelete?: () => void
 }
 
-function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle }: EditableBlockProps) {
+function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle, onDelete }: EditableBlockProps) {
   if (!isEditing) {
     // Read-only view with edit hover overlay
     return (
@@ -868,9 +895,16 @@ function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData
             className="text-sm font-bold text-foreground bg-transparent border-b border-primary/30 outline-none focus:border-primary pb-0.5" />
           <span className="text-[8px] uppercase text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{block.type}</span>
         </div>
-        <button onClick={onStopEdit} className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors">
-          <CheckCircle2 size={9} /> Done
-        </button>
+        <div className="flex items-center gap-2">
+          {onDelete && (
+            <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors">
+              <Trash2 size={9} /> Șterge
+            </button>
+          )}
+          <button onClick={onStopEdit} className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors">
+            <CheckCircle2 size={9} /> Done
+          </button>
+        </div>
       </div>
 
       {/* Type-specific editors */}
