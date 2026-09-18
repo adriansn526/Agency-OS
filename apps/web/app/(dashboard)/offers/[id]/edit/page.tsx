@@ -730,14 +730,22 @@ export default function OfferEditorPage() {
                   onMoveUp={() => {
                     setGeneralBlocks(prev => {
                       const newArr = [...prev];
-                      [newArr[idx - 1], newArr[idx]] = [newArr[idx], newArr[idx - 1]];
+                      if (idx > 0) {
+                        const temp = newArr[idx];
+                        newArr[idx] = newArr[idx - 1] as any;
+                        newArr[idx - 1] = temp as any;
+                      }
                       return newArr;
                     });
                   }}
                   onMoveDown={() => {
                     setGeneralBlocks(prev => {
                       const newArr = [...prev];
-                      [newArr[idx], newArr[idx + 1]] = [newArr[idx + 1], newArr[idx]];
+                      if (idx < newArr.length - 1) {
+                        const temp = newArr[idx];
+                        newArr[idx] = newArr[idx + 1] as any;
+                        newArr[idx + 1] = temp as any;
+                      }
                       return newArr;
                     });
                   }}

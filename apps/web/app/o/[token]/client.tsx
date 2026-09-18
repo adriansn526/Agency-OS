@@ -146,7 +146,10 @@ export default function PublicOfferClient({
                 {modules.map((m: any, idx: number) => (
                   <div key={idx}>
                     <span>{m.serviceName}</span>
-                    <b>{m.price} {offer.currency}</b>
+                    <b>
+                      {m.price} {offer.currency}
+                      {m.pricingUnit === 'lunar' ? ' / lună' : m.pricingUnit === 'per_hour' ? ' / oră' : ''}
+                    </b>
                   </div>
                 ))}
               </div>
@@ -210,35 +213,6 @@ export default function PublicOfferClient({
                 </section>
               )
             })}
-
-            {/* Modules / Packs section */}
-            {modules.length > 0 && (
-              <section id="s-pachete">
-                <h2><i>{blocksWithIds.length + 1}</i> Pachete și investiție</h2>
-                
-                <div className="packs">
-                  {modules.map((m: any, idx: number) => {
-                    const isRecommended = m.status === 'recommended' || (modules.length > 1 && idx === modules.length - 1)
-                    return (
-                      <div key={idx} className={`pack ${isRecommended ? 'pick' : ''}`}>
-                        {isRecommended && <span className="pack-tag">Recomandat</span>}
-                        <h3>{m.serviceName}</h3>
-                        <p className="price">{m.price} {offer.currency}</p>
-                        <p className="unit">{m.pricingUnit === 'lunar' ? 'pe lună' : m.pricingUnit === 'per_hour' ? 'pe oră' : 'preț fix'}</p>
-                        
-                        {m.blocks && m.blocks.length > 0 && (
-                          <ul>
-                            {m.blocks.map((b: any, bIdx: number) => (
-                              <li key={bIdx}>{b.title}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
-            )}
 
             {/* Acceptance Section */}
             <section className="sign" id="acceptare">
