@@ -869,9 +869,14 @@ interface EditableBlockProps {
   onUpdateData: (data: OfferBlockData) => void
   onUpdateTitle: (title: string) => void
   onDelete?: () => void
+  onMoveUp?: () => void
+  onMoveDown?: () => void
+  onInsertBelow?: (type: 'text' | 'features') => void
+  isFirst?: boolean
+  isLast?: boolean
 }
 
-function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle, onDelete, idx }: EditableBlockProps & { idx?: number }) {
+function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData, onUpdateTitle, onDelete, onMoveUp, onMoveDown, onInsertBelow, isFirst, isLast, idx }: EditableBlockProps & { idx?: number }) {
   if (!isEditing) {
     const isFeatures = block.type === "features" || (block.data as any)?.categories
     return (
@@ -917,6 +922,15 @@ function EditableBlock({ block, isEditing, onStartEdit, onStopEdit, onUpdateData
           <span className="text-[8px] uppercase text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{block.type}</span>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-1">
+            {onMoveUp && <button disabled={isFirst} onClick={(e) => { e.stopPropagation(); onMoveUp(); }} className="p-1 hover:bg-muted text-muted-foreground disabled:opacity-30 rounded"><ChevronUp size={12} /></button>}
+            {onMoveDown && <button disabled={isLast} onClick={(e) => { e.stopPropagation(); onMoveDown(); }} className="p-1 hover:bg-muted text-muted-foreground disabled:opacity-30 rounded"><ChevronDown size={12} /></button>}
+          </div>
+          <div className="flex items-center gap-1 border-r border-border pr-2 mr-1">
+            <span className="text-[9px] uppercase text-muted-foreground font-bold mr-1">Adaugă sub:</span>
+            {onInsertBelow && <button onClick={(e) => { e.stopPropagation(); onInsertBelow('text'); }} className="p-1 px-1.5 hover:bg-muted text-foreground text-[10px] font-medium rounded">+ Text</button>}
+            {onInsertBelow && <button onClick={(e) => { e.stopPropagation(); onInsertBelow('features'); }} className="p-1 px-1.5 hover:bg-muted text-foreground text-[10px] font-medium rounded">+ Listă</button>}
+          </div>
           {onDelete && (
             <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors">
               <Trash2 size={9} /> Șterge
