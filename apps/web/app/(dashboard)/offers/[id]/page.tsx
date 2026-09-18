@@ -249,7 +249,7 @@ export default function SingleOfferPage() {
               <FileText size={12} /> Generează Contract
             </Link>
           )}
-          <Link href={`/offer/view/${offer.id}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
+          <Link href={`/o/${offer.id}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
             <ExternalLink size={12} /> Preview Public
           </Link>
           <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
@@ -648,7 +648,7 @@ function SendOfferModal({ offer, onClose }: { offer: any; onClose: () => void })
               </div>
               <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
                 <p className="text-[11px] text-blue-400">
-                  <strong>Link public:</strong> app.asns.ro/offer/view/{offer.id.slice(0, 8)}
+                  <strong>Link public:</strong> app.asns.ro/o/{offer.id.slice(0, 8)}
                 </p>
               </div>
               <div className="flex justify-end gap-2 pt-2">

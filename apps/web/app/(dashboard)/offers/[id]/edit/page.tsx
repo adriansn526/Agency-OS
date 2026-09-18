@@ -377,7 +377,7 @@ export default function OfferEditorPage() {
             className={cn("flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors", showMetaPanel ? "bg-primary/10 text-primary" : "bg-muted text-foreground hover:bg-muted/80")}>
             <Settings size={12} /> Meta
           </button>
-          <Link href={`/offer/view/${offer.deliveries?.[0]?.token || offer.id}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
+          <Link href={`/o/${offer.deliveries?.[0]?.token || offer.id}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
             <Eye size={12} /> Preview
           </Link>
           <button onClick={handleSave} disabled={saving}
