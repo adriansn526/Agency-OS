@@ -648,7 +648,7 @@ function SendOfferModal({ offer, onClose }: { offer: any; onClose: () => void })
               </div>
               <div className="p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
                 <p className="text-[11px] text-blue-400">
-                  <strong>Link public:</strong> app.asns.ro/o/{offer.id.slice(0, 8)}
+                  <strong>Link public:</strong> {typeof window !== 'undefined' ? window.location.origin : 'https://admin.asns.ro'}/o/<em>[link unic va fi generat la trimitere]</em>
                 </p>
               </div>
               <div className="flex justify-end gap-2 pt-2">

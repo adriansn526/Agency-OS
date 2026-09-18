@@ -96,7 +96,7 @@ export async function POST(
     })
 
     // Construct public URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3100'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.AUTH_URL || 'https://admin.asns.ro'
     const publicUrl = `${baseUrl}/o/${token}`
 
     // Send email via AWS SES
