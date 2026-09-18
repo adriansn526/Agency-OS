@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ofertă — cumpar-masini-rulate.ro</title>
+<meta name="robots" content="noindex, nofollow">
+
+<!--
+  ===========================================================================
+  ȘABLON DE OFERTĂ — DE COMPLETAT ÎNAINTE DE TRIMITERE
+  ===========================================================================
+  Toate câmpurile marcate cu {{ }} trebuie înlocuite. Cât timp mai există
+  câmpuri necompletate, în colțul din dreapta-jos apare un panou de control
+  (vizibil doar pe ecran, nu și la print) care le listează. Când nu mai
+  rămâne niciunul, panoul dispare singur.
+
+  De completat:
+    {{NR_OFERTA}}        ex. 2026-014
+    {{DATA_OFERTEI}}     ex. 18 septembrie 2026
+    {{DATA_EXPIRARE}}    ex. 9 octombrie 2026
+    {{NUME_CLIENT}}      persoana de contact
+    {{FIRMA_CLIENT}}     denumirea firmei
+    {{PRET_1}} {{PRET_2}} {{PRET_3}}   preț fix pe pachet, fără TVA
+    {{AVANS}}            ex. 40
+    {{TERMEN_1}} {{TERMEN_2}} {{TERMEN_3}}  zile lucrătoare
+    {{STAT_TRAFIC}} {{STAT_ARTICOLE}} {{STAT_SOLICITARI}}  rezultate de până acum
+    {{COST_HOSTING}} {{COST_DOMENIU}} {{COST_DATE}} {{COST_TRACKING}}
+    {{PRET_MENTENANTA}}
+    {{EMAIL_AGENTIE}} {{TELEFON_AGENTIE}} {{NUME_AGENTIE}} {{CUI_AGENTIE}}
+
+  Reguli de conținut (vezi brief-ul intern):
+    – nu descrie site-ul actual ca având probleme; oferta e etapa următoare
+    – nu detalia sursa datelor evaluatorului
+    – mențiunea privind fluctuația de trafic rămâne, nu se scoate
+  ===========================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#EDEEEA;
+    --paper-2:#E3E5DE;
+    --ink:#12253A;
+    --ink-soft:#4B5D70;
+    --rule:rgba(18,37,58,.18);
+    --rule-strong:rgba(18,37,58,.42);
+    --signal:#F2C230;
+    --signal-ink:#12253A;
+    --brick:#8F4630;
+    --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0F1A24;
+      --paper-2:#17242F;
+      --ink:#E7EBE6;
+      --ink-soft:#9DACB9;
+      --rule:rgba(231,235,230,.18);
+      --rule-strong:rgba(231,235,230,.42);
+      --signal:#F2C230;
+      --signal-ink:#12253A;
+      --brick:#D98268;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1A24;
+    --paper-2:#17242F;
+    --ink:#E7EBE6;
+    --ink-soft:#9DACB9;
+    --rule:rgba(231,235,230,.18);
+    --rule-strong:rgba(231,235,230,.42);
+    --signal:#F2C230;
+    --signal-ink:#12253A;
+    --brick:#D98268;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.65;
+    font-variant-numeric:oldstyle-nums;
+  }
+  img{max-width:100%}
+  a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+  .wrap{max-width:1140px;margin:0 auto;padding:0 20px}
+
+  /* ---------- cover ---------- */
+  .cover{padding:34px 0 8px}
+  .filebar{
+    display:flex;flex-wrap:wrap;gap:6px 26px;
+    font-family:var(--sans);font-size:.78rem;font-weight:500;
+    color:var(--ink-soft);
+    padding-bottom:14px;border-bottom:1px solid var(--rule-strong);
+  }
+  .filebar b{font-weight:600;color:var(--ink)}
+
+  .cover h1{
+    font-family:var(--sans);font-weight:700;
+    font-size:clamp(2.1rem,6.2vw,4rem);
+    line-height:1.02;letter-spacing:-.025em;
+    margin:.55em 0 0;max-width:15ch;
+  }
+  .lede{
+    font-size:clamp(1.05rem,2.2vw,1.3rem);
+    line-height:1.5;max-width:52ch;margin:1rem 0 0;color:var(--ink-soft);
+  }
+  .addressee{
+    font-family:var(--sans);font-size:.88rem;font-weight:500;
+    margin:1.6rem 0 0;color:var(--ink-soft);
+  }
+  .addressee b{display:block;font-size:1.05rem;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+
+  /* ---------- summary ---------- */
+  .summary{
+    background:var(--signal);color:var(--signal-ink);
+    margin:38px 0 0;padding:26px 24px 22px;
+  }
+  .summary h2{
+    font-family:var(--sans);font-size:1.05rem;font-weight:600;
+    margin:0 0 18px;letter-spacing:-.01em;
+  }
+  .prices{
+    display:grid;gap:2px;background:rgba(18,37,58,.22);
+    border-top:1px solid rgba(18,37,58,.22);border-bottom:1px solid rgba(18,37,58,.22);
+  }
+  .prices div{
+    background:var(--signal);padding:12px 2px;
+    display:flex;justify-content:space-between;align-items:baseline;gap:14px;
+  }
+  .prices span{font-family:var(--sans);font-size:.92rem;font-weight:500}
+  .prices b{
+    font-family:var(--sans);font-weight:700;font-size:1.22rem;
+    letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap;
+  }
+  .summary-note{
+    font-family:var(--sans);font-size:.8rem;margin:16px 0 0;
+    color:rgba(18,37,58,.72);line-height:1.5;
+  }
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+  .btn{
+    font-family:var(--sans);font-size:.9rem;font-weight:600;
+    padding:13px 22px;border:1px solid var(--ink);cursor:pointer;
+    background:var(--ink);color:var(--paper);text-decoration:none;display:inline-block;
+  }
+  .btn.ghost{background:transparent;color:var(--ink)}
+
+  /* ---------- layout ---------- */
+  .body-grid{display:block;margin:64px 0 0}
+  .toc{display:none}
+  main{max-width:68ch}
+
+  @media (min-width:960px){
+    .body-grid{display:grid;grid-template-columns:200px 1fr;gap:64px;align-items:start}
+    .toc{
+      display:block;position:sticky;top:34px;
+      font-family:var(--sans);font-size:.83rem;
+    }
+    .toc ol{list-style:none;margin:0;padding:0;border-left:1px solid var(--rule)}
+    .toc a{
+      display:block;padding:5px 0 5px 14px;margin-left:-1px;
+      color:var(--ink-soft);text-decoration:none;border-left:1px solid transparent;
+    }
+    .toc a:hover{color:var(--ink)}
+    .toc a.on{color:var(--ink);font-weight:600;border-left-color:var(--ink)}
+  }
+
+  /* ---------- sections ---------- */
+  section{margin:0 0 56px;scroll-margin-top:24px}
+  section > h2{
+    font-family:var(--sans);font-weight:600;
+    font-size:clamp(1.35rem,3vw,1.75rem);letter-spacing:-.02em;line-height:1.15;
+    margin:0 0 18px;padding:0 0 12px;border-bottom:1px solid var(--rule-strong);
+    display:flex;gap:14px;align-items:baseline;
+  }
+  section > h2 i{
+    font-style:normal;font-size:.78rem;font-weight:600;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;flex:none;
+  }
+  section p{margin:0 0 1rem}
+  section h3{
+    font-family:var(--sans);font-size:1.02rem;font-weight:600;
+    letter-spacing:-.01em;margin:1.8rem 0 .4rem;
+  }
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);margin:0 0 1.4rem}
+  .stats div{background:var(--paper);padding:14px 0}
+  .stats b{display:block;font-family:var(--sans);font-weight:700;font-size:1.7rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .stats span{font-family:var(--sans);font-size:.8rem;color:var(--ink-soft)}
+
+  .list{list-style:none;margin:0 0 1rem;padding:0}
+  .list li{padding:0 0 0 22px;margin:0 0 .5rem;position:relative}
+  .list li::before{content:"";position:absolute;left:0;top:.72em;width:9px;height:1px;background:var(--rule-strong)}
+  .list.no li::before{background:var(--brick);height:1px;top:.72em}
+
+  /* ---------- packages ---------- */
+  .packs{display:grid;gap:14px;margin:0 0 1.6rem}
+  @media (min-width:700px){.packs{grid-template-columns:repeat(3,1fr)}}
+  .pack{border:1px solid var(--rule-strong);padding:20px 18px;display:flex;flex-direction:column}
+  .pack.pick{border-color:var(--ink);border-width:2px;position:relative}
+  .pack-tag{
+    position:absolute;top:-1px;right:-1px;background:var(--ink);color:var(--paper);
+    font-family:var(--sans);font-size:.72rem;font-weight:600;padding:4px 10px;
+  }
+  .pack h3{margin:0;font-size:1.05rem}
+  .pack .price{
+    font-family:var(--sans);font-weight:700;font-size:1.85rem;letter-spacing:-.025em;
+    font-variant-numeric:tabular-nums;margin:.35rem 0 .1rem;
+  }
+  .pack .unit{font-family:var(--sans);font-size:.76rem;color:var(--ink-soft);margin:0 0 14px}
+  .pack ul{list-style:none;margin:0;padding:0;font-size:.95rem}
+  .pack li{padding:0 0 0 20px;position:relative;margin:0 0 .45rem}
+  .pack li::before{content:"✓";position:absolute;left:0;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft)}
+
+  .scroll{overflow-x:auto;margin:0 0 1.4rem;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;min-width:480px;font-family:var(--sans);font-size:.88rem}
+  th,td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+  thead th{font-weight:600;border-bottom:1px solid var(--rule-strong);white-space:nowrap}
+  td.c,th.c{text-align:center;padding-right:0;width:88px}
+  tbody td:first-child{padding-right:24px}
+  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  /* ---------- timeline ---------- */
+  .steps{list-style:none;margin:0 0 1.4rem;padding:0;counter-reset:s}
+  .steps li{
+    counter-increment:s;padding:0 0 22px 46px;position:relative;
+    border-left:1px solid var(--rule);margin-left:13px;
+  }
+  .steps li:last-child{border-left-color:transparent;padding-bottom:0}
+  .steps li::before{
+    content:counter(s);position:absolute;left:-13px;top:0;
+    width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);
+    font-family:var(--sans);font-size:.78rem;font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .steps h3{margin:1px 0 .2rem}
+  .steps p{margin:0;font-size:.97rem}
+  .steps .when{font-family:var(--sans);font-size:.78rem;color:var(--ink-soft);display:block;margin-top:.35rem}
+
+  .note{border-left:3px solid var(--signal);padding:2px 0 2px 18px;margin:0 0 1.2rem}
+
+  /* ---------- sign ---------- */
+  .sign{border-top:2px solid var(--ink);margin:0;padding:26px 0 0}
+  .sign-grid{display:grid;gap:34px;margin:28px 0 0}
+  @media (min-width:600px){.sign-grid{grid-template-columns:1fr 1fr}}
+  .sign-line{border-bottom:1px solid var(--rule-strong);height:52px}
+  .sign-label{font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);margin:8px 0 0}
+
+  footer{
+    border-top:1px solid var(--rule);margin:72px 0 0;padding:22px 0 120px;
+    font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);
+  }
+
+  /* ---------- mobile bar ---------- */
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:11px 16px;font-family:var(--sans);
+  }
+  .bar small{font-size:.74rem;opacity:.75;display:block}
+  .bar b{font-size:.98rem;font-weight:600;letter-spacing:-.01em}
+  .bar a{
+    background:var(--signal);color:var(--signal-ink);text-decoration:none;
+    font-size:.86rem;font-weight:600;padding:10px 16px;white-space:nowrap;
+  }
+  @media (min-width:960px){.bar{display:none}}
+
+  /* ---------- editor panel ---------- */
+  #todo{
+    position:fixed;right:14px;bottom:76px;z-index:30;max-width:290px;
+    background:var(--ink);color:var(--paper);padding:14px 16px;
+    font-family:var(--sans);font-size:.78rem;line-height:1.45;
+  }
+  #todo h4{margin:0 0 6px;font-size:.84rem;font-weight:600}
+  #todo code{font-size:.74rem;opacity:.8;word-break:break-all}
+  #todo button{
+    margin-top:10px;background:none;border:1px solid rgba(255,255,255,.4);
+    color:inherit;font:inherit;padding:5px 10px;cursor:pointer;
+  }
+  @media (min-width:960px){#todo{bottom:14px}}
+
+  .ph{border-bottom:1px dotted var(--rule-strong)}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- print ---------- */
+  @media print{
+    :root{--paper:#fff;--paper-2:#fff;--ink:#000;--ink-soft:#444;--rule:#ccc;--rule-strong:#888}
+    body{background:#fff;font-size:11pt}
+    .toc,.actions,.bar,#todo{display:none!important}
+    .body-grid{display:block;margin-top:28px}
+    main{max-width:none}
+    .summary{border:1px solid #000;background:#fff;color:#000}
+    .prices div{background:#fff}
+    section{margin-bottom:26px;page-break-inside:avoid}
+    .pack,.steps li{page-break-inside:avoid}
+    footer{padding-bottom:0}
+    a{text-decoration:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="cover">
+    <div class="filebar">
+      <div>Ofertă <b>{{NR_OFERTA}}</b></div>
+      <div>Emisă <b>{{DATA_OFERTEI}}</b></div>
+      <div>Valabilă până la <b>{{DATA_EXPIRARE}}</b></div>
+    </div>
+
+    <h1>Următoarea etapă pentru cumpar-masini-rulate.ro</h1>
+
+    <p class="lede">Adăugăm un evaluator instant de preț care transformă vizitatorii în solicitări de ofertă și mutăm site-ul pe o platformă care îl poate susține.</p>
+
+    <p class="addressee">
+      În atenția
+      <b>{{NUME_CLIENT}} — {{FIRMA_CLIENT}}</b>
+    </p>
+
+    <div class="summary">
+      <h2>Rezumat</h2>
+      <div class="prices">
+        <div><span>Platformă nouă</span><b>{{PRET_1}} €</b></div>
+        <div><span>Platformă + vizibilitate în Google</span><b>{{PRET_2}} €</b></div>
+        <div><span>Complet, cu evaluator instant de preț</span><b>{{PRET_3}} €</b></div>
+      </div>
+      <p class="summary-note">Prețuri fixe, fără TVA. Avans {{AVANS}}% la semnare, diferența la lansare. Detaliile fiecărui pachet sunt în secțiunea 4.</p>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="mailto:{{EMAIL_AGENTIE}}?subject=Acceptare%20ofert%C4%83%20{{NR_OFERTA}}">Accept oferta</a>
+      <button class="btn ghost" id="pdf" type="button">Salvează ca PDF</button>
+    </div>
+  </header>
+
+  <div class="body-grid">
+
+    <nav class="toc" aria-label="Cuprins">
+      <ol>
+        <li><a href="#s1">Unde am ajuns</a></li>
+        <li><a href="#s2">Ce urmează</a></li>
+        <li><a href="#s3">Ce primiți</a></li>
+        <li><a href="#s4">Pachete și investiție</a></li>
+        <li><a href="#s5">Ce nu este inclus</a></li>
+        <li><a href="#s6">Etape și termene</a></li>
+        <li><a href="#s7">Ce ne trebuie de la dvs.</a></li>
+        <li><a href="#s8">Costuri recurente</a></li>
+        <li><a href="#s9">După lansare</a></li>
+        <li><a href="#s10">Mențiuni</a></li>
+        <li><a href="#s11">Condiții</a></li>
+      </ol>
+    </nav>
+
+    <main>
+
+      <section id="s1">
+        <h2><i>1</i>Unde am ajuns</h2>
+        <p>Site-ul lansat împreună și-a făcut treaba: aduce constant vizitatori din Google și conduce oamenii către telefon și formular. Conținutul publicat până acum lucrează în continuare pentru dumneavoastră.</p>
+        <div class="stats">
+          <div><b>{{STAT_TRAFIC}}</b><span>vizitatori pe lună</span></div>
+          <div><b>{{STAT_ARTICOLE}}</b><span>articole publicate</span></div>
+          <div><b>{{STAT_SOLICITARI}}</b><span>solicitări primite</span></div>
+        </div>
+        <p>Următorul pas nu este să refacem ce funcționează, ci să adăugăm un instrument care lipsește.</p>
+      </section>
+
+      <section id="s2">
+        <h2><i>2</i>Ce urmează</h2>
+        <p>Astăzi, un om care vrea să-și vândă mașina trebuie să sune ca să afle cât primește pe ea. O parte dintre vizitatori nu sună — amână, compară, se pierd.</p>
+        <p>Propunem un evaluator instant: completează marca, modelul, anul și kilometrii, iar pe loc vede un interval de preț. La final își lasă numărul de telefon. Astfel, în loc de un vizitator anonim, primiți un om care știe deja la ce să se aștepte și care a spus explicit că vrea să vândă.</p>
+        <p>Un instrument de acest fel calculează în timp real și trebuie să reziste la trafic. Are nevoie de o bază tehnică diferită de cea a unui site de prezentare, așa că îl construim împreună cu platforma pe care va rula, păstrând integral conținutul și pozițiile câștigate în Google.</p>
+      </section>
+
+      <section id="s3">
+        <h2><i>3</i>Ce primiți</h2>
+
+        <h3>Evaluator instant de preț</h3>
+        <p>Patru pași simpli, sub un minut, direct de pe telefon. Rezultatul este un interval orientativ, iar oferta fermă rămâne a dumneavoastră, după inspecție. Fiecare evaluare completată ajunge la dumneavoastră ca solicitare, cu toate datele mașinii deja completate.</p>
+        <p>Evaluatorul folosește un model statistic propriu, calibrat pe piața auto din România și actualizat periodic. Rulează deja în producție pe un alt proiect, deci nu este un experiment — îl adaptăm pe segmentul de mașini pe care le cumpărați.</p>
+
+        <h3>Pagini pentru orașe și mărci</h3>
+        <p>Pagini dedicate pentru orașele în care vă deplasați și pentru mărcile cele mai căutate. Fiecare devine o intrare separată în Google, pentru oameni care caută exact acel lucru.</p>
+
+        <h3>Platformă rapidă</h3>
+        <p>Site nou, construit pe tehnologia folosită de marile platforme auto. Se încarcă aproape instant pe telefon, acolo unde vin majoritatea vizitatorilor. Tot conținutul existent se mută cu aceleași adrese, ca pozițiile din Google să rămână intacte.</p>
+
+        <h3>Măsurarea rezultatelor</h3>
+        <p>Veți ști câte telefoane vin din Google, câte din reclame și câte din evaluator. Nu estimări — numere.</p>
+      </section>
+
+      <section id="s4">
+        <h2><i>4</i>Pachete și investiție</h2>
+
+        <div class="packs">
+          <div class="pack">
+            <h3>Platformă</h3>
+            <p class="price">{{PRET_1}} €</p>
+            <p class="unit">preț fix, fără TVA</p>
+            <ul>
+              <li>Site nou, rapid pe mobil</li>
+              <li>Conținutul mutat integral</li>
+              <li>Adresele și pozițiile păstrate</li>
+              <li>Formular și WhatsApp</li>
+            </ul>
+          </div>
+          <div class="pack">
+            <h3>Platformă + vizibilitate</h3>
+            <p class="price">{{PRET_2}} €</p>
+            <p class="unit">preț fix, fără TVA</p>
+            <ul>
+              <li>Tot din pachetul anterior</li>
+              <li>Pagini pentru orașe</li>
+              <li>Pagini pentru mărci</li>
+              <li>Măsurarea surselor de contact</li>
+            </ul>
+          </div>
+          <div class="pack pick">
+            <span class="pack-tag">Recomandat</span>
+            <h3>Complet</h3>
+            <p class="price">{{PRET_3}} €</p>
+            <p class="unit">preț fix, fără TVA</p>
+            <ul>
+              <li>Tot din pachetele anterioare</li>
+              <li>Evaluator instant de preț</li>
+              <li>Calibrare pe mașinile cumpărate de dvs.</li>
+              <li>Solicitări cu date complete</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th>Ce include</th><th class="c">Platformă</th><th class="c">+ Vizibilitate</th><th class="c">Complet</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Site nou, optimizat pentru mobil</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Mutarea conținutului fără pierderi în Google</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Formular cu încărcare de poze</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Administrare proprie a articolelor</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Pagini pentru orașe și mărci</td><td class="c">—</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Măsurarea sursei fiecărui contact</td><td class="c">—</td><td class="c">✓</td><td class="c">✓</td></tr>
+              <tr><td>Evaluator instant de preț</td><td class="c">—</td><td class="c">—</td><td class="c">✓</td></tr>
+              <tr><td>Calibrare pe segmentul dvs. de mașini</td><td class="c">—</td><td class="c">—</td><td class="c">✓</td></tr>
+              <tr><td>Termen de livrare</td><td class="c num">{{TERMEN_1}} zile</td><td class="c num">{{TERMEN_2}} zile</td><td class="c num">{{TERMEN_3}} zile</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Termenele sunt exprimate în zile lucrătoare de la semnare și de la primirea materialelor solicitate în secțiunea 7.</p>
+      </section>
+
+      <section id="s5">
+        <h2><i>5</i>Ce nu este inclus</h2>
+        <p>Următoarele nu fac parte din ofertă. Le putem prelua separat, la cerere:</p>
+        <ul class="list no">
+          <li>Texte scrise de copywriter pentru paginile noi</li>
+          <li>Fotografii profesionale</li>
+          <li>Identitate vizuală sau logo nou</li>
+          <li>Administrarea campaniilor Google Ads și a bugetului de reclamă</li>
+          <li>Traduceri în alte limbi</li>
+          <li>Integrarea cu un program de contabilitate sau CRM anume</li>
+        </ul>
+      </section>
+
+      <section id="s6">
+        <h2><i>6</i>Etape și termene</h2>
+        <ol class="steps">
+          <li>
+            <h3>Stabilirea listei</h3>
+            <p>Fixăm împreună orașele, mărcile și segmentul de mașini pe care le cumpărați.</p>
+            <span class="when">2 zile lucrătoare</span>
+          </li>
+          <li>
+            <h3>Design și aprobare</h3>
+            <p>Vă arătăm cum arată paginile principale și evaluatorul, înainte să construim.</p>
+            <span class="when">4 zile lucrătoare</span>
+          </li>
+          <li>
+            <h3>Construcție</h3>
+            <p>Realizăm platforma, mutăm conținutul și adaptăm evaluatorul.</p>
+            <span class="when">{{TERMEN_3}} zile lucrătoare</span>
+          </li>
+          <li>
+            <h3>Verificare</h3>
+            <p>Testăm pe o versiune privată. Ne dați ultimele observații.</p>
+            <span class="when">3 zile lucrătoare</span>
+          </li>
+          <li>
+            <h3>Lansare și monitorizare</h3>
+            <p>Punem site-ul nou în funcțiune și îl urmărim zilnic în prima lună.</p>
+            <span class="when">inclus</span>
+          </li>
+        </ol>
+      </section>
+
+      <section id="s7">
+        <h2><i>7</i>Ce ne trebuie de la dumneavoastră</h2>
+        <p>Proiectul avansează în ritmul în care primim aceste lucruri:</p>
+        <ul class="list">
+          <li>O singură persoană de contact, care decide</li>
+          <li>Răspuns la întrebări și aprobări în maximum 3 zile lucrătoare</li>
+          <li>Lista orașelor în care vă deplasați și a mărcilor pe care le cumpărați</li>
+          <li>Criteriile după care stabiliți prețul astăzi, pentru calibrarea evaluatorului</li>
+          <li>Poze reale din activitate, dacă există</li>
+        </ul>
+        <p>Accesele tehnice le deținem deja, deci nu este nevoie să vă ocupați de ele.</p>
+      </section>
+
+      <section id="s8">
+        <h2><i>8</i>Costuri recurente</h2>
+        <p>Acestea sunt costuri lunare sau anuale de funcționare, separate de prețul proiectului:</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Serviciu</th><th>Cost</th><th>Frecvență</th></tr></thead>
+            <tbody>
+              <tr><td>Găzduire</td><td class="num">{{COST_HOSTING}} €</td><td>lunar</td></tr>
+              <tr><td>Domeniu</td><td class="num">{{COST_DOMENIU}} €</td><td>anual</td></tr>
+              <tr><td>Actualizarea datelor evaluatorului</td><td class="num">{{COST_DATE}} €</td><td>lunar</td></tr>
+              <tr><td>Măsurarea telefoanelor primite</td><td class="num">{{COST_TRACKING}} €</td><td>lunar</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Actualizarea datelor evaluatorului este necesară doar la pachetul complet. Fără ea, estimările rămân valabile, dar se depărtează treptat de piață.</p>
+      </section>
+
+      <section id="s9">
+        <h2><i>9</i>După lansare</h2>
+        <p>Prima lună este inclusă: urmărim zilnic funcționarea site-ului, corectăm ce apare și verificăm cum reacționează Google.</p>
+        <p>Ulterior, putem continua cu un abonament de {{PRET_MENTENANTA}} € pe lună, care acoperă actualizările tehnice, copiile de siguranță, modificările mici de conținut și un raport lunar cu numărul de solicitări primite. Nu este obligatoriu.</p>
+      </section>
+
+      <section id="s10">
+        <h2><i>10</i>Mențiuni</h2>
+        <div class="note">
+          <p>La orice mutare a unui site pe o platformă nouă, Google reindexează paginile. În primele 2–4 săptămâni traficul poate fluctua, chiar dacă adresele rămân identice. Este un comportament normal, pe care îl monitorizăm zilnic în această perioadă.</p>
+        </div>
+        <p>Prețul afișat de evaluator este orientativ și nu constituie o ofertă fermă de cumpărare. Acest lucru va fi menționat explicit în interfață și în termenii site-ului, pentru a vă proteja în discuția cu clientul.</p>
+        <p>Estimările evaluatorului reflectă piața la momentul calculului. Precizia se îmbunătățește pe măsură ce introduceți în sistem tranzacțiile reale încheiate.</p>
+      </section>
+
+      <section id="s11">
+        <h2><i>11</i>Condiții</h2>
+        <p><b>Valabilitate.</b> Oferta este valabilă până la {{DATA_EXPIRARE}}.</p>
+        <p><b>Plată.</b> {{AVANS}}% avans la semnare, diferența la lansare. Prețurile nu includ TVA.</p>
+        <p><b>Proprietate.</b> După achitarea integrală, site-ul, conținutul și codul vă aparțin. Domeniul și conturile rămân înregistrate pe firma dumneavoastră.</p>
+        <p><b>Modificări.</b> Solicitările care depășesc cele descrise aici se cotează separat, înainte de a fi executate. Nu facem lucrări neanunțate și nu emitem costuri neagreate.</p>
+      </section>
+
+      <section class="sign" id="acceptare">
+        <h2 style="border:0;padding:0"><i></i>Pentru a demara</h2>
+        <p>Confirmați pachetul ales și achitați avansul de {{AVANS}}%. Începem în următoarea zi lucrătoare.</p>
+        <div class="actions">
+          <a class="btn" href="mailto:{{EMAIL_AGENTIE}}?subject=Acceptare%20ofert%C4%83%20{{NR_OFERTA}}">Accept oferta</a>
+          <a class="btn ghost" href="tel:{{TELEFON_AGENTIE}}">{{TELEFON_AGENTIE}}</a>
+        </div>
+        <div class="sign-grid">
+          <div>
+            <div class="sign-line"></div>
+            <p class="sign-label">Beneficiar — {{FIRMA_CLIENT}}, nume și semnătură</p>
+          </div>
+          <div>
+            <div class="sign-line"></div>
+            <p class="sign-label">Prestator — {{NUME_AGENTIE}}, nume și semnătură</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer>
+    {{NUME_AGENTIE}} · {{CUI_AGENTIE}} · {{EMAIL_AGENTIE}} · {{TELEFON_AGENTIE}}<br>
+    Document destinat exclusiv {{FIRMA_CLIENT}}. Ofertă {{NR_OFERTA}}, emisă {{DATA_OFERTEI}}.
+  </footer>
+</div>
+
+<div class="bar">
+  <div>
+    <small>Pachet complet</small>
+    <b>{{PRET_3}} €</b>
+  </div>
+  <a href="mailto:{{EMAIL_AGENTIE}}?subject=Acceptare%20ofert%C4%83%20{{NR_OFERTA}}">Accept oferta</a>
+</div>
+
+<script>
+(function(){
+  var pdf = document.getElementById('pdf');
+  if (pdf) pdf.addEventListener('click', function(){ window.print(); });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if (links.length && 'IntersectionObserver' in window) {
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var a = map[e.target.id];
+        if (!a) return;
+        if (e.isIntersecting) { links.forEach(function(l){ l.classList.remove('on'); }); a.classList.add('on'); }
+      });
+    }, { rootMargin: '-10% 0px -75% 0px' });
+    Object.keys(map).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  }
+
+  var found = (document.body.innerText.match(/\{\{[A-Z0-9_]+\}\}/g) || []);
+  var uniq = found.filter(function(v,i){ return found.indexOf(v) === i; });
+  if (uniq.length) {
+    var box = document.createElement('div');
+    box.id = 'todo';
+    var h = document.createElement('h4');
+    h.textContent = uniq.length + ' câmpuri necompletate';
+    var c = document.createElement('code');
+    c.textContent = uniq.slice(0, 10).join(' ') + (uniq.length > 10 ? ' …' : '');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = 'Ascunde';
+    b.addEventListener('click', function(){ box.remove(); });
+    box.appendChild(h); box.appendChild(c); box.appendChild(b);
+    document.body.appendChild(box);
+  }
+})();
+</script>
+</body>
+</html>

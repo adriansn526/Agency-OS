@@ -1,0 +1,261 @@
+.oferta-theme {
+  --paper: #EDEEEA;
+  --paper-2: #E3E5DE;
+  --ink: #12253A;
+  --ink-soft: #4B5D70;
+  --rule: rgba(18,37,58,.18);
+  --rule-strong: rgba(18,37,58,.42);
+  --signal: #F2C230;
+  --signal-ink: #12253A;
+  --brick: #8F4630;
+  --sans: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
+  --serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.65;
+  font-variant-numeric: oldstyle-nums;
+  min-height: 100vh;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .oferta-theme {
+    --paper: #0F1A24;
+    --paper-2: #17242F;
+    --ink: #E7EBE6;
+    --ink-soft: #9DACB9;
+    --rule: rgba(231,235,230,.18);
+    --rule-strong: rgba(231,235,230,.42);
+    --signal: #F2C230;
+    --signal-ink: #12253A;
+    --brick: #D98268;
+  }
+}
+html[data-theme="dark"] .oferta-theme {
+  --paper: #0F1A24;
+  --paper-2: #17242F;
+  --ink: #E7EBE6;
+  --ink-soft: #9DACB9;
+  --rule: rgba(231,235,230,.18);
+  --rule-strong: rgba(231,235,230,.42);
+  --signal: #F2C230;
+  --signal-ink: #12253A;
+  --brick: #D98268;
+}
+
+.oferta-theme img { max-width: 100%; }
+.oferta-theme a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.oferta-theme *:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.oferta-theme .wrap { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- cover ---------- */
+.oferta-theme .cover { padding: 34px 0 8px; }
+.oferta-theme .filebar {
+  display: flex; flex-wrap: wrap; gap: 6px 26px;
+  font-family: var(--sans); font-size: .78rem; font-weight: 500;
+  color: var(--ink-soft);
+  padding-bottom: 14px; border-bottom: 1px solid var(--rule-strong);
+}
+.oferta-theme .filebar b { font-weight: 600; color: var(--ink); }
+
+.oferta-theme .cover h1 {
+  font-family: var(--sans); font-weight: 700;
+  font-size: clamp(2.1rem, 6.2vw, 4rem);
+  line-height: 1.02; letter-spacing: -.025em;
+  margin: .55em 0 0; max-width: 15ch;
+}
+.oferta-theme .lede {
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  line-height: 1.5; max-width: 52ch; margin: 1rem 0 0; color: var(--ink-soft);
+}
+.oferta-theme .addressee {
+  font-family: var(--sans); font-size: .88rem; font-weight: 500;
+  margin: 1.6rem 0 0; color: var(--ink-soft);
+}
+.oferta-theme .addressee b { display: block; font-size: 1.05rem; font-weight: 600; color: var(--ink); letter-spacing: -.01em; }
+
+/* ---------- summary ---------- */
+.oferta-theme .summary {
+  background: var(--signal); color: var(--signal-ink);
+  margin: 38px 0 0; padding: 26px 24px 22px;
+}
+.oferta-theme .summary h2 {
+  font-family: var(--sans); font-size: 1.05rem; font-weight: 600;
+  margin: 0 0 18px; letter-spacing: -.01em;
+}
+.oferta-theme .prices {
+  display: grid; gap: 2px; background: rgba(18,37,58,.22);
+  border-top: 1px solid rgba(18,37,58,.22); border-bottom: 1px solid rgba(18,37,58,.22);
+}
+.oferta-theme .prices div {
+  background: var(--signal); padding: 12px 2px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+}
+.oferta-theme .prices span { font-family: var(--sans); font-size: .92rem; font-weight: 500; }
+.oferta-theme .prices b {
+  font-family: var(--sans); font-weight: 700; font-size: 1.22rem;
+  letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.oferta-theme .summary-note {
+  font-family: var(--sans); font-size: .8rem; margin: 16px 0 0;
+  color: rgba(18,37,58,.72); line-height: 1.5;
+}
+
+.oferta-theme .actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; }
+.oferta-theme .btn {
+  font-family: var(--sans); font-size: .9rem; font-weight: 600;
+  padding: 13px 22px; border: 1px solid var(--ink); cursor: pointer;
+  background: var(--ink); color: var(--paper); text-decoration: none; display: inline-block;
+}
+.oferta-theme .btn.ghost { background: transparent; color: var(--ink); }
+.oferta-theme .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- layout ---------- */
+.oferta-theme .body-grid { display: block; margin: 64px 0 0; }
+.oferta-theme .toc { display: none; }
+.oferta-theme main { max-width: 68ch; }
+
+@media (min-width: 960px) {
+  .oferta-theme .body-grid { display: grid; grid-template-columns: 200px 1fr; gap: 64px; align-items: start; }
+  .oferta-theme .toc {
+    display: block; position: sticky; top: 34px;
+    font-family: var(--sans); font-size: .83rem;
+  }
+  .oferta-theme .toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
+  .oferta-theme .toc a {
+    display: block; padding: 5px 0 5px 14px; margin-left: -1px;
+    color: var(--ink-soft); text-decoration: none; border-left: 1px solid transparent;
+  }
+  .oferta-theme .toc a:hover { color: var(--ink); }
+  .oferta-theme .toc a.on { color: var(--ink); font-weight: 600; border-left-color: var(--ink); }
+}
+
+/* ---------- sections ---------- */
+.oferta-theme section { margin: 0 0 56px; scroll-margin-top: 24px; }
+.oferta-theme section > h2 {
+  font-family: var(--sans); font-weight: 600;
+  font-size: clamp(1.35rem, 3vw, 1.75rem); letter-spacing: -.02em; line-height: 1.15;
+  margin: 0 0 18px; padding: 0 0 12px; border-bottom: 1px solid var(--rule-strong);
+  display: flex; gap: 14px; align-items: baseline;
+}
+.oferta-theme section > h2 i {
+  font-style: normal; font-size: .78rem; font-weight: 600; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums; flex: none;
+}
+.oferta-theme section p { margin: 0 0 1rem; }
+.oferta-theme section h3 {
+  font-family: var(--sans); font-size: 1.02rem; font-weight: 600;
+  letter-spacing: -.01em; margin: 1.8rem 0 .4rem;
+}
+
+.oferta-theme .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--rule); margin: 0 0 1.4rem; }
+.oferta-theme .stats div { background: var(--paper); padding: 14px 0; }
+.oferta-theme .stats b { display: block; font-family: var(--sans); font-weight: 700; font-size: 1.7rem; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.oferta-theme .stats span { font-family: var(--sans); font-size: .8rem; color: var(--ink-soft); }
+
+.oferta-theme .list { list-style: none; margin: 0 0 1rem; padding: 0; }
+.oferta-theme .list li { padding: 0 0 0 22px; margin: 0 0 .5rem; position: relative; }
+.oferta-theme .list li::before { content: ""; position: absolute; left: 0; top: .72em; width: 9px; height: 1px; background: var(--rule-strong); }
+.oferta-theme .list.no li::before { background: var(--brick); height: 1px; top: .72em; }
+
+/* ---------- packages ---------- */
+.oferta-theme .packs { display: grid; gap: 14px; margin: 0 0 1.6rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.oferta-theme .pack { border: 1px solid var(--rule-strong); padding: 20px 18px; display: flex; flex-direction: column; }
+.oferta-theme .pack.pick { border-color: var(--ink); border-width: 2px; position: relative; }
+.oferta-theme .pack-tag {
+  position: absolute; top: -1px; right: -1px; background: var(--ink); color: var(--paper);
+  font-family: var(--sans); font-size: .72rem; font-weight: 600; padding: 4px 10px;
+}
+.oferta-theme .pack h3 { margin: 0; font-size: 1.05rem; }
+.oferta-theme .pack .price {
+  font-family: var(--sans); font-weight: 700; font-size: 1.85rem; letter-spacing: -.025em;
+  font-variant-numeric: tabular-nums; margin: .35rem 0 .1rem;
+}
+.oferta-theme .pack .unit { font-family: var(--sans); font-size: .76rem; color: var(--ink-soft); margin: 0 0 14px; }
+.oferta-theme .pack ul { list-style: none; margin: 0; padding: 0; font-size: .95rem; }
+.oferta-theme .pack li { padding: 0 0 0 20px; position: relative; margin: 0 0 .45rem; }
+.oferta-theme .pack li::before { content: "✓"; position: absolute; left: 0; font-family: var(--sans); font-size: .85rem; color: var(--ink-soft); }
+
+.oferta-theme .scroll { overflow-x: auto; margin: 0 0 1.4rem; -webkit-overflow-scrolling: touch; }
+.oferta-theme table { border-collapse: collapse; width: 100%; min-width: 480px; font-family: var(--sans); font-size: .88rem; }
+.oferta-theme th, .oferta-theme td { text-align: left; padding: 11px 12px 11px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.oferta-theme thead th { font-weight: 600; border-bottom: 1px solid var(--rule-strong); white-space: nowrap; }
+.oferta-theme td.c, .oferta-theme th.c { text-align: center; padding-right: 0; width: 88px; }
+.oferta-theme tbody td:first-child { padding-right: 24px; }
+.oferta-theme .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- timeline ---------- */
+.oferta-theme .steps { list-style: none; margin: 0 0 1.4rem; padding: 0; counter-reset: s; }
+.oferta-theme .steps li {
+  counter-increment: s; padding: 0 0 22px 46px; position: relative;
+  border-left: 1px solid var(--rule); margin-left: 13px;
+}
+.oferta-theme .steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.oferta-theme .steps li::before {
+  content: counter(s); position: absolute; left: -13px; top: 0;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: var(--paper);
+  font-family: var(--sans); font-size: .78rem; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.oferta-theme .steps h3 { margin: 1px 0 .2rem; }
+.oferta-theme .steps p { margin: 0; font-size: .97rem; }
+.oferta-theme .steps .when { font-family: var(--sans); font-size: .78rem; color: var(--ink-soft); display: block; margin-top: .35rem; }
+
+.oferta-theme .note { border-left: 3px solid var(--signal); padding: 2px 0 2px 18px; margin: 0 0 1.2rem; }
+
+/* ---------- sign ---------- */
+.oferta-theme .sign { border-top: 2px solid var(--ink); margin: 0; padding: 26px 0 0; }
+.oferta-theme .sign-grid { display: grid; gap: 34px; margin: 28px 0 0; }
+@media (min-width: 600px) { .oferta-theme .sign-grid { grid-template-columns: 1fr 1fr; } }
+.oferta-theme .sign-line { border-bottom: 1px solid var(--rule-strong); height: 52px; }
+.oferta-theme .sign-label { font-family: var(--sans); font-size: .8rem; color: var(--ink-soft); margin: 8px 0 0; }
+
+.oferta-theme footer {
+  border-top: 1px solid var(--rule); margin: 72px 0 0; padding: 22px 0 120px;
+  font-family: var(--sans); font-size: .8rem; color: var(--ink-soft);
+}
+
+/* ---------- mobile bar ---------- */
+.oferta-theme .bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 11px 16px; font-family: var(--sans);
+}
+.oferta-theme .bar small { font-size: .74rem; opacity: .75; display: block; }
+.oferta-theme .bar b { font-size: .98rem; font-weight: 600; letter-spacing: -.01em; }
+.oferta-theme .bar a, .oferta-theme .bar button {
+  background: var(--signal); color: var(--signal-ink); text-decoration: none;
+  font-size: .86rem; font-weight: 600; padding: 10px 16px; white-space: nowrap; border: none; cursor: pointer;
+}
+.oferta-theme .bar button:disabled { opacity: 0.5; cursor: not-allowed; }
+@media (min-width: 960px) { .oferta-theme .bar { display: none; } }
+
+/* Inputs inside sign area */
+.oferta-theme .form-group { margin-bottom: 1rem; }
+.oferta-theme .form-group label { display: block; font-family: var(--sans); font-size: .8rem; font-weight: 600; margin-bottom: 4px; color: var(--ink); }
+.oferta-theme .form-group input { 
+  width: 100%; padding: 10px 12px; font-family: var(--sans); font-size: .95rem; 
+  border: 1px solid var(--rule-strong); background: var(--paper-2); color: var(--ink);
+}
+.oferta-theme .form-group input:focus { outline: 2px solid var(--ink); border-color: transparent; }
+
+.oferta-theme .error-msg { background: var(--brick); color: #fff; padding: 10px 14px; font-family: var(--sans); font-size: .85rem; font-weight: 600; margin-bottom: 1rem; }
+
+/* ---------- print ---------- */
+@media print {
+  .oferta-theme { --paper: #fff; --paper-2: #fff; --ink: #000; --ink-soft: #444; --rule: #ccc; --rule-strong: #888; }
+  .oferta-theme { background: #fff; font-size: 11pt; min-height: 0; }
+  .oferta-theme .toc, .oferta-theme .actions, .oferta-theme .bar, .oferta-theme .form-group, .oferta-theme .error-msg { display: none !important; }
+  .oferta-theme .body-grid { display: block; margin-top: 28px; }
+  .oferta-theme main { max-width: none; }
+  .oferta-theme .summary { border: 1px solid #000; background: #fff; color: #000; }
+  .oferta-theme .prices div { background: #fff; }
+  .oferta-theme section { margin-bottom: 26px; page-break-inside: avoid; }
+  .oferta-theme .pack, .oferta-theme .steps li { page-break-inside: avoid; }
+  .oferta-theme footer { padding-bottom: 0; }
+  .oferta-theme a { text-decoration: none; }
+}

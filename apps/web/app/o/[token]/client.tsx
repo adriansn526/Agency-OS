@@ -1,8 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { formatCurrency, cn } from "@/lib/utils"
-import { Check, CheckCircle2, Shield, Calendar, Package } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Archivo, Source_Serif_4 } from "next/font/google"
+import "./oferta.css"
+
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-archivo",
+})
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-source-serif",
+})
 
 export default function PublicOfferClient({
   delivery,
@@ -18,8 +30,16 @@ export default function PublicOfferClient({
   const [accepting, setAccepting] = useState(false)
   const [accepted, setAccepted] = useState(delivery.clientResponse === "accepted")
   const [error, setError] = useState("")
+  const [activeId, setActiveId] = useState("")
 
   const modules = Array.isArray(offer.modules) ? offer.modules : []
+  const generalBlocks = Array.isArray(offer.blocks) ? offer.blocks : []
+
+  // Ensure unique IDs for blocks
+  const blocksWithIds = generalBlocks.map((b: any, i: number) => ({
+    ...b,
+    htmlId: b.id || `s${i + 1}`
+  }))
 
   const handleAccept = async () => {
     if (!name.trim() || !email.trim()) {
@@ -53,159 +73,248 @@ export default function PublicOfferClient({
     }
   }
 
+  const printPdf = () => {
+    if (typeof window !== "undefined") {
+      window.print()
+    }
+  }
+
+  // Format Date logic
+  const validUntilStr = offer.validUntil 
+    ? new Date(offer.validUntil).toLocaleDateString("ro-RO", { year: "numeric", month: "long", day: "numeric" })
+    : "Nedefinit"
+    
+  const sentAtStr = delivery.sentAt 
+    ? new Date(delivery.sentAt).toLocaleDateString("ro-RO", { year: "numeric", month: "long", day: "numeric" })
+    : new Date().toLocaleDateString("ro-RO", { year: "numeric", month: "long", day: "numeric" })
+
+  // Intersection Observer for TOC
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id)
+          }
+        })
+      },
+      { rootMargin: "-10% 0px -75% 0px" }
+    )
+
+    blocksWithIds.forEach((b: any) => {
+      const el = document.getElementById(b.htmlId)
+      if (el) observer.observe(el)
+    })
+    
+    // Add sections that might not be in blocks
+    const extraSections = ["s-pachete", "acceptare"]
+    extraSections.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [blocksWithIds])
+
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-bold">
-              {companySettings?.legalName?.charAt(0) || offer.businessLine?.name?.charAt(0) || "A"}
-            </div>
-            <div>
-              <p className="text-sm font-bold leading-tight">{companySettings?.legalName || offer.businessLine?.name}</p>
-              <p className="text-[10px] text-muted-foreground leading-tight">Ofertă Comercială</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-bold text-primary">{formatCurrency(offer.value, offer.currency)}</p>
-            <p className="text-[10px] text-muted-foreground">{offer.number}</p>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12 space-y-8">
+    <div className={`oferta-theme ${archivo.variable} ${sourceSerif.variable}`}>
+      <div className="wrap">
         
-        {/* Intro */}
-        <section className="space-y-4">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Ofertă pentru {offer.entityName}</h1>
-          {offer.templateName && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-xs font-medium text-muted-foreground">
-              <Package size={14} />
-              {offer.templateName}
-            </div>
-          )}
-          <p className="text-muted-foreground max-w-2xl text-sm leading-relaxed">
-            Aceasta este propunerea noastră detaliată. Te rugăm să o analizezi cu atenție. Dacă ești de acord cu termenii și serviciile incluse, poți accepta oferta în secțiunea de mai jos.
-          </p>
-        </section>
-
-        {/* Services / Modules */}
-        <section className="space-y-4">
-          <h2 className="text-lg font-bold flex items-center gap-2">Servicii Incluse</h2>
-          <div className="grid gap-3">
-            {modules.map((mod: any, idx: number) => (
-              <div key={idx} className="bg-surface border border-border rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-bold text-sm">{mod.serviceName}</h3>
-                  {mod.blocks && mod.blocks.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {mod.blocks.map((b: any, bIdx: number) => (
-                        <li key={bIdx} className="text-xs text-muted-foreground flex items-start gap-1.5">
-                          <Check size={12} className="text-primary mt-0.5 flex-shrink-0" />
-                          <span>{b.title || "Detaliu serviciu"}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div className="text-right flex-shrink-0 bg-muted/50 p-3 rounded-xl border border-border/50">
-                  <p className="text-sm font-bold text-foreground">
-                    {formatCurrency(mod.price, offer.currency)}
-                    <span className="text-[10px] text-muted-foreground font-normal ml-1">
-                      {mod.pricingUnit === 'lunar' ? '/lună' : mod.pricingUnit === 'per_hour' ? '/oră' : ''}
-                    </span>
-                  </p>
-                  {mod.setupFee > 0 && (
-                    <p className="text-[10px] text-muted-foreground mt-0.5">+ {formatCurrency(mod.setupFee, offer.currency)} setup</p>
-                  )}
-                </div>
-              </div>
-            ))}
+        {/* Cover */}
+        <header className="cover">
+          <div className="filebar">
+            <div>Ofertă <b>{offer.number}</b></div>
+            <div>Emisă <b>{sentAtStr}</b></div>
+            <div>Valabilă până la <b>{validUntilStr}</b></div>
           </div>
+
+          <h1>{offer.templateName || "Propunere Comercială"}</h1>
           
-          <div className="bg-surface border-2 border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-sm">
-            <span className="font-bold text-muted-foreground">Total Estimativ</span>
-            <span className="text-xl font-bold text-primary">{formatCurrency(offer.value, offer.currency)}</span>
-          </div>
-        </section>
+          <p className="lede">
+            Aceasta este propunerea noastră detaliată. Te rugăm să o analizezi cu atenție.
+          </p>
 
-        {/* Action Area */}
-        <section className="pt-8 border-t border-border">
-          {accepted ? (
-            <div className="bg-success/10 border-2 border-success/20 rounded-2xl p-6 text-center space-y-3">
-              <CheckCircle2 size={32} className="text-success mx-auto" />
-              <h2 className="text-lg font-bold text-success">Oferta a fost acceptată!</h2>
-              <p className="text-sm text-success/80">
-                Îți mulțumim pentru confirmare. Echipa noastră a fost notificată și te vom contacta în scurt timp cu pașii următori.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-surface border border-border rounded-2xl p-6 md:p-8 space-y-6">
-              <div className="flex items-start gap-3 text-muted-foreground">
-                <Shield size={20} className="text-primary mt-1" />
-                <div className="space-y-1">
-                  <h3 className="font-bold text-foreground text-sm">Acceptă această ofertă</h3>
-                  <p className="text-xs leading-relaxed">
-                    Prin completarea datelor și apăsarea butonului de acceptare, confirmi că reprezinți compania <strong>{offer.entityName}</strong> și ești de acord cu implementarea serviciilor conform prețurilor de mai sus.
-                  </p>
-                </div>
+          <p className="addressee">
+            În atenția
+            <b>{offer.client?.contactPerson || offer.client?.companyName || offer.entityName} {offer.client?.companyName && offer.client.contactPerson ? `— ${offer.client.companyName}` : ''}</b>
+          </p>
+
+          {modules.length > 0 && (
+            <div className="summary">
+              <h2>Rezumat Pachete</h2>
+              <div className="prices">
+                {modules.map((m: any, idx: number) => (
+                  <div key={idx}>
+                    <span>{m.serviceName}</span>
+                    <b>{m.price} {offer.currency}</b>
+                  </div>
+                ))}
               </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-muted-foreground mb-1.5 block">Nume și Prenume *</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Ion Popescu"
-                    className="w-full px-3 py-2.5 text-sm bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-muted-foreground mb-1.5 block">Email *</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="ion@companie.ro"
-                    className="w-full px-3 py-2.5 text-sm bg-muted/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-              </div>
-
-              {error && (
-                <div className="text-xs text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-lg font-medium">
-                  {error}
-                </div>
-              )}
-
-              <button
-                onClick={handleAccept}
-                disabled={accepting}
-                className={cn(
-                  "w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2",
-                  accepting ? "bg-primary/50 text-primary-foreground cursor-wait" : "bg-primary text-primary-foreground hover:bg-primary-hover"
-                )}
-              >
-                {accepting ? "Se confirmă..." : "Acceptă Oferta Comercială"}
-              </button>
+              <p className="summary-note">Prețuri fără TVA. Detaliile fiecărui pachet sunt descrise mai jos.</p>
             </div>
           )}
-        </section>
 
-      </main>
-      
-      {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 text-center text-xs text-muted-foreground">
-        <p>© {new Date().getFullYear()} {companySettings?.legalName || offer.businessLine?.name}. Toate drepturile rezervate.</p>
-        <div className="flex justify-center gap-4 mt-2">
-          {companySettings?.cif && <span>CUI: {companySettings.cif}</span>}
-          {companySettings?.regCom && <span>Reg. Com: {companySettings.regCom}</span>}
+          <div className="actions">
+            {!accepted && (
+              <a className="btn" href="#acceptare">Accept oferta</a>
+            )}
+            <button className="btn ghost" type="button" onClick={printPdf}>Salvează ca PDF</button>
+          </div>
+        </header>
+
+        {/* Body Grid with TOC */}
+        <div className="body-grid">
+          <nav className="toc" aria-label="Cuprins">
+            <ol>
+              {blocksWithIds.map((b: any, idx: number) => (
+                <li key={b.htmlId}>
+                  <a href={`#${b.htmlId}`} className={activeId === b.htmlId ? "on" : ""}>
+                    {b.title || `Secțiunea ${idx + 1}`}
+                  </a>
+                </li>
+              ))}
+              {modules.length > 0 && (
+                <li>
+                  <a href="#s-pachete" className={activeId === "s-pachete" ? "on" : ""}>Pachete și investiție</a>
+                </li>
+              )}
+              <li>
+                <a href="#acceptare" className={activeId === "acceptare" ? "on" : ""}>Pentru a demara</a>
+              </li>
+            </ol>
+          </nav>
+
+          <main>
+            {/* Dynamic General Blocks */}
+            {blocksWithIds.map((block: any, idx: number) => {
+              const isFeatures = block.type === "features" || (block.data && block.data.categories)
+
+              return (
+                <section key={block.htmlId} id={block.htmlId}>
+                  <h2><i>{idx + 1}</i> {block.title}</h2>
+                  
+                  {isFeatures ? (
+                    block.data.categories.map((cat: any, cIdx: number) => (
+                      <div key={cIdx}>
+                        <h3>{cat.name}</h3>
+                        <ul className="list">
+                          {cat.items?.map((item: string, iIdx: number) => (
+                            <li key={iIdx}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))
+                  ) : (
+                    <div dangerouslySetInnerHTML={{ __html: block.data?.content || "" }} />
+                  )}
+                </section>
+              )
+            })}
+
+            {/* Modules / Packs section */}
+            {modules.length > 0 && (
+              <section id="s-pachete">
+                <h2><i>{blocksWithIds.length + 1}</i> Pachete și investiție</h2>
+                
+                <div className="packs">
+                  {modules.map((m: any, idx: number) => {
+                    const isRecommended = m.status === 'recommended' || (modules.length > 1 && idx === modules.length - 1)
+                    return (
+                      <div key={idx} className={`pack ${isRecommended ? 'pick' : ''}`}>
+                        {isRecommended && <span className="pack-tag">Recomandat</span>}
+                        <h3>{m.serviceName}</h3>
+                        <p className="price">{m.price} {offer.currency}</p>
+                        <p className="unit">{m.pricingUnit === 'lunar' ? 'pe lună' : m.pricingUnit === 'per_hour' ? 'pe oră' : 'preț fix'}</p>
+                        
+                        {m.blocks && m.blocks.length > 0 && (
+                          <ul>
+                            {m.blocks.map((b: any, bIdx: number) => (
+                              <li key={bIdx}>{b.title}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Acceptance Section */}
+            <section className="sign" id="acceptare">
+              <h2 style={{ border: 0, padding: 0 }}><i></i>Pentru a demara</h2>
+              
+              {accepted ? (
+                <div className="note" style={{ borderColor: 'var(--ink)' }}>
+                  <p><b>Oferta a fost acceptată.</b></p>
+                  <p>Îți mulțumim pentru confirmare. Un reprezentant te va contacta în scurt timp cu pașii următori.</p>
+                </div>
+              ) : (
+                <>
+                  <p>Confirmați pachetul ales completând datele de mai jos și apăsând butonul de acceptare.</p>
+                  
+                  <div className="sign-grid">
+                    <div className="form-group">
+                      <label>Nume și Prenume</label>
+                      <input 
+                        type="text" 
+                        value={name} 
+                        onChange={(e) => setName(e.target.value)} 
+                        placeholder="Ion Popescu"
+                        disabled={accepting}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Adresa de Email</label>
+                      <input 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        placeholder="ion@companie.ro"
+                        disabled={accepting}
+                      />
+                    </div>
+                  </div>
+                  
+                  {error && <div className="error-msg">{error}</div>}
+                  
+                  <div className="actions">
+                    <button 
+                      className="btn" 
+                      onClick={handleAccept} 
+                      disabled={accepting}
+                    >
+                      {accepting ? "Se confirmă..." : "Accept oferta"}
+                    </button>
+                    {companySettings?.phone && (
+                      <a className="btn ghost" href={`tel:${companySettings.phone}`}>{companySettings.phone}</a>
+                    )}
+                  </div>
+                </>
+              )}
+            </section>
+          </main>
         </div>
-      </footer>
+
+        {/* Footer */}
+        <footer>
+          {companySettings?.legalName || offer.businessLine?.name} · {companySettings?.cif ? `CUI: ${companySettings.cif}` : ''} {companySettings?.email ? `· ${companySettings.email}` : ''} {companySettings?.phone ? `· ${companySettings.phone}` : ''}<br/>
+          Document destinat exclusiv {offer.entityName}. Ofertă {offer.number}, emisă {sentAtStr}.
+        </footer>
+      </div>
+
+      {/* Mobile Bar */}
+      {!accepted && (
+        <div className="bar">
+          <div>
+            <small>Total estimativ</small>
+            <b>{offer.value} {offer.currency}</b>
+          </div>
+          <button onClick={() => document.getElementById("acceptare")?.scrollIntoView({ behavior: 'smooth' })}>
+            Accept oferta
+          </button>
+        </div>
+      )}
     </div>
   )
 }
