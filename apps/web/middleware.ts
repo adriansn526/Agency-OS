@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server"
 const publicPaths = [
   "/login",
   "/offer",
+  "/o/",
   "/contract/view",
   "/s/",              // short link redirects
   "/lp/",             // landing pages
