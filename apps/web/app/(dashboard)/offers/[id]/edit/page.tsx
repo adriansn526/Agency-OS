@@ -709,10 +709,11 @@ export default function OfferEditorPage() {
             {/* General Blocks (Intro, etc) */}
             <div className="space-y-4 mb-8">
               {generalBlocks.length > 0 && <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">Conținut General</h3>}
-              {generalBlocks.map(block => (
+              {generalBlocks.map((block, idx) => (
                 <EditableBlock
                   key={block.id}
                   block={block}
+                  idx={idx}
                   isEditing={editingBlockId === block.id}
                   onStartEdit={() => setEditingBlockId(block.id)}
                   onStopEdit={() => setEditingBlockId(null)}
@@ -726,6 +727,35 @@ export default function OfferEditorPage() {
                     setGeneralBlocks(prev => prev.filter(b => b.id !== block.id))
                     setEditingBlockId(null)
                   }}
+                  onMoveUp={() => {
+                    setGeneralBlocks(prev => {
+                      const newArr = [...prev];
+                      [newArr[idx - 1], newArr[idx]] = [newArr[idx], newArr[idx - 1]];
+                      return newArr;
+                    });
+                  }}
+                  onMoveDown={() => {
+                    setGeneralBlocks(prev => {
+                      const newArr = [...prev];
+                      [newArr[idx], newArr[idx + 1]] = [newArr[idx + 1], newArr[idx]];
+                      return newArr;
+                    });
+                  }}
+                  onInsertBelow={(type) => {
+                    const newId = `gen-${Date.now()}`;
+                    const newBlock = type === 'text' 
+                      ? { id: newId, type: 'text', title: 'Text Nou', data: { content: '' } }
+                      : { id: newId, type: 'features', title: 'Listă Nouă', data: { categories: [{ name: 'Categorie', items: ['Item 1'] }] } };
+                    
+                    setGeneralBlocks(prev => {
+                      const newArr = [...prev];
+                      newArr.splice(idx + 1, 0, newBlock as any);
+                      return newArr;
+                    });
+                    setEditingBlockId(newId);
+                  }}
+                  isFirst={idx === 0}
+                  isLast={idx === generalBlocks.length - 1}
                 />
               ))}
 
