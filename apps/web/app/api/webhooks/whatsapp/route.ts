@@ -35,16 +35,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: 'ignored', reason: 'group message or empty' });
     }
 
-    // 1. Detect Domain from Message Text
+    // 1. Detect Domain from Message Text or URL
     let domain = "WhatsApp"; // Default source
+    
+    const url = new URL(req.url);
+    const sessionParam = url.searchParams.get('session');
 
     // Extract domain (e.g., inchideriterase.ro) from text using a regex
     const domainMatch = messageText.match(/([a-zA-Z0-9-]+\.(ro|com|net|org|eu))/i);
     if (domainMatch && domainMatch[1]) {
       domain = domainMatch[1].toLowerCase();
+    } else if (sessionParam) {
+      domain = sessionParam; // Use session name as domain identifier if provided
     }
 
-    // Always use the default Business Line (e.g. asns.ro or the first one)
+    // Always use the default Business Line (e.g. asns.ro, Servicii Agentie or the first one)
     let businessLine = await db.businessLine.findFirst({ where: { domain: "asns.ro" } });
     if (!businessLine) {
       businessLine = await db.businessLine.findFirst(); // Absolute fallback
