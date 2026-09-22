@@ -81,14 +81,17 @@ export async function POST(req: Request) {
     }
 
     // 1. Create a Lead in the CRM
+    const cleanPhone = senderPhone.replace('@c.us', '');
+    const fallbackName = message._data?.notifyName || cleanPhone;
+
     const newLead = await db.lead.create({
       data: {
         businessLineId: businessLine.id,
         entityType: 'pf',
-        companyName: 'WhatsApp User',
-        contactPerson: message._data?.notifyName || 'WhatsApp User',
+        companyName: fallbackName,
+        contactPerson: fallbackName,
         email: 'whatsapp@whatsapp.com',
-        phone: senderPhone.replace('@c.us', ''),
+        phone: cleanPhone,
         source: 'WhatsApp',
         sourcePage: 'OpenWA Webhook',
         sourceDomain: domain,
