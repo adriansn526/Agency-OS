@@ -80,25 +80,44 @@ export async function POST(req: Request) {
       console.error(`[WhatsApp Webhook] No agent phone configured for domain ${domain}.`);
     }
 
-    // 1. Create a Lead in the CRM
+    // 1. Find or Create Lead in the CRM
     const cleanPhone = senderPhone.replace('@c.us', '');
     const fallbackName = message._data?.notifyName || cleanPhone;
-
-    const newLead = await db.lead.create({
-      data: {
-        businessLineId: businessLine.id,
-        entityType: 'pf',
-        companyName: fallbackName,
-        contactPerson: fallbackName,
-        email: 'whatsapp@whatsapp.com',
-        phone: cleanPhone,
-        source: 'WhatsApp',
-        sourcePage: 'OpenWA Webhook',
-        sourceDomain: domain,
-        status: 'nou',
-        notes: `Mesaj original WhatsApp:\n${messageText}`,
-      }
+    
+    let targetLead = await db.lead.findFirst({
+      where: { phone: cleanPhone },
+      orderBy: { id: 'desc' } // Get the most recent if multiple exist
     });
+
+    const timestamp = new Date().toLocaleString('ro-RO', { timeZone: 'Europe/Bucharest' });
+    const formattedMessage = `\n\n[${timestamp}] Mesaj WhatsApp:\n${messageText}`;
+
+    if (targetLead) {
+      // Append message to existing lead
+      targetLead = await db.lead.update({
+        where: { id: targetLead.id },
+        data: {
+          notes: (targetLead.notes || '') + formattedMessage,
+        }
+      });
+    } else {
+      // Create new lead
+      targetLead = await db.lead.create({
+        data: {
+          businessLineId: businessLine.id,
+          entityType: 'pf',
+          companyName: fallbackName,
+          contactPerson: fallbackName,
+          email: 'whatsapp@whatsapp.com',
+          phone: cleanPhone,
+          source: 'WhatsApp',
+          sourcePage: 'OpenWA Webhook',
+          sourceDomain: domain,
+          status: 'nou',
+          notes: `[${timestamp}] Mesaj inițial WhatsApp:\n${messageText}`,
+        }
+      });
+    }
 
     // 2. Send Alert to Sales Agent(s)
     if (agentPhone) {
@@ -110,7 +129,7 @@ export async function POST(req: Request) {
       }
     }
 
-    return NextResponse.json({ status: 'success', leadId: newLead.id });
+    return NextResponse.json({ status: 'success', leadId: targetLead.id });
 
   } catch (error) {
     console.error("[WhatsApp Webhook] Error processing webhook:", error);
