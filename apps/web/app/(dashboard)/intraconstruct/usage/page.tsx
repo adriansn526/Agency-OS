@@ -75,6 +75,7 @@ const providerIcons: Record<string, { icon: React.ReactNode; color: string; labe
   openai: { icon: <Bot size={18} />, color: "text-emerald-400", label: "OpenAI" },
   twilio: { icon: <Phone size={18} />, color: "text-red-400", label: "Twilio" },
   gemini: { icon: <Sparkles size={18} />, color: "text-blue-400", label: "Gemini" },
+  elevenlabs: { icon: <Bot size={18} />, color: "text-violet-400", label: "ElevenLabs" },
 }
 
 const sourceLabels: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -149,7 +150,17 @@ function ProviderCard({ provider }: { provider: ProviderCost }) {
         </div>
       </div>
 
-      {provider.source === "balance" && !provider.details.periodSpend ? (
+      {provider.provider === "elevenlabs" && provider.source === "balance" ? (
+        <div>
+          <p className="text-lg font-bold text-foreground tabular-nums">
+            {((provider.details.charsUsed as number) || 0).toLocaleString()} <span className="text-[10px] text-muted-foreground font-normal">/ {((provider.details.charsLimit as number) || 0).toLocaleString()} chars</span>
+          </p>
+          <p className="text-[10px] text-muted-foreground mt-1">Caractere utilizate vs limită abonament</p>
+          {provider.details.error && (
+            <p className="text-[10px] text-amber-400 mt-2">⚠ {provider.details.error as string}</p>
+          )}
+        </div>
+      ) : provider.source === "balance" && !provider.details.periodSpend ? (
         <div>
           <p className="text-lg font-bold text-foreground tabular-nums">
             ${(provider.details.balance as number)?.toFixed(2) || "0.00"}

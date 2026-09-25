@@ -250,18 +250,84 @@ export function estimateFromTokens(
 }
 
 /**
+ * Fetch ElevenLabs costs/usage.
+ */
+export async function fetchElevenLabsCosts(
+  startDate: Date,
+  endDate: Date
+): Promise<ProviderCostBreakdown> {
+  const apiKey = process.env.ELEVENLABS_API_KEY || ""
+  
+  if (!apiKey) {
+    return {
+      provider: "elevenlabs",
+      totalUsd: 0,
+      totalEur: 0,
+      source: "balance",
+      details: { error: "ELEVENLABS_API_KEY not configured" },
+    }
+  }
+
+  try {
+    const res = await fetch("https://api.elevenlabs.io/v1/user", {
+      headers: { "xi-api-key": apiKey },
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return {
+        provider: "elevenlabs",
+        totalUsd: 0,
+        totalEur: 0,
+        source: "estimated",
+        details: { error: `ElevenLabs API returned ${res.status}` },
+      }
+    }
+
+    const data = await res.json()
+    const sub = data.subscription || {}
+    
+    // Calculate estimated cost (e.g., $0.30 per 1000 characters over limit or based on plan)
+    // For now we just show the usage balance
+    const charsUsed = sub.character_count || 0
+    const charsLimit = sub.character_limit || 0
+    
+    return {
+      provider: "elevenlabs",
+      totalUsd: 0, // Hard to get exact date-range cost from this endpoint, so we return 0 and show balance info
+      totalEur: 0,
+      source: "balance",
+      details: {
+        balance: 0, // No direct balance
+        charsUsed,
+        charsLimit,
+      },
+    }
+  } catch (err: any) {
+    return {
+      provider: "elevenlabs",
+      totalUsd: 0,
+      totalEur: 0,
+      source: "balance",
+      details: { error: err.message },
+    }
+  }
+}
+
+/**
  * Fetch all provider costs for a given period.
  */
 export async function fetchAllProviderCosts(
   startDate: Date,
   endDate: Date
 ): Promise<ProviderCostReport> {
-  const [openai, twilio] = await Promise.all([
+  const [openai, twilio, elevenlabs] = await Promise.all([
     fetchOpenAICosts(startDate, endDate),
     fetchTwilioCosts(startDate, endDate),
+    fetchElevenLabsCosts(startDate, endDate),
   ])
 
-  const providers = [openai, twilio]
+  const providers = [openai, twilio, elevenlabs]
   const totalCostUsd = providers.reduce((sum, p) => sum + p.totalUsd, 0)
 
   return {

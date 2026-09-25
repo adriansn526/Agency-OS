@@ -19,6 +19,23 @@ export async function GET(req: Request, { params }: RouteParams) {
     }
 
     const { id } = await params
+    
+    // Check if it's a dedicated Single-Tenant instance
+    const db = (await import("@repo/db")).db
+    const instance = await db.tenantInstance.findUnique({ where: { tenantId: id } })
+    
+    if (instance && instance.apiEndpoint && instance.internalApiKey) {
+      // Proxy dynamically to the dedicated server
+      const url = `${instance.apiEndpoint}/api/internal/tenants/${encodeURIComponent(id)}`
+      const res = await fetch(url, {
+        headers: { "x-internal-api-key": instance.internalApiKey }
+      })
+      if (!res.ok) throw new Error(`Dedicated ERP returned ${res.status}`)
+      const data = await res.json()
+      return NextResponse.json(data)
+    }
+
+    // Otherwise proxy to the Shared server
     const data = await icApi.getTenant(id)
     return NextResponse.json(data)
   } catch (error: any) {
