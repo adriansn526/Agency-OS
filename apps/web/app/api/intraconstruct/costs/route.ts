@@ -11,6 +11,7 @@ import {
   estimateFromTokens,
 } from "@/lib/integrations/provider-costs"
 import { icApi } from "@/lib/integrations/intraconstruct"
+import { db } from "@repo/db"
 
 // Plan display info
 const PLAN_INFO: Record<string, { label: string; monthlyEur: number; onetimeEur?: number }> = {
@@ -54,10 +55,8 @@ export async function GET(req: Request) {
     // 2.1 Fetch Dedicated Tenants from Agency OS Database (like Aeroduct)
     let dedicatedTenants: any[] = []
     try {
-      // Import dynamic pentru a nu strica alte module
-      const { db } = await import("@repo/db")
       const instances = await db.tenantInstance.findMany({
-        where: { deploymentType: "dedicated" }
+        where: { deploymentType: { not: "shared" } }
       })
       
       dedicatedTenants = instances.map(inst => ({
