@@ -43,16 +43,39 @@ export async function GET(req: Request) {
     // 1. Fetch real provider costs
     const providerCosts = await fetchAllProviderCosts(startDate, endDate)
 
-    // 2. Fetch tenant usage breakdown from ERP
+    // 2. Fetch tenant usage breakdown from ERP (Shared Server)
     let tenantData: { tenants: any[] } = { tenants: [] }
     try {
       tenantData = await icApi.getTenants()
     } catch (err: any) {
-      console.error("[costs] Failed to fetch tenants:", err.message)
+      console.error("[costs] Failed to fetch shared tenants:", err.message)
     }
 
+    // 2.1 Fetch Dedicated Tenants from Agency OS Database (like Aeroduct)
+    let dedicatedTenants: any[] = []
+    try {
+      // Import dynamic pentru a nu strica alte module
+      const { db } = await import("@repo/db")
+      const instances = await db.tenantInstance.findMany({
+        where: { deploymentType: "dedicated" }
+      })
+      
+      dedicatedTenants = instances.map(inst => ({
+        id: inst.tenantSlug,
+        name: inst.tenantName,
+        slug: inst.tenantSlug,
+        plan: "enterprise",
+        status: "active",
+        usage: { todayTokens: 0, monthTokens: 0, monthCostUsd: 0 } // Or we fetch from their dedicated API
+      }))
+    } catch (err: any) {
+      console.error("[costs] Failed to fetch dedicated tenants:", err.message)
+    }
+
+    const allTenants = [...tenantData.tenants, ...dedicatedTenants]
+
     // 3. Calculate per-tenant estimated costs from their token usage
-    const tenantCosts = tenantData.tenants.map((t: any) => {
+    const tenantCosts = allTenants.map((t: any) => {
       const usage = t.usage || { todayTokens: 0, monthTokens: 0, monthCostUsd: 0 }
       const estimatedCostUsd = usage.monthCostUsd || 0
       const estimatedCostEur = Math.round(estimatedCostUsd * 0.92 * 100) / 100
