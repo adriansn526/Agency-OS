@@ -38,10 +38,10 @@
   --color-info: hsl(199 89% 48%);
   --color-info-soft: hsl(199 89% 95%);
 
-  --color-sidebar-bg: hsl(224 71% 4%);
-  --color-sidebar-fg: hsl(220 9% 70%);
-  --color-sidebar-fg-active: hsl(0 0% 100%);
-  --color-sidebar-border: hsl(225 10% 12%);
+  --color-sidebar-bg: hsl(0 0% 99%);
+  --color-sidebar-fg: hsl(220 9% 46%);
+  --color-sidebar-fg-active: hsl(224 71% 4%);
+  --color-sidebar-border: hsl(220 13% 91%);
   --color-sidebar-accent: hsl(217 91% 60%);
 
   /* --- Radii --- */

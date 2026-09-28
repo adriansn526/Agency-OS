@@ -42,12 +42,14 @@ export function BusinessLineProvider({ children }: { children: ReactNode }) {
         if (json.data && Array.isArray(json.data)) {
           const dbLines: BusinessLine[] = json.data.map((dbBl: any) => ({
             id: dbBl.id,
+            slug: dbBl.slug || dbBl.name.toLowerCase().replace(/\s+/g, '-'),
             name: dbBl.name,
             shortName: dbBl.name,
             icon: dbBl.icon || "🏢",
             color: dbBl.color || "#2563eb",
             bgClass: "bg-muted", 
             textClass: "text-foreground",
+            managesAccounts: dbBl.managesAccounts || false,
             entityTypes: dbBl.config?.entityTypes || [],
             projectTemplates: dbBl.config?.projectTemplates || [],
             offerTemplates: dbBl.config?.offerTemplates || [],

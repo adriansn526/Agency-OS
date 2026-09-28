@@ -27,6 +27,7 @@ model BusinessLine {
   color              String
   domain             String?
   isActive           Boolean             @default(true)
+  managesAccounts    Boolean             @default(false)
   config             Json
   createdAt          DateTime            @default(now())
   clients            Client[]

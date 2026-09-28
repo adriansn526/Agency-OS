@@ -66,6 +66,8 @@ export interface BusinessLine {
   color: string
   bgClass: string
   textClass: string
+  slug?: string
+  managesAccounts?: boolean
   entityTypes: EntityType[]
   projectTemplates: ProjectTemplate[]     // ARRAY — multiple per BL
   offerTemplates: OfferTemplate[]         // Offer templates

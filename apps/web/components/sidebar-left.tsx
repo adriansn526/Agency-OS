@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { useBusinessLine } from "@/components/business-line-context"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -143,6 +144,23 @@ const settingsModules: NavItem[] = [
 export function SidebarLeft() {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
+  const { lines } = useBusinessLine()
+
+  const dynamicPlatformModules = useMemo(() => {
+    const platforms = lines.filter((l) => l.managesAccounts)
+    if (platforms.length === 0) return platformModules // fallback
+    
+    return platforms.map((p) => ({
+      title: p.name,
+      href: `/${p.slug}`,
+      icon: HardHat, // fallback icon since we can't easily resolve string to lucide here without the map, or we could just use a generic icon like Building2
+      children: [
+        { title: "Dashboard", href: `/${p.slug}`, icon: LayoutDashboard },
+        { title: "Tenanți", href: `/${p.slug}/tenants`, icon: Building2 },
+        { title: "AI Usage", href: `/${p.slug}/usage`, icon: Activity },
+      ]
+    }))
+  }, [lines])
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/"
@@ -264,7 +282,7 @@ export function SidebarLeft() {
       <nav className="flex-1 overflow-y-auto py-2 space-y-0.5">
         {renderSection(mainModules)}
         {renderSection(coreModules, "Core")}
-        {renderSection(platformModules, "Platforme")}
+        {dynamicPlatformModules.length > 0 && renderSection(dynamicPlatformModules, "Platforme")}
         {renderSection(secondaryModules, "Secundar")}
         {renderSection(advancedModules, "Avansat")}
       </nav>

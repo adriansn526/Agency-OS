@@ -100,7 +100,7 @@ export function CommandPalette() {
 
   const allResults = useMemo(() => buildSearchIndex(), [])
 
-  // Keyboard shortcut: /
+  // Keyboard shortcuts: / or Cmd+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // / to open (only when not in an input)
@@ -108,14 +108,29 @@ export function CommandPalette() {
         e.preventDefault()
         setOpen(true)
       }
+      
+      // Cmd+K to open
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault()
+        setOpen(true)
+      }
+
       // Escape to close
       if (e.key === "Escape" && open) {
         setOpen(false)
         setQuery("")
       }
     }
+    
+    const handleCustomOpen = () => setOpen(true)
+
     window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
+    window.addEventListener("open-command-palette", handleCustomOpen)
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("open-command-palette", handleCustomOpen)
+    }
   }, [open])
 
   useEffect(() => {

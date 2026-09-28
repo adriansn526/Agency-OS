@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useBusinessLine } from "@/components/business-line-context"
 import { cn } from "@/lib/utils"
-import { ChevronDown, Search, Check } from "lucide-react"
+import { ChevronDown, Search, Check, BarChart3, Building2, HardHat, Code, LayoutDashboard, Briefcase, FileText, Zap, UtensilsCrossed, Settings, Megaphone } from "lucide-react"
 
 /* ============================================================
    ADAPTIVE SWITCHER
@@ -12,6 +12,32 @@ import { ChevronDown, Search, Check } from "lucide-react"
    8+ → Dropdown cu grupare + search
    ============================================================ */
 
+const iconMap: Record<string, React.ElementType> = {
+  "BarChart3": BarChart3,
+  "Building2": Building2,
+  "HardHat": HardHat,
+  "Code": Code,
+  "LayoutDashboard": LayoutDashboard,
+  "Briefcase": Briefcase,
+  "FileText": FileText,
+  "Zap": Zap,
+  "UtensilsCrossed": UtensilsCrossed,
+  "Settings": Settings,
+  "Megaphone": Megaphone,
+}
+
+function resolveIcon(iconString: string, fallback: React.ElementType = LayoutDashboard) {
+  if (!iconString) return fallback
+  if (iconMap[iconString]) return iconMap[iconString]
+  
+  // Try to map emojis if any legacy data exists
+  if (iconString === "📊") return BarChart3
+  if (iconString === "🏗️") return HardHat
+  if (iconString === "🍕") return UtensilsCrossed
+  if (iconString === "📋") return FileText
+  return fallback
+}
+
 export function BusinessLineSwitcher({ compact = false }: { compact?: boolean }) {
   const { activeLineId, setActiveLineId, lines } = useBusinessLine()
 
@@ -19,7 +45,7 @@ export function BusinessLineSwitcher({ compact = false }: { compact?: boolean })
     {
       id: "all" as const,
       label: "Toate",
-      icon: "📊",
+      icon: "BarChart3",
       bgClass: "bg-muted",
       textClass: "text-foreground",
     },
@@ -32,14 +58,8 @@ export function BusinessLineSwitcher({ compact = false }: { compact?: boolean })
     })),
   ]
 
-  // Total = business lines + "Toate"
-  const totalCount = allOptions.length
-
-  if (totalCount <= 7) {
-    return <TabsSwitcher options={allOptions} activeId={activeLineId} onSelect={setActiveLineId} />
-  }
-
-  return <DropdownSwitcher options={allOptions} activeId={activeLineId} onSelect={setActiveLineId} grouped={totalCount > 8} />
+  // Always use DropdownSwitcher to save space in header
+  return <DropdownSwitcher options={allOptions} activeId={activeLineId} onSelect={setActiveLineId} grouped={allOptions.length > 8} />
 }
 
 /* ─── Tab-uri Inline ─────────────────────────── */
@@ -65,6 +85,7 @@ function TabsSwitcher({
     <div className="flex items-center gap-0.5 bg-muted/60 rounded-lg p-0.5 border border-border/50">
       {options.map((opt) => {
         const isActive = activeId === opt.id
+        const Icon = resolveIcon(opt.icon)
         return (
           <button
             key={opt.id}
@@ -75,8 +96,9 @@ function TabsSwitcher({
                 ? "bg-surface text-foreground shadow-sm border border-border/50"
                 : "text-muted-foreground hover:text-foreground hover:bg-surface/50"
             )}
+            title={opt.label}
           >
-            <span className="text-sm leading-none">{opt.icon}</span>
+            <Icon size={14} className="flex-shrink-0" />
             <span className="hidden sm:inline">{opt.label}</span>
           </button>
         )
@@ -115,6 +137,8 @@ function DropdownSwitcher({
     ? options.filter((o) => o.label.toLowerCase().includes(search.toLowerCase()))
     : options
 
+  const ActiveIcon = resolveIcon(active.icon)
+
   return (
     <div className="relative" ref={ref}>
       <button
@@ -124,9 +148,9 @@ function DropdownSwitcher({
           "bg-muted/60 border-border/50 hover:bg-muted text-foreground"
         )}
       >
-        <span className="text-sm leading-none">{active.icon}</span>
-        <span>{active.label}</span>
-        <ChevronDown size={12} className={cn("transition-transform", open && "rotate-180")} />
+        <ActiveIcon size={14} className="flex-shrink-0" />
+        <span className="hidden sm:inline">{active.label}</span>
+        <ChevronDown size={12} className={cn("transition-transform flex-shrink-0", open && "rotate-180")} />
       </button>
 
       {open && (
@@ -163,9 +187,12 @@ function DropdownSwitcher({
                     : "text-foreground hover:bg-muted/50"
                 )}
               >
-                <span className="text-sm leading-none">{opt.icon}</span>
-                <span className="flex-1 text-left">{opt.label}</span>
-                {activeId === opt.id && <Check size={12} className="text-primary" />}
+                {(() => {
+                  const OptIcon = resolveIcon(opt.icon)
+                  return <OptIcon size={14} className="flex-shrink-0" />
+                })()}
+                <span className="flex-1 text-left truncate">{opt.label}</span>
+                {activeId === opt.id && <Check size={12} className="text-primary flex-shrink-0" />}
               </button>
             ))}
             {filtered.length === 0 && (
@@ -189,7 +216,7 @@ export function EntityTypeSelector() {
   if (!activeLine || !hasMultipleTypes) return null
 
   const options = [
-    { id: "all", label: "Toate", icon: "📋" },
+    { id: "all", label: "Toate", icon: "FileText" },
     ...entityTypes.map((et) => ({
       id: et.id,
       label: et.namePlural,
@@ -201,6 +228,7 @@ export function EntityTypeSelector() {
     <div className="flex items-center gap-0.5 bg-muted/40 rounded-lg p-0.5">
       {options.map((opt) => {
         const isActive = activeEntityTypeId === opt.id
+        const OptIcon = resolveIcon(opt.icon)
         return (
           <button
             key={opt.id}
@@ -212,7 +240,7 @@ export function EntityTypeSelector() {
                 : "text-muted-foreground hover:text-foreground hover:bg-surface/30"
             )}
           >
-            <span className="text-xs leading-none">{opt.icon}</span>
+            <OptIcon size={12} className="flex-shrink-0" />
             <span>{opt.label}</span>
           </button>
         )
@@ -238,7 +266,10 @@ export function BusinessLineBadge({ lineId }: { lineId: string }) {
         line.textClass
       )}
     >
-      <span className="leading-none">{line.icon}</span>
+      {(() => {
+        const LineIcon = resolveIcon(line.icon)
+        return <LineIcon size={10} className="flex-shrink-0" />
+      })()}
       <span>{line.shortName}</span>
     </span>
   )
@@ -261,12 +292,18 @@ export function EntityBadge({ lineId, entityTypeId }: { lineId: string; entityTy
           line.textClass
         )}
       >
-        <span className="leading-none">{line.icon}</span>
+        {(() => {
+          const LineIcon = resolveIcon(line.icon)
+          return <LineIcon size={10} className="flex-shrink-0" />
+        })()}
         <span>{line.shortName}</span>
       </span>
       {et && line.entityTypes.length > 1 && (
         <span className="inline-flex items-center gap-0.5 px-1 py-0.5 text-[9px] font-medium rounded bg-muted text-muted-foreground">
-          {et.icon} {et.name}
+          {(() => {
+            const EtIcon = resolveIcon(et.icon)
+            return <EtIcon size={9} className="flex-shrink-0" />
+          })()} {et.name}
         </span>
       )}
     </div>
