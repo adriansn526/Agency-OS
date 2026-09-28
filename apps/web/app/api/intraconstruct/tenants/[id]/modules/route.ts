@@ -14,11 +14,27 @@ interface RouteParams {
 export async function GET(req: Request, { params }: RouteParams) {
   try {
     const session = await auth()
-    if (!session?.user?.id || session.user.role !== "admin") {
+    if (!session?.user?.id || (session.user as any).role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const { id } = await params
+    
+    // Check if it's a dedicated Single-Tenant instance
+    const db = (await import("@repo/db")).db
+    const instance = await db.tenantInstance.findUnique({ where: { tenantId: id } })
+    
+    if (instance && instance.apiEndpoint && instance.internalApiKey) {
+      // Proxy dynamically to the dedicated server
+      const url = `${instance.apiEndpoint}/api/internal/tenants/${encodeURIComponent(id)}/modules`
+      const res = await fetch(url, {
+        headers: { "x-internal-api-key": instance.internalApiKey }
+      })
+      if (!res.ok) throw new Error(`Dedicated ERP returned ${res.status}`)
+      const data = await res.json()
+      return NextResponse.json(data)
+    }
+
     const data = await icApi.getModules(id)
     return NextResponse.json(data)
   } catch (error: any) {
@@ -34,7 +50,7 @@ export async function GET(req: Request, { params }: RouteParams) {
 export async function PATCH(req: Request, { params }: RouteParams) {
   try {
     const session = await auth()
-    if (!session?.user?.id || session.user.role !== "admin") {
+    if (!session?.user?.id || (session.user as any).role !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -46,6 +62,26 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         { error: "Body must contain 'updates' array" },
         { status: 400 }
       )
+    }
+
+    // Check if it's a dedicated Single-Tenant instance
+    const db = (await import("@repo/db")).db
+    const instance = await db.tenantInstance.findUnique({ where: { tenantId: id } })
+    
+    if (instance && instance.apiEndpoint && instance.internalApiKey) {
+      // Proxy dynamically to the dedicated server
+      const url = `${instance.apiEndpoint}/api/internal/tenants/${encodeURIComponent(id)}/modules`
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { 
+          "x-internal-api-key": instance.internalApiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+      if (!res.ok) throw new Error(`Dedicated ERP returned ${res.status}`)
+      const data = await res.json()
+      return NextResponse.json(data)
     }
 
     const data = await icApi.updateModules(id, body.updates)

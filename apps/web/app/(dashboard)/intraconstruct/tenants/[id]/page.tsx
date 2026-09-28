@@ -143,13 +143,14 @@ function formatDateShort(date: string | null): string {
    Tabs
    ============================================================ */
 
-type Tab = "overview" | "modules" | "users" | "backups" | "migrate"
+type Tab = "overview" | "modules" | "users" | "backups" | "migrate" | "credite"
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Prezentare", icon: <Building2 size={14} /> },
   { id: "modules", label: "Module", icon: <Package size={14} /> },
   { id: "users", label: "Utilizatori", icon: <Users size={14} /> },
   { id: "backups", label: "Backups", icon: <Archive size={14} /> },
+  { id: "credite", label: "Credite", icon: <Zap size={14} /> },
   { id: "migrate", label: "Migrare", icon: <Rocket size={14} /> },
 ]
 
@@ -170,6 +171,10 @@ export default function TenantDetailPage() {
   const [saving, setSaving] = useState(false)
   const [editPlan, setEditPlan] = useState<string | null>(null)
   const [editStatus, setEditStatus] = useState<string | null>(null)
+
+  // Credits state
+  const [creditsData, setCreditsData] = useState<any>(null)
+  const [creditsLoading, setCreditsLoading] = useState(false)
 
   // Health & Backups state
   const [health, setHealth] = useState<any>(null)
@@ -265,6 +270,21 @@ export default function TenantDetailPage() {
   useEffect(() => {
     if (activeTab === "backups") fetchBackups()
   }, [activeTab, fetchBackups])
+
+  // ─── Fetch Credits ───
+  const fetchCredits = useCallback(async () => {
+    setCreditsLoading(true)
+    try {
+      const res = await fetch(`/api/intraconstruct/tenants/${tenantId}/credits`)
+      if (res.ok) setCreditsData(await res.json())
+    } catch {} finally {
+      setCreditsLoading(false)
+    }
+  }, [tenantId])
+
+  useEffect(() => {
+    if (activeTab === "credite" && !creditsData) fetchCredits()
+  }, [activeTab, creditsData, fetchCredits])
 
   // ─── Trigger Manual Backup ───
   const handleBackup = async () => {
@@ -453,9 +473,9 @@ export default function TenantDetailPage() {
             ) : (
               <button
                 onClick={() => setEditPlan(tenant.plan)}
-                className={cn("px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase transition-all hover:opacity-80", plan.bg, plan.border, plan.color)}
+                className={cn("px-3 py-1.5 rounded-lg border text-[10px] font-bold uppercase transition-all hover:opacity-80", plan?.bg, plan?.border, plan?.color)}
               >
-                {plan.label}
+                {plan?.label}
               </button>
             )}
 
@@ -486,8 +506,8 @@ export default function TenantDetailPage() {
                 onClick={() => setEditStatus(tenant.status)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/50 text-xs hover:border-border transition-all"
               >
-                <div className={cn("w-2 h-2 rounded-full", status.bg)} />
-                <span className={cn("font-medium", status.color)}>{status.label}</span>
+                <div className={cn("w-2 h-2 rounded-full", status?.bg)} />
+                <span className={cn("font-medium", status?.color)}>{status?.label}</span>
               </button>
             )}
           </div>
@@ -775,6 +795,62 @@ export default function TenantDetailPage() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {activeTab === "credite" && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-muted-foreground">
+              Istoric pachete de credite achiziționate / alocate pentru acest tenant.
+            </p>
+            <div className="text-sm font-bold text-amber-500 bg-amber-500/10 px-3 py-1 rounded-lg">
+              Total Disponibil: {creditsData?.balanceCredits?.toLocaleString() || 0} credite
+            </div>
+          </div>
+
+          {creditsLoading ? (
+            <div className="flex justify-center p-8"><Loader2 className="animate-spin text-muted-foreground" /></div>
+          ) : !creditsData?.history || creditsData.history.length === 0 ? (
+            <div className="text-center p-8 bg-surface border border-border rounded-xl">
+              <p className="text-xs text-muted-foreground">Niciun pachet de credite alocat.</p>
+            </div>
+          ) : (
+            <div className="bg-surface rounded-xl border border-border overflow-hidden">
+              <table className="w-full text-xs">
+                <thead className="bg-muted/50 border-b border-border">
+                  <tr>
+                    <th className="px-4 py-2 text-left font-semibold text-muted-foreground">Data</th>
+                    <th className="px-4 py-2 text-left font-semibold text-muted-foreground">Pachet</th>
+                    <th className="px-4 py-2 text-right font-semibold text-muted-foreground">Credite</th>
+                    <th className="px-4 py-2 text-right font-semibold text-muted-foreground">Valoare (EUR)</th>
+                    <th className="px-4 py-2 text-center font-semibold text-muted-foreground">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {creditsData.history.map((pkg: any) => (
+                    <tr key={pkg.id} className="hover:bg-muted/20">
+                      <td className="px-4 py-2 font-medium text-foreground">{formatDate(pkg.purchasedAt)}</td>
+                      <td className="px-4 py-2">
+                        <span className="font-semibold text-foreground">{pkg.packageName}</span>
+                        <span className="ml-2 text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                          {pkg.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-right font-bold text-amber-500 tabular-nums">+{pkg.credits?.toLocaleString()}</td>
+                      <td className="px-4 py-2 text-right tabular-nums">{pkg.priceEur} EUR</td>
+                      <td className="px-4 py-2 text-center">
+                        <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-emerald-500">
+                          <CheckCircle2 size={10} />
+                          {pkg.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 
@@ -1522,6 +1598,7 @@ function MigrateTab({
           )}
         </div>
       )}
+      {renderModal()}
     </div>
   )
 }
