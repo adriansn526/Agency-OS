@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 import { ThemeProvider } from "@/components/theme-provider"
+import { SessionProvider } from "@/components/session-provider"
 import { Toaster } from "sonner"
 import "./globals.css"
 
@@ -25,10 +26,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased" suppressHydrationWarning>
-        <ThemeProvider>
-          {children}
-          <Toaster richColors position="top-right" closeButton />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider>
+            {children}
+            <Toaster richColors position="top-right" closeButton />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )
