@@ -25,6 +25,7 @@ const publicPaths = [
   "/api/intraconstruct",     // IntraConstruct remote API (authenticated via X-License-Key)
   "/api/accounting/spv/auth",     // Public redirect to ANAF for external accountants
   "/api/accounting/spv/callback", // Public ANAF callback URL
+  "/api/accounting/spv/sync",     // SPV cron sync
   "/projects",
 ]
 
