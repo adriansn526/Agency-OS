@@ -325,6 +325,7 @@ export default function AccountingArchivePage() {
                       
                       {activeTab === 'ap' && (
                         <>
+                          <td className="p-4 text-muted-foreground text-xs">{(pagination.currentPage - 1) * 50 + i + 1}</td>
                           <td className="p-4">
                             <div className="font-medium">{row.extractedSupplierName || row.supplier?.name || '-'}</div>
                             {row.lines && row.lines.length > 0 && (

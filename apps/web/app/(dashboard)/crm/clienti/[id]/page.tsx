@@ -19,7 +19,7 @@ import {
   ExternalLink, Edit, MoreHorizontal, CreditCard, Repeat,
   MessageSquare, PhoneCall, Video, StickyNote, Loader2,
   TrendingUp, Shield, Zap, Plus, Send, Dna, BarChart3, Copy, Sparkles,
-  FormInput, Key,
+  FormInput, Key, Trash2,
 } from "lucide-react"
 
 /* ────────────────────────────────────────────── */
@@ -111,6 +111,29 @@ export default function SingleClientPage() {
   const [editMode, setEditMode] = useState(false)
   const [editForm, setEditForm] = useState<Record<string, any>>({})
   const [saving, setSaving] = useState(false)
+  
+  // Custom dropdown and delete state
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deletingClient, setDeletingClient] = useState(false)
+
+  const handleDeleteClient = async () => {
+    setDeletingClient(true)
+    try {
+      const res = await fetch(`/api/clients/${id}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        router.push('/crm/clienti')
+      } else {
+        alert('Eroare la ștergerea clientului.')
+      }
+    } catch (e) {
+      alert('Eroare la ștergerea clientului.')
+    } finally {
+      setDeletingClient(false)
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -253,13 +276,72 @@ export default function SingleClientPage() {
               >
                 <Edit size={12} /> Editează
               </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors">
-                <MoreHorizontal size={14} className="text-muted-foreground" />
-              </button>
+              
+              <div className="relative">
+                <button 
+                  onClick={() => setShowOptionsMenu(!showOptionsMenu)}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:bg-muted transition-colors"
+                >
+                  <MoreHorizontal size={14} className="text-muted-foreground" />
+                </button>
+                {showOptionsMenu && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setShowOptionsMenu(false)} />
+                    <div className="absolute right-0 mt-2 w-48 bg-surface border border-border rounded-xl shadow-lg z-20 py-1 animate-in fade-in zoom-in-95">
+                      <button 
+                        onClick={() => {
+                          setShowOptionsMenu(false)
+                          setShowDeleteConfirm(true)
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-muted/50 flex items-center gap-2 transition-colors"
+                      >
+                        <Trash2 size={14} /> Șterge Client
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </>
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in px-4">
+          <div className="bg-surface border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-4 relative">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-destructive/10 flex items-center justify-center">
+                <Trash2 size={18} className="text-destructive" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-foreground">Șterge Clientul</h3>
+                <p className="text-[10px] text-muted-foreground truncate w-48">{client.companyName || client.contactPerson}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Ești sigur că vrei să ștergi acest client? Această acțiune va șterge ireversibil clientul și toate datele asociate (contacte, note, domenii).
+            </p>
+            <div className="flex items-center gap-2 pt-2">
+              <button 
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deletingClient}
+                className="flex-1 px-4 py-2 text-xs font-medium text-foreground bg-muted hover:bg-muted/80 rounded-xl transition-colors disabled:opacity-50"
+              >
+                Anulează
+              </button>
+              <button 
+                onClick={handleDeleteClient}
+                disabled={deletingClient}
+                className="flex-1 px-4 py-2 text-xs font-medium text-white bg-destructive hover:bg-destructive/90 rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {deletingClient ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                {deletingClient ? "Se șterge..." : "Confirmă"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header Card */}
       <div className={cn("bg-surface rounded-2xl border p-5 transition-all", editMode ? "border-primary/30" : "border-border")}>

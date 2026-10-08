@@ -29,6 +29,7 @@ export async function extractTransactionsFromText(textChunk: string): Promise<Ex
   try {
     const result = await generateObject({
       model: google('gemini-3.5-flash-lite'),
+      maxRetries: 0,
       schema: transactionSchema,
       prompt: `
         Extrage tranzacțiile financiare din următorul text provenit dintr-un extras de cont bancar.
