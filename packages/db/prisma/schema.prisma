@@ -46,6 +46,10 @@ model BusinessLine {
   serviceTemplates   ServiceTemplate[]
   shortLinks         ShortLink[]
   contractTemplates  ContractTemplate[]
+  commerceChannel      CommerceChannel?
+  commerceListings     CommerceListing[]
+  commercePricingRules CommercePricingRule[]
+  commerceOrders       CommerceOrder[]
 }
 
 model Client {
@@ -90,6 +94,7 @@ model Client {
   retainers           Retainer[]
   seoAudits           SeoAudit[]
   systemAlerts        SystemAlert[]
+  commerceOrders      CommerceOrder[]
 
   @@index([businessLineId, entityType])
   @@index([status])
@@ -910,6 +915,7 @@ model Supplier {
   status              String            @default("active")
   createdAt           DateTime          @default(now())
   invoices            SupplierInvoice[]
+  commerceFeeds       CommerceSupplierFeed[]
 
   @@index([tenantId])
 }
@@ -1142,4 +1148,393 @@ model CompanySettings {
   updatedAt          DateTime @updatedAt
 
   @@index([tenantId])
+}
+
+// ════════════════════════════════════════════════════════════════════
+// COMMERCE MODULE (global catalog, activated per BusinessLine)
+// All models below are additive — no changes to pre-existing tables.
+// ════════════════════════════════════════════════════════════════════
+
+// Per-BusinessLine commerce settings (activates the module for a BL)
+model CommerceChannel {
+  id               String       @id @default(cuid())
+  businessLineId   String       @unique
+  isEnabled        Boolean      @default(true)
+  storefrontUrl    String?
+  vatRate          Decimal      @default(21) @db.Decimal(5, 2)
+  transportPct     Decimal      @default(0) @db.Decimal(6, 2) // landed-cost surcharge on supplier cost (%)
+  defaultMarkupPct Decimal      @default(35) @db.Decimal(6, 2)
+  minMarginRon     Decimal      @default(15) @db.Decimal(12, 2)
+  roundingMode     String       @default("99") // 99 | 90 | integer | none
+  config           Json?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  businessLine     BusinessLine @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
+}
+
+// ─── Vehicles ───
+model VehicleMake {
+  id        String         @id @default(cuid())
+  slug      String         @unique
+  name      String
+  logoUrl   String?
+  sortOrder Int            @default(0)
+  isActive  Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  models    VehicleModel[]
+}
+
+model VehicleModel {
+  id          String              @id @default(cuid())
+  makeId      String
+  slug        String
+  name        String
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  make        VehicleMake         @relation(fields: [makeId], references: [id], onDelete: Cascade)
+  generations VehicleGeneration[]
+
+  @@unique([makeId, slug])
+}
+
+model VehicleGeneration {
+  id           String             @id @default(cuid())
+  modelId      String
+  slug         String
+  name         String // display, e.g. "Logan III (2021-)"
+  variant      String? // e.g. "MCV", "H/B", "2D"
+  yearFrom     Int?
+  yearTo       Int?
+  chassisCodes String[]           @default([])
+  bodyTypes    String[]           @default([])
+  ktype        Int? // TecDoc type id (future)
+  imageUrl     String?
+  isActive     Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  model        VehicleModel       @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  fitments     CommerceFitment[]
+  modelMaps    CommerceModelMap[]
+
+  @@unique([modelId, slug])
+}
+
+// ─── Catalog ───
+model CommerceCategory {
+  id          String             @id @default(cuid())
+  parentId    String?
+  slug        String             @unique
+  nameRo      String
+  description String?
+  bulkyClass  String             @default("standard") // small | standard | large | xlarge
+  sortOrder   Int                @default(0)
+  isActive    Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  parent      CommerceCategory?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    CommerceCategory[] @relation("CategoryTree")
+  products    CommerceProduct[]
+  groupMaps   CommerceGroupMap[]
+  rules       CommercePricingRule[]
+}
+
+model CommerceSupplierFeed {
+  id               String             @id @default(cuid())
+  code             String             @unique
+  name             String
+  supplierId       String?
+  format           String // parser id, e.g. "gr-txt-v1"
+  sourceType       String             @default("local") // local | ftp | url
+  sourceConfig     Json // paths/urls (no secrets — credentials come from env)
+  encoding         String             @default("ISO-8859-7")
+  currency         String             @default("EUR")
+  stockFlagMeaning String             @default("unknown") // unknown | one_in_stock | one_out_of_stock
+  isActive         Boolean            @default(true)
+  lastRunAt        DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  supplier         Supplier?          @relation(fields: [supplierId], references: [id])
+  products         CommerceProduct[]
+  runs             CommerceFeedRun[]
+  groupMaps        CommerceGroupMap[]
+  modelMaps        CommerceModelMap[]
+}
+
+model CommerceFeedRun {
+  id          String               @id @default(cuid())
+  feedId      String
+  status      String               @default("running") // running | success | failed
+  triggeredBy String?
+  startedAt   DateTime             @default(now())
+  finishedAt  DateTime?
+  durationMs  Int?
+  stats       Json?
+  error       String?
+  feed        CommerceSupplierFeed @relation(fields: [feedId], references: [id], onDelete: Cascade)
+
+  @@index([feedId, startedAt(sort: Desc)])
+}
+
+model CommerceGroupMap {
+  id         String               @id @default(cuid())
+  feedId     String
+  groupCode  String
+  categoryId String?
+  brand      String?
+  quality    String? // OE | A | B | aftermarket
+  updatedAt  DateTime             @updatedAt
+  feed       CommerceSupplierFeed @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  category   CommerceCategory?    @relation(fields: [categoryId], references: [id])
+
+  @@unique([feedId, groupCode])
+}
+
+model CommerceModelMap {
+  id           String               @id @default(cuid())
+  feedId       String
+  modelCode    String
+  rawName      String
+  generationId String?
+  isManual     Boolean              @default(false)
+  updatedAt    DateTime             @updatedAt
+  feed         CommerceSupplierFeed @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  generation   VehicleGeneration?   @relation(fields: [generationId], references: [id])
+
+  @@unique([feedId, modelCode])
+}
+
+model CommerceProduct {
+  id           String                    @id @default(cuid())
+  feedId       String
+  supplierCode String // supplier base article code
+  groupCode    String?
+  categoryId   String?
+  nameEn       String
+  nameEl       String?
+  nameRo       String?
+  nameRoSource String? // dict | ai | manual
+  oeMain       String?
+  side         String? // L | R
+  brand        String?
+  quality      String?
+  attributes   Json?
+  bulkyClass   String?
+  images       String[]                  @default([])
+  costPrice    Decimal                   @db.Decimal(12, 2)
+  costCurrency String                    @default("EUR")
+  contentHash  String?
+  isActive     Boolean                   @default(true)
+  firstSeenAt  DateTime                  @default(now())
+  lastSeenAt   DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  feed         CommerceSupplierFeed      @relation(fields: [feedId], references: [id], onDelete: Cascade)
+  category     CommerceCategory?         @relation(fields: [categoryId], references: [id])
+  fitments     CommerceFitment[]
+  oeCodes      CommerceOeCode[]
+  stock        CommerceStock[]
+  listings     CommerceListing[]
+  links        CommerceProductLink[]     @relation("ProductLinkFrom")
+  linkedFrom   CommerceProductLink[]     @relation("ProductLinkTo")
+  competitors  CommerceCompetitorPrice[]
+
+  @@unique([feedId, supplierCode])
+  @@index([categoryId])
+  @@index([oeMain])
+  @@index([isActive])
+}
+
+model CommerceFitment {
+  id           String            @id @default(cuid())
+  productId    String
+  generationId String
+  listingCode  String // supplier listing code (model+part)
+  note         String?
+  product      CommerceProduct   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  generation   VehicleGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, generationId, listingCode])
+  @@index([generationId])
+  @@index([listingCode])
+}
+
+model CommerceOeCode {
+  id         String          @id @default(cuid())
+  productId  String
+  raw        String
+  normalized String
+  product    CommerceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, normalized])
+  @@index([normalized])
+}
+
+model CommerceProductLink {
+  id        String          @id @default(cuid())
+  productId String
+  relatedId String
+  type      String          @default("equivalent")
+  product   CommerceProduct @relation("ProductLinkFrom", fields: [productId], references: [id], onDelete: Cascade)
+  related   CommerceProduct @relation("ProductLinkTo", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, relatedId, type])
+}
+
+model CommerceStock {
+  id        String          @id @default(cuid())
+  productId String
+  warehouse String
+  rawFlag   Int
+  updatedAt DateTime        @updatedAt
+  product   CommerceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, warehouse])
+}
+
+model CommerceListing {
+  id             String               @id @default(cuid())
+  productId      String
+  businessLineId String
+  slug           String
+  priceRon       Decimal?             @db.Decimal(12, 2)
+  compareAtRon   Decimal?             @db.Decimal(12, 2)
+  manualPriceRon Decimal?             @db.Decimal(12, 2)
+  priceSource    String               @default("rule") // rule | competitor | manual
+  appliedRuleId  String?
+  priceUpdatedAt DateTime?
+  seoTitle       String?
+  seoDescription String?
+  isActive       Boolean              @default(true)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  product        CommerceProduct      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  businessLine   BusinessLine         @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
+  appliedRule    CommercePricingRule? @relation(fields: [appliedRuleId], references: [id], onDelete: SetNull)
+
+  @@unique([productId, businessLineId])
+  @@unique([businessLineId, slug])
+  @@index([businessLineId, isActive])
+}
+
+model CommercePricingRule {
+  id                    String            @id @default(cuid())
+  businessLineId        String
+  name                  String
+  priority              Int               @default(100) // higher wins
+  categoryId            String?
+  brand                 String?
+  quality               String?
+  costMin               Decimal?          @db.Decimal(12, 2) // in RON (landed cost)
+  costMax               Decimal?          @db.Decimal(12, 2)
+  markupPct             Decimal           @db.Decimal(6, 2)
+  minMarginRon          Decimal?          @db.Decimal(12, 2)
+  bulkySurchargeRon     Decimal           @default(0) @db.Decimal(12, 2)
+  competitorUndercutRon Decimal?          @db.Decimal(12, 2)
+  isActive              Boolean           @default(true)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  businessLine          BusinessLine      @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
+  category              CommerceCategory? @relation(fields: [categoryId], references: [id])
+  listings              CommerceListing[]
+
+  @@index([businessLineId, isActive])
+}
+
+model CommerceCompetitorPrice {
+  id         String          @id @default(cuid())
+  productId  String
+  competitor String
+  url        String?
+  priceRon   Decimal         @db.Decimal(12, 2)
+  inStock    Boolean?
+  checkedAt  DateTime        @default(now())
+  product    CommerceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, competitor])
+}
+
+model CommerceTranslation {
+  id         String   @id @default(cuid())
+  hash       String
+  sourceLang String   @default("en")
+  targetLang String   @default("ro")
+  sourceText String
+  text       String
+  source     String   @default("dict") // dict | ai | manual
+  reviewed   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([hash, targetLang])
+  @@index([reviewed])
+}
+
+model CommerceExchangeRate {
+  id        String   @id @default(cuid())
+  currency  String
+  rate      Decimal  @db.Decimal(12, 6) // RON per 1 unit
+  date      DateTime @db.Date
+  source    String   @default("BNR")
+  createdAt DateTime @default(now())
+
+  @@unique([currency, date])
+}
+
+// ─── Orders (structure only in Phase 1) ───
+model CommerceOrder {
+  id                  String               @id @default(cuid())
+  number              String               @unique
+  businessLineId      String
+  clientId            String?
+  status              String               @default("new") // new | confirmed | ordered_supplier | shipped | delivered | cancelled | returned
+  paymentMethod       String               @default("cod") // cod | card
+  paymentStatus       String               @default("pending")
+  currency            String               @default("RON")
+  subtotal            Decimal              @db.Decimal(12, 2)
+  shippingTotal       Decimal              @default(0) @db.Decimal(12, 2)
+  vatTotal            Decimal              @default(0) @db.Decimal(12, 2)
+  total               Decimal              @db.Decimal(12, 2)
+  customer            Json
+  shippingAddress     Json
+  billingAddress      Json?
+  notes               String?
+  supplierOrderStatus String               @default("manual")
+  idempotencyKey      String?              @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  businessLine        BusinessLine         @relation(fields: [businessLineId], references: [id])
+  client              Client?              @relation(fields: [clientId], references: [id])
+  items               CommerceOrderItem[]
+  events              CommerceOrderEvent[]
+
+  @@index([businessLineId, status])
+  @@index([createdAt(sort: Desc)])
+}
+
+model CommerceOrderItem {
+  id           String        @id @default(cuid())
+  orderId      String
+  productId    String?
+  listingId    String?
+  supplierCode String
+  name         String
+  qty          Int
+  unitPriceRon Decimal       @db.Decimal(12, 2)
+  totalRon     Decimal       @db.Decimal(12, 2)
+  costPrice    Decimal?      @db.Decimal(12, 2)
+  generationId String?
+  options      Json?
+  order        CommerceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+model CommerceOrderEvent {
+  id        String        @id @default(cuid())
+  orderId   String
+  type      String
+  message   String?
+  data      Json?
+  createdAt DateTime      @default(now())
+  order     CommerceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }
