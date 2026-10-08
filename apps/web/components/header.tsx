@@ -68,7 +68,7 @@ export function Header() {
 
   return (
     <>
-      <header className="border-b border-border bg-surface/80 backdrop-blur-md flex-shrink-0 sticky top-0 z-20 overflow-hidden">
+      <header className="border-b border-border bg-surface/80 backdrop-blur-md flex-shrink-0 sticky top-0 z-20">
         {/* Main bar */}
         <div className="h-14 flex items-center justify-between px-4 md:px-6 gap-2 min-w-0">
           <div className="flex items-center gap-3 min-w-0 flex-shrink overflow-hidden">
