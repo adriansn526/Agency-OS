@@ -1,6 +1,7 @@
 import { db } from '@repo/db'
 import { endOfMonth, startOfMonth, parseISO } from 'date-fns'
 import { downloadFromS3 } from '@/lib/storage/s3'
+import { generatePdfFromUblXml } from '@/lib/accounting/pdf-generator'
 import { ZipArchive } from 'archiver'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -41,10 +42,15 @@ export async function generateAndSendAccountingPackage({
     }
   }
 
-  // Colectare facturi
+  // Colectare facturi primite
   const validInvoices = await db.supplierInvoice.findMany({
     where: { tenantId, issueDate: { gte: startDate, lte: endDate }, extractionStatus: 'confirmed' },
     include: { supplier: true }
+  })
+
+  // Colectare facturi emise
+  const outgoingInvoices = await db.invoice.findMany({
+    where: { direction: 'emisa', issuedAt: { gte: startDate, lte: endDate } }
   })
 
   // Colectare extrase unice si parole
@@ -78,8 +84,9 @@ export async function generateAndSendAccountingPackage({
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `accounting-${month}-`))
   const zipPath = path.join(tempDir, `Documente-Financiare-${month}.zip`)
   
-  let csvContent = 'Furnizor,Data,Numar,Suma\n'
-  let total = 0
+  let csvContent = 'Tip,Furnizor/Client,Data,Numar,Suma\n'
+  let totalIncoming = 0
+  let totalOutgoing = 0
   
   const output = fs.createWriteStream(zipPath)
   const archive = new ZipArchive({ zlib: { level: 9 } })
@@ -94,26 +101,57 @@ export async function generateAndSendAccountingPackage({
   try {
     for (const inv of validInvoices) {
       const supName = inv.supplier?.name || inv.extractedSupplierName || 'Necunoscut'
-      csvContent += `"${supName}","${inv.issueDate.toISOString().split('T')[0]}","${inv.invoiceNumber}","${inv.amount}"\n`
-      total += Number(inv.amount)
+      csvContent += `"Primita","${supName}","${inv.issueDate.toISOString().split('T')[0]}","${inv.invoiceNumber}","${inv.amount}"\n`
+      totalIncoming += Number(inv.amount)
       
+      const supNameClean = supName.replace(/[^a-z0-9]/gi, '_')
+      const invNameClean = inv.invoiceNumber ? inv.invoiceNumber.replace(/[^a-z0-9]/gi, '_') : inv.id
+
       if (inv.pdfUrl) {
         const localPdf = path.join(tempDir, `inv_${inv.id}.pdf`)
         try {
            await downloadFromS3(inv.pdfUrl, localPdf)
-           archive.file(localPdf, { name: `Facturi/${supName.replace(/[^a-z0-9]/gi, '_')}_${inv.invoiceNumber}.pdf` })
+           archive.file(localPdf, { name: `Facturi-Primite/${supNameClean}_${invNameClean}.pdf` })
         } catch(err) {
            console.error(`S3 Download failed pt factura ${inv.id} key: ${inv.pdfUrl}`, err)
+        }
+      } else if (inv.xmlData) {
+        // Generare PDF din XML daca nu avem PDF atasat
+        try {
+          const pdfBuf = await generatePdfFromUblXml(inv.xmlData, invNameClean)
+          archive.append(pdfBuf, { name: `Facturi-Primite/${supNameClean}_${invNameClean}_generat.pdf` })
+        } catch (err) {
+          console.error(`Eroare generare PDF factură primită ${inv.id}`, err)
         }
       }
 
       if (inv.xmlData) {
-         const supNameClean = supName.replace(/[^a-z0-9]/gi, '_');
-         const invNameClean = inv.invoiceNumber ? inv.invoiceNumber.replace(/[^a-z0-9]/gi, '_') : inv.id;
-         archive.append(inv.xmlData, { name: `e-Factura-XML/${supNameClean}_${invNameClean}.xml` });
+         archive.append(inv.xmlData, { name: `e-Factura-XML/Primite/${supNameClean}_${invNameClean}.xml` });
       }
     }
-    csvContent += `\nTOTAL,,,${total}\n`
+
+    for (const inv of outgoingInvoices) {
+      const clientName = inv.extractedClientName || 'Necunoscut'
+      csvContent += `"Emisa","${clientName}","${inv.issuedAt.toISOString().split('T')[0]}","${inv.number}","${inv.amount}"\n`
+      totalOutgoing += Number(inv.amount)
+      
+      const clientNameClean = clientName.replace(/[^a-z0-9]/gi, '_')
+      const invNameClean = inv.number.replace(/[^a-z0-9]/gi, '_')
+
+      // Daca avem XML (factura trimisa prin SPV)
+      if (inv.xmlData) {
+        archive.append(inv.xmlData, { name: `e-Factura-XML/Emise/${clientNameClean}_${invNameClean}.xml` })
+        try {
+          const pdfBuf = await generatePdfFromUblXml(inv.xmlData, invNameClean)
+          archive.append(pdfBuf, { name: `Facturi-Emise/${clientNameClean}_${invNameClean}_generat.pdf` })
+        } catch (err) {
+          console.error(`Eroare generare PDF factură emisă ${inv.id}`, err)
+        }
+      }
+    }
+
+    csvContent += `\nTOTAL PRIMITE,,,,${totalIncoming}\n`
+    csvContent += `TOTAL EMISE,,,,${totalOutgoing}\n`
     archive.append(csvContent, { name: 'index.csv' })
 
     const exec = require('util').promisify(require('child_process').exec)
@@ -165,7 +203,7 @@ export async function generateAndSendAccountingPackage({
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: accountantEmail,
       subject: `Documente Financiare - ${month}${skipValidation ? ' (Auto-Trimis)' : ''}`,
-      text: `Salut,\n\nAtașat găsești documentele financiare pentru luna ${month}.\nAcestea conțin ${validInvoices.length} facturi (dintre care cele e-Factura sunt incluse în format XML) și ${statementText}.\n\nGenerat automat.`,
+      text: `Salut,\n\nAtașat găsești documentele financiare pentru luna ${month}.\nAcestea conțin ${validInvoices.length} facturi primite, ${outgoingInvoices.length} facturi emise (format PDF și XML E-Factura) și ${statementText}.\n\nGenerat automat.`,
       attachments: [
         {
           filename: `Documente-Financiare-${month}.zip`,
@@ -182,8 +220,8 @@ export async function generateAndSendAccountingPackage({
         tenantId,
         month,
         sentBy,
-        invoiceCount: validInvoices.length,
-        totalAmount: total,
+        invoiceCount: validInvoices.length + outgoingInvoices.length,
+        totalAmount: totalIncoming + totalOutgoing,
         status: 'sent'
       }
     })

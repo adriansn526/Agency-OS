@@ -367,12 +367,11 @@ export default function AccountingArchivePage() {
                                   <Download className="w-3 h-3" /> Descarcă XML
                                 </a>
                                 <a 
-                                  href="https://mfinante.gov.ro/ro/web/efactura/validare-xml-factura" 
+                                  href={`/api/accounting/archive/invoices-in/${row.id}/pdf`} 
                                   target="_blank" 
-                                  className="text-[10px] text-slate-500 hover:underline"
-                                  title="Afișare Lizibilă ANAF"
+                                  className="text-[10px] text-red-600 hover:underline flex items-center gap-1"
                                 >
-                                  ANAF Vizualizare ↗
+                                  <Download className="w-3 h-3" /> Descarcă PDF
                                 </a>
                               </div>
                             )}
