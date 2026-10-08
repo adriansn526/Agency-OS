@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import { Store, Globe, Settings, Activity } from "lucide-react"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic'
+
 export default async function CommerceDashboard() {
   const channels = await db.commerceChannel.findMany({
     orderBy: { businessLineId: 'asc' }
@@ -11,8 +13,8 @@ export default async function CommerceDashboard() {
 
   // Quick stats
   const totalProducts = await db.commerceProduct.count()
-  const translated = await db.commerceTranslation.count({ where: { status: 'APPLIED' } })
-  const activeListings = await db.commerceListing.count({ where: { isOutofstock: false } })
+  const translated = await db.commerceTranslation.count({ where: { reviewed: true } })
+  const activeListings = await db.commerceListing.count({ where: { isActive: true } })
 
   return (
     <div className="flex flex-col gap-8 p-8">
@@ -62,16 +64,16 @@ export default async function CommerceDashboard() {
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{channel.businessLineId}</CardTitle>
-                  <Badge variant={channel.isActive ? "default" : "secondary"}>
-                    {channel.isActive ? "Activ" : "Inactiv"}
+                  <Badge variant={channel.isEnabled ? "default" : "secondary"}>
+                    {channel.isEnabled ? "Activ" : "Inactiv"}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
                   <div className="flex justify-between py-1">
-                    <span>Monedă:</span>
-                    <span className="font-medium text-foreground">{channel.currency}</span>
+                    <span>Monedă implicită:</span>
+                    <span className="font-medium text-foreground">RON</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span>Markup Implicit:</span>
