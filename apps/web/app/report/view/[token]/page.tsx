@@ -98,6 +98,39 @@ function hasAdsActivity(data: Record<string, unknown>): boolean {
   return (kpis.clicks || 0) > 0 || (kpis.impressions || 0) > 0 || (kpis.spend || 0) > 0
 }
 
+// Widgets that always render (they have their own empty handling)
+const ALWAYS_VISIBLE = ["conversions_hero", "interpretation"]
+
+function isWidgetEmpty(type: string, value: unknown): boolean {
+  if (ALWAYS_VISIBLE.includes(type)) return false
+  if (value === null || value === undefined) return true
+  if (Array.isArray(value)) return value.length === 0
+  if (typeof value !== "object") return false
+
+  const v = value as Record<string, any>
+  if (v.error) return true
+  if (Object.keys(v).length === 0) return true
+
+  switch (type) {
+    case "site_health":
+      return !v.health && !v.webVitals
+    case "posthog_traffic":
+      return !v.traffic
+    case "uptime":
+      return !v.totalChecks
+    case "google_ads_tables":
+      return !(v.campaigns?.length || v.convBreakdown?.length || v.searchTerms?.length)
+    case "seo_tables":
+      return !(v.queries?.length || v.pages?.length)
+    case "seo_page_keywords":
+      return !v.analysis?.pageKeywordMap?.length
+    case "conversion_details":
+      return !(v.landingPageConversions?.length || v.conversionsByPage?.length)
+    default:
+      return false
+  }
+}
+
 function PublicReportContent() {
   const { token } = useParams<{ token: string }>()
   const searchParams = useSearchParams()
@@ -252,27 +285,9 @@ function PublicReportContent() {
               return null
             }
 
-            // Hide empty widgets once data is loaded
-            if (!dataLoading && data) {
-              const widgetData = data[widget.type]
-              const isDataEmpty = 
-                widgetData === null || 
-                (Array.isArray(widgetData) && widgetData.length === 0) ||
-                (typeof widgetData === "object" && !Array.isArray(widgetData) && Object.keys(widgetData || {}).length === 0)
-              
-              if (isDataEmpty && [
-                "source_attribution", 
-                "google_ads_tables", 
-                "seo_tables",
-                "seo_articles",
-                "social_breakdown",
-                "google_ads_trend",
-                "seo_trend",
-                "posthog_traffic",
-                "seo_page_keywords"
-              ].includes(widget.type)) {
-                return null
-              }
+            // Hide any data widget that has nothing to show
+            if (!dataLoading && data && isWidgetEmpty(widget.type, data[widget.type])) {
+              return null
             }
 
             return (

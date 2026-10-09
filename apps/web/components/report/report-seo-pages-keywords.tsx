@@ -65,13 +65,13 @@ export function ReportSEOPagesKeywords({
   data?: { analysis: SEOAnalysisData; raw: PageKeywordData[] }
   loading?: boolean
 }) {
-  const [tab, setTab] = useState<'recommendations' | 'pages'>('recommendations')
+  const tab = 'pages' as const
   const [expandedPage, setExpandedPage] = useState<string | null>(null)
 
   const analysis = data?.analysis
   const summary = analysis?.summary
 
-  if (!analysis && !loading) return null
+  if (!loading && (!analysis || !analysis.pageKeywordMap || analysis.pageKeywordMap.length === 0)) return null
 
   return (
     <WidgetWrapper title="SEO — Pagini & Keywords" icon={<Link2 size={16} />} loading={loading}>
@@ -95,133 +95,10 @@ export function ReportSEOPagesKeywords({
           color={posColor(summary?.avgPosition ?? 99)}
           sublabel="toate paginile"
         />
-        <KpiCard
-          label="Oportunități"
-          value={summary?.lowHangingFruitCount ?? 0}
-          color="#f59e0b"
-          sublabel="low-hanging fruit"
-        />
-      </div>
-
-      {/* Tabs */}
-      <div style={{ padding: "8px 24px", display: "flex", gap: 8, borderBottom: "1px solid #e2e8f0" }}>
-        {[
-          { key: 'recommendations' as const, label: '💡 Recomandări SEO', count: analysis?.recommendations.length },
-          { key: 'pages' as const, label: '🔗 Pagini ↔ Keywords', count: summary?.totalPages },
-        ].map(t => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            style={{
-              padding: "8px 16px",
-              fontSize: 12,
-              fontWeight: tab === t.key ? 700 : 500,
-              color: tab === t.key ? '#6366f1' : '#94a3b8',
-              borderBottom: tab === t.key ? '2px solid #6366f1' : '2px solid transparent',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              borderRadius: 0,
-            }}
-          >
-            {t.label} {t.count !== undefined && <span style={{ opacity: 0.6, marginLeft: 4 }}>({t.count})</span>}
-          </button>
-        ))}
       </div>
 
       {/* Tab Content */}
       <div style={{ padding: 24 }}>
-        {/* Recommendations Tab */}
-        {tab === 'recommendations' && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {(!analysis?.recommendations || analysis.recommendations.length === 0) ? (
-              <p style={{ fontSize: 13, color: '#94a3b8', textAlign: 'center', padding: 24 }}>
-                Nu sunt suficiente date GSC pentru a genera recomandări.
-              </p>
-            ) : (
-              <>
-                {/* Cannibalization alert */}
-                {(summary?.cannibalizationCount ?? 0) > 0 && (
-                  <div style={{
-                    padding: 12,
-                    borderRadius: 8,
-                    background: '#ef44440d',
-                    border: '1px solid #ef44441a',
-                    fontSize: 12,
-                    color: '#ef4444',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}>
-                    <AlertTriangle size={14} />
-                    <span><strong>{summary?.cannibalizationCount}</strong> cazuri de canibalizare keywords detectate</span>
-                  </div>
-                )}
-
-                {analysis.recommendations.map((rec, i) => {
-                  const config = severityConfig[rec.severity]
-                  const Icon = config.icon
-                  return (
-                    <div key={i} style={{
-                      padding: 14,
-                      borderRadius: 10,
-                      background: config.bg,
-                      border: `1px solid ${config.border}`,
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                        <Icon size={14} style={{ color: config.color, marginTop: 2, flexShrink: 0 }} />
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                            <span style={{
-                              fontSize: 9,
-                              fontWeight: 700,
-                              textTransform: 'uppercase' as const,
-                              color: config.color,
-                              background: `${config.color}1a`,
-                              padding: '2px 6px',
-                              borderRadius: 4,
-                            }}>
-                              {config.label}
-                            </span>
-                            <span style={{
-                              fontSize: 9,
-                              color: '#94a3b8',
-                              textTransform: 'uppercase' as const,
-                            }}>
-                              {rec.type.replace(/_/g, ' ')}
-                            </span>
-                          </div>
-                          <p style={{ fontSize: 12, fontWeight: 600, color: '#1e293b', marginBottom: 4 }}>
-                            {rec.title}
-                          </p>
-                          <p style={{ fontSize: 11, color: '#64748b', lineHeight: 1.5 }}>
-                            {rec.description}
-                          </p>
-                          {rec.metrics && (
-                            <div style={{ display: 'flex', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
-                              {Object.entries(rec.metrics).map(([key, val]) => (
-                                <span key={key} style={{
-                                  fontSize: 10,
-                                  color: '#64748b',
-                                  background: '#f1f5f9',
-                                  padding: '2px 8px',
-                                  borderRadius: 4,
-                                }}>
-                                  {key}: <strong>{val}</strong>
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </>
-            )}
-          </div>
-        )}
-
         {/* Pages ↔ Keywords Tab */}
         {tab === 'pages' && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>

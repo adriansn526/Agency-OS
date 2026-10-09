@@ -137,7 +137,8 @@ export async function GET(
             try {
               // Fetch core data in parallel
               const [allCampaigns, daily, convBreakdown, searchTerms] = await Promise.all([
-                getCampaigns(adsId, dateFrom, dateTo).catch(() => []),
+                // Not swallowed: a bad customer id must surface as an error, not as silent zeros
+                getCampaigns(adsId, dateFrom, dateTo),
                 getDailyPerformance(adsId, dateFrom, dateTo).catch(() => []),
                 getConversionBreakdown(adsId, dateFrom, dateTo, campaignFilter).catch(() => []),
                 getSearchTerms(adsId, dateFrom, dateTo, campaignFilter, 20).catch(() => []),
