@@ -100,6 +100,13 @@ export interface TelnyxData {
   calls: Array<{ id: string; from: string; to: string; duration: number; createdAt: string; source: string; sourceLabel: string }>
 }
 
+export interface CrmLeadsData {
+  totalLeads: number
+  organicLeads: number
+  adsLeads: number
+  recentLeads: Array<{ id: string; name: string; date: string; source: string; status: string; value: number | null }>
+}
+
 export interface DomainReportData {
   // Hero KPIs (aggregated)
   summary: {
@@ -116,6 +123,7 @@ export interface DomainReportData {
   analytics: AnalyticsData | null
   uptime: UptimeData | null
   telnyx: TelnyxData | null
+  crmLeads: CrmLeadsData | null
 
   // Source availability
   sources: {
@@ -124,6 +132,7 @@ export interface DomainReportData {
     posthog: boolean
     uptime: boolean
     telnyx: boolean
+    crm: boolean
   }
 }
 
@@ -275,12 +284,14 @@ export async function aggregateDomainReport(
     analytics: null,
     uptime: null,
     telnyx: null,
+    crmLeads: null,
     sources: {
       googleAds: !!sources.adsCustomerId,
       gsc: !!sources.gscSiteUrl,
       posthog: !!process.env.POSTHOG_PERSONAL_API_KEY,
       uptime: true,
       telnyx: sources.telnyxPhoneNumbers.length > 0 && !!process.env.TELNYX_API_KEY,
+      crm: true,
     },
   }
 
@@ -484,6 +495,48 @@ export async function aggregateDomainReport(
       })()
     )
   }
+
+  // ── CRM Leads ──
+  promises.push(
+    (async () => {
+      try {
+        const thirtyDaysAgo = new Date(dateFrom)
+        const leads = await db.lead.findMany({
+          where: {
+            sourceDomain: { contains: domain },
+            createdAt: { gte: thirtyDaysAgo, lte: new Date(dateTo + 'T23:59:59Z') },
+          },
+          orderBy: { createdAt: 'desc' },
+        })
+
+        if (leads.length > 0) {
+          const isAdsLead = (l: any) => {
+            const s = (l.source || l.utmSource || l.utmMedium || '').toLowerCase();
+            return s.includes('ads') || s.includes('cpc') || s.includes('google');
+          }
+          const organicLeadsCount = leads.filter(l => !isAdsLead(l)).length;
+
+          result.crmLeads = {
+            totalLeads: leads.length,
+            organicLeads: organicLeadsCount,
+            adsLeads: leads.length - organicLeadsCount,
+            recentLeads: leads.slice(0, 10).map(l => ({
+              id: l.id,
+              name: l.contactPerson || l.companyName,
+              date: l.createdAt.toISOString(),
+              source: l.source || l.utmSource || 'Organic',
+              status: l.status,
+              value: l.value
+            }))
+          }
+          // Doar leadurile organice se adună la total pentru a nu dubla conversiile înregistrate deja de platforma Google Ads
+          result.summary.totalConversions += organicLeadsCount
+        }
+      } catch (err) {
+        console.error(`[Aggregator] CRM Leads error for ${domain}:`, err)
+      }
+    })()
+  )
 
   await Promise.all(promises)
 

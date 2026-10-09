@@ -33,8 +33,8 @@ function HeroKpis({ data }: { data: DomainReportData }) {
       <KpiCard
         icon={<Trophy size={16} className="text-amber-500" />}
         label="Conversii"
-        value={ads?.conversions?.toLocaleString("ro-RO") || "0"}
-        sublabel={ads ? `ROAS: ${ads.roas}x` : undefined}
+        value={s.totalConversions.toLocaleString("ro-RO")}
+        sublabel={`Ads: ${ads?.conversions || 0} · CRM Organic: ${data.crmLeads?.organicLeads || 0}`}
         color="text-amber-600"
       />
       <KpiCard
@@ -557,6 +557,68 @@ function TelnyxSection({ data }: { data: NonNullable<DomainReportData["telnyx"]>
   )
 }
 
+// ─── CRM Leads Section ───
+
+function CrmLeadsSection({ data }: { data: NonNullable<DomainReportData["crmLeads"]> }) {
+  return (
+    <details open className="bg-surface rounded-xl border border-border overflow-hidden mb-4">
+      <summary className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-muted/30 transition-colors select-none">
+        <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center">
+          <Users size={16} className="text-pink-500" />
+        </div>
+        <span className="font-bold text-sm text-foreground">Leaduri CRM</span>
+        <span className="ml-auto text-xs font-bold text-pink-600">{data.totalLeads} leaduri</span>
+        <ChevronDown size={16} className="text-muted-foreground" />
+      </summary>
+      <div className="border-t border-border">
+        <div className="grid grid-cols-3 gap-3 p-5">
+          <MiniKpi label="Total Leaduri" value={data.totalLeads.toString()} />
+          <MiniKpi label="Organic / Direct" value={data.organicLeads.toString()} />
+          <MiniKpi label="Din Reclame (Ads)" value={data.adsLeads.toString()} />
+        </div>
+
+        {data.recentLeads.length > 0 && (
+          <div className="border-t border-border/50">
+            <p className="px-5 py-3 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Leaduri Recente</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border/50 bg-muted/20">
+                    <th className="text-left px-5 py-2 text-muted-foreground font-semibold">Data</th>
+                    <th className="text-left px-3 py-2 text-muted-foreground font-semibold">Nume</th>
+                    <th className="text-left px-3 py-2 text-muted-foreground font-semibold">Sursă</th>
+                    <th className="text-left px-3 py-2 text-muted-foreground font-semibold">Status</th>
+                    <th className="text-right px-5 py-2 text-muted-foreground font-semibold">Valoare</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.recentLeads.map((lead, i) => (
+                    <tr key={i} className="border-b border-border/30 hover:bg-muted/10">
+                      <td className="px-5 py-2 text-foreground">
+                        {new Date(lead.date).toLocaleDateString("ro-RO", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                      </td>
+                      <td className="px-3 py-2 font-medium text-foreground">{lead.name}</td>
+                      <td className="px-3 py-2 text-muted-foreground">{lead.source}</td>
+                      <td className="px-3 py-2">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted/30 text-muted-foreground border border-border/50">
+                          {lead.status}
+                        </span>
+                      </td>
+                      <td className="text-right px-5 py-2 text-foreground font-medium">
+                        {lead.value ? `${lead.value.toLocaleString("ro-RO")} lei` : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </details>
+  )
+}
+
 // ─── Sub-components ───
 
 function MiniKpi({ label, value }: { label: string; value: string }) {
@@ -971,6 +1033,7 @@ export default function ReportsPage() {
             <SourceBadge label="PostHog" active={data.sources.posthog && !!data.analytics} />
             <SourceBadge label="Uptime" active={!!data.uptime && data.uptime.totalChecks > 0} />
             <SourceBadge label="Telnyx" active={data.sources.telnyx && !!data.telnyx} />
+            <SourceBadge label="CRM" active={!!data.crmLeads && data.crmLeads.totalLeads > 0} />
           </div>
         )}
       </div>
@@ -1031,6 +1094,9 @@ export default function ReportsPage() {
 
           {/* Telnyx Call Tracking */}
           {data.telnyx && data.telnyx.totalCalls > 0 && <TelnyxSection data={data.telnyx} />}
+
+          {/* CRM Leads */}
+          {data.crmLeads && data.crmLeads.totalLeads > 0 && <CrmLeadsSection data={data.crmLeads} />}
 
           {/* Actions Bar */}
           <div className="bg-surface rounded-xl border border-border p-5">
