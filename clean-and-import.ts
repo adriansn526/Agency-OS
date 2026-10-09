@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient({ datasources: { db: { url: "postgresql://agency_os:AgencyOS_2026!Secure@localhost:5434/agency_os" } } })
+const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } })
 async function main() {
   console.log("Ștergem TOATE leadurile din csv_import...");
   const res = await prisma.lead.deleteMany({ where: { source: 'csv_import' } });

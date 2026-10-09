@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient({ datasources: { db: { url: 'postgresql://agency_os:AgencyOS_2026!Secure@localhost:5434/agency_os?schema=public' } } })
+const prisma = new PrismaClient({ datasources: { db: { url: process.env.DATABASE_URL } } })
 
 async function main() {
   let t = await prisma.tenantInstance.findFirst();

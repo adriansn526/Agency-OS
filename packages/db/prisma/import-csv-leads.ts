@@ -5,7 +5,7 @@ import { parse } from 'csv-parse'
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://agency_os:AgencyOS_2026!Secure@localhost:5434/agency_os?schema=public"
+      url: process.env.DATABASE_URL
     }
   }
 })

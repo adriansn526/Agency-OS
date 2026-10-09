@@ -12,7 +12,7 @@ function decrypt(text) {
 }
 
 async function main() {
-  const pool = new Pool({ connectionString: "postgresql://agency_os:AgencyOS_2026!Secure@localhost:5434/agency_os?schema=public" });
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
   const res = await pool.query('SELECT "accessToken" FROM "AnafSettings" LIMIT 1');
   const token = decrypt(res.rows[0].accessToken);
   
