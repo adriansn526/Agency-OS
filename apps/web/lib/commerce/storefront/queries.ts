@@ -4,6 +4,7 @@
  */
 import { db, Prisma } from '@repo/db'
 import { normalizeOe } from '../text'
+import { imageUrl } from '../images/urls'
 import { StorefrontInputError, type StorefrontContext } from './auth'
 
 const SLUG_RE = /^[a-z0-9-]{1,140}$/
@@ -146,7 +147,7 @@ async function categoryIdsFor(slug: string): Promise<string[] | null> {
 
 // ─── Products ───
 const listingSelect = {
-  slug: true, priceRon: true, compareAtRon: true,
+  slug: true, priceRon: true, compareAtRon: true, productId: true,
   product: {
     select: {
       supplierCode: true, nameRo: true, oeMain: true, side: true, brand: true, quality: true, images: true, bulkyClass: true,
@@ -158,7 +159,30 @@ const listingSelect = {
 
 type ListingRow = Prisma.CommerceListingGetPayload<{ select: typeof listingSelect }>
 
-function toCard(l: ListingRow, meaning: string) {
+type ImageMap = Map<string, string[]>
+
+/** Image URLs per product, manual first then auto by position. One query for a whole page (no N+1); only the first one when `all` is false. */
+async function loadImages(productIds: string[], all = false): Promise<ImageMap> {
+  const out: ImageMap = new Map()
+  if (!productIds.length) return out
+  const ids = [...new Set(productIds)]
+  const rows = all
+    ? await db.$queryRaw<Array<{ productId: string; objectKey: string }>>`
+        SELECT "productId", "objectKey" FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
+        ORDER BY "productId", (source = 'manual') DESC, position ASC, "objectKey"`
+    : await db.$queryRaw<Array<{ productId: string; objectKey: string }>>`
+        SELECT DISTINCT ON ("productId") "productId", "objectKey" FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
+        ORDER BY "productId", (source = 'manual') DESC, position ASC, "objectKey"`
+  for (const r of rows) {
+    const u = imageUrl(r.objectKey)
+    if (!u) continue
+    const list = out.get(r.productId)
+    if (list) list.push(u); else out.set(r.productId, [u])
+  }
+  return out
+}
+
+function toCard(l: ListingRow, meaning: string, images: ImageMap) {
   const p = l.product
   return {
     slug: l.slug,
@@ -168,7 +192,7 @@ function toCard(l: ListingRow, meaning: string) {
     side: p.side,
     brand: p.brand,
     quality: p.quality,
-    image: p.images[0] ?? null,
+    image: images.get(l.productId)?.[0] ?? p.images[0] ?? null,
     category: p.category ? { slug: p.category.slug, name: p.category.nameRo } : null,
     priceRon: l.priceRon != null ? Number(l.priceRon) : null,
     compareAtRon: l.compareAtRon != null ? Number(l.compareAtRon) : null,
@@ -249,6 +273,7 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
     cached(`count:${JSON.stringify(where)}`, 60_000, () => db.commerceListing.count({ where })),
     db.commerceListing.findMany({ where, select: listingSelect, orderBy: [...orderBy, { id: 'asc' }], skip: (page - 1) * pageSize, take: pageSize }),
   ])
+  const imgs = await loadImages(rows.map((r) => r.productId))
   return {
     page, pageSize, total, pages: Math.ceil(total / pageSize),
     vehicle: generation ? {
@@ -256,7 +281,7 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
       generation: { slug: generation.slug, name: generation.name, variant: generation.variant, yearFrom: generation.yearFrom, yearTo: generation.yearTo, imageUrl: generation.imageUrl },
     } : null,
     category,
-    items: rows.map((r) => toCard(r, ctx.stockFlagMeaning)),
+    items: rows.map((r) => toCard(r, ctx.stockFlagMeaning, imgs)),
   }
 }
 
@@ -280,8 +305,11 @@ export async function getProduct(ctx: StorefrontContext, slug: string) {
     },
   })
   if (!l || !l.isActive || !l.product.isActive || l.priceRon == null) return null
+  const relatedListings = l.product.links.flatMap((k) => k.related.listings)
+  const imgs = await loadImages([l.productId, ...relatedListings.map((rl) => rl.productId)], true)
   return {
-    ...toCard(l, ctx.stockFlagMeaning),
+    ...toCard(l, ctx.stockFlagMeaning, imgs),
+    images: imgs.get(l.productId) ?? [],
     seoTitle: l.seoTitle, seoDescription: l.seoDescription,
     attributes: l.product.attributes,
     oeCodes: [...new Set(l.product.oeCodes.map((o) => o.raw))],
@@ -289,7 +317,7 @@ export async function getProduct(ctx: StorefrontContext, slug: string) {
       make: g.model.make, model: { slug: g.model.slug, name: g.model.name },
       generation: { slug: g.slug, name: g.name, variant: g.variant, yearFrom: g.yearFrom, yearTo: g.yearTo },
     })),
-    related: l.product.links.flatMap((k) => k.related.listings.map((rl) => ({ type: k.type, ...toCard(rl, ctx.stockFlagMeaning) }))),
+    related: l.product.links.flatMap((k) => k.related.listings.map((rl) => ({ type: k.type, ...toCard(rl, ctx.stockFlagMeaning, imgs) }))),
   }
 }
 
@@ -317,8 +345,9 @@ export async function searchSuggest(ctx: StorefrontContext, qRaw: string) {
       take: 6,
     }),
   ])
+  const imgs = await loadImages(products.map((p) => p.productId))
   return {
-    products: products.map((p) => toCard(p, ctx.stockFlagMeaning)),
+    products: products.map((p) => toCard(p, ctx.stockFlagMeaning, imgs)),
     vehicles: vehicles.map((g) => ({ make: g.model.make, model: { slug: g.model.slug, name: g.model.name }, generation: { slug: g.slug, name: g.name } })),
   }
 }

@@ -58,7 +58,7 @@ export default async function CommerceDashboard() {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-4">Linii de Business</h2>
+        <div className="flex items-center justify-between mb-4"><h2 className="text-xl font-semibold">Linii de Business</h2><Link href="/commerce/products" className="text-sm text-primary hover:underline">Produse și poze →</Link></div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {channels.map(channel => (
             <Card key={channel.businessLineId} className="hover:border-primary/50 transition-colors">

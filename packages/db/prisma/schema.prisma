@@ -1340,6 +1340,7 @@ model CommerceProduct {
   @@index([categoryId])
   @@index([oeMain])
   @@index([isActive])
+  productImages CommerceProductImage[]
 }
 
 model CommerceFitment {
@@ -1525,6 +1526,27 @@ model CommerceOrderItem {
   order        CommerceOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
+}
+
+/// Image references into the public bucket (CDN base from COMMERCE_IMAGES_CDN_BASE). Created via prisma/sql/commerce_product_image.sql.
+model CommerceProductImage {
+  id           String          @id @default(cuid())
+  productId    String
+  objectKey    String
+  position     Int             @default(0)
+  width        Int?
+  height       Int?
+  sizeBytes    Int?
+  source       String          @default("auto") // auto | manual
+  lastSeenAt   DateTime?
+  missingSince DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  product      CommerceProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, objectKey])
+  @@index([productId, position])
+  @@index([source, lastSeenAt])
 }
 
 model CommerceOrderEvent {
