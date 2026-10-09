@@ -177,8 +177,18 @@ function toCard(l: ListingRow, meaning: string) {
   }
 }
 
+/**
+ * Deliberate cap: OFFSET pagination gets slower the deeper it goes (full sort of the join), and it is also a
+ * scraping guard. Pages beyond it are rejected with 400 instead of silently serving the last allowed page.
+ * To enumerate the whole catalog use GET /api/storefront/sitemap (keyset cursor, no page limit).
+ */
+export const MAX_PRODUCT_PAGE = 500
+
 export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) {
-  const page = Math.max(1, Math.min(500, Number(sp.get('page') ?? 1) || 1))
+  const page = Math.max(1, Number(sp.get('page') ?? 1) || 1)
+  if (page > MAX_PRODUCT_PAGE) {
+    throw new StorefrontInputError(`page must be <= ${MAX_PRODUCT_PAGE}; use /api/storefront/sitemap (cursor) to list the whole catalog`)
+  }
   const pageSize = Math.max(1, Math.min(60, Number(sp.get('pageSize') ?? 24) || 24))
   const sort = sp.get('sort') ?? 'relevance'
   if (!SORTS.has(sort)) throw new StorefrontInputError('Invalid sort')
@@ -193,10 +203,20 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
 
   let generation: Awaited<ReturnType<typeof resolveGeneration>> = null
   const make = slugParam(sp.get('make'), 'make'), model = slugParam(sp.get('model'), 'model'), gen = slugParam(sp.get('gen'), 'gen')
+  if (model && !make) throw new StorefrontInputError('model requires make')
+  if (gen && !(make && model)) throw new StorefrontInputError('gen requires make and model')
   if (make && model && gen) {
     generation = await resolveGeneration(make, model, gen)
     if (!generation) return null
     pw.fitments = { some: { generationId: generation.id } }
+  } else if (make) {
+    // make, or make+model: match any active generation under it
+    const gens = await db.vehicleGeneration.findMany({
+      where: { isActive: true, model: { ...(model ? { slug: model } : {}), make: { slug: make } } },
+      select: { id: true },
+    })
+    if (!gens.length) return null
+    pw.fitments = { some: { generationId: { in: gens.map((g) => g.id) } } }
   }
   const catSlug = slugParam(sp.get('category'), 'category')
   let category: { slug: string; name: string } | null = null
@@ -301,4 +321,30 @@ export async function searchSuggest(ctx: StorefrontContext, qRaw: string) {
     products: products.map((p) => toCard(p, ctx.stockFlagMeaning)),
     vehicles: vehicles.map((g) => ({ make: g.model.make, model: { slug: g.model.slug, name: g.model.name }, generation: { slug: g.slug, name: g.name } })),
   }
+}
+
+// ─── Sitemap (keyset pagination) ───
+const SITEMAP_DEFAULT_LIMIT = 1000
+const SITEMAP_MAX_LIMIT = 5000
+
+/**
+ * Whole-catalog listing for sitemaps: keyset pagination on the unique (businessLineId, slug) index, so every page is
+ * O(limit) regardless of depth. Pass the previous response's `nextCursor` as `cursor`; `nextCursor` is null on the last page.
+ */
+export async function listSitemap(ctx: StorefrontContext, sp: URLSearchParams) {
+  const limit = Math.max(1, Math.min(SITEMAP_MAX_LIMIT, Number(sp.get('limit') ?? SITEMAP_DEFAULT_LIMIT) || SITEMAP_DEFAULT_LIMIT))
+  const cursor = sp.get('cursor')
+  if (cursor && !SLUG_RE.test(cursor)) throw new StorefrontInputError('Invalid cursor')
+  const rows = await db.commerceListing.findMany({
+    where: {
+      businessLineId: ctx.businessLineId, isActive: true, priceRon: { not: null }, product: { isActive: true },
+      ...(cursor ? { slug: { gt: cursor } } : {}),
+    },
+    select: { slug: true, updatedAt: true },
+    orderBy: { slug: 'asc' },
+    take: limit + 1,
+  })
+  const more = rows.length > limit
+  const items = (more ? rows.slice(0, limit) : rows).map((r) => ({ slug: r.slug, updatedAt: r.updatedAt.toISOString() }))
+  return { items, nextCursor: more ? items[items.length - 1]!.slug : null }
 }
