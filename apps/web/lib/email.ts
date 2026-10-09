@@ -1,6 +1,8 @@
 // ─── SMTP Email Service ───
 // Sends transactional emails via SMTP (mail@outcave.ro)
 import nodemailer from 'nodemailer'
+import fs from 'fs'
+import path from 'path'
 import { renderReportEmail, type ReportEmailContent } from '@/lib/reports/report-email'
 
 // Lazy Nodemailer transporter
@@ -278,6 +280,10 @@ export async function sendReportEmailWithAttachments(input: SendReportEmailInput
   const sender = getSender(input.businessLine)
   const attachments = input.attachments || []
 
+  // Inline logo for the signature (skipped silently if the file is missing)
+  const logoPath = path.join(process.cwd(), 'public', 'email', 'asns-icon.png')
+  const hasLogo = fs.existsSync(logoPath)
+
   const { html, text } = renderReportEmail({
     subject: input.subject,
     senderName: sender.name,
@@ -290,6 +296,7 @@ export async function sendReportEmailWithAttachments(input: SendReportEmailInput
     content: input.content,
     businessLine: input.businessLine,
     attachmentNames: attachments.map(a => a.filename),
+    logoCid: hasLogo ? 'asns-logo' : undefined,
   })
 
   const result = await getTransporter().sendMail({
@@ -300,11 +307,14 @@ export async function sendReportEmailWithAttachments(input: SendReportEmailInput
     subject: input.subject,
     html,
     text,
-    attachments: attachments.map(att => ({
-      filename: att.filename,
-      content: att.content,
-      contentType: att.contentType,
-    })),
+    attachments: [
+      ...attachments.map(att => ({
+        filename: att.filename,
+        content: att.content,
+        contentType: att.contentType,
+      })),
+      ...(hasLogo ? [{ filename: 'asns.png', path: logoPath, cid: 'asns-logo', contentDisposition: 'inline' as const }] : []),
+    ],
   })
 
   return { messageId: result.messageId, success: true }

@@ -204,6 +204,8 @@ export interface RenderReportEmailInput {
   content?: ReportEmailContent
   businessLine?: string
   attachmentNames?: string[]
+  /** Content-ID of the inline logo image; signature shows text only when absent */
+  logoCid?: string
 }
 
 function renderReview(markdown: string, accent: string): string {
@@ -227,10 +229,41 @@ function renderReview(markdown: string, accent: string): string {
     .replace(/<strong>/g, '<strong style="color:#111827;">')
 }
 
+function renderSignature(logoCid?: string): string {
+  const blue = '#1e88e5'
+  const logo = logoCid
+    ? `<img src="cid:${logoCid}" width="52" alt="" style="display:block;border:0;height:auto;">`
+    : ''
+  return `
+          <tr>
+            <td style="padding:8px 40px 32px;">
+              <p style="margin:0 0 18px;color:#374151;font-size:14px;">Cu stimă,</p>
+              <table role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td valign="middle" style="padding-right:18px;">
+                    <table role="presentation" cellspacing="0" cellpadding="0"><tr>
+                      <td valign="middle" style="padding-right:6px;">${logo}</td>
+                      <td valign="middle" style="font-size:30px;font-weight:800;letter-spacing:-1px;color:#1f2937;font-family:Arial,Helvetica,sans-serif;">asns<span style="color:${blue};">.ro</span></td>
+                    </tr></table>
+                  </td>
+                  <td valign="middle" style="border-left:2px solid ${blue};padding:2px 0 2px 18px;font-family:Arial,Helvetica,sans-serif;">
+                    <p style="margin:0 0 4px;color:#111827;font-size:18px;font-weight:700;">Adrian Nichitov</p>
+                    <p style="margin:0 0 10px;color:${blue};font-size:13px;line-height:1.5;">Digital Business<br>Developer</p>
+                    <p style="margin:0 0 3px;color:#374151;font-size:13px;"><strong style="color:${blue};">T</strong>&nbsp;&nbsp;+40 731 156 333</p>
+                    <p style="margin:0;color:#374151;font-size:13px;"><strong style="color:${blue};">W</strong>&nbsp;&nbsp;<a href="https://www.asns.ro" style="color:#374151;text-decoration:none;">www.asns.ro</a></p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`
+}
+
 export function renderReportEmail(input: RenderReportEmailInput): { html: string; text: string } {
   const isFudly = input.businessLine === 'fudly'
   const accent = isFudly ? '#c2410c' : '#312e81'
   const border = '#e5e7eb'
+  // Personal signature belongs to the agency sender only
+  const showSignature = !input.businessLine || input.businessLine === 'agency'
 
   const reviewMd = extractClientReview(input.review || '') || input.content?.fallbackReview || ''
   const reviewHtml = reviewMd
@@ -317,6 +350,7 @@ export function renderReportEmail(input: RenderReportEmailInput): { html: string
             </td>
           </tr>
           ${attachmentsHtml}
+          ${showSignature ? renderSignature(input.logoCid) : ''}
           <tr>
             <td style="padding:24px 40px;background-color:#f9fafb;border-top:1px solid ${border};">
               <p style="margin:0;color:#374151;font-size:13px;font-weight:600;">${escapeHtml(input.senderName)}</p>
@@ -348,7 +382,9 @@ export function renderReportEmail(input: RenderReportEmailInput): { html: string
     for (const k of keywords) textLines.push(`  ${k.query} - ${nf(k.clicks)} click-uri, poziția ${nf(k.position, 1)}`)
     textLines.push('')
   }
-  textLines.push('Raportul complet:', input.reportUrl, '', '---', input.senderName)
+  textLines.push('Raportul complet:', input.reportUrl, '')
+  if (showSignature) textLines.push('Cu stimă,', 'Adrian Nichitov', 'Digital Business Developer', 'T +40 731 156 333', 'W www.asns.ro')
+  else textLines.push('---', input.senderName)
 
   return { html, text: textLines.join('\n') }
 }
