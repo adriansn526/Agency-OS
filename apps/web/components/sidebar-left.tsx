@@ -38,6 +38,7 @@ import {
   Search,
   Radar,
   Package,
+  Store,
 } from "lucide-react"
 
 interface NavItem {
@@ -121,6 +122,7 @@ const platformModules: NavItem[] = [
       { title: "AI Usage", href: "/intraconstruct/usage", icon: Activity },
     ],
   },
+  { title: "Commerce", href: "/commerce", icon: Store },
 ]
 
 const settingsModules: NavItem[] = [
