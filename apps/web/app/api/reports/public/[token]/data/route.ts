@@ -494,6 +494,7 @@ export async function GET(
 
       formSubmissions = Math.max(formSubmissions, crmForms)
       whatsappContacts = Math.max(whatsappContacts, crmWhatsapp)
+      phoneCalls = Math.max(phoneCalls, results.telnyx?.totalCalls || 0)
 
       results.conversions_hero = {
         formSubmissions: Math.round(formSubmissions),
