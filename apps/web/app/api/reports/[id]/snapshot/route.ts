@@ -142,8 +142,19 @@ Răspunde STRICT în acest format JSON:
 {"content": "aici pui tot textul formatat Markdown (cu ### etc)", "highlights": [{"label": "TOTAL CONVERSII", "value": "133", "trend": "+15%"}, {"label": "VIZITE GOOGLE ADS", "value": "19.841", "trend": ""}, {"label": "VIZITE ORGANICE", "value": "1.023", "trend": ""}]}
 `
 
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
+    let text = ''
+    let usedModel = 'gemini-3.6-flash'
+    try {
+      const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' })
+      const result = await model.generateContent(prompt)
+      text = result.response.text()
+    } catch (err: any) {
+      console.warn('[Snapshot] gemini-3.6-flash failed, falling back to gemini-1.5-flash:', err.message)
+      const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+      const result = await fallbackModel.generateContent(prompt)
+      text = result.response.text()
+      usedModel = 'gemini-1.5-flash'
+    }
     
     // Parse AI response
     let content = ''
@@ -165,7 +176,7 @@ Răspunde STRICT în acest format JSON:
         dateTo: new Date(dateTo),
         content,
         highlights: highlights as any,
-        generatedBy: 'gemini-3.6-flash',
+        generatedBy: usedModel,
       },
     })
 
