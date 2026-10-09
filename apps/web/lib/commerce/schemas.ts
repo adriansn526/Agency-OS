@@ -30,3 +30,13 @@ export const RulePatch = z.object({
   competitorUndercutRon: z.number().min(0).max(1e5).nullable(),
   isActive: z.boolean(),
 }).partial()
+
+export const ChannelPatch = z.object({
+  isEnabled: z.boolean(),
+  storefrontUrl: z.string().trim().url().max(200).refine((u) => /^https?:\/\//i.test(u), 'URL invalid').nullable(),
+  vatRate: z.number().min(0).max(50),
+  transportPct: z.number().min(0).max(200),
+  defaultMarkupPct: z.number().min(0).max(1000),
+  minMarginRon: z.number().min(0).max(1e5),
+  roundingMode: z.enum(['99', '90', 'integer', 'none']),
+}).partial().strict()

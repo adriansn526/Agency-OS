@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic'
 
 export default async function CommerceDashboard() {
   const channels = await db.commerceChannel.findMany({
-    orderBy: { businessLineId: 'asc' }
+    orderBy: { businessLineId: 'asc' },
+    include: { businessLine: { select: { name: true } } },
   })
 
   // Quick stats
@@ -63,7 +64,7 @@ export default async function CommerceDashboard() {
             <Card key={channel.businessLineId} className="hover:border-primary/50 transition-colors">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{channel.businessLineId}</CardTitle>
+                  <CardTitle className="text-lg">{channel.businessLine.name}</CardTitle>
                   <Badge variant={channel.isEnabled ? "default" : "secondary"}>
                     {channel.isEnabled ? "Activ" : "Inactiv"}
                   </Badge>
@@ -89,7 +90,7 @@ export default async function CommerceDashboard() {
                   </div>
                 </div>
                 <div className="pt-2 flex gap-2">
-                  <Link href={`/commerce/\${channel.businessLineId}`} className="inline-flex items-center justify-center text-sm font-medium bg-primary text-primary-foreground h-9 px-4 py-2 rounded-md hover:bg-primary/90 w-full">
+                  <Link href={`/commerce/${channel.businessLineId}`} className="inline-flex items-center justify-center text-sm font-medium bg-primary text-primary-foreground h-9 px-4 py-2 rounded-md hover:bg-primary/90 w-full">
                     Setări Prețuri
                   </Link>
                 </div>
