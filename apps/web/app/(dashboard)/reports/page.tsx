@@ -20,6 +20,7 @@ import {
 import { ReportWidgetEditor } from "@/components/report/report-widget-editor"
 import { ReportScheduleEditor } from "@/components/report/report-schedule-editor"
 import { PeriodPicker, DeltaBadge } from "@/components/report/report-period-picker"
+import { SeoComparison } from "@/components/report/report-seo-compare"
 import { getComparisonRange, getPresetRange, type CompareMode } from "@/lib/reports/periods"
 
 // ─── Inline Report Widgets (Admin-only, render aggregated data) ───
@@ -178,7 +179,9 @@ function AdsSection({ data, prev, showCost = true }: { data: NonNullable<DomainR
 function SeoSection({ data, prev }: { data: NonNullable<DomainReportData["seo"]>; prev?: DomainReportData["seo"] }) {
   const pk = prev?.kpis
   const k = data.kpis
-  const [seoTab, setSeoTab] = useState<'keywords' | 'recommendations' | 'pages'>('keywords')
+  const [seoTab, setSeoTab] = useState<'keywords' | 'recommendations' | 'pages' | 'compare'>(prev ? 'compare' : 'keywords')
+  // Leave the comparison tab when comparison is switched off, open it when switched on
+  useEffect(() => { setSeoTab(t => (prev ? (t === 'keywords' ? 'compare' : t) : (t === 'compare' ? 'keywords' : t))) }, [!!prev])
   const analysis = data.seoAnalysis
   const pageKeywords = data.pageKeywords || []
 
@@ -217,6 +220,7 @@ function SeoSection({ data, prev }: { data: NonNullable<DomainReportData["seo"]>
         {/* Tabs */}
         <div className="flex items-center gap-1 px-5 border-t border-border/50">
           {[
+            ...(prev ? [{ key: 'compare' as const, label: 'Comparație termeni', count: data.topQueries.length }] : []),
             { key: 'keywords' as const, label: '🔑 Top Keywords', count: data.topQueries.length },
             { key: 'recommendations' as const, label: '💡 Recomandări', count: analysis?.recommendations.length || 0 },
             { key: 'pages' as const, label: '🔗 Pagini ↔ Keywords', count: sortedPages.length },
@@ -235,6 +239,9 @@ function SeoSection({ data, prev }: { data: NonNullable<DomainReportData["seo"]>
             </button>
           ))}
         </div>
+
+        {/* Tab: Comparison */}
+        {seoTab === 'compare' && prev && <SeoComparison data={data} prev={prev} />}
 
         {/* Tab: Top Keywords */}
         {seoTab === 'keywords' && data.topQueries.length > 0 && (

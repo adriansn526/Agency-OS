@@ -395,7 +395,7 @@ export async function aggregateDomainReport(
           const [kpis, daily, topQueries, topPages, pageKeywords] = await Promise.all([
             getSiteMetrics(sources.gscSiteUrl!, dateFrom, dateTo),
             getGSCDailyPerformance(sources.gscSiteUrl!, dateFrom, dateTo).catch(() => []),
-            getTopQueries(sources.gscSiteUrl!, dateFrom, dateTo, 20).catch(() => []),
+            getTopQueries(sources.gscSiteUrl!, dateFrom, dateTo, 100).catch(() => []),
             getGSCTopPages(sources.gscSiteUrl!, dateFrom, dateTo, 20).catch(() => []),
             getPageKeywords(sources.gscSiteUrl!, dateFrom, dateTo, 200).catch(() => []),
           ])
