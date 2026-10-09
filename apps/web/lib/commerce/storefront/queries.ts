@@ -17,13 +17,26 @@ function slugParam(v: string | null, name: string): string | null {
 }
 
 // ─── small TTL cache for heavy aggregate endpoints ───
-const ttl = new Map<string, { at: number; data: unknown }>()
+const TTL_MAX_ENTRIES = 500
+const ttl = new Map<string, { until: number; data: unknown }>()
+const inflight = new Map<string, Promise<unknown>>()
 async function cached<T>(key: string, ms: number, fn: () => Promise<T>): Promise<T> {
   const hit = ttl.get(key)
-  if (hit && Date.now() - hit.at < ms) return hit.data as T
-  const data = await fn()
-  ttl.set(key, { at: Date.now(), data })
-  return data
+  if (hit && Date.now() < hit.until) return hit.data as T
+  // concurrent callers for the same key share one query instead of each hitting the DB
+  const pending = inflight.get(key)
+  if (pending) return pending as Promise<T>
+  const p = fn()
+    .then((data) => {
+      const now = Date.now()
+      if (ttl.size >= TTL_MAX_ENTRIES) for (const [k, v] of ttl) if (v.until <= now) ttl.delete(k)
+      if (ttl.size >= TTL_MAX_ENTRIES) ttl.delete(ttl.keys().next().value!)
+      ttl.set(key, { until: now + ms, data })
+      return data
+    })
+    .finally(() => inflight.delete(key))
+  inflight.set(key, p)
+  return p
 }
 
 export function availabilityFor(stock: { rawFlag: number }[], meaning: string): 'in_stock' | 'out_of_stock' | 'confirm_on_order' {
@@ -212,7 +225,8 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
     [{ product: { categoryId: 'asc' } }, { priceRon: 'asc' }]
 
   const [total, rows] = await Promise.all([
-    db.commerceListing.count({ where }),
+    // count() is a full parallel hash join (~70 ms) and doesn't depend on page/sort: cache per filter set
+    cached(`count:${JSON.stringify(where)}`, 60_000, () => db.commerceListing.count({ where })),
     db.commerceListing.findMany({ where, select: listingSelect, orderBy: [...orderBy, { id: 'asc' }], skip: (page - 1) * pageSize, take: pageSize }),
   ])
   return {
