@@ -37,6 +37,7 @@ import {
 import { getCallRecordings, type TelnyxCallStats } from '@/lib/integrations/telnyx'
 import { analyzeSEOOpportunities, type SEOAnalysisResult } from '@/lib/seo/seo-recommendations'
 import { db } from '@repo/db'
+import { computeConversionSummary, leadDomainWhere, type ConversionSummary } from '@/lib/reports/conversions'
 
 // ─── Types ───
 
@@ -115,6 +116,8 @@ export interface DomainReportData {
     totalSessions: number
     uptimePercent: number
     totalCalls: number
+    /** Same breakdown the public report shows (forms + calls + WhatsApp + other) */
+    conversionBreakdown: ConversionSummary
   }
 
   // Per-source data
@@ -278,7 +281,10 @@ export async function aggregateDomainReport(
   const sources = await resolveDomainSources(clientId, domain, domainConfigId)
 
   const result: DomainReportData = {
-    summary: { totalConversions: 0, totalClicks: 0, totalSessions: 0, uptimePercent: 0, totalCalls: 0 },
+    summary: {
+      totalConversions: 0, totalClicks: 0, totalSessions: 0, uptimePercent: 0, totalCalls: 0,
+      conversionBreakdown: { formSubmissions: 0, phoneCalls: 0, whatsappContacts: 0, otherConversions: 0, totalConversions: 0 },
+    },
     googleAds: null,
     seo: null,
     analytics: null,
@@ -297,6 +303,7 @@ export async function aggregateDomainReport(
 
   // Fetch all data in parallel
   const promises: Promise<void>[] = []
+  let crmLeadSources: Array<{ source: string | null }> = []
 
   // ── Google Ads ──
   if (sources.adsCustomerId) {
@@ -351,7 +358,6 @@ export async function aggregateDomainReport(
             conversions,
             searchTerms,
           }
-          result.summary.totalConversions += kpis.conversions
           result.summary.totalClicks += kpis.clicks
 
           // Fetch extended data in parallel (non-blocking — errors silenced)
@@ -503,11 +509,13 @@ export async function aggregateDomainReport(
         const thirtyDaysAgo = new Date(dateFrom)
         const leads = await db.lead.findMany({
           where: {
-            sourceDomain: { contains: domain },
+            ...leadDomainWhere(domain),
             createdAt: { gte: thirtyDaysAgo, lte: new Date(dateTo + 'T23:59:59Z') },
           },
           orderBy: { createdAt: 'desc' },
         })
+
+        crmLeadSources = leads.map(l => ({ source: l.source }))
 
         if (leads.length > 0) {
           const isAdsLead = (l: any) => {
@@ -529,8 +537,6 @@ export async function aggregateDomainReport(
               value: l.value
             }))
           }
-          // Doar leadurile organice se adună la total pentru a nu dubla conversiile înregistrate deja de platforma Google Ads
-          result.summary.totalConversions += organicLeadsCount
         }
       } catch (err) {
         console.error(`[Aggregator] CRM Leads error for ${domain}:`, err)
@@ -539,6 +545,14 @@ export async function aggregateDomainReport(
   )
 
   await Promise.all(promises)
+
+  // Headline conversions use the exact same rules as the public report
+  result.summary.conversionBreakdown = computeConversionSummary({
+    adsBreakdown: result.googleAds?.conversions,
+    leads: crmLeadSources,
+    telnyxCalls: result.telnyx?.totalCalls || 0,
+  })
+  result.summary.totalConversions = result.summary.conversionBreakdown.totalConversions
 
   return result
 }

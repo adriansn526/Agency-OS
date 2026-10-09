@@ -31,6 +31,7 @@ import {
 import { resolveDomainSources } from '@/lib/reports/aggregator'
 import { analyzeSEOOpportunities } from '@/lib/seo/seo-recommendations'
 import { getCallRecordings } from '@/lib/integrations/telnyx'
+import { computeConversionSummary, leadDomainWhere } from '@/lib/reports/conversions'
 
 export const dynamic = 'force-dynamic'
 
@@ -362,7 +363,7 @@ export async function GET(
           try {
             const allLeads = await db.lead.findMany({
               where: {
-                sourceDomain: targetDomain,
+                ...leadDomainWhere(targetDomain),
                 createdAt: {
                   gte: new Date(dateFrom),
                   lte: new Date(dateTo + 'T23:59:59Z'),
@@ -412,7 +413,7 @@ export async function GET(
           try {
             const leads = await db.lead.findMany({
               where: {
-                sourceDomain: targetDomain,
+                ...leadDomainWhere(targetDomain),
                 createdAt: {
                   gte: new Date(dateFrom),
                   lte: new Date(dateTo + 'T23:59:59Z'),
@@ -464,44 +465,14 @@ export async function GET(
       const adsData = results.google_ads_kpis as any
       const adsConvBreakdown = (results.google_ads_tables as any)?.convBreakdown || []
 
-      // Categorize conversions from Ads
-      let formSubmissions = 0
-      let phoneCalls = 0
-      let whatsappContacts = 0
-      let otherConversions = 0
-
-      for (const conv of adsConvBreakdown) {
-        const name = (conv.actionName || '').toLowerCase()
-        if (/form|formular|submit|contact|lead|cerere/i.test(name)) {
-          formSubmissions += conv.allConversions || 0
-        } else if (/phone|apel|call|tel/i.test(name)) {
-          phoneCalls += conv.allConversions || 0
-        } else if (/whatsapp|\bwa\b/i.test(name)) {
-          whatsappContacts += conv.allConversions || 0
-        } else {
-          otherConversions += conv.allConversions || 0
-        }
-      }
-
-      // Use CRM leads for forms and WhatsApp if available and greater than what Google Ads reported
-      const crmLeads = (results.crm_leads as any[]) || []
-      let crmForms = 0
-      let crmWhatsapp = 0
-      for (const lead of crmLeads) {
-        if (/whatsapp/i.test(lead.source || '')) crmWhatsapp++
-        else crmForms++
-      }
-
-      formSubmissions = Math.max(formSubmissions, crmForms)
-      whatsappContacts = Math.max(whatsappContacts, crmWhatsapp)
-      phoneCalls = Math.max(phoneCalls, results.telnyx?.totalCalls || 0)
+      const summary = computeConversionSummary({
+        adsBreakdown: adsConvBreakdown,
+        leads: (results.crm_leads as any[]) || [],
+        telnyxCalls: (results.telnyx as any)?.totalCalls || 0,
+      })
 
       results.conversions_hero = {
-        formSubmissions: Math.round(formSubmissions),
-        phoneCalls: Math.round(phoneCalls),
-        whatsappContacts: Math.round(whatsappContacts),
-        otherConversions: Math.round(otherConversions),
-        totalConversions: Math.round(formSubmissions + phoneCalls + whatsappContacts + otherConversions),
+        ...summary,
         adsConversions: adsData?.conversions || 0,
         adsConversionsValue: adsData?.conversionsValue || 0,
         adsClicks: adsData?.clicks || 0,

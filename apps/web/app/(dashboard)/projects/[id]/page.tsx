@@ -86,6 +86,7 @@ const templateConfig: Record<string, { label: string; class: string }> = {
   seo_project: { label: "SEO", class: "bg-success/10 text-success" },
   seo_programmatic: { label: "SEO Programatic", class: "bg-accent/10 text-accent" },
   ads_campaign: { label: "Google Ads", class: "bg-warning/10 text-warning" },
+  google_ads: { label: "Google Ads", class: "bg-warning/10 text-warning" },
   web_dev_project: { label: "Web Dev", class: "bg-primary/10 text-primary" },
   social_media: { label: "Social Media", class: "bg-pink-500/10 text-pink-500" },
   linkedin_campaign: { label: "LinkedIn Ads", class: "bg-blue-500/10 text-blue-500" },
@@ -230,7 +231,7 @@ export default function ProjectSinglePage() {
   const isWebDevProject = dashboardVariant === 'webdev'
   
   const isSeoProject = ['seo_project', 'seo_programmatic'].includes(project?.templateId || '')
-  const isAdsProject = ['ads_campaign', 'linkedin_campaign', 'instagram_campaign', 'facebook_campaign', 'tiktok_campaign'].includes(project?.templateId || '')
+  const isAdsProject = ['ads_campaign', 'google_ads', 'linkedin_campaign', 'instagram_campaign', 'facebook_campaign', 'tiktok_campaign'].includes(project?.templateId || '')
   const isMarketingProject = isSeoProject || isAdsProject || ['social_media'].includes(project?.templateId || '')
   const hasDashboard = isSeoProject || isAdsProject || isWebDevProject
 

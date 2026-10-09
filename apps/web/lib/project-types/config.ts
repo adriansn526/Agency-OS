@@ -38,7 +38,7 @@ export const PROJECT_TYPES_CONFIG: ProjectTypeConfig[] = [
     ]
   },
   {
-    templateIds: ['ads_campaign', 'linkedin_campaign', 'instagram_campaign', 'facebook_campaign', 'tiktok_campaign'],
+    templateIds: ['ads_campaign', 'google_ads', 'linkedin_campaign', 'instagram_campaign', 'facebook_campaign', 'tiktok_campaign'],
     dashboardVariant: 'ads',
     cards: [
       { id: 'ads-overview', visibility: 'both' },

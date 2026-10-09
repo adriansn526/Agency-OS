@@ -90,7 +90,7 @@ export function ReportSEOPagesKeywords({
           sublabel={`${summary?.topKeywordsCovered ?? 0} în top 3`}
         />
         <KpiCard
-          label="Poziție Medie"
+          label="Poziție Medie Keywords"
           value={summary?.avgPosition ?? "—"}
           color={posColor(summary?.avgPosition ?? 99)}
           sublabel="toate paginile"

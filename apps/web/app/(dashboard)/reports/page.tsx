@@ -34,7 +34,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         icon={<Trophy size={16} className="text-amber-500" />}
         label="Conversii"
         value={s.totalConversions.toLocaleString("ro-RO")}
-        sublabel={`Ads: ${ads?.conversions || 0} · CRM Organic: ${data.crmLeads?.organicLeads || 0}`}
+        sublabel={`Formulare: ${s.conversionBreakdown.formSubmissions} · Apeluri: ${s.conversionBreakdown.phoneCalls} · WhatsApp: ${s.conversionBreakdown.whatsappContacts}`}
         color="text-amber-600"
       />
       <KpiCard
@@ -54,7 +54,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
       <KpiCard
         icon={<Phone size={16} className="text-orange-500" />}
         label="Apeluri"
-        value={data.telnyx?.totalCalls?.toLocaleString("ro-RO") || "—"}
+        value={s.conversionBreakdown.phoneCalls > 0 ? s.conversionBreakdown.phoneCalls.toLocaleString("ro-RO") : "—"}
         sublabel={data.telnyx ? `Durată medie: ${data.telnyx.avgDuration}s` : undefined}
         color="text-orange-600"
       />
@@ -197,7 +197,7 @@ function SeoSection({ data }: { data: NonNullable<DomainReportData["seo"]> }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-5">
           <MiniKpi label="Clickuri Organice" value={k.clicks.toLocaleString("ro-RO")} />
           <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} />
-          <MiniKpi label="CTR" value={`${(k.ctr * 100).toFixed(1)}%`} />
+          <MiniKpi label="CTR" value={`${(k.ctr * 100).toFixed(2)}%`} />
           <MiniKpi label="Poziție Medie" value={k.position.toFixed(1)} />
         </div>
 

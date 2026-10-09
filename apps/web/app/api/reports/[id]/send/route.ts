@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { sendReportEmailWithAttachments, EmailAttachment } from '@/lib/email'
+import { buildReportEmailContent, formatPeriod } from '@/lib/reports/report-email'
 
 // ─── POST /api/reports/[id]/send ───
 // Sends report email to client with public link, optional CC, message, and PDF attachments
@@ -16,15 +17,17 @@ export async function POST(
     let to: string = ''
     let cc: string[] = []
     let message: string = ''
-    let dateRange: string = 'Ultimele 30 zile'
+    let dateFromParam = ''
+    let dateToParam = ''
     const attachments: EmailAttachment[] = []
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData()
       to = formData.get('to') as string || ''
       message = formData.get('message') as string || ''
-      if (formData.get('dateRange')) dateRange = formData.get('dateRange') as string
-      
+      dateFromParam = (formData.get('dateFrom') as string) || ''
+      dateToParam = (formData.get('dateTo') as string) || ''
+
       // Parse CC (comma-separated string)
       const ccRaw = formData.get('cc') as string || ''
       cc = ccRaw.split(',').map(e => e.trim()).filter(e => e.length > 0 && e.includes('@'))
@@ -46,15 +49,16 @@ export async function POST(
       to = body.to || ''
       cc = body.cc || []
       message = body.message || ''
-      if (body.dateRange) dateRange = body.dateRange
+      dateFromParam = body.dateFrom || ''
+      dateToParam = body.dateTo || ''
     }
 
     const report = await db.clientReport.findUnique({
       where: { id },
       include: {
-        client: { select: { companyName: true, contactPerson: true, email: true } },
+        client: { select: { id: true, companyName: true, contactPerson: true, email: true } },
         businessLine: { select: { slug: true, name: true } },
-        snapshots: { orderBy: { createdAt: 'desc' }, take: 1 },
+        snapshots: { orderBy: { dateFrom: 'desc' }, take: 1 },
       },
     })
 
@@ -65,15 +69,26 @@ export async function POST(
       return NextResponse.json({ error: 'Lipsește adresa de email' }, { status: 400 })
     }
 
-    const publicUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://admin.asns.ro'}/report/view/${report.token}`
+    // Period: explicit > latest AI snapshot > last 30 days
+    const latestSnapshot = report.snapshots[0]
+    const dateFrom = dateFromParam
+      || latestSnapshot?.dateFrom.toISOString().slice(0, 10)
+      || new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10)
+    const dateTo = dateToParam
+      || latestSnapshot?.dateTo.toISOString().slice(0, 10)
+      || new Date().toISOString().slice(0, 10)
 
-    // Get highlights from latest snapshot
-    const highlights: string[] = []
-    if (report.snapshots[0]?.highlights && Array.isArray(report.snapshots[0].highlights)) {
-      for (const h of report.snapshots[0].highlights as Array<{ label: string; value: string }>) {
-        highlights.push(`${h.label}: ${h.value}`)
-      }
-    }
+    const publicUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://admin.asns.ro'}/report/view/${report.token}?from=${dateFrom}&to=${dateTo}`
+
+    const content = report.domain
+      ? await buildReportEmailContent({
+          clientId: report.client.id,
+          domain: report.domain,
+          from: dateFrom,
+          to: dateTo,
+          showCostData: report.showCostData,
+        })
+      : undefined
 
     const targetName = report.domain ? report.domain : report.client.companyName
     let finalSubject = report.title
@@ -88,8 +103,8 @@ export async function POST(
       reportTitle: report.title,
       clientName: report.client.contactPerson || report.client.companyName,
       reportUrl: publicUrl,
-      dateRange: 'Ultimele 30 zile',
-      highlights: highlights.length > 0 ? highlights : ['Raport complet disponibil'],
+      dateRange: formatPeriod(dateFrom, dateTo),
+      content,
       message: message || report.notes || undefined,
       businessLine: report.businessLine.slug,
       attachments: attachments.length > 0 ? attachments : undefined,

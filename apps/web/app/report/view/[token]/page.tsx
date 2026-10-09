@@ -92,6 +92,12 @@ function WidgetRenderer({ type, data, dataLoading, meta, dateRange }: {
   }
 }
 
+function hasAdsActivity(data: Record<string, unknown>): boolean {
+  const kpis = data.google_ads_kpis as { clicks?: number; impressions?: number; spend?: number; error?: string } | undefined
+  if (!kpis || kpis.error) return false
+  return (kpis.clicks || 0) > 0 || (kpis.impressions || 0) > 0 || (kpis.spend || 0) > 0
+}
+
 function PublicReportContent() {
   const { token } = useParams<{ token: string }>()
   const searchParams = useSearchParams()
@@ -240,6 +246,11 @@ function PublicReportContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
           {sortedWidgets.map(widget => {
             const isFull = widget.size === "full"
+
+            // Hide Google Ads widgets entirely when the client has no ad activity in the period
+            if (!dataLoading && data && widget.type.startsWith("google_ads") && !hasAdsActivity(data)) {
+              return null
+            }
 
             // Hide empty widgets once data is loaded
             if (!dataLoading && data) {

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { BarChart3 } from "lucide-react"
 import { WidgetWrapper } from "./report-widget-wrapper"
 
 // ─── Report Conversion Details ───
@@ -48,18 +49,22 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
   
   const hasLanding = data?.landingPageConversions && data.landingPageConversions.length > 0
   const hasPosthog = data?.conversionsByPage && data.conversionsByPage.length > 0
+  // Phone/email clicks are not attributed per page for every client; hide empty columns
+  const showPhoneCol = !!data?.conversionsByPage?.some(c => c.phoneClicks > 0)
+  const showEmailCol = !!data?.conversionsByPage?.some(c => c.emailClicks > 0)
+  const colCount = 3 + (showPhoneCol ? 1 : 0) + (showEmailCol ? 1 : 0)
 
   if (!hasLanding && !hasPosthog && !loading) return null
 
   return (
-    <WidgetWrapper title="Conversii Detaliate — Per Pagină" icon="📊" loading={loading}>
+    <WidgetWrapper title="Conversii Detaliate — Per Pagină" icon={<BarChart3 size={16} />} loading={loading}>
       <div style={{ padding: 24 }}>
         {/* Landing Page Conversions from Google Ads */}
         {hasLanding && (
           <div style={{ marginBottom: hasPosthog ? 32 : 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>
-                📄 Conversii per Landing Page
+                Conversii per Landing Page
               </span>
               <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 400 }}>
                 Google Ads — de pe ce pagini vin conversiile
@@ -129,7 +134,7 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "#0f172a" }}>
-                📝 Interacțiuni per Pagină
+                Interacțiuni per Pagină
               </span>
               <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 400 }}>
                 Formulare trimise, click-uri telefon și email
@@ -146,14 +151,14 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
                       Total
                     </th>
                     <th style={{ textAlign: "right", padding: "8px 12px", color: "#64748b", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>
-                      📝 Forms
+                      Formulare
                     </th>
-                    <th style={{ textAlign: "right", padding: "8px 12px", color: "#64748b", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>
-                      📞 Telefon
-                    </th>
-                    <th style={{ textAlign: "right", padding: "8px 12px", color: "#64748b", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>
-                      📧 Email
-                    </th>
+                    {showPhoneCol && (<th style={{ textAlign: "right", padding: "8px 12px", color: "#64748b", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>
+                      Telefon
+                    </th>)}
+                    {showEmailCol && (<th style={{ textAlign: "right", padding: "8px 12px", color: "#64748b", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>
+                      Email
+                    </th>)}
                   </tr>
                 </thead>
                 <tbody>
@@ -181,16 +186,20 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
                         <td style={{ padding: "10px 12px", textAlign: "right", color: "#4338ca", fontWeight: 500 }}>
                           {cp.formSubmissions || "—"}
                         </td>
-                        <td style={{ padding: "10px 12px", textAlign: "right", color: "#16a34a", fontWeight: 500 }}>
-                          {cp.phoneClicks || "—"}
-                        </td>
-                        <td style={{ padding: "10px 12px", textAlign: "right", color: "#2563eb", fontWeight: 500 }}>
-                          {cp.emailClicks || "—"}
-                        </td>
+                        {showPhoneCol && (
+                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#16a34a", fontWeight: 500 }}>
+                            {cp.phoneClicks || "—"}
+                          </td>
+                        )}
+                        {showEmailCol && (
+                          <td style={{ padding: "10px 12px", textAlign: "right", color: "#2563eb", fontWeight: 500 }}>
+                            {cp.emailClicks || "—"}
+                          </td>
+                        )}
                       </tr>
                       {expandedRow === i && cp.leads && cp.leads.length > 0 && (
                         <tr style={{ borderBottom: "1px solid #f8fafc", backgroundColor: "#f8fafc" }}>
-                          <td colSpan={5} style={{ padding: "0 12px 12px 12px" }}>
+                          <td colSpan={colCount} style={{ padding: "0 12px 12px 12px" }}>
                             <div style={{ background: "white", borderRadius: 6, border: "1px solid #e2e8f0", overflow: "hidden" }}>
                               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                                 <thead>
@@ -231,7 +240,7 @@ export function ReportConversionDetails({ data, loading }: { data?: ConversionDe
         {/* No data state */}
         {!hasLanding && !hasPosthog && !loading && (
           <div style={{ textAlign: "center", padding: "24px 0", color: "#94a3b8", fontSize: 13 }}>
-            ℹ️ Nu sunt date de conversii detaliate disponibile. Activează tracking-ul PostHog pe site.
+            Nu sunt date de conversii detaliate disponibile. Activează tracking-ul PostHog pe site.
           </div>
         )}
       </div>

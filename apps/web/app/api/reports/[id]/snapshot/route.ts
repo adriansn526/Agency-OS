@@ -4,6 +4,41 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
+// Tried in order. 1.5 models have been retired by Google, so the fallbacks are
+// the rolling "-latest" aliases, which never go stale.
+const MODEL_CHAIN = [
+  process.env.REPORT_AI_MODEL || 'gemini-3.6-flash',
+  'gemini-flash-latest',
+  'gemini-flash-lite-latest',
+]
+
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
+
+function isTransient(err: any): boolean {
+  const msg = String(err?.message || '')
+  return /\b(429|500|502|503|504)\b|overloaded|unavailable|high demand|timed? ?out|fetch failed/i.test(msg)
+}
+
+async function generateWithFallback(prompt: string): Promise<{ text: string; model: string }> {
+  let lastErr: any
+  for (const name of [...new Set(MODEL_CHAIN)]) {
+    const model = genAI.getGenerativeModel({ model: name })
+    // Retry transient overloads on the same model before moving on
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const result = await model.generateContent(prompt)
+        return { text: result.response.text(), model: name }
+      } catch (err: any) {
+        lastErr = err
+        console.warn(`[Snapshot] ${name} attempt ${attempt + 1} failed:`, err.message)
+        if (!isTransient(err)) break
+        await sleep(1500 * (attempt + 1))
+      }
+    }
+  }
+  throw lastErr
+}
+
 // ─── GET /api/reports/[id]/snapshot ───
 // Returns all snapshots for a report
 export async function GET(
@@ -93,8 +128,6 @@ export async function POST(
     }))
 
     // Generate AI interpretation
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' })
-
     const dateFormatter = new Intl.DateTimeFormat('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })
     const fDateFrom = dateFormatter.format(new Date(dateFrom))
     const fDateTo = dateFormatter.format(new Date(dateTo))
@@ -109,6 +142,7 @@ IMPORTANT - REGULI DE REDACTARE:
 3. Utilizarea Datelor:
   - Dacă datele includ metrici cantitative de performanță (trafic, CTR, ROAS, conversii), TREBUIE să menționezi cele mai importante cifre.
   - Dacă setul de date este complet GOL sau nu are nicio metrică (ex. proiect abia început / zero performanță), NU inventa și NU aproxima nicio cifră (FĂRĂ HALUCINAȚII). Confirmă doar perioada raportată și faptul că proiectul este în faza de setare/început sau fără date.
+4. Fără emoji sau emoticoane, nicăieri în text.
 
 Date disponibile:
 ${JSON.stringify(reportData, null, 2)}
@@ -143,19 +177,17 @@ Răspunde STRICT în acest format JSON:
 `
 
     let text = ''
-    let usedModel = 'gemini-3.6-flash'
+    let usedModel = ''
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' })
-      const result = await model.generateContent(prompt)
-      text = result.response.text()
+      ;({ text, model: usedModel } = await generateWithFallback(prompt))
     } catch (err: any) {
-      console.warn('[Snapshot] gemini-3.6-flash failed, falling back to gemini-1.5-flash:', err.message)
-      const fallbackModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-      const result = await fallbackModel.generateContent(prompt)
-      text = result.response.text()
-      usedModel = 'gemini-1.5-flash'
+      console.error('[Snapshot] All Gemini models failed:', err.message)
+      return NextResponse.json(
+        { error: 'Serviciul AI este momentan indisponibil. Încercați din nou în câteva minute.' },
+        { status: 503 }
+      )
     }
-    
+
     // Parse AI response
     let content = ''
     let highlights: unknown[] = []

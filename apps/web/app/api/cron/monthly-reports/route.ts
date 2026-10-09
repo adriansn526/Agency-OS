@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@repo/db"
 import { sendReportEmailWithAttachments } from "@/lib/email"
+import { buildReportEmailContent, formatPeriod } from "@/lib/reports/report-email"
 
 export const maxDuration = 60 // Vercel maximum duration
 
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
         status: "active"
       },
       include: {
-        client: { select: { companyName: true, contactPerson: true, email: true } },
+        client: { select: { id: true, companyName: true, contactPerson: true, email: true } },
         businessLine: { select: { slug: true, name: true } },
       }
     })
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
 
     const monthNames = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
     const monthName = monthNames[firstDayPrevMonth.getMonth()]
-    const dateRangeLabel = `Luna ${monthName} ${yyyy} (completă)`
+    const dateRangeLabel = `${formatPeriod(startStr, endStr)} (${monthName} ${yyyy})`
 
     for (const report of reports) {
       // Build email data
@@ -70,6 +71,10 @@ export async function GET(req: NextRequest) {
       const cc = emailsList.length > 1 ? emailsList.slice(1) : undefined
 
       try {
+        const content = report.domain
+          ? await buildReportEmailContent({ clientId: report.client.id, domain: report.domain, from: startStr, to: endStr, showCostData: report.showCostData })
+          : undefined
+
         await sendReportEmailWithAttachments({
           to: mainEmail,
           cc: cc,
@@ -78,8 +83,8 @@ export async function GET(req: NextRequest) {
           clientName: report.client.contactPerson || report.client.companyName,
           reportUrl: publicUrl,
           dateRange: dateRangeLabel,
-          highlights: [], // Omit highlights for cron for now, or just fallback to empty
-          message: report.scheduleMessage || report.notes || "Găsiți mai jos raportul detaliat cu performanțele lunii trecute.",
+          content,
+          message: report.scheduleMessage || report.notes || undefined,
           businessLine: report.businessLine.slug,
           attachments: undefined, // No PDFs
         })
