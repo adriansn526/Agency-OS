@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: agency_os
       POSTGRES_USER: agency_os
-      POSTGRES_PASSWORD: AgencyOS_2026!Secure
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     shm_size: 1gb
