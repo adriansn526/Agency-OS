@@ -410,7 +410,7 @@ export async function GET(
       promises.push(
         (async () => {
           try {
-            const count = await db.lead.count({
+            const leads = await db.lead.findMany({
               where: {
                 sourceDomain: targetDomain,
                 createdAt: {
@@ -418,8 +418,9 @@ export async function GET(
                   lte: new Date(dateTo + 'T23:59:59Z'),
                 },
               },
+              select: { source: true },
             })
-            results.crm_leads_count = count
+            results.crm_leads = leads
           } catch (err) {
             console.warn('[PublicData] CRM Leads fetch error:', err)
           }
@@ -482,10 +483,17 @@ export async function GET(
         }
       }
 
-      // Use CRM leads for forms if available and greater than what Google Ads reported
-      if (typeof results.crm_leads_count === 'number' && results.crm_leads_count > 0) {
-        formSubmissions = Math.max(formSubmissions, results.crm_leads_count)
+      // Use CRM leads for forms and WhatsApp if available and greater than what Google Ads reported
+      const crmLeads = (results.crm_leads as any[]) || []
+      let crmForms = 0
+      let crmWhatsapp = 0
+      for (const lead of crmLeads) {
+        if (/whatsapp/i.test(lead.source || '')) crmWhatsapp++
+        else crmForms++
       }
+
+      formSubmissions = Math.max(formSubmissions, crmForms)
+      whatsappContacts = Math.max(whatsappContacts, crmWhatsapp)
 
       results.conversions_hero = {
         formSubmissions: Math.round(formSubmissions),
