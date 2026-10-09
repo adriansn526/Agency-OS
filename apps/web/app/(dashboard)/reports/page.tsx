@@ -19,11 +19,14 @@ import {
 } from "@/components/report/report-ads-extended"
 import { ReportWidgetEditor } from "@/components/report/report-widget-editor"
 import { ReportScheduleEditor } from "@/components/report/report-schedule-editor"
+import { PeriodPicker, DeltaBadge } from "@/components/report/report-period-picker"
+import { getComparisonRange, getPresetRange, type CompareMode } from "@/lib/reports/periods"
 
 // ─── Inline Report Widgets (Admin-only, render aggregated data) ───
 
-function HeroKpis({ data }: { data: DomainReportData }) {
+function HeroKpis({ data, prev }: { data: DomainReportData; prev?: DomainReportData | null }) {
   const s = data.summary
+  const ps = prev?.summary
   const ads = data.googleAds?.kpis
   const seo = data.seo?.kpis
   const analytics = data.analytics?.traffic
@@ -36,6 +39,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         value={s.totalConversions.toLocaleString("ro-RO")}
         sublabel={`Formulare: ${s.conversionBreakdown.formSubmissions} · Apeluri: ${s.conversionBreakdown.phoneCalls} · WhatsApp: ${s.conversionBreakdown.whatsappContacts}`}
         color="text-amber-600"
+        delta={prev && <DeltaBadge cur={s.totalConversions} prev={ps?.totalConversions} />}
       />
       <KpiCard
         icon={<Megaphone size={16} className="text-blue-500" />}
@@ -43,6 +47,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         value={((ads?.clicks || 0) + (seo?.clicks || 0)).toLocaleString("ro-RO")}
         sublabel={`Ads: ${ads?.clicks?.toLocaleString("ro-RO") || "0"} · SEO: ${seo?.clicks?.toLocaleString("ro-RO") || "0"}`}
         color="text-blue-600"
+        delta={prev && <DeltaBadge cur={(ads?.clicks || 0) + (seo?.clicks || 0)} prev={(prev.googleAds?.kpis.clicks || 0) + (prev.seo?.kpis.clicks || 0)} />}
       />
       <KpiCard
         icon={<Globe size={16} className="text-violet-500" />}
@@ -50,6 +55,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         value={analytics?.sessions?.toLocaleString("ro-RO") || s.totalSessions.toLocaleString("ro-RO")}
         sublabel={analytics ? `Bounce: ${analytics.bounceRate}%` : undefined}
         color="text-violet-600"
+        delta={prev && <DeltaBadge cur={analytics?.sessions ?? s.totalSessions} prev={prev.analytics?.traffic?.sessions ?? ps?.totalSessions} />}
       />
       <KpiCard
         icon={<Phone size={16} className="text-orange-500" />}
@@ -57,6 +63,7 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         value={s.conversionBreakdown.phoneCalls > 0 ? s.conversionBreakdown.phoneCalls.toLocaleString("ro-RO") : "—"}
         sublabel={data.telnyx ? `Durată medie: ${data.telnyx.avgDuration}s` : undefined}
         color="text-orange-600"
+        delta={prev && <DeltaBadge cur={s.conversionBreakdown.phoneCalls} prev={ps?.conversionBreakdown.phoneCalls} />}
       />
       <KpiCard
         icon={<Shield size={16} className="text-emerald-500" />}
@@ -64,13 +71,14 @@ function HeroKpis({ data }: { data: DomainReportData }) {
         value={data.uptime ? `${data.uptime.percent}%` : "—"}
         sublabel={data.uptime ? `Resp: ${data.uptime.avgResponseMs}ms` : undefined}
         color="text-emerald-600"
+        delta={prev && data.uptime && prev.uptime && <DeltaBadge cur={data.uptime.percent} prev={prev.uptime.percent} mode="abs" unit=" pp" digits={2} />}
       />
     </div>
   )
 }
 
-function KpiCard({ icon, label, value, sublabel, color }: {
-  icon: React.ReactNode; label: string; value: string | number; sublabel?: string; color?: string
+function KpiCard({ icon, label, value, sublabel, color, delta }: {
+  icon: React.ReactNode; label: string; value: string | number; sublabel?: string; color?: string; delta?: React.ReactNode
 }) {
   return (
     <div className="bg-surface rounded-xl border border-border p-4 hover:shadow-sm transition-shadow">
@@ -78,7 +86,10 @@ function KpiCard({ icon, label, value, sublabel, color }: {
         {icon}
         <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
       </div>
-      <p className={`text-2xl font-extrabold ${color || "text-foreground"} tracking-tight`}>{value}</p>
+      <div className="flex items-baseline gap-2">
+        <p className={`text-2xl font-extrabold ${color || "text-foreground"} tracking-tight`}>{value}</p>
+        {delta}
+      </div>
       {sublabel && <p className="text-[11px] text-muted-foreground mt-1">{sublabel}</p>}
     </div>
   )
@@ -86,8 +97,9 @@ function KpiCard({ icon, label, value, sublabel, color }: {
 
 // ─── Google Ads Section ───
 
-function AdsSection({ data, showCost = true }: { data: NonNullable<DomainReportData["googleAds"]>; showCost?: boolean }) {
+function AdsSection({ data, prev, showCost = true }: { data: NonNullable<DomainReportData["googleAds"]>; prev?: DomainReportData["googleAds"]; showCost?: boolean }) {
   const k = data.kpis
+  const pk = prev?.kpis
   return (
     <details open className="bg-surface rounded-xl border border-border overflow-hidden mb-4">
       <summary className="flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-muted/30 transition-colors select-none">
@@ -101,15 +113,15 @@ function AdsSection({ data, showCost = true }: { data: NonNullable<DomainReportD
       <div className="border-t border-border">
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-5">
-          <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} />
-          <MiniKpi label="Click-uri" value={k.clicks.toLocaleString("ro-RO")} />
-          <MiniKpi label="CTR" value={`${k.ctr}%`} />
-          {showCost && <MiniKpi label="Spend" value={`${k.spend.toLocaleString("ro-RO")} lei`} />}
-          {showCost && <MiniKpi label="CPC" value={`${k.cpc} lei`} />}
-          <MiniKpi label="Conversii" value={k.conversions.toLocaleString("ro-RO")} />
-          <MiniKpi label="Valoare Conv." value={`${k.conversionsValue.toLocaleString("ro-RO")} lei`} />
-          <MiniKpi label="Rată Conversie" value={`${k.conversionRate}%`} />
-          <MiniKpi label="ROAS" value={`${k.roas}x`} />
+          <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} delta={pk && <DeltaBadge cur={k.impressions} prev={pk.impressions} />} />
+          <MiniKpi label="Click-uri" value={k.clicks.toLocaleString("ro-RO")} delta={pk && <DeltaBadge cur={k.clicks} prev={pk.clicks} />} />
+          <MiniKpi label="CTR" value={`${k.ctr}%`} delta={pk && <DeltaBadge cur={k.ctr} prev={pk.ctr} mode="abs" unit=" pp" digits={2} />} />
+          {showCost && <MiniKpi label="Spend" value={`${k.spend.toLocaleString("ro-RO")} lei`} delta={pk && <DeltaBadge cur={k.spend} prev={pk.spend} neutral />} />}
+          {showCost && <MiniKpi label="CPC" value={`${k.cpc} lei`} delta={pk && <DeltaBadge cur={k.cpc} prev={pk.cpc} invert />} />}
+          <MiniKpi label="Conversii" value={k.conversions.toLocaleString("ro-RO")} delta={pk && <DeltaBadge cur={k.conversions} prev={pk.conversions} />} />
+          <MiniKpi label="Valoare Conv." value={`${k.conversionsValue.toLocaleString("ro-RO")} lei`} delta={pk && <DeltaBadge cur={k.conversionsValue} prev={pk.conversionsValue} />} />
+          <MiniKpi label="Rată Conversie" value={`${k.conversionRate}%`} delta={pk && <DeltaBadge cur={k.conversionRate} prev={pk.conversionRate} mode="abs" unit=" pp" digits={2} />} />
+          <MiniKpi label="ROAS" value={`${k.roas}x`} delta={pk && <DeltaBadge cur={k.roas} prev={pk.roas} mode="abs" unit="x" digits={2} />} />
         </div>
 
         {/* Campaigns Table */}
@@ -163,7 +175,8 @@ function AdsSection({ data, showCost = true }: { data: NonNullable<DomainReportD
 
 // ─── SEO Section ───
 
-function SeoSection({ data }: { data: NonNullable<DomainReportData["seo"]> }) {
+function SeoSection({ data, prev }: { data: NonNullable<DomainReportData["seo"]>; prev?: DomainReportData["seo"] }) {
+  const pk = prev?.kpis
   const k = data.kpis
   const [seoTab, setSeoTab] = useState<'keywords' | 'recommendations' | 'pages'>('keywords')
   const analysis = data.seoAnalysis
@@ -195,10 +208,10 @@ function SeoSection({ data }: { data: NonNullable<DomainReportData["seo"]> }) {
       <div className="border-t border-border">
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-5">
-          <MiniKpi label="Clickuri Organice" value={k.clicks.toLocaleString("ro-RO")} />
-          <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} />
-          <MiniKpi label="CTR" value={`${(k.ctr * 100).toFixed(2)}%`} />
-          <MiniKpi label="Poziție Medie" value={k.position.toFixed(1)} />
+          <MiniKpi label="Clickuri Organice" value={k.clicks.toLocaleString("ro-RO")} delta={pk && <DeltaBadge cur={k.clicks} prev={pk.clicks} />} />
+          <MiniKpi label="Impresii" value={k.impressions.toLocaleString("ro-RO")} delta={pk && <DeltaBadge cur={k.impressions} prev={pk.impressions} />} />
+          <MiniKpi label="CTR" value={`${(k.ctr * 100).toFixed(2)}%`} delta={pk && <DeltaBadge cur={k.ctr * 100} prev={pk.ctr * 100} mode="abs" unit=" pp" digits={2} />} />
+          <MiniKpi label="Poziție Medie" value={k.position.toFixed(1)} delta={pk && <DeltaBadge cur={k.position} prev={pk.position} mode="abs" invert />} />
         </div>
 
         {/* Tabs */}
@@ -621,11 +634,14 @@ function CrmLeadsSection({ data }: { data: NonNullable<DomainReportData["crmLead
 
 // ─── Sub-components ───
 
-function MiniKpi({ label, value }: { label: string; value: string }) {
+function MiniKpi({ label, value, delta }: { label: string; value: string; delta?: React.ReactNode }) {
   return (
     <div className="bg-muted/20 rounded-lg px-3 py-2.5 border border-border/50">
       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</p>
-      <p className="text-base font-extrabold text-foreground mt-0.5 tracking-tight">{value}</p>
+      <div className="flex items-baseline gap-2 mt-0.5">
+        <p className="text-base font-extrabold text-foreground tracking-tight">{value}</p>
+        {delta}
+      </div>
     </div>
   )
 }
@@ -762,11 +778,10 @@ export default function ReportsPage() {
   const [selectedClientId, setSelectedClientId] = useState("")
   const [domains, setDomains] = useState<DomainOption[]>([])
   const [selectedDomain, setSelectedDomain] = useState("")
-  const [dateFrom, setDateFrom] = useState(() => {
-    const d = new Date(); d.setDate(d.getDate() - 30)
-    return d.toISOString().slice(0, 10)
-  })
-  const [dateTo, setDateTo] = useState(() => new Date().toISOString().slice(0, 10))
+  const [dateFrom, setDateFrom] = useState(() => getPresetRange('last30').from)
+  const [dateTo, setDateTo] = useState(() => getPresetRange('last30').to)
+  const [compareMode, setCompareMode] = useState<CompareMode>('none')
+  const [compareData, setCompareData] = useState<DomainReportData | null>(null)
 
   const [data, setData] = useState<DomainReportData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -839,7 +854,12 @@ export default function ReportsPage() {
     if (!selectedClientId || !selectedDomain) return
     setLoading(true)
     try {
-      const res = await fetch(`/api/reports/live?clientId=${selectedClientId}&domain=${encodeURIComponent(selectedDomain)}&from=${dateFrom}&to=${dateTo}`)
+      const base = `/api/reports/live?clientId=${selectedClientId}&domain=${encodeURIComponent(selectedDomain)}`
+      const compareRange = getComparisonRange({ from: dateFrom, to: dateTo }, compareMode)
+      const [res, cmpRes] = await Promise.all([
+        fetch(`${base}&from=${dateFrom}&to=${dateTo}`),
+        compareRange ? fetch(`${base}&from=${compareRange.from}&to=${compareRange.to}`) : Promise.resolve(null),
+      ])
       const json = await res.json()
       if (res.ok) {
         setData(json.data)
@@ -847,16 +867,23 @@ export default function ReportsPage() {
       } else {
         showToast(`❌ ${json.error}`)
       }
+      if (cmpRes) {
+        const cmpJson = await cmpRes.json().catch(() => null)
+        setCompareData(cmpRes.ok ? cmpJson?.data ?? null : null)
+        if (!cmpRes.ok) showToast("❌ Nu s-au putut încărca datele pentru perioada de comparație")
+      } else {
+        setCompareData(null)
+      }
     } catch (err: any) {
       showToast(`❌ ${err.message}`)
     } finally {
       setLoading(false)
     }
-  }, [selectedClientId, selectedDomain, dateFrom, dateTo])
+  }, [selectedClientId, selectedDomain, dateFrom, dateTo, compareMode])
 
   useEffect(() => {
     if (selectedClientId && selectedDomain) fetchData()
-  }, [selectedClientId, selectedDomain, dateFrom, dateTo, fetchData])
+  }, [selectedClientId, selectedDomain, dateFrom, dateTo, compareMode, fetchData])
 
   // ─── Actions ───
 
@@ -999,20 +1026,6 @@ export default function ReportsPage() {
             </select>
           </div>
 
-          {/* Date Range */}
-          <div className="flex items-center gap-2">
-            <div>
-              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">De la</label>
-              <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                className="px-3 py-2.5 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 dark:bg-zinc-900 dark:text-white dark:[color-scheme:dark]" />
-            </div>
-            <div>
-              <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Până la</label>
-              <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                className="px-3 py-2.5 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 dark:bg-zinc-900 dark:text-white dark:[color-scheme:dark]" />
-            </div>
-          </div>
-
           {/* Refresh */}
           <button
             onClick={fetchData}
@@ -1022,6 +1035,16 @@ export default function ReportsPage() {
             {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCcw size={14} />}
             {loading ? "Se încarcă..." : "Actualizează"}
           </button>
+        </div>
+
+        {/* Period + comparison */}
+        <div className="mt-4 pt-4 border-t border-border/50">
+          <PeriodPicker
+            range={{ from: dateFrom, to: dateTo }}
+            onChange={r => { setDateFrom(r.from); setDateTo(r.to) }}
+            compare={compareMode}
+            onCompareChange={setCompareMode}
+          />
         </div>
 
         {/* Source Indicators */}
@@ -1064,10 +1087,10 @@ export default function ReportsPage() {
       {data && !loading && (
         <>
           {/* Hero KPIs */}
-          <HeroKpis data={data} />
+          <HeroKpis data={data} prev={compareMode !== 'none' ? compareData : null} />
 
           {/* Google Ads */}
-          {data.googleAds && <AdsSection data={data.googleAds} />}
+          {data.googleAds && <AdsSection data={data.googleAds} prev={compareMode !== 'none' ? compareData?.googleAds : null} />}
 
           {/* Google Ads — Extended Analytics */}
           {data.googleAds && (data.googleAds.deviceBreakdown?.length || data.googleAds.impressionShare?.length || data.googleAds.keywords?.length) && (
@@ -1084,7 +1107,7 @@ export default function ReportsPage() {
           )}
 
           {/* SEO */}
-          {data.seo && <SeoSection data={data.seo} />}
+          {data.seo && <SeoSection data={data.seo} prev={compareMode !== 'none' ? compareData?.seo : null} />}
 
           {/* Analytics */}
           {data.analytics && <AnalyticsSection data={data.analytics} />}
