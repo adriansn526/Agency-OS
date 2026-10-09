@@ -303,7 +303,7 @@ export function renderReportEmail(input: RenderReportEmailInput): { html: string
           </tr>
           <tr>
             <td style="padding:32px 40px 16px;">
-              <p style="margin:0 0 14px;color:#111827;font-size:15px;">Bună ziua, ${escapeHtml(input.clientName)},</p>
+              <p style="margin:0 0 14px;color:#111827;font-size:15px;">Bună ziua,</p>
               <p style="margin:0;color:#4b5563;font-size:14px;line-height:1.7;">Mai jos găsiți principalele rezultate ale perioadei. Raportul complet, cu toate detaliile, este disponibil online.</p>
             </td>
           </tr>
@@ -331,7 +331,7 @@ export function renderReportEmail(input: RenderReportEmailInput): { html: string
 </html>`
 
   const textLines: string[] = [
-    `Bună ziua, ${input.clientName},`,
+    'Bună ziua,',
     '',
     `${input.reportTitle}`,
     `Perioada: ${input.periodLabel}`,
