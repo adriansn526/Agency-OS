@@ -58,6 +58,20 @@ function getSender(businessLine?: string) {
   return DEFAULT_SENDER
 }
 
+// ─── Generic transactional email (callers build the html/text) ───
+export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string }) {
+  const sender = getSender(input.businessLine)
+  const result = await getTransporter().sendMail({
+    from: `${sender.name} <${sender.email}>`,
+    replyTo: sender.replyTo,
+    to: input.to,
+    subject: input.subject,
+    html: input.html,
+    text: input.text,
+  })
+  return { messageId: result.messageId, success: true }
+}
+
 // ─── Send Offer Email ───
 
 interface SendOfferEmailInput {

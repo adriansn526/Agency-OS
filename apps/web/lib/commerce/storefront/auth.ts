@@ -81,12 +81,13 @@ export function storefrontHandler<P = Record<string, string>>(
       if (c.hashes.some((h) => h.length === presented.length && timingSafeEqual(h, presented))) { match = c; break }
     }
     if (!match) return json({ error: 'Unauthorized' }, 401)
-    if (rateLimited(presented.toString('hex'))) return json({ error: 'Too many requests' }, 429)
+    if (rateLimited(presented.toString('hex'))) return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Retry-After': '60' } })
 
     try {
       const feed = await db.commerceSupplierFeed.findFirst({ where: { isActive: true }, select: { stockFlagMeaning: true } })
       const ctx: StorefrontContext = { businessLineId: match.businessLineId, channelId: match.channelId, stockFlagMeaning: feed?.stockFlagMeaning ?? 'unknown' }
       const data = await handler(req, ctx, await routeCtx.params)
+      if (data instanceof Response) return data
       if (data === null) return json({ error: 'Not found' }, 404)
       return json(data, 200)
     } catch (e) {
