@@ -192,11 +192,11 @@ export async function resolveDomainSources(
 
     const fromProjectsFull = extractFromProjects(client?.projects || [], domain)
     return {
-      adsCustomerId: fallbackAds || client?.googleAdsCustomerId || null,
-      adsCampaignIds: fallbackCampaignIds.length > 0 ? fallbackCampaignIds : fromProjectsFull.adsCampaignIds,
-      gscSiteUrl: config.gscSiteUrl || null,
-      posthogProjectId: fallbackPosthog || null,
-      telnyxPhoneNumbers: fromProjectsFull.telnyxPhoneNumbers,
+      adsCustomerId: fromProjectsFull.adsCustomerId || fallbackAds || client?.googleAdsCustomerId || null,
+      adsCampaignIds: fromProjectsFull.adsCampaignIds.length > 0 ? fromProjectsFull.adsCampaignIds : fallbackCampaignIds,
+      gscSiteUrl: fromProjectsFull.gscSiteUrl || config.gscSiteUrl || null,
+      posthogProjectId: fromProjectsFull.posthogProjectId || fallbackPosthog || null,
+      telnyxPhoneNumbers: fromProjectsFull.telnyxPhoneNumbers.length > 0 ? fromProjectsFull.telnyxPhoneNumbers : ((config as any)?.telnyxPhoneNumbers || []),
       domain: config.domain,
     }
   }
