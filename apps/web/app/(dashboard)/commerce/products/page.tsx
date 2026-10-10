@@ -4,6 +4,7 @@ import { db, Prisma } from "@repo/db"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { imageUrl } from "@/lib/commerce/images/urls"
+import { AutoSubmitForm } from "./auto-submit-form"
 
 export const dynamic = 'force-dynamic'
 const PAGE = 50
@@ -29,9 +30,14 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
   const esc = (s: string) => s.replace(/[%_\\]/g, "\\$&")
   const like = `%${esc(q)}%`, starts = `${esc(q)}%`
 
-  const [fx, cats, rows] = await Promise.all([
+  const cats = await db.commerceCategory.findMany({ select: { id: true, parentId: true, nameRo: true }, orderBy: [{ sortOrder: "asc" }, { nameRo: "asc" }] })
+  // A parent category covers its subcategories (products are assigned to the leaves)
+  const catIds: string[] = cat ? [cat] : []
+  for (let i = 0; i < catIds.length; i++) for (const c of cats) if (c.parentId === catIds[i] && !catIds.includes(c.id)) catIds.push(c.id)
+  const roots = cats.filter((c) => !c.parentId)
+
+  const [fx, rows] = await Promise.all([
     db.commerceExchangeRate.findFirst({ where: { currency: "EUR" }, orderBy: { date: "desc" } }),
-    db.commerceCategory.findMany({ select: { id: true, nameRo: true, parent: { select: { nameRo: true } } }, orderBy: { nameRo: "asc" } }),
     db.$queryRaw<Array<{
       id: string; active: boolean; sku: string; name: string | null; key: string | null; n: bigint; cost: string; price: string | null
       category: string | null; brand: string | null; quality: string | null; side: string | null; avail: boolean | null; views: bigint; updated: Date | null
@@ -48,7 +54,7 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
       LEFT JOIN "CommerceCategory" c ON c.id = p."categoryId"
       WHERE (${q} = '' OR p."supplierCode" ILIKE ${starts} OR p."nameRo" ILIKE ${like} OR p."nameEn" ILIKE ${like} OR p."oeMain" ILIKE ${starts})
         AND (${!inactive} OR NOT p."isActive")
-        AND (${cat} = '' OR p."categoryId" = ${cat})
+        AND (${cat} = '' OR p."categoryId" = ANY(${catIds}::text[]))
         AND (${!noimg} OR NOT EXISTS (SELECT 1 FROM "CommerceProductImage" i WHERE i."productId" = p.id))
         AND (${stock} = '' OR (${stock} = 'in' AND EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id AND s."rawFlag" = 1))
              OR (${stock} = 'out' AND EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id) AND NOT EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id AND s."rawFlag" = 1))
@@ -68,16 +74,24 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
         <h1 className="text-3xl font-bold tracking-tight">Produse</h1>
         <p className="text-muted-foreground">Catalog, costuri, prețuri, stoc la furnizor și poze. Prețurile sunt cele din storefront (RON, TVA inclus).</p>
       </div>
-      <form className="flex flex-wrap items-center gap-3 text-sm">
+      <AutoSubmitForm className="flex flex-wrap items-center gap-3 text-sm">
         <input name="q" defaultValue={q} placeholder="SKU, cod OE sau denumire" className="h-9 w-64 rounded-md border border-input bg-background px-3 shadow-sm" />
-        <select name="cat" defaultValue={cat} className={sel}><option value="">Toate categoriile</option>{cats.map((c) => <option key={c.id} value={c.id}>{c.parent ? `${c.parent.nameRo} › ` : ""}{c.nameRo}</option>)}</select>
+        <select name="cat" defaultValue={cat} className={sel}>
+          <option value="">Toate categoriile</option>
+          {roots.map((r) => (
+            <optgroup key={r.id} label={r.nameRo}>
+              <option value={r.id}>Toate din {r.nameRo}</option>
+              {cats.filter((c) => c.parentId === r.id).map((c) => <option key={c.id} value={c.id}>{c.nameRo}</option>)}
+            </optgroup>
+          ))}
+        </select>
         <select name="stock" defaultValue={stock} className={sel}><option value="">Orice stoc</option><option value="in">Disponibil la furnizor</option><option value="out">Epuizat la furnizor</option><option value="unknown">Fără date de stoc</option></select>
         <select name="sort" defaultValue={sort} className={sel}>{Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
         <label className="flex items-center gap-2"><input type="checkbox" name="noimg" value="1" defaultChecked={noimg} /> Doar fără poză</label>
         <label className="flex items-center gap-2"><input type="checkbox" name="inactive" value="1" defaultChecked={inactive} /> Doar inactive</label>
         <button className="h-9 rounded-md bg-primary px-4 text-primary-foreground">Caută</button>
         <a href="/api/commerce/images/missing" className="ml-auto inline-flex items-center gap-1 text-primary hover:underline"><Download className="h-4 w-4" /> Export CSV produse fără poză</a>
-      </form>
+      </AutoSubmitForm>
       <Card><CardContent className="p-0"><div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="border-b text-left text-muted-foreground">
