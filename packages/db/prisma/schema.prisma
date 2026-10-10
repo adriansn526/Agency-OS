@@ -1403,6 +1403,7 @@ model CommerceListing {
   priceUpdatedAt DateTime?
   seoTitle       String?
   seoDescription String?
+  seoAuto        Boolean              @default(false) // true = seoTitle/seoDescription generated (see scripts/commerce/apply-seo.ts)
   isActive       Boolean              @default(true)
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
