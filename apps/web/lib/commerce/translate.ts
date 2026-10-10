@@ -31,14 +31,14 @@ async function geminiJson(model: string, system: string, user: string): Promise<
         temperature: 0,
         maxOutputTokens: 8192,
         responseMimeType: 'application/json',
-        thinkingConfig: { thinkingLevel: 'minimal' },
+        thinkingConfig: { thinkingLevel: /lite/.test(model) ? 'minimal' : 'low' },
       },
     }),
   })
   if (!res.ok) {
     const body = await res.text().catch(() => '')
     const quota = res.status === 429 && /quota/i.test(body)
-    throw new Error(`Gemini ${res.status}${quota ? ' quota-exhausted' : ''}`)
+    throw new Error(`Gemini ${model} ${res.status}${quota ? ' quota-exhausted' : ''} ${body.slice(0, 160).replace(/\s+/g, ' ')}`)
   }
   const data = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] }
   return data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? '').join('') ?? ''
@@ -61,6 +61,7 @@ WINDOW REGULATOR=macara geam, W/O MOTOR=fără motor, DOOR HANDLE=mâner ușă, 
 GAS SPRING=amortizor (telescop), RADIATOR=radiator, CONDENSER=condensator AC, COOLING FAN=electroventilator, HEATER RADIATOR=radiator încălzire, AUXILIARY TANK=vas expansiune
 WIPER WASHER TANK=vas lichid parbriz, PDC=senzori parcare, W/2 PDC=cu 2 găuri senzori parcare, FOG LAMP HOLE=găuri proiectoare, WASHER HOLES=găuri spălătoare faruri
 SPLASH PANEL BRAKE DISC=protecție disc frână, ENGINE COVER=scut motor, TOW HOOK COVER=capac cârlig remorcare, A QUALITY=calitate A, W/=cu, W/O=fără
+WHEEL ARCH=pasaj roată, EXH=țeavă de eșapament (2SINGLE EXH=2 țevi eșapament simple, 2 DOUBLE EXH=2 țevi eșapament duble), MOULDING=bandă ornamentală, BUMPER ABSORBER=absorbant impact bară
 `.trim()
 
 const SYSTEM = `Ești traducător specializat în piese auto pentru un magazin online din România.
@@ -70,12 +71,13 @@ Reguli:
 - Păstrează neschimbate: mărci (DEPO, TYC, VALEO, HELLA, MARELLI, NRF…), coduri, numere, dimensiuni, unități, tipuri de becuri (H7, H11, LED), denumiri de echipare (M-SPORT, AMG-LINE, S-LINE).
 - Acordă adjectivele corect în gen (ex. „Bară față grunduită”, „Far electric”).
 - Prima literă majusculă, restul cu litere mici (exceptând mărci/coduri). Folosește diacritice (ă, â, î, ș, ț).
+- Numerele lipite de cuvinte (ex. 2SINGLE, 4WD, 5D) se păstrează ca atare sau se despart corect; nu lipi cifre de litere românești.
 - Nu adăuga informații noi. Nu traduce în paranteză decât conținutul existent.
 Glosar:
 ${GLOSSARY}
 Răspunde STRICT cu JSON: {"t": ["traducere1", "traducere2", ...]} în aceeași ordine și cu același număr de elemente.`
 
-async function translateBatch(texts: string[]): Promise<string[]> {
+export async function translateBatch(texts: string[]): Promise<string[]> {
   const numbered = texts.map((t, i) => `${i + 1}. ${t}`).join('\n')
   let lastErr: unknown
   for (const model of models()) {
@@ -101,13 +103,14 @@ async function translateBatch(texts: string[]): Promise<string[]> {
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr))
 }
 
-/** Apply cached translations to products that have no nameRo. */
+/** Untranslated = nameRo missing, or just the untouched English copy with no source recorded. */
 export async function applyCachedTranslations(): Promise<number> {
   return db.$executeRaw`
     UPDATE "CommerceProduct" p
     SET "nameRo" = t."text", "nameRoSource" = t."source", "updatedAt" = now()
     FROM "CommerceTranslation" t
-    WHERE p."nameRo" IS NULL AND t."targetLang" = 'ro' AND t."hash" = md5(lower(p."nameEn"))`
+    WHERE (p."nameRo" IS NULL OR (p."nameRoSource" IS NULL AND p."nameRo" = p."nameEn"))
+      AND t."targetLang" = 'ro' AND t."hash" = md5(lower(p."nameEn"))`
 }
 
 /**
@@ -122,7 +125,7 @@ export async function translatePendingNames(opts: { limit?: number; batchSize?: 
 
   const pending = await db.$queryRaw<{ nameEn: string }[]>`
     SELECT DISTINCT p."nameEn" FROM "CommerceProduct" p
-    WHERE p."isActive" = true AND p."nameRo" IS NULL
+    WHERE p."isActive" = true AND (p."nameRo" IS NULL OR (p."nameRoSource" IS NULL AND p."nameRo" = p."nameEn"))
     ORDER BY p."nameEn"
     LIMIT ${limit}`
   const texts = pending.map((r) => r.nameEn)
@@ -152,6 +155,6 @@ export async function translatePendingNames(opts: { limit?: number; batchSize?: 
   const applied = await applyCachedTranslations()
 
   const rows = await db.$queryRaw<{ count: bigint }[]>`
-    SELECT COUNT(DISTINCT "nameEn")::bigint AS count FROM "CommerceProduct" WHERE "isActive" = true AND "nameRo" IS NULL`
+    SELECT COUNT(DISTINCT "nameEn")::bigint AS count FROM "CommerceProduct" p WHERE "isActive" = true AND (p."nameRo" IS NULL OR (p."nameRoSource" IS NULL AND p."nameRo" = p."nameEn"))`
   return { requested: texts.length, translated, applied, remaining: Number(rows[0]?.count ?? 0), errors: errors.slice(0, 5) }
 }

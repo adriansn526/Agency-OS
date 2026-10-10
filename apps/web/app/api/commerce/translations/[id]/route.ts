@@ -27,6 +27,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     },
   })
   // Propagate to all products sharing this source name (listing slugs stay stable for SEO).
+  if (text === t.text) return NextResponse.json({ ok: true, translation: updated, productsUpdated: 0 })
   const products = await db.$executeRaw`
     UPDATE "CommerceProduct" SET "nameRo" = ${text}, "nameRoSource" = ${updated.source}, "updatedAt" = now()
     WHERE md5(lower("nameEn")) = ${t.hash} AND ("nameRo" IS DISTINCT FROM ${text})`
