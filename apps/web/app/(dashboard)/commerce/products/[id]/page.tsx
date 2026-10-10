@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { imageUrl } from "@/lib/commerce/images/urls"
 import { availabilityFromFlags } from "@/lib/commerce/availability"
+import { loadSeoRows } from "@/lib/commerce/seo/data"
+import { buildSeo } from "@/lib/commerce/seo/titles"
 import { ImageManager } from "./image-manager"
 import { ActiveToggle } from "./active-toggle"
 
@@ -56,6 +58,9 @@ export default async function CommerceProduct({ params }: { params: Promise<{ id
     db.$queryRaw<Array<{ n: bigint; qty: bigint }>>`SELECT count(DISTINCT o.id) AS n, COALESCE(sum(i.qty), 0) AS qty FROM "CommerceOrderItem" i JOIN "CommerceOrder" o ON o.id = i."orderId" WHERE i."productId" = ${id} AND o.status <> 'cancelled'`,
     db.commerceSyncReview.findMany({ where: { productId: id }, orderBy: { createdAt: "desc" }, take: 5, select: { kind: true, status: true, oldCost: true, newCost: true, oldPriceRon: true, newPriceRon: true, createdAt: true } }).catch(() => []),
   ])
+
+  const seoRow = (await loadSeoRows({ businessLineId: BL, productId: id }))[0]
+  const seo = seoRow ? buildSeo(seoRow) : null
 
   const cost = Number(p.costPrice), rate = fx ? Number(fx.rate) : null, vat = channel ? Number(channel.vatRate) : 21
   const price = listing?.priceRon != null ? Number(listing.priceRon) : null
@@ -142,6 +147,16 @@ export default async function CommerceProduct({ params }: { params: Promise<{ id
           {attrs.length === 0 ? <p className="text-sm text-muted-foreground">Fără atribute.</p> : attrs.map(([k, v]) => <Row key={k} k={k}>{typeof v === "object" ? JSON.stringify(v) : String(v)}</Row>)}
         </Section>
       </div>
+
+      {seo && seoRow && (
+        <Section title="SEO (propunere, neaplicată)">
+          <Row k="Titlu">{seo.title} <span className="text-xs text-muted-foreground">({seo.title.length}/70)</span></Row>
+          <Row k="Descriere">{seo.description}</Row>
+          <Row k="Slug propus"><span className="font-mono text-xs break-all">{seo.slug}</span></Row>
+          <Row k="Slug curent"><span className="font-mono text-xs break-all">{seoRow.currentSlug}</span></Row>
+          <Row k="Titlu SEO salvat">{seoRow.currentSeoTitle ?? "—"}</Row>
+        </Section>
+      )}
 
       <Section title={`Compatibilitate vehicule (${fitCount})`}>
         {fitCount === 0 ? <p className="text-sm text-muted-foreground">Fără vehicule asociate.</p> : (
