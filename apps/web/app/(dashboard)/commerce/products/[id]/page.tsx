@@ -5,12 +5,13 @@ import { db } from "@repo/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { imageUrl } from "@/lib/commerce/images/urls"
 import { ImageManager } from "./image-manager"
+import { ActiveToggle } from "./active-toggle"
 
 export const dynamic = 'force-dynamic'
 
 export default async function CommerceProduct({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const p = await db.commerceProduct.findUnique({ where: { id }, select: { id: true, supplierCode: true, nameRo: true, nameEn: true, category: { select: { nameRo: true } } } })
+  const p = await db.commerceProduct.findUnique({ where: { id }, select: { id: true, isActive: true, supplierCode: true, nameRo: true, nameEn: true, category: { select: { nameRo: true } } } })
   if (!p) notFound()
   const imgs = await db.$queryRaw<Array<{ id: string; objectKey: string; source: string; width: number | null; height: number | null }>>`
     SELECT id, "objectKey", source, width, height FROM "CommerceProductImage" WHERE "productId" = ${id} ORDER BY (source = 'manual') DESC, position, "objectKey"`
@@ -20,6 +21,7 @@ export default async function CommerceProduct({ params }: { params: Promise<{ id
       <div>
         <Link href="/commerce/products" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-3"><ArrowLeft className="h-4 w-4" /> Produse</Link>
         <h1 className="text-2xl font-bold tracking-tight">{p.nameRo ?? p.nameEn}</h1>
+        <div className="my-2"><ActiveToggle productId={p.id} isActive={p.isActive} /></div>
         <p className="text-sm text-muted-foreground">SKU <span className="font-mono">{p.supplierCode}</span>{p.category ? ` · ${p.category.nameRo}` : ""}{listing ? ` · slug ${listing.slug}` : ""}</p>
       </div>
       <Card>

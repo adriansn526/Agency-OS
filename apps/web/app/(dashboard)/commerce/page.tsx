@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Store, Globe, Settings, Activity } from "lucide-react"
 import Link from "next/link"
+import { TrendsWidget } from "./trends-widget"
 
 export const dynamic = 'force-dynamic'
 
@@ -24,7 +25,7 @@ export default async function CommerceDashboard() {
         <p className="text-muted-foreground">Gestionează liniile de business, regulile de preț și feed-urile de produse.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Produse în Feed</CardTitle>
@@ -55,10 +56,11 @@ export default async function CommerceDashboard() {
             <p className="text-xs text-muted-foreground">Cu preț și stoc</p>
           </CardContent>
         </Card>
+        <TrendsWidget />
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-4"><h2 className="text-xl font-semibold">Linii de Business</h2><span className="flex gap-4"><Link href="/commerce/sync" className="text-sm text-primary hover:underline">Sincronizare preț și stoc →</Link><Link href="/commerce/products" className="text-sm text-primary hover:underline">Produse și poze →</Link></span></div>
+        <div className="flex items-center justify-between mb-4"><h2 className="text-xl font-semibold">Linii de Business</h2><span className="flex gap-4"><Link href="/commerce/trends" className="text-sm text-primary hover:underline">Stoc și cerere</Link><Link href="/commerce/sync" className="text-sm text-primary hover:underline">Sincronizare preț și stoc →</Link><Link href="/commerce/products" className="text-sm text-primary hover:underline">Produse și poze →</Link></span></div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {channels.map(channel => (
             <Card key={channel.businessLineId} className="hover:border-primary/50 transition-colors">

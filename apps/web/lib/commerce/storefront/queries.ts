@@ -6,6 +6,7 @@ import { db, Prisma } from '@repo/db'
 import { normalizeOe } from '../text'
 import { imageUrl } from '../images/urls'
 import { availabilityFromFlags } from '../availability'
+import { trackProductView, trackSearch } from './track'
 import { StorefrontInputError, type StorefrontContext } from './auth'
 
 const SLUG_RE = /^[a-z0-9-]{1,140}$/
@@ -220,6 +221,7 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
   const quality = sp.get('quality')
   if (quality && !QUALITIES.has(quality)) throw new StorefrontInputError('Invalid quality')
   const q = (sp.get('q') ?? '').trim().slice(0, 80)
+  if (q) trackSearch(q)
 
   const where: Prisma.CommerceListingWhereInput = { businessLineId: ctx.businessLineId, isActive: true, priceRon: { not: null } }
   const pw: Prisma.CommerceProductWhereInput = { isActive: true }
@@ -304,6 +306,7 @@ export async function getProduct(ctx: StorefrontContext, slug: string) {
     },
   })
   if (!l || !l.isActive || !l.product.isActive || l.priceRon == null) return null
+  trackProductView(l.productId)
   const relatedListings = l.product.links.flatMap((k) => k.related.listings)
   const imgs = await loadImages([l.productId, ...relatedListings.map((rl) => rl.productId)], true)
   return {

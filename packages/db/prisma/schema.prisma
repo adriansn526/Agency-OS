@@ -1620,3 +1620,45 @@ model CommerceSyncMissing {
   feedId       String
   missingSince DateTime @default(now())
 }
+
+// ─── Stock/price change journal and storefront demand counters (tables + triggers: prisma/sql/commerce_trends.sql) ───
+model CommerceStockEvent {
+  id        BigInt   @id @default(autoincrement())
+  productId String
+  warehouse String
+  oldFlag   Int?
+  newFlag   Int
+  at        DateTime @default(now())
+
+  @@index([at(sort: Desc)])
+  @@index([productId, at(sort: Desc)])
+}
+
+model CommercePriceEvent {
+  id        BigInt   @id @default(autoincrement())
+  listingId String
+  productId String
+  oldPrice  Decimal  @db.Decimal(12, 2)
+  newPrice  Decimal  @db.Decimal(12, 2)
+  at        DateTime @default(now())
+
+  @@index([at(sort: Desc)])
+  @@index([productId, at(sort: Desc)])
+}
+
+model CommerceDemandDaily {
+  day       DateTime @db.Date
+  productId String
+  views     Int      @default(0)
+
+  @@id([day, productId])
+  @@index([productId])
+}
+
+model CommerceSearchDaily {
+  day  DateTime @db.Date
+  term String
+  n    Int      @default(0)
+
+  @@id([day, term])
+}
