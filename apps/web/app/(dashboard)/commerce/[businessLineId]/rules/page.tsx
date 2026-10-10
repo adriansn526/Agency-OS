@@ -45,9 +45,13 @@ export default async function PricingRulesPage({ params }: { params: Promise<{ b
         <h1 className="text-3xl font-bold tracking-tight">Reguli de preț — {channel.businessLine.name}</h1>
         <p className="text-muted-foreground">Prima regulă potrivită (prioritate mare → mică) înlocuiește markup-ul implicit și marja minimă din setările canalului.</p>
       </div>
-      {parsePriceSyncSettings(channel.config).enabled && (
+      {parsePriceSyncSettings(channel.config).enabled ? (
         <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-sm">
           Prețurile sunt gestionate de <Link href="/commerce/sync" className="font-medium underline">sincronizarea cu furnizorul</Link>: regulile de preț și recalcularea de aici nu mai modifică prețurile din catalog.
+        </div>
+      ) : (
+        <div className="rounded-md border border-sky-500/50 bg-sky-500/10 p-3 text-sm">
+          Adaosul, TVA-ul și rotunjirea care contează pentru prețurile din catalog se setează în <Link href="/commerce/sync" className="font-medium underline">Sincronizare furnizor</Link> (formula de preț). Setările de aici (markup, transport, marjă, reguli) sunt folosite doar de motorul vechi de recalculare și nu sunt aplicate de sincronizare.
         </div>
       )}
       <RulesManager
