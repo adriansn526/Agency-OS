@@ -32,6 +32,19 @@ export interface ImportStats {
   timingsMs: Record<string, number>
 }
 
+/**
+ * Once the supplier price & stock sync (lib/commerce/sync) has applied a price list for this feed, it owns costPrice, stock flags and the
+ * active state of products it deactivated/queued. This import then leaves those alone (it reads an older local copy of the feed).
+ */
+async function syncOwnsPriceAndStock(feedId: string): Promise<boolean> {
+  try {
+    const r = await db.$queryRaw<Array<{ n: bigint }>>`SELECT count(*) AS n FROM "CommerceSyncFile" WHERE "feedId" = ${feedId} AND name = 'pricelist'`
+    return Number(r[0]?.n ?? 0) > 0
+  } catch {
+    return false // DDL not applied yet
+  }
+}
+
 function chunk<T>(arr: T[], size = CHUNK): T[][] {
   const out: T[][] = []
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
@@ -63,7 +76,7 @@ export async function ensureCategories(): Promise<Map<string, string>> {
   return bySlug
 }
 
-async function syncGroupMaps(feedId: string, groups: string[], catBySlug: Map<string, string>) {
+export async function syncGroupMaps(feedId: string, groups: string[], catBySlug: Map<string, string>) {
   const existing = await db.commerceGroupMap.findMany({ where: { feedId } })
   const known = new Set(existing.map((g) => g.groupCode))
   const toCreate = groups.filter((g) => !known.has(g))
@@ -154,7 +167,7 @@ async function syncVehicles(feedId: string, models: Map<string, { make: string; 
 // ─────────────────────────────────────────────────────────────
 // Products
 // ─────────────────────────────────────────────────────────────
-interface ProductInput {
+export interface ProductInput {
   code: string
   group: string
   categoryId: string | null
@@ -170,7 +183,7 @@ interface ProductInput {
   hash: string
 }
 
-function buildProducts(rows: PriceRow[], groupMaps: Awaited<ReturnType<typeof syncGroupMaps>>, catBySlug: Map<string, string>, catById: Map<string, string>) {
+export function buildProducts(rows: PriceRow[], groupMaps: Awaited<ReturnType<typeof syncGroupMaps>>, catBySlug: Map<string, string>, catById: Map<string, string>) {
   const gm = new Map(groupMaps.map((g) => [g.groupCode, g]))
   const canonical = new Map<string, PriceRow>()
   for (const r of rows) {
@@ -196,7 +209,7 @@ function buildProducts(rows: PriceRow[], groupMaps: Awaited<ReturnType<typeof sy
   return products
 }
 
-async function upsertProducts(feedId: string, currency: string, products: ProductInput[]) {
+async function upsertProducts(feedId: string, currency: string, products: ProductInput[], syncOwns: boolean) {
   const existing = await db.commerceProduct.findMany({ where: { feedId }, select: { supplierCode: true, contentHash: true } })
   const prev = new Map(existing.map((p) => [p.supplierCode, p.contentHash]))
   let created = 0
@@ -205,6 +218,14 @@ async function upsertProducts(feedId: string, currency: string, products: Produc
     if (!prev.has(p.code)) created++
     else if (prev.get(p.code) !== p.hash) changed++
   }
+
+  const costSql = syncOwns ? Prisma.sql`"CommerceProduct"."costPrice"` : Prisma.sql`EXCLUDED."costPrice"`
+  const isActiveSql = syncOwns
+    ? Prisma.sql`CASE
+          WHEN EXISTS (SELECT 1 FROM "CommerceSyncMissing" m WHERE m."productId" = "CommerceProduct"."id") THEN false
+          WHEN EXISTS (SELECT 1 FROM "CommerceSyncReview" r WHERE r."productId" = "CommerceProduct"."id" AND r.kind = 'new_product' AND r.status = 'pending') THEN false
+          ELSE true END`
+    : Prisma.sql`true`
 
   for (const c of chunk(products)) {
     await db.$executeRaw`
@@ -225,7 +246,7 @@ async function upsertProducts(feedId: string, currency: string, products: Produc
       ) AS u(code, grp, cat, en, el, oe, side, brand, quality, attrs, bulky, cost, hash)
       ON CONFLICT ("feedId", "supplierCode") DO UPDATE SET
         "lastSeenAt" = now(),
-        "isActive" = true,
+        "isActive" = ${isActiveSql},
         "groupCode" = EXCLUDED."groupCode",
         "categoryId" = EXCLUDED."categoryId",
         "nameEn" = EXCLUDED."nameEn",
@@ -236,7 +257,7 @@ async function upsertProducts(feedId: string, currency: string, products: Produc
         "quality" = EXCLUDED."quality",
         "attributes" = EXCLUDED."attributes",
         "bulkyClass" = EXCLUDED."bulkyClass",
-        "costPrice" = EXCLUDED."costPrice",
+        "costPrice" = ${costSql},
         "contentHash" = EXCLUDED."contentHash",
         -- Re-translate when the source name changes (keep manual translations)
         "nameRo" = CASE WHEN "CommerceProduct"."nameEn" IS DISTINCT FROM EXCLUDED."nameEn"
@@ -252,7 +273,7 @@ async function upsertProducts(feedId: string, currency: string, products: Produc
 // ─────────────────────────────────────────────────────────────
 // Relations (fitments, OE, links, stock) — staging temp tables, diff-sync
 // ─────────────────────────────────────────────────────────────
-async function syncRelations(feedId: string, data: FeedData, genByModel: Map<string, string | null>) {
+async function syncRelations(feedId: string, data: FeedData, genByModel: Map<string, string | null>, syncOwns: boolean) {
   const listingToBases = new Map<string, Set<string>>()
   for (const r of data.rows) {
     if (!listingToBases.has(r.listingCode)) listingToBases.set(r.listingCode, new Set())
@@ -372,8 +393,8 @@ async function syncRelations(feedId: string, data: FeedData, genByModel: Map<str
       FROM tmp_link t JOIN tmp_prod pa ON pa.code = t.a JOIN tmp_prod pb ON pb.code = t.b
       ON CONFLICT ("productId", "relatedId", "type") DO NOTHING`
 
-    // Stock
-    await tx.$executeRaw`
+    // Stock (owned by the supplier sync once it has run — see syncOwnsPriceAndStock)
+    if (!syncOwns) await tx.$executeRaw`
       INSERT INTO "CommerceStock" ("id", "productId", "warehouse", "rawFlag", "updatedAt")
       SELECT gen_random_uuid()::text, p.id, t.wh, t.flag, now() FROM tmp_stock t JOIN tmp_prod p ON p.code = t.base
       ON CONFLICT ("productId", "warehouse") DO UPDATE SET "rawFlag" = EXCLUDED."rawFlag", "updatedAt" = now()
@@ -423,10 +444,11 @@ export async function runFeedImport(feedCode: string, triggeredBy = 'manual') {
 
     const products = buildProducts(data.rows, groupMaps, catBySlug, catById)
     const startedAt = new Date()
-    const up = await upsertProducts(feed.id, feed.currency, products)
+    const syncOwns = await syncOwnsPriceAndStock(feed.id)
+    const up = await upsertProducts(feed.id, feed.currency, products, syncOwns)
     t = lap('products', t)
 
-    const rel = await syncRelations(feed.id, data, vehicles.byCode)
+    const rel = await syncRelations(feed.id, data, vehicles.byCode, syncOwns)
     t = lap('relations', t)
 
     // Safety: never deactivate more than 30% of the catalog in a single run

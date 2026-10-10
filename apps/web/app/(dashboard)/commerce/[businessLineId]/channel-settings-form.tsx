@@ -23,6 +23,11 @@ const ROUNDING = [
   { value: "integer", label: "Număr întreg (ex. 125)" },
   { value: "none", label: "Fără rotunjire (2 zecimale)" },
 ]
+interface Preview {
+  listings: number; changed: number; up: number; down: number; avgChangePct: number; medianChangePct: number; p5ChangePct: number; p95ChangePct: number
+  samples: Array<{ sku: string; name: string | null; currentRon: number; newRon: number; changePct: number }>
+}
+const pct = (n: number) => `${n > 0 ? "+" : ""}${n.toLocaleString("ro-RO")}%`
 const input = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
 const fmt = (n: number) => new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON" }).format(n)
 
@@ -52,6 +57,8 @@ export function ChannelSettingsForm({
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [repricing, setRepricing] = useState(false)
   const [repriceInfo, setRepriceInfo] = useState<string | null>(null)
+  const [preview, setPreview] = useState<Preview | null>(null)
+  const [previewing, setPreviewing] = useState(false)
 
   const dirty = JSON.stringify(s) !== JSON.stringify(saved)
   const num = (v: string) => (v === "" ? NaN : Number(v.replace(",", ".")))
@@ -96,12 +103,24 @@ export function ChannelSettingsForm({
     return () => clearInterval(t)
   }, [repricing]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  async function runPreview() {
+    setPreviewing(true); setRepriceInfo(null); setPreview(null)
+    try {
+      const res = await fetch(`/api/commerce/channels/${businessLineId}/reprice`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ dryRun: true }) })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || "Previzualizarea a eșuat")
+      setPreview(data.preview)
+    } catch (e) { setRepriceInfo(`Eroare: ${e instanceof Error ? e.message : "previzualizare eșuată"}`) } finally { setPreviewing(false) }
+  }
+
   async function reprice() {
-    if (!confirm(`Se recalculează prețurile pentru ${activeListings.toLocaleString("ro-RO")} produse active, cu setările salvate, regulile de preț și cursul BNR. Prețurile din storefront se schimbă imediat. Continui?`)) return
+    if (!preview) return
+    if (!confirm(`Aplici recalcularea? ${preview.changed.toLocaleString("ro-RO")} prețuri se schimbă (medie ${pct(preview.avgChangePct)}, mediană ${pct(preview.medianChangePct)}) și apar imediat în storefront. Acțiunea nu se poate anula automat.`)) return
     setRepriceInfo(null)
-    const res = await fetch(`/api/commerce/channels/${businessLineId}/reprice`, { method: "POST" })
+    const res = await fetch(`/api/commerce/channels/${businessLineId}/reprice`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ apply: true }) })
     const data = await res.json().catch(() => ({}))
     if (!res.ok) { setRepriceInfo(data.error || "Nu s-a putut porni recalcularea"); return }
+    setPreview(null)
     setRepricing(true)
   }
 
@@ -159,16 +178,35 @@ export function ChannelSettingsForm({
         <CardContent className="grid gap-3 text-sm">
           <p className="text-muted-foreground">
             {activeListings.toLocaleString("ro-RO")} produse active. Ultima actualizare de preț: {lastPriceUpdate ? new Date(lastPriceUpdate).toLocaleString("ro-RO") : "—"}.
-            Salvarea setărilor nu modifică prețurile existente; recalcularea le aplică.
+            Salvarea setărilor nu modifică prețurile existente. Întâi previzualizezi impactul, apoi poți aplica recalcularea.
           </p>
           {dirty && <Alert>Ai modificări nesalvate; recalcularea folosește doar setările salvate.</Alert>}
           {repriceInfo && <Alert variant={repriceInfo.startsWith("Eroare") ? "destructive" : "default"}>{repriceInfo}</Alert>}
-          <div>
-            <Button variant="outline" onClick={reprice} disabled={repricing || !saved.isEnabled}>
-              {repricing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-              {repricing ? "Se recalculează…" : "Recalculează prețurile"}
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={runPreview} disabled={previewing || repricing || !saved.isEnabled}>
+              {previewing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              {previewing ? "Se calculează…" : "Previzualizează impactul"}
+            </Button>
+            <Button onClick={reprice} disabled={!preview || repricing || previewing}>
+              {repricing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+              {repricing ? "Se recalculează…" : "Aplică recalcularea"}
             </Button>
           </div>
+          {preview && (
+            <div className="rounded-md border bg-muted/40 p-3 grid gap-2">
+              <div className="font-medium">Impact asupra a {preview.listings.toLocaleString("ro-RO")} produse (nu s-a modificat nimic încă)</div>
+              <div>
+                {preview.changed.toLocaleString("ro-RO")} prețuri s-ar schimba: {preview.up.toLocaleString("ro-RO")} cresc, {preview.down.toLocaleString("ro-RO")} scad.
+                Variație medie <b>{pct(preview.avgChangePct)}</b>, mediană <b>{pct(preview.medianChangePct)}</b>, 90% dintre produse între {pct(preview.p5ChangePct)} și {pct(preview.p95ChangePct)}.
+              </div>
+              <div className="text-xs text-muted-foreground">Cele mai mari schimbări:</div>
+              <ul className="text-xs grid gap-0.5">
+                {preview.samples.map((x) => (
+                  <li key={x.sku}><span className="font-mono">{x.sku}</span> {x.name ? `· ${x.name.slice(0, 50)}` : ""}: {fmt(x.currentRon)} → <b>{fmt(x.newRon)}</b> ({pct(x.changePct)})</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

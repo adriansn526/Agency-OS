@@ -5,6 +5,7 @@
 import { db, Prisma } from '@repo/db'
 import { normalizeOe } from '../text'
 import { imageUrl } from '../images/urls'
+import { availabilityFromFlags } from '../availability'
 import { StorefrontInputError, type StorefrontContext } from './auth'
 
 const SLUG_RE = /^[a-z0-9-]{1,140}$/
@@ -41,9 +42,7 @@ async function cached<T>(key: string, ms: number, fn: () => Promise<T>): Promise
 }
 
 export function availabilityFor(stock: { rawFlag: number }[], meaning: string): 'in_stock' | 'out_of_stock' | 'confirm_on_order' {
-  if (meaning === 'one_in_stock') return stock.some((s) => s.rawFlag === 1) ? 'in_stock' : 'out_of_stock'
-  if (meaning === 'one_out_of_stock') return stock.some((s) => s.rawFlag === 0) ? 'in_stock' : 'out_of_stock'
-  return 'confirm_on_order'
+  return availabilityFromFlags(stock.map((s) => s.rawFlag), meaning)
 }
 
 // ─── Vehicles ───

@@ -1560,3 +1560,63 @@ model CommerceOrderEvent {
 
   @@index([orderId])
 }
+
+// ─── Supplier price & stock sync (tables created via prisma/sql/commerce_supplier_sync.sql; FKs live in SQL only) ───
+model CommerceSyncRun {
+  id          String    @id @default(cuid())
+  feedId      String
+  job         String // feed_sync | reprice
+  status      String    @default("running") // running | success | unchanged | aborted | failed
+  dryRun      Boolean   @default(false)
+  triggeredBy String?
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+  durationMs  Int?
+  stats       Json?
+  error       String?
+  alerted     Boolean   @default(false)
+
+  @@index([feedId, startedAt(sort: Desc)])
+}
+
+model CommerceSyncFile {
+  id          String   @id @default(cuid())
+  feedId      String
+  name        String
+  remoteMtime DateTime
+  size        Int
+  sha256      String
+  rows        Int
+  appliedAt   DateTime
+
+  @@unique([feedId, name])
+}
+
+model CommerceSyncReview {
+  id           String    @id @default(cuid())
+  feedId       String
+  kind         String // price_change | new_product
+  productId    String?
+  supplierCode String
+  status       String    @default("pending") // pending | approved | rejected
+  oldCost      Decimal?  @db.Decimal(12, 2)
+  newCost      Decimal?  @db.Decimal(12, 2)
+  oldPriceRon  Decimal?  @db.Decimal(12, 2)
+  newPriceRon  Decimal?  @db.Decimal(12, 2)
+  changePct    Decimal?  @db.Decimal(10, 2)
+  payload      Json?
+  runId        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+  decidedAt    DateTime?
+  decidedBy    String?
+
+  @@index([status, kind, createdAt(sort: Desc)])
+  @@index([productId])
+}
+
+model CommerceSyncMissing {
+  productId    String   @id
+  feedId       String
+  missingSince DateTime @default(now())
+}

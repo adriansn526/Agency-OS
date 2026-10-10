@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { db } from "@repo/db"
+import { parsePriceSyncSettings } from "@/lib/commerce/sync/settings"
 import { ChannelSettingsForm } from "./channel-settings-form"
 
 export const dynamic = 'force-dynamic'
@@ -26,6 +27,12 @@ export default async function ChannelSettingsPage({ params }: { params: Promise<
         <h1 className="text-3xl font-bold tracking-tight">Setări canal — {channel.businessLine.name}</h1>
         <p className="text-muted-foreground">Parametrii cu care se calculează prețurile din catalog (cost EUR × curs BNR → RON cu TVA).</p>
       </div>
+      {parsePriceSyncSettings(channel.config).enabled && (
+        <div className="rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-sm">
+          Prețurile sunt gestionate de <Link href="/commerce/sync" className="font-medium underline">sincronizarea cu furnizorul</Link>: regulile de preț și recalcularea de aici nu mai modifică prețurile din catalog.
+        </div>
+      )}
+      <Link href={`/commerce/${businessLineId}/rules`} className="text-sm text-primary hover:underline">Reguli de preț (pe categorie, brand, calitate, interval de cost) →</Link>
       <ChannelSettingsForm
         businessLineId={businessLineId}
         initial={{

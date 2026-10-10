@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+const bandOk = (v: { costMin?: number | null; costMax?: number | null }) => v.costMin == null || v.costMax == null || v.costMin < v.costMax
+const BAND_MSG = { message: 'costMin trebuie să fie mai mic decât costMax' }
+
 export const RuleBody = z.object({
   businessLineId: z.string().min(1).max(40),
   name: z.string().trim().min(1).max(120),
@@ -14,7 +17,7 @@ export const RuleBody = z.object({
   bulkySurchargeRon: z.number().min(0).max(1e5).default(0),
   competitorUndercutRon: z.number().min(0).max(1e5).nullable().default(null),
   isActive: z.boolean().default(true),
-})
+}).refine(bandOk, BAND_MSG)
 
 export const RulePatch = z.object({
   name: z.string().trim().min(1).max(120),
@@ -29,7 +32,7 @@ export const RulePatch = z.object({
   bulkySurchargeRon: z.number().min(0).max(1e5),
   competitorUndercutRon: z.number().min(0).max(1e5).nullable(),
   isActive: z.boolean(),
-}).partial()
+}).partial().refine(bandOk, BAND_MSG)
 
 export const ChannelPatch = z.object({
   isEnabled: z.boolean(),
