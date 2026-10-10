@@ -286,7 +286,12 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
   }
 }
 
-export async function getProduct(ctx: StorefrontContext, slug: string) {
+/** The storefront contract: a listing slug always ends with "-<9-digit SKU>" (also for legacy `uuid-SKU` slugs). */
+export function skuFromSlug(slug: string): string | null {
+  return /-(\d{9})$/.exec(slug)?.[1] ?? null
+}
+
+export async function getProduct(ctx: StorefrontContext, slug: string, fromLegacy = false): Promise<any> {
   if (!SLUG_RE.test(slug)) throw new StorefrontInputError('Invalid slug')
   const l = await db.commerceListing.findUnique({
     where: { businessLineId_slug: { businessLineId: ctx.businessLineId, slug } },
@@ -305,6 +310,13 @@ export async function getProduct(ctx: StorefrontContext, slug: string) {
       },
     },
   })
+  if (!l && !fromLegacy) {
+    // Old (uuid-…) or otherwise outdated slug: resolve by the SKU at the end and answer with the product's CURRENT slug in `slug`
+    // (the storefront redirects to it with a 301).
+    const sku = skuFromSlug(slug)
+    const alt = sku ? await db.commerceListing.findFirst({ where: { businessLineId: ctx.businessLineId, product: { supplierCode: sku } }, select: { slug: true } }) : null
+    if (alt && alt.slug !== slug) return getProduct(ctx, alt.slug, true)
+  }
   if (!l || !l.isActive || !l.product.isActive || l.priceRon == null) return null
   trackProductView(l.productId)
   const relatedListings = l.product.links.flatMap((k) => k.related.listings)

@@ -6,7 +6,7 @@ import { createHash } from 'crypto'
 import { isIP } from 'net'
 import { db, Prisma } from '@repo/db'
 import type { StorefrontContext } from './auth'
-import { availabilityFor } from './queries'
+import { availabilityFor, skuFromSlug } from './queries'
 
 export const ORDER_STATUS = 'pending_confirmation'
 export const LEAD_SOURCE = 'storefront-ecaroseria'
@@ -211,8 +211,19 @@ export function createStorefrontOrder(
         },
       })
       const bySlug = new Map(listings.map((l) => [l.slug, l]))
+      // A cart may still hold a legacy slug: resolve those by the SKU at the end (same rule as GET /products/{slug})
+      const unresolved = input.items.map((i) => i.slug).filter((sl) => !bySlug.has(sl))
+      const bySku = new Map<string, (typeof listings)[number]>()
+      const skus = [...new Set(unresolved.map(skuFromSlug).filter((x): x is string => !!x))]
+      if (skus.length) {
+        const alt = await tx.commerceListing.findMany({
+          where: { businessLineId: ctx.businessLineId, product: { supplierCode: { in: skus } }, isActive: true, priceRon: { not: null } },
+          select: { id: true, slug: true, priceRon: true, productId: true, product: { select: { supplierCode: true, nameRo: true, bulkyClass: true, isActive: true, stock: { select: { rawFlag: true } } } } },
+        })
+        for (const l of alt) if (l.product.isActive) bySku.set(l.product.supplierCode, l as (typeof listings)[number])
+      }
       const lines = input.items.map((it, i) => {
-        const l = bySlug.get(it.slug)
+        const l = bySlug.get(it.slug) ?? bySku.get(skuFromSlug(it.slug) ?? '')
         if (!l || l.priceRon == null) throw new OrderInputError(`Produsul de pe linia ${i + 1} nu mai este disponibil. Te rugăm să actualizezi coșul.`)
         const unit = Math.round(Number(l.priceRon) * 100)
         return {
