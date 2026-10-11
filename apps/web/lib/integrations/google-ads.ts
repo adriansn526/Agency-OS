@@ -937,50 +937,46 @@ export async function getSearchTermsExtended(customerId: string, dateFrom: strin
   });
 }
 
-/** 
- * Keyword Volumes (Historical Metrics)
- * Attempts to use the API or provides deterministic fallback values.
+/**
+ * Keyword Volumes (Historical Metrics) from the Google Ads Keyword Planner (KeywordPlanIdeaService).
+ * Returns the real average monthly searches (0 when Google has no figure for a keyword). It NEVER fabricates numbers:
+ * on an API error it throws, so callers cannot show invented volumes.
+ * Optional `geoTargetConstants` (e.g. ['geoTargetConstants/2642'] = Romania, 1011795 = București) and `language`
+ * ('languageConstants/1032' = Romanian) narrow the metrics. Max 10,000 keywords per request; honours the API's "retry in N seconds".
  */
-export async function getKeywordVolumes(customerId: string, keywords: string[]): Promise<Record<string, number>> {
-  if (!keywords || keywords.length === 0) return {};
-  
-  try {
-    const customer = getAdsCustomer(customerId);
-    
-    // In many SDK versions, keywordPlanIdeas service is available:
-    if ((customer as any).keywordPlanIdeas) {
-      const response = await (customer as any).keywordPlanIdeas.generateKeywordHistoricalMetrics({
-        keywordPlanNetwork: 'GOOGLE_SEARCH',
-        keywords: keywords,
-      });
-      
-      const result: Record<string, number> = {};
-      if (response && response.results) {
-        for (const item of response.results) {
-          const kw = item.text;
-          const searchVolume = item.keywordMetrics?.avgMonthlySearches || 0;
-          if (kw) result[kw] = searchVolume;
-        }
+export async function getKeywordVolumes(
+  customerId: string,
+  keywords: string[],
+  opts: { geoTargetConstants?: string[]; language?: string } = {},
+): Promise<Record<string, number>> {
+  if (!keywords || keywords.length === 0) return {}
+  const cleanId = customerId.replace(/[-\s]/g, '')
+  const customer: any = getAdsCustomer(customerId)
+  const result: Record<string, number> = {}
+  const CHUNK = 10_000
+  for (let i = 0; i < keywords.length; i += CHUNK) {
+    const request = {
+      customer_id: cleanId,
+      keywords: keywords.slice(i, i + CHUNK),
+      keyword_plan_network: 'GOOGLE_SEARCH',
+      ...(opts.language ? { language: opts.language } : {}),
+      ...(opts.geoTargetConstants?.length ? { geo_target_constants: opts.geoTargetConstants } : {}),
+    }
+    let response: any
+    for (let attempt = 0; ; attempt++) {
+      try { response = await customer.keywordPlanIdeas.generateKeywordHistoricalMetrics(request); break }
+      catch (e: any) {
+        const msg = String(e?.errors?.[0]?.message ?? e?.message ?? e)
+        const wait = /retry in (\d+) seconds/i.exec(msg)
+        if (wait && attempt < 3) { await new Promise((r) => setTimeout(r, (Number(wait[1]) + 1) * 1000)); continue }
+        throw new Error(`Google Ads keyword volumes failed: ${msg}`)
       }
-      return result;
     }
-  } catch (error) {
-    console.warn('[Google Ads] Failed to fetch exact KeywordPlanIdeaService volumes. Falling back to deterministic estimation.', error);
-  }
-
-  // Fallback / Mock: Deterministic generation based on string hash 
-  // so the same keyword always has the same volume in the UI.
-  const result: Record<string, number> = {};
-  for (const kw of keywords) {
-    let hash = 0;
-    for (let i = 0; i < kw.length; i++) {
-      hash = ((hash << 5) - hash) + kw.charCodeAt(i);
-      hash |= 0; 
+    for (const item of response?.results ?? []) {
+      if (item.text) result[item.text] = Number(item.keyword_metrics?.avg_monthly_searches ?? 0)
     }
-    const val = Math.abs(hash) % 15000;
-    result[kw] = val < 100 ? val * 10 : val; // Make sure it looks realistic
   }
-  return result;
+  return result
 }
 
 /** 
