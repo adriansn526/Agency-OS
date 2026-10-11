@@ -13,7 +13,8 @@ Baza: https://admin.asns.ro/api/storefront
 - GET /products/{slug} → aceleași câmpuri + images[] (URL-uri CDN https, prima = principala), seoTitle, seoDescription, attributes, oeCodes[], fitments[{make,model,generation{slug,name,variant,yearFrom,yearTo}}], related[]. Produs inexistent/dezactivat → 404.
 - GET /sitemap?cursor&limit(≤5000) → { items:[{ slug, updatedAt }], nextCursor|null }  (keyset; buclează până nextCursor=null; ~110.700 produse)
 - GET /vehicles → mărci; GET /vehicles?make=<slug> → modele cu generații; GET /categories → arbore cu număr de produse; GET /search?q= ; GET /meta → { currency:"RON", vatIncluded:true, priceUpdatedAt, fxRate, fxRateDate }
-- POST /orders (existent; nu-l modifica).
+- POST /orders (existent; nu-l modifica; a primit în plus, aditiv, `service` pe linie, vezi secțiunea „Servicii partenere”).
+- GET /service-partners?service=mount|paint|paint_mount&bulky=small|standard|large|xlarge&lat=&lng=&county=&city=&limit=3&maxKm=150 → { mode:"distance"|"area"|"all", total, items:[{ id, name, city, county, address, distanceKm, services:[{ service, priceRon, leadTimeDays }] }] }  (parteneri activi, cei mai apropiați primii; priceRon include TVA).
 Rate limit: 1200 cereri/minut per cheie (429 + Retry-After).
 
 ## Reguli despre date
@@ -32,8 +33,33 @@ E. Pagini de listare indexabile pe vehicul și categorie: /{marcă}/{model}/{gen
 F. Performanță: imagini cu width/height sau aspect-ratio fix, loading="lazy" sub fold, fără CLS; LCP pe poza principală cu priority; HTML server-rendered (nu client-only) pentru produs, listare și meta.
 G. Search Console: verificare domeniu, trimitere sitemap-uri, și un checklist de după lansare (acoperire, canonical alese de Google, Core Web Vitals).
 
+## Servicii partenere (vopsire / montaj) — NOU, deja în producție
+Clientul poate cere ca piesa cumpărată să fie vopsită la culoarea mașinii și/sau montată de un service partener. Piesa se livrează **la service**, nu la client. Sunt 4 parteneri activi (București) cu tarife de test, care se vor schimba, deci nu hardcoda prețuri.
+
+Tipuri de serviciu: `mount` (montaj), `paint` (vopsire la culoarea mașinii), `paint_mount` (vopsire + montaj). Nu toți partenerii fac toate tipurile: afișează doar ce întoarce API-ul pentru partenerul și piesa respectivă.
+
+Flux în storefront:
+1. Pe pagina de produs, după „Adaugă în coș”, oferă „Vopsire / Montaj la service”. Recomandare (de confirmat cu proprietarul): arată vopsirea doar pentru produse grunduite (`attributes.primed` true) și montajul pentru piese de caroserie și iluminat.
+2. Cere locația clientului (geolocație din browser sau județ/oraș introdus; pentru o adresă poți folosi `GET /api/storefront/geocode`) și apelează `GET /service-partners` cu `service`, `bulky` și `lat`/`lng` sau `county`/`city`. Afișează partenerii cu nume, oraș, distanță, preț și termen (`leadTimeDays` zile).
+3. Dacă `mode` = "area" sau "all", nu ai coordonate: afișează lista fără distanță. Dacă `items` e gol: spune „Momentan nu avem service partener în zona ta” și lasă comanda fără serviciu.
+4. Pentru vopsire (`paint`, `paint_mount`) cere **codul de vopsea** al mașinii (obligatoriu, litere/cifre/spații, max. 40 de caractere; arată un exemplu și unde se găsește pe mașină). VIN-ul e opțional (17 caractere, fără I, O, Q).
+5. Trimite la comandă, pe linia piesei: `items:[{ slug, quantity:1, service:{ partnerId, type, paintCode?, vin? } }]`.
+
+Reguli stricte (ERP-ul le impune și întoarce 422 cu mesaj în română):
+- O linie cu serviciu are `quantity: 1`; pentru două piese cu serviciu trimiți **două linii**.
+- Toate serviciile unei comenzi folosesc **același** partener (cel din `/service-partners`). Dacă clientul vrea servicii la doi parteneri, cere comenzi separate.
+- **Prețul serviciului nu se trimite niciodată**; ERP-ul îl ia din tariful partenerului pentru clasa de mărime a piesei. Prețul din `GET /service-partners` este orientativ: **suma afișată în confirmare este cea din răspunsul 201** (`servicesTotalRon`, `productsTotalRon`, `totalRon`). Produsul întoarce doar `bulky: true/false`; trimite `bulky=large` când e true și `standard` când e false pentru estimare (pentru piese foarte mici sau foarte mari prețul final poate diferi).
+- Cu serviciu, piesa merge la service: formularul de adresă rămâne **adresa clientului** (contact/facturare), iar în pagina de confirmare scrie clar „Piesa se livrează la <service>, <adresă>”.
+- Un produs `out_of_stock` este refuzat (422); scoate-l din coș sau cere ofertă.
+
+Răspuns 201: `{ id, number, totalRon, productsTotalRon, servicesTotalRon }`. Afișează numărul comenzii, defalcarea (produse + servicii) și textul „Te contactăm telefonic pentru confirmare. Piesele vopsite nu se pot returna.” (confirmă formularea juridică cu proprietarul).
+
+Erori de tratat (afișează `error` ca atare): „Service-ul ales nu mai este disponibil. Te rugăm să alegi altul.” (reapelezi `/service-partners`), „Serviciul ales nu este disponibil pentru produsul de pe linia N…”, „Pentru vopsire trebuie să introduci codul de vopsea al mașinii.”, „Seria de șasiu (VIN) trebuie să aibă 17 caractere.”, „Serviciile dintr-o comandă trebuie făcute la același service partener.”.
+
+Plata rămâne **ramburs** pentru tot totalul (piese + servicii). Nu există plată online. Cache: `/service-partners` se poate ține 1–5 minute; nu cache-ui răspunsul la `/orders`. Folosește `Idempotency-Key` ca la orice comandă.
+
 ## Constrângeri
-- Nu schimba contractul /orders și nu apela API-ul din browser (cheia e doar pe server).
+- Nu modifica restul contractului /orders (câmpul `service` e aditiv) și nu apela API-ul din browser (cheia e doar pe server).
 - Nu hardcoda URL-uri de poze și nu deduce SKU din slug decât unde o face deja codul existent.
 - Dacă vezi în API ceva care te blochează (câmp lipsă, format), spune-mi exact ce îți trebuie; ERP-ul poate adăuga câmpuri, dar nu schimbă cele existente.
 
