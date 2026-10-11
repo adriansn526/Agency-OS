@@ -8,6 +8,18 @@ export function cdnBase(): string | null {
   return null
 }
 
+/** Public image proxy (hides the bucket key, which contains the supplier's code): COMMERCE_IMAGES_PROXY_BASE, e.g. https://ecaroseria.ro/img → <base>/EC935CE466-1.jpg */
+export function proxyBase(): string | null {
+  const b = process.env.COMMERCE_IMAGES_PROXY_BASE?.trim().replace(/\/+$/, '')
+  return b && /^https:\/\/[^\s?#]+$/.test(b) ? b : null
+}
+
+/** URL the storefront gets for image number `n` (1-based) of a product: the proxy when configured, otherwise the CDN URL. */
+export function storefrontImageUrl(publicCode: string | null | undefined, n: number, key: string): string | null {
+  const base = proxyBase()
+  return base && publicCode ? `${base}/${publicCode}-${n}.jpg` : imageUrl(key)
+}
+
 /** https URL with every path segment percent-encoded, e.g. parts/1301/130105152_1.JPG */
 export function imageUrl(key: string): string | null {
   const base = cdnBase()

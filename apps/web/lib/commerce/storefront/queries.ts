@@ -4,7 +4,7 @@
  */
 import { db, Prisma } from '@repo/db'
 import { normalizeOe } from '../text'
-import { cdnBase, imageUrl } from '../images/urls'
+import { cdnBase, imageUrl, storefrontImageUrl } from '../images/urls'
 import { availabilityFromFlags } from '../availability'
 import { trackProductView, trackSearch } from './track'
 import { StorefrontInputError, type StorefrontContext } from './auth'
@@ -167,16 +167,16 @@ async function loadImages(productIds: string[], all = false): Promise<ImageMap> 
   if (!productIds.length) return out
   const ids = [...new Set(productIds)]
   const rows = all
-    ? await db.$queryRaw<Array<{ productId: string; objectKey: string }>>`
-        SELECT "productId", "objectKey" FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
+    ? await db.$queryRaw<Array<{ productId: string; objectKey: string; code: string | null }>>`
+        SELECT "productId", "objectKey", (SELECT "publicCode" FROM "CommerceProduct" WHERE id = "productId") AS code FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
         ORDER BY "productId", (source = 'manual') DESC, position ASC, "objectKey"`
-    : await db.$queryRaw<Array<{ productId: string; objectKey: string }>>`
-        SELECT DISTINCT ON ("productId") "productId", "objectKey" FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
+    : await db.$queryRaw<Array<{ productId: string; objectKey: string; code: string | null }>>`
+        SELECT DISTINCT ON ("productId") "productId", "objectKey", (SELECT "publicCode" FROM "CommerceProduct" WHERE id = "productId") AS code FROM "CommerceProductImage" WHERE "productId" = ANY(${ids}::text[])
         ORDER BY "productId", (source = 'manual') DESC, position ASC, "objectKey"`
   for (const r of rows) {
-    const u = imageUrl(r.objectKey)
-    if (!u) continue
     const list = out.get(r.productId)
+    const u = storefrontImageUrl(r.code, (list?.length ?? 0) + 1, r.objectKey)
+    if (!u) continue
     if (list) list.push(u); else out.set(r.productId, [u])
   }
   return out
