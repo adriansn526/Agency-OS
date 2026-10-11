@@ -33,10 +33,17 @@ export async function listPartners(f: { status?: string; q?: string; county?: st
   const supplierIds = [...new Set(rows.map((r) => r.supplierId).filter((x): x is string => !!x))]
   const suppliers = supplierIds.length ? await db.supplier.findMany({ where: { id: { in: supplierIds } }, select: { id: true, name: true, cui: true, status: true } }) : []
   const supplierById = new Map(suppliers.map((x) => [x.id, x]))
+  // Google rating/reviews stay in the CRM lead (customFields.google), matched by Place ID: shown read-only next to the partner
+  const placeIds = rows.map((r) => r.googlePlaceId).filter((x): x is string => !!x)
+  const gLeads = placeIds.length ? await db.lead.findMany({ where: { businessLineId, entityType: 'service_partners', externalId: { in: placeIds } }, select: { externalId: true, customFields: true } }) : []
+  const googleByPlace = new Map(gLeads.map((l) => {
+    const g = ((l.customFields ?? {}) as { google?: { rating?: number | null; ratingCount?: number | null; mapsUrl?: string | null; fetchedAt?: string | null } }).google
+    return [l.externalId!, { rating: g?.rating ?? null, ratingCount: g?.ratingCount ?? null, mapsUrl: g?.mapsUrl ?? null, fetchedAt: g?.fetchedAt ?? null }] as const
+  }))
   const byPartner = new Map<string, typeof rates>()
   for (const r of rates) byPartner.set(r.partnerId, [...(byPartner.get(r.partnerId) ?? []), r])
   return {
-    partners: rows.map((p) => ({ ...p, supplier: p.supplierId ? supplierById.get(p.supplierId) ?? null : null, coordsState: coordsState(p), rating: p.rating != null ? Number(p.rating) : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
+    partners: rows.map((p) => ({ ...p, supplier: p.supplierId ? supplierById.get(p.supplierId) ?? null : null, coordsState: coordsState(p), rating: p.rating != null ? Number(p.rating) : null, googleLead: p.googlePlaceId ? googleByPlace.get(p.googlePlaceId) ?? null : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
     counts: Object.fromEntries(counts.map((c) => [c.status, c._count])),
   }
 }

@@ -339,6 +339,35 @@ export default function SingleLeadPage() {
                 </div>
               )}
 
+              {/* Google Places data (service-partner prospects) */}
+              {lead.customFields?.google && (
+                <div className="bg-surface rounded-xl border border-border p-4 space-y-3">
+                  <h3 className="text-sm font-semibold text-foreground">Google</h3>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Rating</p>
+                      <p className="text-xs font-semibold text-foreground">{lead.customFields.google.rating != null ? `${Number(lead.customFields.google.rating).toFixed(1)} ⭐` : "—"}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Recenzii</p>
+                      <p className="text-xs font-semibold text-foreground">{lead.customFields.google.ratingCount != null ? Number(lead.customFields.google.ratingCount).toLocaleString("ro-RO") : "—"}</p>
+                    </div>
+                    {lead.customFields.google.fetchedAt && (
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Preluat la</p>
+                        <p className="text-xs font-medium text-foreground">{formatDate(lead.customFields.google.fetchedAt)}</p>
+                      </div>
+                    )}
+                    {(lead.customFields.google.placeId || lead.customFields.google.mapsUrl) && (
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Hartă</p>
+                        <a className="text-xs font-medium text-primary hover:underline" target="_blank" rel="noreferrer" href={lead.customFields.google.mapsUrl || `https://www.google.com/maps/place/?q=place_id:${lead.customFields.google.placeId}`}>Deschide în Google Maps</a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Form Tracking & Raw Data */}
               {(lead.sourcePage || lead.utmSource || lead.customFields) && (
                 <div className="bg-surface rounded-xl border border-border p-4 space-y-3">

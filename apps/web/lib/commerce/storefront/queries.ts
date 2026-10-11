@@ -4,7 +4,7 @@
  */
 import { db, Prisma } from '@repo/db'
 import { normalizeOe } from '../text'
-import { imageUrl } from '../images/urls'
+import { cdnBase, imageUrl } from '../images/urls'
 import { availabilityFromFlags } from '../availability'
 import { trackProductView, trackSearch } from './track'
 import { StorefrontInputError, type StorefrontContext } from './auth'
@@ -378,16 +378,23 @@ export async function listSitemap(ctx: StorefrontContext, sp: URLSearchParams) {
   const limit = Math.max(1, Math.min(SITEMAP_MAX_LIMIT, Number(sp.get('limit') ?? SITEMAP_DEFAULT_LIMIT) || SITEMAP_DEFAULT_LIMIT))
   const cursor = sp.get('cursor')
   if (cursor && !SLUG_RE.test(cursor)) throw new StorefrontInputError('Invalid cursor')
-  const rows = await db.commerceListing.findMany({
-    where: {
-      businessLineId: ctx.businessLineId, isActive: true, priceRon: { not: null }, product: { isActive: true },
-      ...(cursor ? { slug: { gt: cursor } } : {}),
-    },
-    select: { slug: true, updatedAt: true },
-    orderBy: { slug: 'asc' },
-    take: limit + 1,
-  })
+  // hasImage mirrors `image != null` of the product endpoints: a CommerceProductImage row (served only when the CDN base is configured, see imageUrl) or a legacy product.images entry.
+  // hasSeoTitle = non-blank seoTitle. Both computed in the same keyset query (EXISTS on the (productId, position) index), no per-product queries.
+  const imagesServed = cdnBase() != null
+  const rows = await db.$queryRaw<Array<{ slug: string; updatedAt: Date; hasImage: boolean; hasSeoTitle: boolean }>>`
+    SELECT l.slug, l."updatedAt",
+      (cardinality(p.images) > 0 OR (${imagesServed}::boolean AND EXISTS (SELECT 1 FROM "CommerceProductImage" i WHERE i."productId" = l."productId"))) AS "hasImage",
+      (btrim(coalesce(l."seoTitle", '')) <> '') AS "hasSeoTitle"
+    FROM "CommerceListing" l
+    JOIN "CommerceProduct" p ON p.id = l."productId"
+    WHERE l."businessLineId" = ${ctx.businessLineId} AND l."isActive" AND l."priceRon" IS NOT NULL AND p."isActive"
+      AND (${cursor}::text IS NULL OR l.slug > ${cursor}::text)
+    ORDER BY l.slug ASC
+    LIMIT ${limit + 1}`
   const more = rows.length > limit
-  const items = (more ? rows.slice(0, limit) : rows).map((r) => ({ slug: r.slug, updatedAt: r.updatedAt.toISOString() }))
+  const items = (more ? rows.slice(0, limit) : rows).map((r) => ({
+    slug: r.slug, updatedAt: r.updatedAt.toISOString(),
+    hasImage: r.hasImage, hasSeoTitle: r.hasSeoTitle, indexable: r.hasImage && r.hasSeoTitle,
+  }))
   return { items, nextCursor: more ? items[items.length - 1]!.slug : null }
 }

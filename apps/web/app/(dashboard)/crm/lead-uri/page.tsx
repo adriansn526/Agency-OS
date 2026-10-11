@@ -653,6 +653,8 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
   totalCount: number; serverPage: number; serverTotalPages: number; serverPageSize: number
   onServerPageChange: (page: number) => void; onServerPageSizeChange: (size: number) => void
 }) {
+  const { activeEntityTypeId } = useBusinessLine()
+  const isServicePartners = activeEntityTypeId === 'service_partners'
   const [sorting, setSorting] = useState<SortingState>([])
   const [showColumnPicker, setShowColumnPicker] = useState(false)
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
@@ -984,7 +986,7 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
       {
         id: "boltRating",
         header: "⭐ Rating",
-        accessorFn: (row: Lead) => row.customFields?.bolt_rating ?? null,
+        accessorFn: (row: Lead) => row.customFields?.bolt_rating ?? row.customFields?.google?.rating ?? null,
         cell: ({ getValue }: { getValue: () => any }) => {
           const rating = getValue() as number | null
           if (!rating) return <span className="text-[10px] text-muted-foreground/50">—</span>
@@ -998,8 +1000,8 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
       },
       {
         id: "boltReviews",
-        header: "Reviews",
-        accessorFn: (row: Lead) => row.customFields?.bolt_reviews ?? null,
+        header: "Recenzii",
+        accessorFn: (row: Lead) => row.customFields?.bolt_reviews ?? row.customFields?.google?.ratingCount ?? null,
         cell: ({ getValue }: { getValue: () => any }) => {
           const reviews = getValue() as number | null
           if (!reviews) return <span className="text-[10px] text-muted-foreground/50">—</span>
@@ -1052,7 +1054,7 @@ function TableView({ leads: data, onClickLead, isAll = false, selectedIds, toggl
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, columnVisibility, columnOrder: columnOrder.length > 0 ? columnOrder : undefined },
+    state: { sorting, columnVisibility: isServicePartners ? { ...columnVisibility, boltRating: true, boltReviews: true } : columnVisibility, columnOrder: columnOrder.length > 0 ? columnOrder : undefined },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     onColumnOrderChange: setColumnOrder,

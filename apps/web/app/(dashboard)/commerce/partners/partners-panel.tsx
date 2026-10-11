@@ -96,7 +96,7 @@ export function PartnersPanel({ initial }: { initial: { partners: any[]; counts:
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead><tr className="text-left text-muted-foreground"><th className="py-2 pr-3">Nume</th><th className="pr-3">Locație</th><th className="pr-3">Contact</th><th className="pr-3">Rating</th><th className="pr-3">Servicii</th><th className="pr-3">Stare</th></tr></thead>
+              <thead><tr className="text-left text-muted-foreground"><th className="py-2 pr-3">Nume</th><th className="pr-3">Locație</th><th className="pr-3">Contact</th><th className="pr-3">Rating Google</th><th className="pr-3">Servicii</th><th className="pr-3">Stare</th></tr></thead>
               <tbody>
                 {shown.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-muted-foreground">Niciun partener. Importă un CSV sau adaugă manual.</td></tr>}
                 {shown.map((p) => (
@@ -105,7 +105,13 @@ export function PartnersPanel({ initial }: { initial: { partners: any[]; counts:
                       <td className="py-2 pr-3 font-medium">{p.name}</td>
                       <td className="pr-3 max-w-xs truncate">{[p.city, p.address].filter(Boolean).join(" · ") || "—"}{p.lat == null && <span className="text-amber-700 text-xs ml-1">fără coordonate</span>}</td>
                       <td className="pr-3">{p.phone ?? "—"}</td>
-                      <td className="pr-3">{p.rating != null ? `${p.rating} (${p.ratingCount ?? "?"})` : "—"}</td>
+                      <td className="pr-3 whitespace-nowrap">{(() => {
+                        const r = p.rating ?? p.googleLead?.rating, n = p.ratingCount ?? p.googleLead?.ratingCount
+                        if (r == null) return "—"
+                        const link = p.googlePlaceId ? `https://www.google.com/maps/place/?q=place_id:${p.googlePlaceId}` : p.googleMapsUrl
+                        const label = <><span className={r >= 4.5 ? "font-semibold text-emerald-600" : r >= 4 ? "font-semibold text-amber-600" : "font-semibold"}>{Number(r).toFixed(1)} ⭐</span> <span className="text-muted-foreground">({n != null ? `${Number(n).toLocaleString("ro-RO")} recenzii` : "? recenzii"})</span></>
+                        return link ? <a href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title={p.googleLead?.fetchedAt ? `Date Google din lead, preluate la ${new Date(p.googleLead.fetchedAt).toLocaleDateString("ro-RO")}` : "Date Google"} className="hover:underline">{label}</a> : label
+                      })()}</td>
                       <td className="pr-3">{p.services.map((s: string) => SERVICE_RO[s]).join(", ") || "—"}</td>
                       <td className="pr-3"><Badge variant={variant(p.status) as any}>{STATUS_RO[p.status]}</Badge></td>
                     </tr>
