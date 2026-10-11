@@ -3,8 +3,8 @@ export const MAKES = ['VW', 'BMW', 'Renault', 'Dacia', 'Ford', 'Opel', 'Toyota',
 export const MAKE_TERM: Record<string, string> = { VW: 'vw', BMW: 'bmw', Renault: 'renault', Dacia: 'dacia', Ford: 'ford', Opel: 'opel', Toyota: 'toyota', Skoda: 'skoda', Audi: 'audi', Mercedes: 'mercedes', Hyundai: 'hyundai', Fiat: 'fiat' }
 /** search term -> regex on the unaccented, lower-case Romanian product name */
 export const PART_RE: Record<string, string> = {
-  'bara fata': '^bara fata', 'bara spate': '^bara spate', grila: '^grila', far: '^far( |$)', stop: '^stop( |$)', oglinda: '^oglinda', 'sticla oglinda': '^sticla oglinda', 'capac oglinda': '^capac oglinda',
-  'aripa fata': '^aripa fata', 'aripa spate': '^aripa spate', capota: '^capota', 'maner usa': '^maner usa', 'broasca usa': '^broasca', 'amortizor haion': '^amortizor haion', proiector: '^proiector',
+  'bara fata': '^bara fata(?! -)', 'bara spate': '^bara spate(?! -)', grila: '^grila', far: '^far( |$)', stop: '^stop( |$)', oglinda: '^oglinda', 'sticla oglinda': '^sticla oglinda', 'capac oglinda': '^capac oglinda',
+  'aripa fata': '^aripa fata', 'aripa spate': '^aripa spate', capota: '^capota', 'maner usa': '^maner usa', 'broasca usa': '^broasca usa', 'amortizor haion': '^amortizor haion', proiector: '^proiector',
   'suport bara': '^suport bara', 'armatura bara': '^armatura bara', 'spoiler bara': '^spoiler bara', 'scut motor': '^scut motor', 'balama capota': '^balama capota', trager: '^trager',
   'radiator intercooler': '^radiator intercooler', 'condensator ac': '^condensator', 'vas expansiune': '^vas expansiune', 'macara geam': '^macara', 'limitator usa': '^limitator',
   'bandou aripa': '^bandou', 'carenaj aripa': '^carenaj aripa', 'pasaj roata': '^pasaj', 'amortizor capota': '^amortizor capota', 'usa fata': '^usa fata', haion: '^haion',
