@@ -13,6 +13,8 @@
 #   CRON
 #   ) | crontab -
 set -euo pipefail
+# cron starts with a minimal PATH: node/npx live under nvm
+export PATH="/home/asns/.nvm/versions/node/v20.19.5/bin:/usr/local/bin:/usr/bin:/bin"
 JOB="${1:?usage: sync-supplier-cron.sh feed|reprice}"
 case "$JOB" in feed|reprice) ;; *) echo "unknown job: $JOB" >&2; exit 2 ;; esac
 cd "$(dirname "$0")/../.."
