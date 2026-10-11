@@ -16,6 +16,8 @@ const SORTS: Record<string, { label: string; sql: Prisma.Sql }> = {
   updated: { label: "Preț actualizat recent", sql: Prisma.sql`l."priceUpdatedAt" DESC NULLS LAST, p."supplierCode"` },
   views: { label: "Cele mai văzute (30 zile)", sql: Prisma.sql`views DESC, p."supplierCode"` },
 }
+const QUALITY: Record<string, string> = { OE: "OE (original)", A: "Calitate A", B: "Calitate B", aftermarket: "Aftermarket" }
+const SIDE: Record<string, string> = { L: "stânga", R: "dreapta" }
 const ron = (n: number | null) => (n == null ? "—" : new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON" }).format(n))
 
 export default async function CommerceProducts({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
@@ -95,7 +97,7 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
       <Card><CardContent className="p-0"><div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="border-b text-left text-muted-foreground">
-            <th className="p-3 w-16">Poză</th><th className="p-3">SKU</th><th className="p-3">Denumire</th><th className="p-3">Categorie</th><th className="p-3">Brand / calitate</th>
+            <th className="p-3 w-16">Poză</th><th className="p-3">SKU</th><th className="p-3">Denumire</th><th className="p-3">Categorie</th><th className="p-3">Brand</th><th className="p-3">Calitate</th><th className="p-3">Parte</th>
             <th className="p-3 text-right">Cost €</th><th className="p-3 text-right">Preț</th><th className="p-3 text-right">Adaos</th><th className="p-3">Stoc furnizor</th><th className="p-3 text-right">Vizualiz. 30z</th><th className="p-3">Poze</th>
           </tr></thead>
           <tbody>
@@ -109,7 +111,9 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
                   <td className="p-3 font-mono"><Link className="text-primary hover:underline" href={`/commerce/products/${r.id}`}>{r.sku}</Link></td>
                   <td className="p-3 max-w-xs">{r.name ?? "—"}{!r.active && <Badge variant="destructive" className="ml-2">inactiv</Badge>}</td>
                   <td className="p-3 text-muted-foreground">{r.category ?? "—"}</td>
-                  <td className="p-3 text-muted-foreground">{[r.brand, r.quality, r.side].filter(Boolean).join(" · ") || "—"}</td>
+                  <td className="p-3 text-muted-foreground">{r.brand ?? "—"}</td>
+                  <td className="p-3 text-muted-foreground">{r.quality ? QUALITY[r.quality] ?? r.quality : "—"}</td>
+                  <td className="p-3 text-muted-foreground">{r.side ? SIDE[r.side] ?? r.side : "—"}</td>
                   <td className="p-3 text-right">{cost.toLocaleString("ro-RO", { minimumFractionDigits: 2 })}</td>
                   <td className="p-3 text-right font-medium">{ron(price)}</td>
                   <td className="p-3 text-right text-muted-foreground">{markup == null ? "—" : `${markup.toFixed(0)}%`}</td>
@@ -119,7 +123,7 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
                 </tr>
               )
             })}
-            {list.length === 0 && <tr><td colSpan={11} className="p-8 text-center text-muted-foreground">Niciun produs.</td></tr>}
+            {list.length === 0 && <tr><td colSpan={13} className="p-8 text-center text-muted-foreground">Niciun produs.</td></tr>}
           </tbody>
         </table>
       </div></CardContent></Card>
