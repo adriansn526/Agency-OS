@@ -1752,3 +1752,45 @@ model CommerceServiceJob {
   @@index([partnerId, status])
   @@index([orderId])
 }
+
+// ─── In-app scheduler for commerce jobs (tables via prisma/sql/commerce_scheduler.sql) ───
+model CommerceSchedulerState {
+  id          String    @id
+  enabled     Boolean   @default(false)
+  heartbeatAt DateTime?
+  instanceId  String?
+  updatedAt   DateTime  @default(now()) @updatedAt
+}
+
+model CommerceScheduledJob {
+  id             String    @id @default(cuid())
+  key            String    @unique
+  enabled        Boolean   @default(false)
+  schedule       Json
+  nextRunAt      DateTime?
+  lastRunAt      DateTime?
+  lastStatus     String?
+  lastDurationMs Int?
+  lastSummary    Json?
+  lastError      String?
+  runningSince   DateTime?
+  runningBy      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+}
+
+model CommerceScheduledJobRun {
+  id         String    @id @default(cuid())
+  jobKey     String
+  trigger    String // schedule | manual
+  dryRun     Boolean   @default(false)
+  status     String    @default("running") // running | success | unchanged | skipped | aborted | failed | missed
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  durationMs Int?
+  summary    Json?
+  error      String?
+  startedBy  String?
+
+  @@index([jobKey, startedAt(sort: Desc)])
+}
