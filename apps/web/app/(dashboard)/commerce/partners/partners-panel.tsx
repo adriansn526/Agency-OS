@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Alert } from "@/components/ui/alert"
+import { PlacesPanel } from "./places-panel"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const STATUS_RO: Record<string, string> = { prospect: "prospect", contacted: "contactat", negotiating: "în discuții", active: "activ", inactive: "inactiv", declined: "refuzat" }
 const SERVICE_RO: Record<string, string> = { mount: "Montaj", paint: "Vopsire", paint_mount: "Vopsire + montaj" }
+const COORDS_RO: Record<string, string> = { missing: "lipsesc", permanent: "permanente", fresh: "valabile", refresh: "de reîmprospătat", expired: "expirate" }
 const BULKY = ["", "small", "standard", "large", "xlarge"]
 const input = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
 const variant = (s: string) => (s === "active" ? "default" : s === "declined" || s === "inactive" ? "destructive" : "secondary")
@@ -49,6 +51,8 @@ export function PartnersPanel({ initial }: { initial: { partners: any[]; counts:
     <div className="grid gap-6">
       {msg && <Alert variant={msg.ok ? "default" : "destructive"}>{msg.text}</Alert>}
 
+      <PlacesPanel onRegistryChanged={reload} />
+
       <Card>
         <CardHeader><CardTitle className="text-lg">Import din Google Maps (CSV)</CardTitle></CardHeader>
         <CardContent className="grid gap-3">
@@ -72,7 +76,7 @@ export function PartnersPanel({ initial }: { initial: { partners: any[]; counts:
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-lg">Registru ({total})</CardTitle>
-          <Button size="sm" variant="outline" onClick={() => setAdding(!adding)}><Plus className="h-4 w-4 mr-1" />Adaugă manual</Button>
+          <div className="flex gap-2"><Button size="sm" variant="outline" disabled={!!busy} onClick={() => run("coords", async () => { const r = await api("/api/commerce/partners/coords/refresh", "POST", {}); await reload(); setMsg({ ok: true, text: `Coordonate: ${r.refreshedGoogle} reîmprospătate din Google, ${r.geocodedOsm} geocodate (OSM), ${r.clearedExpired} șterse (expirate), ${r.stillMissing} încă lipsă${r.failed ? `, ${r.failed} erori` : ""}.` }) })}>{busy === "coords" ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : null}Reîmprospătează coordonate</Button><Button size="sm" variant="outline" onClick={() => setAdding(!adding)}><Plus className="h-4 w-4 mr-1" />Adaugă manual</Button></div>
         </CardHeader>
         <CardContent className="grid gap-4">
           {adding && (
@@ -140,6 +144,7 @@ function Editor({ p, run, busy, onDone }: { p: any; run: (k: string, f: () => Pr
         ))}
         <label className="grid gap-1 text-xs sm:col-span-3"><span className="font-medium">Note</span><textarea className={`${input} h-16 py-2`} value={f.notes} onChange={set("notes")} /></label>
       </div>
+      <div className="text-xs text-muted-foreground">Coordonate: {COORDS_RO[p.coordsState] ?? p.coordsState}{p.coordsSource ? ` · sursă ${p.coordsSource}` : ""}{p.coordsFetchedAt ? ` · obținute ${new Date(p.coordsFetchedAt).toLocaleDateString("ro-RO")}` : ""}. Coordonatele Google se păstrează maximum 30 de zile și se reîmprospătează automat; cele OSM sau introduse manual nu expiră.</div>
       <div className="flex flex-wrap gap-2 items-center">
         <Button size="sm" onClick={save} disabled={!!busy}>Salvează datele</Button>
         {p.googleMapsUrl && <a className="text-xs text-primary hover:underline" href={p.googleMapsUrl} target="_blank" rel="noopener noreferrer">Vezi în Google Maps</a>}

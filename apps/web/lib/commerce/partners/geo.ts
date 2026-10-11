@@ -16,3 +16,18 @@ export function nearest<T extends { lat: number | null; lng: number | null }>(it
     .sort((a, b) => a.distanceKm - b.distanceKm)
     .slice(0, limit)
 }
+
+/** Google lets Places coordinates be cached for 30 days at most; refresh well before that. */
+export const GOOGLE_COORDS_MAX_DAYS = 30
+export const GOOGLE_COORDS_REFRESH_DAYS = 20
+
+export type CoordsState = 'missing' | 'permanent' | 'fresh' | 'refresh' | 'expired'
+
+export function coordsState(c: { lat: number | null; lng: number | null; coordsSource: string | null; coordsFetchedAt: Date | null }, now = new Date()): CoordsState {
+  if (c.lat == null || c.lng == null) return 'missing'
+  if (c.coordsSource !== 'google') return 'permanent' // osm / manual / legacy
+  if (!c.coordsFetchedAt) return 'expired' // google coordinates without a date cannot be proven fresh
+  const days = (now.getTime() - c.coordsFetchedAt.getTime()) / 86_400_000
+  if (days >= GOOGLE_COORDS_MAX_DAYS) return 'expired'
+  return days >= GOOGLE_COORDS_REFRESH_DAYS ? 'refresh' : 'fresh'
+}

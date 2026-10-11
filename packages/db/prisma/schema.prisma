@@ -1675,6 +1675,8 @@ model CommerceServicePartner {
   county          String?
   lat             Float?
   lng             Float?
+  coordsSource    String? // google | osm | manual
+  coordsFetchedAt DateTime?
   phone           String?
   email           String?
   website         String?
@@ -1708,4 +1710,16 @@ model CommerceServicePartnerRate {
   updatedAt     DateTime @default(now()) @updatedAt
 
   @@index([partnerId])
+}
+
+/// Google Places search audit + daily cap (table created via prisma/sql/commerce_service_partner_search.sql).
+model CommerceServicePartnerSearch {
+  id          String   @id @default(cuid())
+  query       String
+  requests    Int
+  resultCount Int
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt(sort: Desc)])
 }

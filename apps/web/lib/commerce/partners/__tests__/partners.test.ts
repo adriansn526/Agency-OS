@@ -112,3 +112,71 @@ test('query validation', () => {
   for (const bad of ['lat=44', 'lat=abc&lng=1', 'lat=95&lng=1', 'service=wash', 'bulky=huge', 'limit=0', 'limit=99', 'maxKm=0']) assert.throws(() => q(bad), bad)
   assert.equal(q('').limit, 3)
 })
+
+// ─── Google Places parsing / classification ───
+import { classify, locationFromAddress, parsePlace } from '../places'
+test('classify: paint/body from names, unknown stays unknown', () => {
+  assert.deepEqual(classify('Vopsitorie Auto Alfa', []), { paintLikely: true, bodyLikely: false, relevant: true })
+  assert.equal(classify('Tinichigerie și Vopsitorie Rapid', []).bodyLikely, true)
+  assert.equal(classify('Caroserie Auto Pro', []).bodyLikely, true)
+  const u = classify('Service Auto Popescu', ['car_repair'])
+  assert.deepEqual([u.paintLikely, u.bodyLikely, u.relevant], [false, false, true])
+  assert.equal(classify('Florăria Bella', ['florist']).relevant, false)
+})
+test('address → city/county', () => {
+  assert.deepEqual(locationFromAddress('Str. X 5, Sector 3, 030167 București, România'), { city: 'București', county: 'București' })
+  assert.deepEqual(locationFromAddress('Str. Y 1, 700000 Iași, România'), { city: 'Iași', county: null })
+  assert.deepEqual(locationFromAddress(null), { city: null, county: null })
+})
+test('parsePlace: normalises phone/website, drops bad maps links, ignores incomplete rows', () => {
+  const p = parsePlace({ id: 'ChIJ1', displayName: { text: 'Vopsitorie\u0000 Alfa' }, formattedAddress: 'Str. X 5, Sector 3, București', internationalPhoneNumber: '+40 722 111 222', websiteUri: 'https://alfa.ro/', googleMapsUri: 'https://maps.google.com/?cid=1', rating: 4.5, userRatingCount: 80, types: ['car_repair'] })!
+  assert.equal(p.name, 'Vopsitorie Alfa')
+  assert.equal(p.phone, '+40722111222')
+  assert.equal(p.website, 'https://alfa.ro')
+  assert.equal(p.county, 'București')
+  assert.equal(p.paintLikely, true)
+  assert.equal(parsePlace({ id: 'x', displayName: { text: 'A' }, googleMapsUri: 'https://evil.example/x' })!.mapsUrl, null)
+  assert.equal(parsePlace({ displayName: { text: 'no id' } }), null)
+  assert.equal(parsePlace({ id: 'x' }), null)
+})
+
+// ─── coordinates: provenance, expiry, Google/OSM clients ───
+import { coordsState } from '../geo'
+import { googleLocation, osmGeocode } from '../coords'
+const D = (days: number, now = new Date('2026-10-20T00:00:00Z')) => new Date(now.getTime() - days * 86_400_000)
+const NOW = new Date('2026-10-20T00:00:00Z')
+test('coordsState: google coordinates age out, osm/manual do not', () => {
+  const c = (source: string | null, at: Date | null, lat: number | null = 44.4) => ({ lat, lng: lat == null ? null : 26.1, coordsSource: source, coordsFetchedAt: at })
+  assert.equal(coordsState(c(null, null, null), NOW), 'missing')
+  assert.equal(coordsState(c('google', D(5)), NOW), 'fresh')
+  assert.equal(coordsState(c('google', D(20)), NOW), 'refresh')
+  assert.equal(coordsState(c('google', D(29.9)), NOW), 'refresh')
+  assert.equal(coordsState(c('google', D(30)), NOW), 'expired')
+  assert.equal(coordsState(c('google', null), NOW), 'expired')
+  assert.equal(coordsState(c('osm', D(400)), NOW), 'permanent')
+  assert.equal(coordsState(c('manual', null), NOW), 'permanent')
+  assert.equal(coordsState(c(null, null), NOW), 'permanent') // legacy rows typed by hand before provenance existed
+})
+const json = (body: unknown, status = 200) => (async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch
+test('googleLocation: asks for the location field only; 404 and malformed bodies give null', async () => {
+  process.env.GOOGLE_MAPS_API_KEY = 'test-key-123456789012345'
+  let seen: RequestInit | undefined, seenUrl = ''
+  const spy = (async (u: string, init: RequestInit) => { seen = init; seenUrl = u; return new Response(JSON.stringify({ location: { latitude: 44.4, longitude: 26.1 } })) }) as unknown as typeof fetch
+  assert.deepEqual(await googleLocation('ChIJabcdefghij', spy), { lat: 44.4, lng: 26.1 })
+  assert.equal((seen!.headers as Record<string, string>)['X-Goog-FieldMask'], 'location')
+  assert.ok(!seenUrl.includes('test-key'), 'key must be in a header, not the URL')
+  assert.equal(await googleLocation('ChIJabcdefghij', json({}, 404)), null)
+  assert.equal(await googleLocation('ChIJabcdefghij', json({ nothing: 1 })), null)
+  assert.equal(await googleLocation('bad id!', json({ location: { latitude: 1, longitude: 1 } })), null)
+  await assert.rejects(() => googleLocation('ChIJabcdefghij', json({}, 403)), /403/)
+})
+test('osmGeocode: identifies the app, accepts Romanian hits only', async () => {
+  let ua = ''
+  const ok = (async (_u: string, init: RequestInit) => { ua = (init.headers as Record<string, string>)['User-Agent']!; return new Response(JSON.stringify([{ lat: '44.4268', lon: '26.1025' }])) }) as unknown as typeof fetch
+  assert.deepEqual(await osmGeocode('Str. Test 1', 'București', ok), { lat: 44.4268, lng: 26.1025 })
+  assert.match(ua, /AgencyOS/)
+  assert.equal(await osmGeocode('Rue de Rivoli 1', 'Paris', json([{ lat: '48.8566', lon: '2.3522' }])), null)
+  assert.equal(await osmGeocode('Str. Test 1', 'București', json([])), null)
+  assert.equal(await osmGeocode('x', null, json([{ lat: '44', lon: '26' }])), null) // too short to be an address
+  assert.equal(await osmGeocode('Str. Test 1', 'București', json({}, 429)), null)
+})

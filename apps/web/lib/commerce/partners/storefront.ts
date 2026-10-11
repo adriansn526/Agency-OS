@@ -5,7 +5,7 @@
  * settlement cost, phone, e-mail, notes, ratings and coordinates (those come from Google or are internal).
  */
 import { db } from '@repo/db'
-import { haversineKm } from './geo'
+import { coordsState, haversineKm } from './geo'
 import { BULKY, SERVICES } from './schemas'
 import { StorefrontInputError } from '../storefront/auth'
 
@@ -100,13 +100,16 @@ export function invalidateActivePartners() { cache = null }
 
 export async function loadActivePartners(businessLineId: string): Promise<ActivePartner[]> {
   if (cache && cache.until > Date.now()) return cache.data
-  const rows = await db.commerceServicePartner.findMany({ where: { businessLineId, status: 'active' }, select: { id: true, name: true, city: true, county: true, address: true, lat: true, lng: true } })
+  const rows = await db.commerceServicePartner.findMany({ where: { businessLineId, status: 'active' }, select: { id: true, name: true, city: true, county: true, address: true, lat: true, lng: true, coordsSource: true, coordsFetchedAt: true } })
   const rates = await db.commerceServicePartnerRate.findMany({
     where: { partnerId: { in: rows.map((r) => r.id) }, isActive: true },
     select: { partnerId: true, service: true, bulkyClass: true, salePriceRon: true, leadTimeDays: true },
   })
-  const data = rows.map((p) => ({
+  const now = new Date()
+  const data = rows.map(({ coordsSource, coordsFetchedAt, ...p }) => ({
     ...p,
+    // Defence in depth: Google-derived coordinates older than 30 days are never used, even if the refresh job has not run.
+    ...(coordsState({ lat: p.lat, lng: p.lng, coordsSource, coordsFetchedAt }, now) === 'expired' ? { lat: null, lng: null } : {}),
     rates: rates.filter((r) => r.partnerId === p.id).map((r) => ({ service: r.service, bulkyClass: r.bulkyClass, salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null, leadTimeDays: r.leadTimeDays })),
   }))
   cache = { until: Date.now() + 60_000, data }

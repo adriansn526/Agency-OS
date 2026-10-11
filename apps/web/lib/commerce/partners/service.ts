@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { dedupeKey, parsePartnersCsv } from './csv'
 import { PartnerBody, PartnerPatch, RatesBody } from './schemas'
 import { invalidateActivePartners } from './storefront'
+import { coordsState } from './geo'
 
 const SLUG = () => process.env.COMMERCE_SYNC_BUSINESS_LINE || 'ecaroseria'
 
@@ -31,7 +32,7 @@ export async function listPartners(f: { status?: string; q?: string; county?: st
   const byPartner = new Map<string, typeof rates>()
   for (const r of rates) byPartner.set(r.partnerId, [...(byPartner.get(r.partnerId) ?? []), r])
   return {
-    partners: rows.map((p) => ({ ...p, rating: p.rating != null ? Number(p.rating) : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
+    partners: rows.map((p) => ({ ...p, coordsState: coordsState(p), rating: p.rating != null ? Number(p.rating) : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
     counts: Object.fromEntries(counts.map((c) => [c.status, c._count])),
   }
 }
@@ -49,7 +50,8 @@ export async function createPartner(input: unknown) {
   if (data.status === 'active') throw new PartnerError('Un partener nou nu poate fi activ: adaugă întâi tarifele')
   const businessLineId = await partnerBusinessLineId()
   try {
-    return await db.commerceServicePartner.create({ data: { ...data, businessLineId } })
+    const manual = data.lat != null && data.lng != null ? { coordsSource: 'manual', coordsFetchedAt: null } : {}
+    return await db.commerceServicePartner.create({ data: { ...data, ...manual, businessLineId } })
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new PartnerError('Există deja un partener cu acest Google Place ID', 409)
     throw e
@@ -66,6 +68,8 @@ export async function updatePartner(id: string, input: unknown) {
   const becomesActive = patch.status === 'active' && cur.status !== 'active'
   if (patch.status === 'active') await assertCanBeActive(id, merged)
   const extra: Prisma.CommerceServicePartnerUpdateInput = {}
+  if (patch.lat != null && patch.lng != null && (patch.lat !== cur.lat || patch.lng !== cur.lng)) { extra.coordsSource = 'manual'; extra.coordsFetchedAt = null }
+  if (patch.lat === null && patch.lng === null) { extra.coordsSource = null; extra.coordsFetchedAt = null }
   if (becomesActive) extra.activatedAt = new Date()
   if (patch.status && ['contacted', 'negotiating'].includes(patch.status) && cur.status !== patch.status) extra.lastContactedAt = new Date()
   try {
