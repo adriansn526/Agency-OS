@@ -354,7 +354,7 @@ export async function searchSuggest(ctx: StorefrontContext, qRaw: string) {
           isActive: true,
           OR: [
             { nameRo: { contains: q, mode: 'insensitive' } },
-            ...(oe.length >= 4 ? [{ oeCodes: { some: { normalized: { startsWith: oe } } } }] : []),
+            ...(oe.length >= 4 ? [{ oeCodes: { some: { normalized: { startsWith: oe } } } }, { publicCode: { startsWith: q.toUpperCase() } }] : []),
           ],
         },
       },
