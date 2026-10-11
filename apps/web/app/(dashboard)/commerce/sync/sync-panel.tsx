@@ -137,7 +137,7 @@ export function SyncPanel({ initial }: { initial: Overview }) {
           <Button onClick={() => run("reprice", false)} disabled={!!busy || data.running || !s.enabled}><RefreshCw className="h-4 w-4 mr-2" />Repreț la curs acum</Button>
           <Button variant="outline" onClick={() => run("reprice", true)} disabled={!!busy || data.running}><FlaskConical className="h-4 w-4 mr-2" />Dry-run repreț</Button>
           {data.running && <span className="inline-flex items-center text-sm text-muted-foreground"><Loader2 className="h-4 w-4 mr-2 animate-spin" />rulează…</span>}
-          <p className="basis-full text-xs text-muted-foreground">Programare automată: preț și stoc zilnic de la 05:00 (reîncercare la 2 ore până la 13:00; furnizorul regenerează fișierele în jur de 04:23); repreț la curs la 13:30 și 15:30, zilele lucrătoare, după publicarea cursului BNR.</p>
+          <p className="basis-full text-xs text-muted-foreground">Rularea automată (orele, zilele, activarea) se setează în secțiunea <a className="text-primary hover:underline" href="#programari">Programări automate</a> de mai jos.</p>
         </CardContent>
       </Card>
 

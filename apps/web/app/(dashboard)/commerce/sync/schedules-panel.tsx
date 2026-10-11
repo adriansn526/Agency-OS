@@ -23,7 +23,8 @@ async function api(url: string, method: string, body?: unknown) {
   return j
 }
 
-export function SchedulesPanel({ initial }: { initial: any }) {
+/** `hideRunFor`: job keys whose "Rulează acum"/"Dry-run" buttons already exist elsewhere on the page. */
+export function SchedulesPanel({ initial, hideRunFor = [] }: { initial: any; hideRunFor?: string[] }) {
   const [d, setD] = useState(initial)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
@@ -69,10 +70,11 @@ export function SchedulesPanel({ initial }: { initial: any }) {
               {j.lastSummary?.note && <div className="text-xs text-muted-foreground">{j.lastSummary.note}</div>}
             </div>
             {editing === j.key && <ScheduleEditor job={j} onSave={(schedule) => run(j.key, async () => { await api(`/api/commerce/schedules/${j.key}`, "PATCH", { schedule }); setEditing(null) }, "Program salvat.")} onCancel={() => setEditing(null)} busy={busy === j.key} />}
-            <div className="flex flex-wrap gap-2">
+            {!hideRunFor.includes(j.key) && <div className="flex flex-wrap gap-2">
               <Button size="sm" disabled={!!busy || j.running} onClick={() => { if (confirm(`Rulezi acum „${j.label}”? Poate modifica prețurile/stocul dacă scrierea este activată.`)) void run(j.key, () => api(`/api/commerce/schedules/${j.key}/run`, "POST", { dryRun: false }), "Rulare pornită.") }}><Play className="h-4 w-4 mr-1" />Rulează acum</Button>
               {j.supportsDryRun && <Button size="sm" variant="outline" disabled={!!busy || j.running} onClick={() => run(j.key, () => api(`/api/commerce/schedules/${j.key}/run`, "POST", { dryRun: true }), "Dry-run pornit (nu scrie nimic).")}><FlaskConical className="h-4 w-4 mr-1" />Dry-run</Button>}
-            </div>
+            </div>}
+            {hideRunFor.includes(j.key) && <p className="text-xs text-muted-foreground">Rularea manuală și dry-run-ul se fac din secțiunea „Rulare” de mai sus.</p>}
           </CardContent>
         </Card>
       ))}

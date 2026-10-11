@@ -1,6 +1,6 @@
 # Programări (planificator intern pentru joburile Commerce)
 
-Pagina `/commerce/schedules` (link „Programări” în Commerce) înlocuiește crontab-ul pentru cele trei joburi:
+Secțiunea **Programări automate** din pagina `/commerce/sync` (`/commerce/schedules` redirecționează acolo) înlocuiește crontab-ul pentru cele trei joburi:
 
 | Job | Ce face | Program implicit |
 |---|---|---|

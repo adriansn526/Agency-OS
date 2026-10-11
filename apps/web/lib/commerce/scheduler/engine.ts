@@ -1,7 +1,7 @@
 /**
  * In-app scheduler for the commerce jobs. State lives in the database; the process only wakes up every 30 s and runs what is due.
  *
- *  - master switch (CommerceSchedulerState.enabled) and a per-job switch, both OFF until someone turns them on in /commerce/schedules
+ *  - master switch (CommerceSchedulerState.enabled) and a per-job switch, both OFF until someone turns them on in /commerce/sync (Programări automate)
  *  - one run of a job at a time across ALL processes: the lock is an UPDATE … WHERE "runningSince" IS NULL (stale after timeout + 5 min)
  *  - no catch-up storms: after a run the next time is computed from "now"; a due run that is later than the job's grace period
  *    (server was restarting/down) is recorded as "missed" and skipped
@@ -213,6 +213,6 @@ export function startScheduler(): boolean {
   setTimeout(() => void tick(), 20_000).unref()
   g.__commerceScheduler = setInterval(() => void tick(), TICK_MS)
   g.__commerceScheduler.unref()
-  console.log(`[scheduler] started (${INSTANCE_ID}); jobs run only when enabled in /commerce/schedules`)
+  console.log(`[scheduler] started (${INSTANCE_ID}); jobs run only when enabled in /commerce/sync (Programări automate)`)
   return true
 }
