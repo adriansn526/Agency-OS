@@ -180,3 +180,40 @@ test('osmGeocode: identifies the app, accepts Romanian hits only', async () => {
   assert.equal(await osmGeocode('x', null, json([{ lat: '44', lon: '26' }])), null) // too short to be an address
   assert.equal(await osmGeocode('Str. Test 1', 'București', json({}, 429)), null)
 })
+
+// ─── customer geocoding (OSM) ───
+import { GeocodeError, geocodeAddress, parseHits, precisionOf, resetGeocodeState } from '../geocode'
+const hit = (lat: string, lon: string, display_name: string, type = 'house') => ({ lat, lon, display_name, addresstype: type })
+test('geocode: parsing, precision, Romania-only, label without the country', () => {
+  const r = parseHits([hit('44.4268', '26.1025', 'Strada Unirii 5, Sector 3, București, 030167, România'), hit('48.85', '2.35', 'Paris, Franța'), hit('44.43', '26.1', 'Strada Z, București, România', 'road'), hit('x', 'y', 'bad')], 5)
+  assert.equal(r.length, 2)
+  assert.equal(r[0]!.label, 'Strada Unirii 5, Sector 3, București, 030167')
+  assert.deepEqual(r.map((x) => x.precision), ['house', 'street'])
+  assert.equal(precisionOf({ addresstype: 'suburb' }), 'area')
+})
+test('geocode: validation, cache, queue spacing and errors', async () => {
+  resetGeocodeState()
+  let calls = 0, ua = ''
+  const f = (async (_u: string, init: RequestInit) => { calls++; ua = (init.headers as Record<string, string>)['User-Agent']!; return new Response(JSON.stringify([hit('44.4268', '26.1025', 'Strada Unirii 5, București, România')])) }) as unknown as typeof fetch
+  await assert.rejects(() => geocodeAddress('abc', { fetchImpl: f }), (e) => e instanceof GeocodeError && e.status === 400)
+  const a = await geocodeAddress('Strada Unirii 5 București', { fetchImpl: f, spacingMs: 0 })
+  assert.equal(a.cached, false); assert.equal(calls, 1); assert.match(ua, /AgencyOS/); assert.equal(a.attribution, '© OpenStreetMap contributors')
+  const b = await geocodeAddress('  strada UNIRII 5  bucurești ', { fetchImpl: f, spacingMs: 0 }) // same query after normalisation
+  assert.equal(b.cached, true); assert.equal(calls, 1)
+  // 429 from Nominatim → our 429, and failures are not cached
+  const busy = (async () => new Response('', { status: 429 })) as unknown as typeof fetch
+  await assert.rejects(() => geocodeAddress('Altă adresă 10 Cluj', { fetchImpl: busy, spacingMs: 0 }), (e) => e instanceof GeocodeError && e.status === 429)
+  const down = (async () => { throw new Error('net') }) as unknown as typeof fetch
+  await assert.rejects(() => geocodeAddress('Altă adresă 10 Cluj', { fetchImpl: down, spacingMs: 0 }), (e) => e instanceof GeocodeError && e.status === 502)
+  // the queue never lets two lookups closer than the spacing
+  resetGeocodeState()
+  const times: number[] = []
+  const timed = (async () => { times.push(Date.now()); return new Response('[]') }) as unknown as typeof fetch
+  await Promise.all(['adresa unu 1 iasi', 'adresa doi 2 iasi', 'adresa trei 3 iasi'].map((q) => geocodeAddress(q, { fetchImpl: timed, spacingMs: 120 })))
+  assert.ok(times[1]! - times[0]! >= 110 && times[2]! - times[1]! >= 110, JSON.stringify(times.map((t) => t - times[0]!)))
+  // too many waiting callers are refused instead of piling up
+  resetGeocodeState()
+  const slow = (async () => { await new Promise((r) => setTimeout(r, 30)); return new Response('[]') }) as unknown as typeof fetch
+  const many = await Promise.allSettled(Array.from({ length: 14 }, (_, i) => geocodeAddress(`adresa lunga numarul ${i} brasov`, { fetchImpl: slow, spacingMs: 0 })))
+  assert.ok(many.some((m) => m.status === 'rejected' && (m.reason as GeocodeError).status === 429))
+})
