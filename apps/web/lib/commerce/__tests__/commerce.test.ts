@@ -152,3 +152,19 @@ test('pricing: manual price wins; missing FX returns null', () => {
   assert.equal(computePrice({ ...prod, manualPriceRon: 199 }, ch, [], { EUR: 5 })!.priceSource, 'manual')
   assert.equal(computePrice(prod, ch, [], {}), null)
 })
+
+// ─── vehicle summary formatting (make / model / year columns) ───
+import { formatVehicle, formatYears } from '../vehicle-summary'
+test('years: ranges, single year, open-ended, unknown', () => {
+  assert.equal(formatYears(1994, 1999, false), '1994–1999')
+  assert.equal(formatYears(2021, null, true), '2021–')
+  assert.equal(formatYears(2005, 2005, false), '2005')
+  assert.equal(formatYears(1998, 2024, true), '1998–') // any generation still in production keeps the range open
+  assert.equal(formatYears(null, null, false), '—')
+})
+test('vehicle text: lists are cut with a +N, full list kept for the tooltip, missing fitment shows dashes', () => {
+  const v = formatVehicle({ makes: ['Dacia', 'Renault', 'Nissan'], models: ['Logan', 'Sandero', 'Clio', 'Duster', 'Twingo'], yearFrom: 2004, yearTo: 2012, openEnded: false, generations: 6 })
+  assert.deepEqual([v.make, v.model, v.years], ['Dacia, Renault +1', 'Logan, Sandero, Clio +2', '2004–2012'])
+  assert.equal(v.makeFull, 'Dacia, Renault, Nissan')
+  assert.deepEqual(formatVehicle(undefined), { make: '—', model: '—', years: '—', makeFull: '', modelFull: '' })
+})

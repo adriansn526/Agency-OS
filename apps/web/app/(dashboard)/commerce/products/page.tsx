@@ -4,6 +4,7 @@ import { db, Prisma } from "@repo/db"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { imageUrl } from "@/lib/commerce/images/urls"
+import { formatVehicle, vehicleSummaries } from "@/lib/commerce/vehicle-summary"
 import { AutoSubmitForm } from "./auto-submit-form"
 
 export const dynamic = 'force-dynamic'
@@ -27,6 +28,7 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
   const inactive = sp.inactive === "1"
   const cat = (sp.cat ?? "").slice(0, 40)
   const stock = ["in", "out", "unknown"].includes(sp.stock ?? "") ? sp.stock! : ""
+  const make = /^[a-z0-9-]{1,60}$/.test(sp.make ?? "") ? sp.make! : ""
   const sort = SORTS[sp.sort ?? ""] ? sp.sort! : "sku"
   const page = Math.max(1, Math.min(10000, Number(sp.page) || 1))
   const esc = (s: string) => s.replace(/[%_\\]/g, "\\$&")
@@ -38,8 +40,9 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
   for (let i = 0; i < catIds.length; i++) for (const c of cats) if (c.parentId === catIds[i] && !catIds.includes(c.id)) catIds.push(c.id)
   const roots = cats.filter((c) => !c.parentId)
 
-  const [fx, rows] = await Promise.all([
+  const [fx, makes, rows] = await Promise.all([
     db.commerceExchangeRate.findFirst({ where: { currency: "EUR" }, orderBy: { date: "desc" } }),
+    db.vehicleMake.findMany({ where: { isActive: true }, select: { slug: true, name: true }, orderBy: { name: "asc" } }),
     db.$queryRaw<Array<{
       id: string; active: boolean; sku: string; name: string | null; key: string | null; n: bigint; cost: string; price: string | null
       category: string | null; brand: string | null; quality: string | null; side: string | null; avail: boolean | null; views: bigint; updated: Date | null
@@ -57,6 +60,10 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
       WHERE (${q} = '' OR p."supplierCode" ILIKE ${starts} OR p."nameRo" ILIKE ${like} OR p."nameEn" ILIKE ${like} OR p."oeMain" ILIKE ${starts})
         AND (${!inactive} OR NOT p."isActive")
         AND (${cat} = '' OR p."categoryId" = ANY(${catIds}::text[]))
+        AND (${make} = '' OR EXISTS (
+              SELECT 1 FROM "CommerceFitment" f JOIN "VehicleGeneration" g ON g.id = f."generationId"
+              JOIN "VehicleModel" vm ON vm.id = g."modelId" JOIN "VehicleMake" mk ON mk.id = vm."makeId"
+              WHERE f."productId" = p.id AND mk.slug = ${make}))
         AND (${!noimg} OR NOT EXISTS (SELECT 1 FROM "CommerceProductImage" i WHERE i."productId" = p.id))
         AND (${stock} = '' OR (${stock} = 'in' AND EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id AND s."rawFlag" = 1))
              OR (${stock} = 'out' AND EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id) AND NOT EXISTS (SELECT 1 FROM "CommerceStock" s WHERE s."productId" = p.id AND s."rawFlag" = 1))
@@ -66,7 +73,8 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
   const rate = fx ? Number(fx.rate) : null
   const more = rows.length > PAGE
   const list = rows.slice(0, PAGE)
-  const qs = (p: number) => `?${new URLSearchParams({ ...(q ? { q } : {}), ...(cat ? { cat } : {}), ...(stock ? { stock } : {}), ...(sort !== "sku" ? { sort } : {}), ...(noimg ? { noimg: "1" } : {}), ...(inactive ? { inactive: "1" } : {}), page: String(p) })}`
+  const vehicles = await vehicleSummaries(list.map((r) => r.id))
+  const qs = (p: number) => `?${new URLSearchParams({ ...(q ? { q } : {}), ...(cat ? { cat } : {}), ...(make ? { make } : {}), ...(stock ? { stock } : {}), ...(sort !== "sku" ? { sort } : {}), ...(noimg ? { noimg: "1" } : {}), ...(inactive ? { inactive: "1" } : {}), page: String(p) })}`
   const sel = "h-9 rounded-md border border-input bg-background px-2 shadow-sm"
 
   return (
@@ -87,6 +95,10 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
             </optgroup>
           ))}
         </select>
+        <select name="make" defaultValue={make} className={sel}>
+          <option value="">Toate mărcile auto</option>
+          {makes.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+        </select>
         <select name="stock" defaultValue={stock} className={sel}><option value="">Orice stoc</option><option value="in">Disponibil la furnizor</option><option value="out">Epuizat la furnizor</option><option value="unknown">Fără date de stoc</option></select>
         <select name="sort" defaultValue={sort} className={sel}>{Object.entries(SORTS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select>
         <label className="flex items-center gap-2"><input type="checkbox" name="noimg" value="1" defaultChecked={noimg} /> Doar fără poză</label>
@@ -97,12 +109,13 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
       <Card><CardContent className="p-0"><div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="border-b text-left text-muted-foreground">
-            <th className="p-3 w-16">Poză</th><th className="p-3">SKU</th><th className="p-3">Denumire</th><th className="p-3">Categorie</th><th className="p-3">Brand</th><th className="p-3">Calitate</th><th className="p-3">Parte</th>
+            <th className="p-3 w-16">Poză</th><th className="p-3">SKU</th><th className="p-3">Denumire</th><th className="p-3">Categorie</th><th className="p-3">Marcă auto</th><th className="p-3">Model</th><th className="p-3">An</th><th className="p-3">Brand piesă</th><th className="p-3">Calitate</th><th className="p-3">Parte</th>
             <th className="p-3 text-right">Cost €</th><th className="p-3 text-right">Preț</th><th className="p-3 text-right">Adaos</th><th className="p-3">Stoc furnizor</th><th className="p-3 text-right">Vizualiz. 30z</th><th className="p-3">Poze</th>
           </tr></thead>
           <tbody>
             {list.map((r) => {
               const u = r.key ? imageUrl(r.key) : null
+              const v = formatVehicle(vehicles.get(r.id))
               const cost = Number(r.cost), price = r.price != null ? Number(r.price) : null
               const markup = price != null && rate && cost > 0 ? (price / 1.21 / (cost * rate) - 1) * 100 : null
               return (
@@ -111,6 +124,9 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
                   <td className="p-3 font-mono"><Link className="text-primary hover:underline" href={`/commerce/products/${r.id}`}>{r.sku}</Link></td>
                   <td className="p-3 max-w-xs">{r.name ?? "—"}{!r.active && <Badge variant="destructive" className="ml-2">inactiv</Badge>}</td>
                   <td className="p-3 text-muted-foreground">{r.category ?? "—"}</td>
+                  <td className="p-3" title={v.makeFull}>{v.make}</td>
+                  <td className="p-3 max-w-[11rem]" title={v.modelFull}>{v.model}</td>
+                  <td className="p-3 whitespace-nowrap text-muted-foreground">{v.years}</td>
                   <td className="p-3 text-muted-foreground">{r.brand ?? "—"}</td>
                   <td className="p-3 text-muted-foreground">{r.quality ? QUALITY[r.quality] ?? r.quality : "—"}</td>
                   <td className="p-3 text-muted-foreground">{r.side ? SIDE[r.side] ?? r.side : "—"}</td>
@@ -123,7 +139,7 @@ export default async function CommerceProducts({ searchParams }: { searchParams:
                 </tr>
               )
             })}
-            {list.length === 0 && <tr><td colSpan={13} className="p-8 text-center text-muted-foreground">Niciun produs.</td></tr>}
+            {list.length === 0 && <tr><td colSpan={16} className="p-8 text-center text-muted-foreground">Niciun produs.</td></tr>}
           </tbody>
         </table>
       </div></CardContent></Card>

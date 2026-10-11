@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { getTrends, SCORE_FORMULA, type ProductRow } from "@/lib/commerce/trends"
+import { getTrends, SCORE_FORMULA, VEHICLE_SCORE_FORMULA, type ProductRow, type VehicleScoreRow } from "@/lib/commerce/trends"
 import { PriceChart, StockChart } from "./trends-chart"
 
 export const dynamic = 'force-dynamic'
@@ -20,18 +20,46 @@ function Kpi({ label, value, hint }: { label: string; value: string; hint?: stri
   )
 }
 
+function VehicleTable({ rows, showModel, showYears, empty }: { rows: VehicleScoreRow[]; showModel: boolean; showYears: boolean; empty: string }) {
+  const max = Math.max(1, ...rows.map((r) => r.score))
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead><tr className="border-b text-left text-muted-foreground">
+          <th className="p-2">Marcă</th>{showModel && <th className="p-2">Model</th>}{showYears && <th className="p-2">An</th>}
+          <th className="p-2 text-right">Produse</th><th className="p-2 text-right">Vizualizări</th><th className="p-2 text-right">Comandate</th><th className="p-2 text-right">Scor</th><th className="p-2 w-32"></th>
+        </tr></thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i} className="border-b last:border-0">
+              <td className="p-2 font-medium">{r.make}</td>{showModel && <td className="p-2">{r.model}</td>}{showYears && <td className="p-2 whitespace-nowrap text-muted-foreground">{r.years}</td>}
+              <td className="p-2 text-right">{n(r.products)}</td><td className="p-2 text-right">{n(r.views)}</td><td className="p-2 text-right">{n(r.ordered)}</td>
+              <td className="p-2 text-right font-medium">{n(r.score)}</td>
+              <td className="p-2"><div className="h-2 rounded bg-primary/70" style={{ width: `${Math.max(3, (r.score / max) * 100)}%` }} /></td>
+            </tr>
+          ))}
+          {rows.length === 0 && <tr><td colSpan={8} className="p-6 text-center text-muted-foreground">{empty}</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 function ProductTable({ rows, empty }: { rows: ProductRow[]; empty: string }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead><tr className="border-b text-left text-muted-foreground">
-          <th className="p-2">Produs</th><th className="p-2 text-right">Scor</th><th className="p-2 text-right">Vizualizări</th><th className="p-2 text-right">Comandate</th>
+          <th className="p-2">Produs</th><th className="p-2">Marcă</th><th className="p-2">Model</th><th className="p-2">An</th><th className="p-2 text-right">Scor</th><th className="p-2 text-right">Vizualizări</th><th className="p-2 text-right">Comandate</th>
           <th className="p-2 text-right">Epuizări</th><th className="p-2 text-right">Reaprov.</th><th className="p-2">Acum</th>
         </tr></thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.id} className="border-b last:border-0">
               <td className="p-2"><Link className="text-primary hover:underline" href={`/commerce/products/${r.id}`}><span className="font-mono">{r.sku}</span></Link> <span className="text-muted-foreground">{r.name?.slice(0, 48)}</span>{!r.isActive && <Badge variant="destructive" className="ml-2">inactiv</Badge>}</td>
+              <td className="p-2" title={r.vehicle?.makeFull}>{r.vehicle?.make ?? "—"}</td>
+              <td className="p-2 max-w-[10rem]" title={r.vehicle?.modelFull}>{r.vehicle?.model ?? "—"}</td>
+              <td className="p-2 whitespace-nowrap text-muted-foreground">{r.vehicle?.years ?? "—"}</td>
               <td className="p-2 text-right font-medium">{n(r.score)}</td>
               <td className="p-2 text-right">{n(r.views)}</td>
               <td className="p-2 text-right">{n(r.ordered)}</td>
@@ -40,7 +68,7 @@ function ProductTable({ rows, empty }: { rows: ProductRow[]; empty: string }) {
               <td className="p-2">{r.available == null ? "—" : r.available ? <Badge variant="secondary">disponibil</Badge> : <Badge variant="destructive">epuizat</Badge>}</td>
             </tr>
           ))}
-          {rows.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">{empty}</td></tr>}
+          {rows.length === 0 && <tr><td colSpan={10} className="p-6 text-center text-muted-foreground">{empty}</td></tr>}
         </tbody>
       </table>
     </div>
@@ -87,6 +115,21 @@ export default async function TrendsPage({ searchParams }: { searchParams: Promi
         <CardContent className="grid gap-2">
           <p className="text-xs text-muted-foreground">Scor = {SCORE_FORMULA}. Vizualizările sunt cererile storefront-ului către API și includ și roboții. Epuizarea la furnizor arată ce se vinde bine la toți clienții lui, nu doar la noi.</p>
           <ProductTable rows={t.byScore} empty="Nu există încă date de cerere în această perioadă." />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle className="text-lg">Cerere pe marcă, model și an</CardTitle></CardHeader>
+        <CardContent className="grid gap-6">
+          <p className="text-xs text-muted-foreground">
+            Scor = {VEHICLE_SCORE_FORMULA}. „An” este intervalul de ani al generației. Scorurile însumează cererea reală pentru piesele care au mașini asociate
+            ({n(t.vehicles.attributedScore)} puncte); {n(t.vehicles.unattributedScore)} puncte vin de la produse fără mașini asociate și nu apar mai jos.
+          </p>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div><div className="mb-1 text-sm font-medium">Pe marcă</div><VehicleTable rows={t.vehicles.byMake} showModel={false} showYears={false} empty="Nu există încă date de cerere în această perioadă." /></div>
+            <div><div className="mb-1 text-sm font-medium">Pe model</div><VehicleTable rows={t.vehicles.byModel} showModel showYears empty="Nu există încă date de cerere în această perioadă." /></div>
+          </div>
+          <div><div className="mb-1 text-sm font-medium">Pe model și generație (an)</div><VehicleTable rows={t.vehicles.byGeneration} showModel showYears empty="Nu există încă date de cerere în această perioadă." /></div>
         </CardContent>
       </Card>
 
