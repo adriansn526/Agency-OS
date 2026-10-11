@@ -1663,3 +1663,49 @@ model CommerceSearchDaily {
 
   @@id([day, term])
 }
+
+// ─── Partner service registry (table created via prisma/sql/commerce_service_partners.sql; FKs live in SQL only) ───
+model CommerceServicePartner {
+  id              String    @id @default(cuid())
+  businessLineId  String
+  name            String
+  status          String    @default("prospect") // prospect | contacted | negotiating | active | inactive | declined
+  address         String?
+  city            String?
+  county          String?
+  lat             Float?
+  lng             Float?
+  phone           String?
+  email           String?
+  website         String?
+  contactPerson   String?
+  services        String[]  @default([]) // mount | paint | paint_mount
+  googlePlaceId   String?
+  googleMapsUrl   String?
+  rating          Decimal?  @db.Decimal(3, 2)
+  ratingCount     Int?
+  source          String    @default("manual") // manual | csv | google_maps
+  notes           String?
+  lastContactedAt DateTime?
+  activatedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @default(now()) @updatedAt
+
+  @@index([businessLineId, status])
+  @@index([county, city])
+}
+
+model CommerceServicePartnerRate {
+  id            String   @id @default(cuid())
+  partnerId     String
+  service       String // mount | paint | paint_mount
+  bulkyClass    String? // null = any
+  settlementRon Decimal  @db.Decimal(12, 2)
+  salePriceRon  Decimal? @db.Decimal(12, 2)
+  leadTimeDays  Int?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  @@index([partnerId])
+}
