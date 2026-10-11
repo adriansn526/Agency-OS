@@ -13,19 +13,28 @@ function customerEmail(o: OrderSummary) {
     `<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center">${i.quantity}</td>` +
     `<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap">${ron(i.totalRon)}</td></tr>`).join('')
   const sh = o.shipping
+  const sv = o.service
+  const svcRows = (sv?.lines ?? []).map((l) =>
+    `<tr><td style="padding:6px 8px;border-bottom:1px solid #eee">${esc(l.label)}<br><span style="color:#888;font-size:12px">pentru: ${esc(l.forProduct)}${l.paintCode ? ` · cod vopsea ${esc(l.paintCode)}` : ''}</span></td>` +
+    `<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:center">1</td>` +
+    `<td style="padding:6px 8px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap">${ron(l.priceRon)}</td></tr>`).join('')
+  const delivery = sv
+    ? `Piesa se livrează direct la service: ${esc(sv.partnerName)}, ${esc(sv.address)}, ${esc(sv.city)}. Te anunțăm când este gata.`
+    : `Livrare la: ${esc(sh.address)}, ${esc(sh.city)}, ${esc(sh.county)}${sh.postalCode ? `, ${esc(sh.postalCode)}` : ''}`
   const html = `<!DOCTYPE html><html lang="ro"><body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:16px">
 <h2 style="margin:0 0 4px">Am primit comanda ta ${esc(o.number)}</h2>
 <p>Mulțumim, ${esc(o.customer.name)}! Te contactăm telefonic în cel mai scurt timp pentru confirmarea comenzii, a stocului și a costului de transport.</p>
-<table style="width:100%;border-collapse:collapse;font-size:14px"><tr><th align="left" style="padding:6px 8px;border-bottom:2px solid #ccc">Produs</th><th style="padding:6px 8px;border-bottom:2px solid #ccc">Cant.</th><th align="right" style="padding:6px 8px;border-bottom:2px solid #ccc">Total</th></tr>${rows}
-<tr><td colspan="2" style="padding:8px;text-align:right"><b>Total produse (TVA inclus)</b></td><td style="padding:8px;text-align:right"><b>${ron(o.totalRon)}</b></td></tr></table>
-<p style="font-size:14px">Transport: se confirmă telefonic.<br>Plată: ramburs, la livrare.<br>Livrare la: ${esc(sh.address)}, ${esc(sh.city)}, ${esc(sh.county)}${sh.postalCode ? `, ${esc(sh.postalCode)}` : ''}</p>
+<table style="width:100%;border-collapse:collapse;font-size:14px"><tr><th align="left" style="padding:6px 8px;border-bottom:2px solid #ccc">Produs</th><th style="padding:6px 8px;border-bottom:2px solid #ccc">Cant.</th><th align="right" style="padding:6px 8px;border-bottom:2px solid #ccc">Total</th></tr>${rows}${svcRows}
+<tr><td colspan="2" style="padding:8px;text-align:right"><b>${sv ? 'Total (TVA inclus)' : 'Total produse (TVA inclus)'}</b></td><td style="padding:8px;text-align:right"><b>${ron(o.totalRon)}</b></td></tr></table>
+<p style="font-size:14px">Transport: se confirmă telefonic.<br>Plată: ramburs, la livrare.<br>${delivery}</p>
 ${o.notes ? `<p style="font-size:14px">Observațiile tale: ${esc(o.notes)}</p>` : ''}
 <p style="color:#888;font-size:12px">Ai primit acest mesaj pentru că ai plasat o comandă pe ecaroseria.ro.</p></body></html>`
   const text = [
     `Am primit comanda ta ${o.number}`, '', `Mulțumim, ${o.customer.name}! Te contactăm telefonic pentru confirmarea comenzii, a stocului și a costului de transport.`, '',
     ...o.items.map((i) => `- ${i.name} (cod ${i.sku}) x ${i.quantity} = ${ron(i.totalRon)}`),
-    `Total produse (TVA inclus): ${ron(o.totalRon)}`, 'Transport: se confirmă telefonic. Plată: ramburs, la livrare.',
-    `Livrare la: ${sh.address}, ${sh.city}, ${sh.county}${sh.postalCode ? `, ${sh.postalCode}` : ''}`,
+    ...(sv?.lines ?? []).map((l) => `- ${l.label} pentru ${l.forProduct}${l.paintCode ? ` (cod vopsea ${l.paintCode})` : ''} = ${ron(l.priceRon)}`),
+    `${sv ? 'Total (TVA inclus)' : 'Total produse (TVA inclus)'}: ${ron(o.totalRon)}`, 'Transport: se confirmă telefonic. Plată: ramburs, la livrare.',
+    sv ? `Piesa se livrează direct la service: ${sv.partnerName}, ${sv.address}, ${sv.city}.` : `Livrare la: ${sh.address}, ${sh.city}, ${sh.county}${sh.postalCode ? `, ${sh.postalCode}` : ''}`,
   ].join('\n')
   return { html, text }
 }
@@ -42,6 +51,7 @@ export async function notifyNewOrder(o: OrderSummary): Promise<void> {
     await sendTelegramAlert(
       `🛒 <b>Comandă nouă ${esc(o.number)}</b> (eCaroseria)\n👤 ${esc(o.customer.name)} · ${esc(o.customer.phone)}\n📧 ${esc(o.customer.email)}\n` +
       o.items.map((i) => `• ${esc(i.name)} × ${i.quantity}`).join('\n') +
+      (o.service ? `\n🔧 ${o.service.lines.map((l) => esc(l.label)).join(', ')} la ${esc(o.service.partnerName)} (${esc(o.service.city)})${o.service.lines.some((l) => l.paintCode) ? ` · cod vopsea ${esc(o.service.lines.find((l) => l.paintCode)!.paintCode!)}` : ''}` : '') +
       `\n💰 ${ron(o.totalRon)} (TVA incl., ramburs)${o.bulky ? '\n📦 produse voluminoase' : ''}\n\n🔗 https://admin.asns.ro/crm/lead-uri/${o.leadId}`,
       'HTML',
     )

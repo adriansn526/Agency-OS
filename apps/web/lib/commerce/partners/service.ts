@@ -5,6 +5,7 @@ import { dedupeKey, parsePartnersCsv } from './csv'
 import { PartnerBody, PartnerPatch, RatesBody } from './schemas'
 import { invalidateActivePartners } from './storefront'
 import { coordsState } from './geo'
+import { syncLeadStatus } from './lead-sync'
 
 const SLUG = () => process.env.COMMERCE_SYNC_BUSINESS_LINE || 'ecaroseria'
 
@@ -73,7 +74,9 @@ export async function updatePartner(id: string, input: unknown) {
   if (becomesActive) extra.activatedAt = new Date()
   if (patch.status && ['contacted', 'negotiating'].includes(patch.status) && cur.status !== patch.status) extra.lastContactedAt = new Date()
   try {
-    return await db.commerceServicePartner.update({ where: { id }, data: { ...patch, ...extra } })
+    const updated = await db.commerceServicePartner.update({ where: { id }, data: { ...patch, ...extra } })
+    if (patch.status && patch.status !== cur.status) await syncLeadStatus(id, patch.status)
+    return updated
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new PartnerError('Există deja un partener cu acest Google Place ID', 409)
     throw e
@@ -86,6 +89,7 @@ export async function deletePartner(id: string) {
   const cur = await db.commerceServicePartner.findFirst({ where: { id, businessLineId } })
   if (!cur) throw new PartnerError('Not found', 404)
   if (cur.status === 'active') throw new PartnerError('Un partener activ nu se șterge: dezactivează-l întâi', 409)
+  if ((await db.commerceServiceJob.count({ where: { partnerId: id } })) > 0) throw new PartnerError('Partenerul are lucrări în istoric și nu poate fi șters: marchează-l inactiv', 409)
   await db.commerceServicePartner.delete({ where: { id } })
 }
 

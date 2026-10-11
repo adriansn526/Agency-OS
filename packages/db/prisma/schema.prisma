@@ -1723,3 +1723,28 @@ model CommerceServicePartnerSearch {
 
   @@index([createdAt(sort: Desc)])
 }
+
+/// Partner service ordered with a storefront order; basis of the settlement (table created via prisma/sql/commerce_service_jobs.sql; FKs in SQL).
+model CommerceServiceJob {
+  id             String    @id @default(cuid())
+  orderId        String
+  orderItemId    String?
+  partnerId      String
+  service        String // mount | paint | paint_mount
+  status         String    @default("pending") // pending | scheduled | done | settled | cancelled
+  saleRon        Decimal   @db.Decimal(12, 2)
+  settlementRon  Decimal   @db.Decimal(12, 2)
+  forProductName String?
+  paintCode      String?
+  vin            String?
+  scheduledAt    DateTime?
+  doneAt         DateTime?
+  settledAt      DateTime?
+  settlementRef  String?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+
+  @@index([partnerId, status])
+  @@index([orderId])
+}

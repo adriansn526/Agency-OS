@@ -31,3 +31,29 @@ Zilnic e suficient, de exemplu `15 6 * * * cd /home/asns/projects/AdvancedSystem
 ## Limite cunoscute
 - Termenii Google Maps Platform (EEA) nu au putut fi citiți integral; regula de 30 de zile pentru coordonate vine din versiuni arhivate. Verifică secțiunea de caching din termenii specifici EEA și lista „Places API EEA permitted uses” înainte de a păstra alte câmpuri Google în lead-uri.
 - Lead-urile Google au `email` gol (câmp obligatoriu în CRM); excluse din campanii prin `entityType`.
+
+## Comenzi cu serviciu, administrare și decontare
+
+### Contract `POST /api/storefront/orders` (additiv)
+`items[]` acceptă opțional, pe linie: `service: { partnerId, type: "mount"|"paint"|"paint_mount", paintCode?, vin? }`.
+- Linia cu serviciu are `quantity: 1` (două piese = două linii). Toate serviciile unei comenzi folosesc **același** service partener (cel din `GET /api/storefront/service-partners`).
+- `paintCode` este obligatoriu la `paint` / `paint_mount` (litere, cifre, spații, max. 40); `vin` opțional, 17 caractere.
+- **Prețul serviciului nu se citește din cerere**: vine din tariful partenerului (`salePriceRon`, TVA inclus), cel pentru dimensiunea piesei (`bulky`) sau tariful „orice dimensiune”. Costul de decontare se îngheață în comandă.
+- Cu serviciu, **piesa se livrează la service**: `shippingAddress` = service, `billingAddress` = adresa clientului.
+- Răspuns `201`: `{ id, number, totalRon, productsTotalRon, servicesTotalRon }`.
+- Un produs `out_of_stock` este refuzat (422) când maparea `supplier_confirm` este activă.
+- Erori `422` cu mesaj în română, afișabil clientului.
+
+### Date create
+Fiecare serviciu comandat → linie `CommerceOrderItem` (`supplierCode = SRV:<tip>`) + rând `CommerceServiceJob` (`saleRon`, `settlementRon`, `paintCode`, `vin`, stare `pending → scheduled → done → settled`, `cancelled`). DDL: `packages/db/prisma/sql/commerce_service_jobs.sql`.
+
+### Administrare
+- `/commerce/orders` și `/commerce/orders/[id]`: listă și detaliu, stare comandă (De confirmat, Confirmată, Piesă comandată la furnizor, Piesă la service, Lucrare programată, Gata de ridicat, Expediată, Livrată, Anulată, Returnată), note, lucrările de service (programează / finalizată / anulează / redeschide), mesaj de copiat către service. Starea comenzii sincronizează lead-ul din CRM (nou → comandă → livrat). Anularea comenzii anulează lucrările deschise.
+- `/commerce/settlements`: pe partener, ce datorăm (lucrări **finalizate**, nedecontate), ce am plătit, în lucru, marja. Selectezi lucrările finalizate și le marchezi decontate cu o referință (OP/factură). Doar lucrările `done` ale aceluiași partener se pot deconta.
+- Lead-urile partenerilor au tipul CRM propriu „Service partener” (`entityType = service_partners`), separate de clienți (`customers`).
+
+### Reguli stabilite (de confirmat cu proprietarul)
+- Lucrarea e „datorată” când e marcată **finalizată** în ERP.
+- Retur sau lucrare nereușită: nu e automatizat; se anulează/redeschide lucrarea și se rezolvă manual în decontare.
+- Prețul de vânzare al serviciului este TVA inclus (TVA din comandă = formula obișnuită, 21%).
+- Partenerul este notificat manual (mesaj de copiat + „marchează notificat").

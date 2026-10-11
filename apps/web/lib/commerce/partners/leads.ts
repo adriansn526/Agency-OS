@@ -12,6 +12,7 @@ import { partnerBusinessLineId, createPartner, PartnerError } from './service'
 import { searchPlaces, type PlaceResult, type SearchOutcome } from './places'
 import { PartnerFields } from './schemas'
 import { osmGeocode } from './coords'
+import { PARTNER_ENTITY_TYPE, leadStatusForPartner } from './lead-sync'
 
 export const LEAD_SOURCE = 'google_places'
 const TTL_MS = 30 * 60_000
@@ -53,7 +54,7 @@ export async function saveAsLeads(input: unknown) {
   const picked = s.results.filter((r) => want.has(r.placeId))
   const fetchedAt = new Date(s.at).toISOString()
   const data: Prisma.LeadCreateManyInput[] = picked.map((r) => ({
-    businessLineId, entityType: 'service_partners', companyName: r.name, contactPerson: 'Nespecificat', email: '',
+    businessLineId, entityType: PARTNER_ENTITY_TYPE, companyName: r.name, contactPerson: 'Nespecificat', email: '',
     phone: r.phone, website: r.website, address: r.address, city: r.city, county: r.county,
     status: 'prospect', source: LEAD_SOURCE, sourceService: 'service-partner-prospecting',
     industry: 'Service auto — tinichigerie / vopsitorie',
@@ -111,7 +112,7 @@ export async function promoteLead(leadId: string, input: unknown) {
   }
   await db.lead.update({
     where: { id: leadId },
-    data: { status: 'calificat', customFields: { ...(lead.customFields as object), partnerId: partner.id } as Prisma.InputJsonValue },
+    data: { status: leadStatusForPartner(data.status) ?? 'prospect', customFields: { ...(lead.customFields as object), partnerId: partner.id } as Prisma.InputJsonValue },
   })
   return partner
 }

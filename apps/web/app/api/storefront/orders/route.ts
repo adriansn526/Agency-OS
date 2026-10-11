@@ -14,8 +14,11 @@ const fail = (error: string, status: number, extra?: Record<string, string>) => 
 
 /**
  * POST /api/storefront/orders   (Authorization: Bearer <storefront key>, optional Idempotency-Key)
- * Body: { customer:{name,phone,email}, shipping:{county,city,address,postalCode?}, paymentMethod:'cod', notes?, items:[{slug,quantity}] }
- * 201 { id, number } · 400 malformed · 422 validation (message is customer-facing, Romanian) · 429 + Retry-After (max 5 orders/hour
+ * Body: { customer:{name,phone,email}, shipping:{county,city,address,postalCode?}, paymentMethod:'cod', notes?,
+ *         items:[{ slug, quantity, service?: { partnerId, type:'mount'|'paint'|'paint_mount', paintCode?, vin? } }] }
+ *   A line with `service` must have quantity 1; all services in one order use the same partner (GET /api/storefront/service-partners);
+ *   paintCode is required for paint / paint_mount; with a service the part is delivered to the partner garage.
+ * 201 { id, number, totalRon, productsTotalRon, servicesTotalRon } · 400 malformed · 422 validation (message is customer-facing, Romanian) · 429 + Retry-After (max 5 orders/hour
  * per e-mail, phone or IP — IP = leftmost X-Forwarded-For) · 503 + Retry-After on internal errors. Prices are never read from the body.
  */
 export const POST = storefrontHandler(async (req, ctx) => {
@@ -29,7 +32,7 @@ export const POST = storefrontHandler(async (req, ctx) => {
 
     const order = await createStorefrontOrder(ctx, input, { idempotencyKey, ip: clientIp(req), userAgent: req.headers.get('user-agent') })
     if (order.summary) void notifyNewOrder(order.summary)
-    return NextResponse.json({ id: order.id, number: order.number }, { status: 201, headers: H })
+    return NextResponse.json({ id: order.id, number: order.number, ...order.totals }, { status: 201, headers: H })
   } catch (e) {
     if (e instanceof OrderInputError) return fail(e.message, e.status)
     if (e instanceof OrderRateLimitError) return fail('Ai trimis prea multe comenzi într-un interval scurt. Te rugăm să încerci din nou mai târziu.', 429, { 'Retry-After': String(e.retryAfterSec) })
