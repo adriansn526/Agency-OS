@@ -3,6 +3,7 @@ import { db, Prisma } from '@repo/db'
 import { z } from 'zod'
 import { dedupeKey, parsePartnersCsv } from './csv'
 import { PartnerBody, PartnerPatch, RatesBody } from './schemas'
+import { invalidateActivePartners } from './storefront'
 
 const SLUG = () => process.env.COMMERCE_SYNC_BUSINESS_LINE || 'ecaroseria'
 
@@ -43,6 +44,7 @@ async function assertCanBeActive(id: string, p: { city: string | null; county: s
 }
 
 export async function createPartner(input: unknown) {
+  invalidateActivePartners()
   const data = PartnerBody.parse(input)
   if (data.status === 'active') throw new PartnerError('Un partener nou nu poate fi activ: adaugă întâi tarifele')
   const businessLineId = await partnerBusinessLineId()
@@ -55,6 +57,7 @@ export async function createPartner(input: unknown) {
 }
 
 export async function updatePartner(id: string, input: unknown) {
+  invalidateActivePartners()
   const patch = PartnerPatch.parse(input)
   const businessLineId = await partnerBusinessLineId()
   const cur = await db.commerceServicePartner.findFirst({ where: { id, businessLineId } })
@@ -74,6 +77,7 @@ export async function updatePartner(id: string, input: unknown) {
 }
 
 export async function deletePartner(id: string) {
+  invalidateActivePartners()
   const businessLineId = await partnerBusinessLineId()
   const cur = await db.commerceServicePartner.findFirst({ where: { id, businessLineId } })
   if (!cur) throw new PartnerError('Not found', 404)
@@ -82,6 +86,7 @@ export async function deletePartner(id: string) {
 }
 
 export async function setRates(id: string, input: unknown) {
+  invalidateActivePartners()
   const { rates } = RatesBody.parse(input)
   const keys = new Set<string>()
   for (const r of rates) {

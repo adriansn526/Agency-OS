@@ -67,3 +67,48 @@ test('haversine: Bucharest–Cluj ≈ 325 km; nearest sorts and skips partners w
   assert.deepEqual(nearest(list, buc, 3).map((x) => x.n), ['near', 'far'])
   assert.deepEqual(nearest(list, buc, 3, 50).map((x) => x.n), ['near'])
 })
+
+// ─── storefront selection ───
+import { parseNearbyQuery, selectNearby, type ActivePartner } from '../storefront'
+const P = (id: string, name: string, lat: number | null, lng: number | null, county: string | null, rates: ActivePartner['rates']): ActivePartner => ({ id, name, city: county, county, address: 'Str. X 1', lat, lng, rates })
+const q = (s: string) => parseNearbyQuery(new URLSearchParams(s))
+const partners = [
+  P('far', 'Cluj Auto', 46.77, 23.62, 'Cluj', [{ service: 'paint', bulkyClass: null, salePriceRon: 500, leadTimeDays: 5 }]),
+  P('near', 'Buc Rapid', 44.44, 26.1, 'București', [{ service: 'paint', bulkyClass: null, salePriceRon: 400, leadTimeDays: 3 }, { service: 'paint', bulkyClass: 'large', salePriceRon: 650, leadTimeDays: 4 }, { service: 'mount', bulkyClass: null, salePriceRon: 150, leadTimeDays: 1 }]),
+  P('mid', 'Buc Alfa', 44.5, 26.2, 'București', [{ service: 'mount', bulkyClass: null, salePriceRon: 170, leadTimeDays: 2 }]),
+  P('nocoord', 'Buc Fara Coord', null, null, 'București', [{ service: 'mount', bulkyClass: null, salePriceRon: 160, leadTimeDays: null }]),
+  P('noprice', 'Fara Pret', 44.43, 26.09, 'București', [{ service: 'mount', bulkyClass: null, salePriceRon: null, leadTimeDays: 1 }]),
+]
+test('nearby: sorted by distance, far partners cut by maxKm, no price = not offered', () => {
+  const r = selectNearby(partners, q('lat=44.4268&lng=26.1025&limit=10'))
+  assert.equal(r.mode, 'distance')
+  assert.deepEqual(r.items.map((i) => i.id), ['near', 'mid'])
+  assert.ok(r.items[0]!.distanceKm! < r.items[1]!.distanceKm!)
+  assert.equal(selectNearby(partners, q('lat=44.4268&lng=26.1025&maxKm=500&limit=10')).items.at(-1)!.id, 'far')
+})
+test('nearby: size class picks the specific price, otherwise the any-size one', () => {
+  const large = selectNearby(partners, q('lat=44.4268&lng=26.1025&service=paint&bulky=large')).items[0]!
+  assert.deepEqual(large.services, [{ service: 'paint', priceRon: 650, leadTimeDays: 4 }])
+  const std = selectNearby(partners, q('lat=44.4268&lng=26.1025&service=paint&bulky=small')).items[0]!
+  assert.equal(std.services[0]!.priceRon, 400)
+})
+test('nearby: partners without coordinates follow the measured ones in the same county only', () => {
+  const r = selectNearby(partners, q('lat=44.4268&lng=26.1025&county=Bucure%C8%99ti&service=mount&limit=10'))
+  assert.deepEqual(r.items.map((i) => i.id), ['near', 'mid', 'nocoord'])
+  assert.equal(r.items[2]!.distanceKm, null)
+  assert.ok(!selectNearby(partners, q('lat=44.4268&lng=26.1025&service=mount&limit=10')).items.some((i) => i.id === 'nocoord'))
+})
+test('area and all modes, diacritics-insensitive county', () => {
+  assert.equal(selectNearby(partners, q('county=Bucuresti&limit=10')).mode, 'area')
+  assert.deepEqual(selectNearby(partners, q('county=Bucuresti&service=mount&limit=10')).items.map((i) => i.id), ['mid', 'near', 'nocoord'].sort((a, b) => partners.find((p) => p.id === a)!.name.localeCompare(partners.find((p) => p.id === b)!.name, 'ro')))
+  assert.equal(selectNearby(partners, q('')).mode, 'all')
+  assert.equal(selectNearby(partners, q('limit=2')).items.length, 2)
+})
+test('response never carries internal fields', () => {
+  const item = selectNearby(partners, q('lat=44.4268&lng=26.1025')).items[0]! as Record<string, unknown>
+  for (const k of ['phone', 'email', 'settlementRon', 'notes', 'lat', 'lng', 'rating']) assert.ok(!(k in item), k)
+})
+test('query validation', () => {
+  for (const bad of ['lat=44', 'lat=abc&lng=1', 'lat=95&lng=1', 'service=wash', 'bulky=huge', 'limit=0', 'limit=99', 'maxKm=0']) assert.throws(() => q(bad), bad)
+  assert.equal(q('').limit, 3)
+})
