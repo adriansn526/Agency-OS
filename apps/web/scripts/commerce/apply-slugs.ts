@@ -25,7 +25,7 @@ async function main() {
   fs.writeFileSync(file, 'listingId,sku,slug_vechi,slug_nou\n' + items.map((x) => [x.id, x.sku, x.old, x.next].join(',')).join('\n') + '\n')
 
   // safety: every new slug must end with its SKU, be URL-safe, and be unique (also against slugs that stay as they are)
-  const bad = items.filter((x) => !x.next.endsWith(`-${x.sku}`) || !/^[a-z0-9-]{1,140}$/.test(x.next))
+  const bad = items.filter((x) => !x.next.endsWith(`-${x.sku.toLowerCase()}`) || !/^[a-z0-9-]{1,140}$/.test(x.next))
   const all = new Map<string, number>(); for (const r of rows) { const s = items.find((x) => x.id === r.listingId)?.next ?? r.currentSlug; all.set(s, (all.get(s) ?? 0) + 1) }
   const dup = [...all.values()].filter((n) => n > 1).length
   console.log(JSON.stringify({ mode: apply ? 'SCRIERE' : 'dry-run', listings: rows.length, toChange: items.length, invalid: bad.length, duplicates: dup, csv: file, sample: items.slice(0, 3).map((x) => `${x.old}  →  ${x.next}`) }, null, 1))

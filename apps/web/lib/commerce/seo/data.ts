@@ -7,7 +7,7 @@ export interface SeoRow extends SeoInput { listingId: string; productId: string;
 export async function loadSeoRows(opts: { businessLineId: string; productId?: string }): Promise<SeoRow[]> {
   const pid = opts.productId ?? null
   const products = await db.$queryRaw<Array<{ pid: string; lid: string; sku: string; name: string; side: string | null; oe: string | null; slug: string; seoTitle: string | null }>>`
-    SELECT p.id AS pid, l.id AS lid, p."supplierCode" AS sku, p."nameRo" AS name, p.side, p."oeMain" AS oe, l.slug, l."seoTitle" AS "seoTitle"
+    SELECT p.id AS pid, l.id AS lid, coalesce(p."publicCode", p."supplierCode") AS sku, p."nameRo" AS name, p.side, p."oeMain" AS oe, l.slug, l."seoTitle" AS "seoTitle"
     FROM "CommerceListing" l JOIN "CommerceProduct" p ON p.id = l."productId"
     WHERE l."businessLineId" = ${opts.businessLineId} AND p."nameRo" IS NOT NULL AND p."nameRo" <> ''
       AND (${pid}::text IS NULL OR p.id = ${pid})

@@ -150,7 +150,7 @@ const listingSelect = {
   slug: true, priceRon: true, compareAtRon: true, productId: true,
   product: {
     select: {
-      supplierCode: true, nameRo: true, oeMain: true, side: true, brand: true, quality: true, images: true, bulkyClass: true,
+      supplierCode: true, publicCode: true, nameRo: true, oeMain: true, side: true, brand: true, quality: true, images: true, bulkyClass: true,
       category: { select: { slug: true, nameRo: true } },
       stock: { select: { rawFlag: true } },
     },
@@ -186,7 +186,7 @@ function toCard(l: ListingRow, meaning: string, images: ImageMap) {
   const p = l.product
   return {
     slug: l.slug,
-    sku: p.supplierCode,
+    sku: p.publicCode ?? p.supplierCode,
     name: p.nameRo,
     oe: p.oeMain,
     side: p.side,
@@ -258,7 +258,7 @@ export async function listProducts(ctx: StorefrontContext, sp: URLSearchParams) 
     const oe = normalizeOe(q)
     pw.OR = [
       { nameRo: { contains: q, mode: 'insensitive' } },
-      ...(oe.length >= 4 ? [{ oeCodes: { some: { normalized: { startsWith: oe } } } }, { supplierCode: { startsWith: q.toUpperCase() } }] : []),
+      ...(oe.length >= 4 ? [{ oeCodes: { some: { normalized: { startsWith: oe } } } }, { publicCode: { startsWith: q.toUpperCase() } }] : []),
     ]
   }
   where.product = pw
@@ -291,6 +291,12 @@ export function skuFromSlug(slug: string): string | null {
   return /-(\d{9})$/.exec(slug)?.[1] ?? null
 }
 
+/** Current slugs end with "-<public code>" (EC + 8 hex, lowercase); the supplier's own code is never part of a public slug. */
+export function publicCodeFromSlug(slug: string): string | null {
+  const m = /-(ec[0-9a-f]{8})$/.exec(slug)
+  return m ? m[1]!.toUpperCase() : null
+}
+
 export async function getProduct(ctx: StorefrontContext, slug: string, fromLegacy = false): Promise<any> {
   if (!SLUG_RE.test(slug)) throw new StorefrontInputError('Invalid slug')
   const l = await db.commerceListing.findUnique({
@@ -313,8 +319,9 @@ export async function getProduct(ctx: StorefrontContext, slug: string, fromLegac
   if (!l && !fromLegacy) {
     // Old (uuid-…) or otherwise outdated slug: resolve by the SKU at the end and answer with the product's CURRENT slug in `slug`
     // (the storefront redirects to it with a 301).
-    const sku = skuFromSlug(slug)
-    const alt = sku ? await db.commerceListing.findFirst({ where: { businessLineId: ctx.businessLineId, product: { supplierCode: sku } }, select: { slug: true } }) : null
+    // Older slugs end with the supplier SKU (legacy) or an earlier public code: both resolve to the current slug
+    const sku = skuFromSlug(slug), pc = publicCodeFromSlug(slug)
+    const alt = sku || pc ? await db.commerceListing.findFirst({ where: { businessLineId: ctx.businessLineId, product: sku ? { supplierCode: sku } : { publicCode: pc } }, select: { slug: true } }) : null
     if (alt && alt.slug !== slug) return getProduct(ctx, alt.slug, true)
   }
   if (!l || !l.isActive || !l.product.isActive || l.priceRon == null) return null

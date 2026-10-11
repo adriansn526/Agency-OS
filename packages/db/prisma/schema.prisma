@@ -1308,6 +1308,7 @@ model CommerceProduct {
   id           String                    @id @default(cuid())
   feedId       String
   supplierCode String // supplier base article code
+  publicCode   String?  @unique // "EC…" code shown on the storefront instead of supplierCode (filled by DB trigger on insert)
   groupCode    String?
   categoryId   String?
   nameEn       String

@@ -127,7 +127,7 @@ export function buildSeo(input: SeoInput): SeoOutput {
   // slug from the most detailed variant (years included), cut at a hyphen boundary, then "-SKU"
   let text = slugify(detailed) || 'piesa-auto'
   if (text.length > SLUG_TEXT_MAX) { text = text.slice(0, SLUG_TEXT_MAX); const i = text.lastIndexOf('-'); if (i > 20) text = text.slice(0, i) }
-  const slug = `${text}-${input.sku}`
+  const slug = `${text}-${input.sku.toLowerCase()}`
 
   return { title, description, slug, hasVehicle: vs.length > 0, modelCount: vs.length, truncated, level, shortened }
 }
