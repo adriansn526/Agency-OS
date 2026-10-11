@@ -172,7 +172,45 @@ function Editor({ p, run, busy, onDone }: { p: any; run: (k: string, f: () => Pr
         </div>
       </div>
 
+      <SupplierBlock p={p} run={run} busy={busy} onDone={onDone} />
+
       {p.status !== "active" && <div><Button size="sm" variant="outline" disabled={!!busy} onClick={() => { if (confirm(`Ștergi „${p.name}”?`)) run(`del-${p.id}`, async () => { await api(`/api/commerce/partners/${p.id}`, "DELETE"); await onDone() }, "Șters.") }}><Trash2 className="h-4 w-4 mr-1" />Șterge</Button></div>}
+    </div>
+  )
+}
+
+function SupplierBlock({ p, run, busy, onDone }: { p: any; run: (k: string, f: () => Promise<unknown>, t?: string) => Promise<void>; busy: string | null; onDone: () => Promise<void> }) {
+  const [f, setF] = useState({ name: p.name, cui: "", iban: "" })
+  const [pick, setPick] = useState({ q: "", found: [] as any[] })
+  const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value })
+  async function search() {
+    const r = await api(`/api/commerce/partners/supplier-search?q=${encodeURIComponent(pick.q)}`, "GET").catch(() => ({ suppliers: [] }))
+    setPick({ ...pick, found: r.suppliers ?? [] })
+  }
+  if (p.supplier) {
+    return (
+      <div className="rounded-md border p-3 text-sm grid gap-2">
+        <div className="font-medium">Furnizor (contabilitate)</div>
+        <div><a className="text-primary hover:underline" href={`/suppliers/${p.supplier.id}`}>{p.supplier.name}</a>{p.supplier.cui ? ` · CUI ${p.supplier.cui}` : ""} · {p.supplier.status}</div>
+        <div><Button size="sm" variant="outline" disabled={!!busy} onClick={() => run(`unl-${p.id}`, async () => { await api(`/api/commerce/partners/${p.id}/supplier`, "DELETE"); await onDone() }, "Legătura cu furnizorul a fost scoasă (furnizorul rămâne).")}>Scoate legătura</Button></div>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-md border p-3 grid gap-3">
+      <div className="text-sm font-medium">Furnizor (contabilitate)</div>
+      <p className="text-xs text-muted-foreground">Leagă partenerul de un furnizor când începe să ne factureze: facturile primite și plățile apar în modulul Furnizori. Un furnizor creat aici apare doar pe linia eCaroseria.</p>
+      <div className="grid gap-2 sm:grid-cols-4 items-end">
+        <label className="grid gap-1 text-xs"><span className="font-medium">Denumire firmă</span><input className={input} value={f.name} onChange={set("name")} /></label>
+        <label className="grid gap-1 text-xs"><span className="font-medium">CUI (exact ca în factură)</span><input className={input} value={f.cui} onChange={set("cui")} placeholder="RO12345678" /></label>
+        <label className="grid gap-1 text-xs"><span className="font-medium">IBAN</span><input className={input} value={f.iban} onChange={set("iban")} placeholder="RO49AAAA…" /></label>
+        <Button size="sm" disabled={!!busy || f.name.trim().length < 2} onClick={() => run(`sup-${p.id}`, async () => { await api(`/api/commerce/partners/${p.id}/supplier`, "POST", { create: { name: f.name, cui: f.cui, iban: f.iban } }); await onDone() }, "Furnizor creat și asociat.")}>Creează furnizor</Button>
+      </div>
+      <div className="flex flex-wrap gap-2 items-center">
+        <input className={`${input} max-w-xs`} placeholder="…sau caută un furnizor existent (nume/CUI)" value={pick.q} onChange={(e) => setPick({ ...pick, q: e.target.value })} onKeyDown={(e) => { if (e.key === "Enter") void search() }} />
+        <Button size="sm" variant="outline" onClick={search}>Caută</Button>
+        {pick.found.map((s: any) => <Button key={s.id} size="sm" variant="outline" disabled={!!busy} onClick={() => run(`lnk-${p.id}`, async () => { await api(`/api/commerce/partners/${p.id}/supplier`, "POST", { supplierId: s.id }); await onDone() }, "Furnizor asociat.")}>{s.name}{s.cui ? ` · ${s.cui}` : ""}</Button>)}
+      </div>
     </div>
   )
 }

@@ -48,6 +48,9 @@ export function SettlementsPanel({ initial }: { initial: any }) {
           <Card key={p.partner.id}>
             <CardHeader><CardTitle className="text-lg">{p.partner.name}{p.partner.city ? ` · ${p.partner.city}` : ""}</CardTitle></CardHeader>
             <CardContent className="grid gap-4">
+              {p.supplier
+                ? <div className="text-xs text-muted-foreground">Furnizor în contabilitate: <Link className="text-primary hover:underline" href={`/suppliers/${p.supplier.id}`}>{p.supplier.name}</Link>{p.supplier.cui ? ` · CUI ${p.supplier.cui}` : ""}. Folosește numărul facturii lor ca referință la decontare.</div>
+                : <div className="text-xs text-amber-700">Acest partener nu are furnizor asociat în contabilitate: facturile lui nu se vor potrivi automat. Asociază-l din Service-uri partenere.</div>}
               <div className="flex flex-wrap gap-6 text-sm">
                 <span>De plătit: <b>{ron(p.owedRon)}</b></span><span>Plătit: {ron(p.settledRon)}</span><span>În lucru: {ron(p.inProgressRon)}</span><span>Marjă (finalizate + decontate): {ron(p.marginRon)}</span>
               </div>
@@ -66,7 +69,7 @@ export function SettlementsPanel({ initial }: { initial: any }) {
               {done.length > 0 && (
                 <div className="flex flex-wrap gap-3 items-center">
                   <Button size="sm" variant="outline" onClick={() => setSel({ ...sel, [p.partner.id]: new Set(done.map((j: any) => j.id)) })}>Selectează toate finalizate</Button>
-                  <input className={`${input} max-w-60`} placeholder="Referință plată (OP, factură)" value={ref[p.partner.id] ?? ""} onChange={(e) => setRef({ ...ref, [p.partner.id]: e.target.value })} />
+                  <input className={`${input} max-w-60`} placeholder="Nr. factură furnizor / OP" value={ref[p.partner.id] ?? ""} onChange={(e) => setRef({ ...ref, [p.partner.id]: e.target.value })} />
                   <Button size="sm" disabled={busy === p.partner.id || chosen.size === 0 || (ref[p.partner.id] ?? "").trim().length < 2} onClick={() => settle(p.partner.id, done)}>Marchează {chosen.size} ca decontate</Button>
                 </div>)}
             </CardContent>

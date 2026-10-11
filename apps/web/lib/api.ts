@@ -137,6 +137,8 @@ export interface APISupplier {
   vatRegime: string
   invoiceFetchMethod: string
   invoiceSenderEmails: string[]
+  /** Lines the supplier is shown on; empty = all lines */
+  businessLineIds?: string[]
   iban: string | null
   category: string | null
   isRecurring: boolean

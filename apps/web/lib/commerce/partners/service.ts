@@ -30,10 +30,13 @@ export async function listPartners(f: { status?: string; q?: string; county?: st
     db.commerceServicePartner.groupBy({ by: ['status'], where: { businessLineId }, _count: true }),
   ])
   const rates = await db.commerceServicePartnerRate.findMany({ where: { partnerId: { in: rows.map((r) => r.id) } }, orderBy: [{ service: 'asc' }, { bulkyClass: 'asc' }] })
+  const supplierIds = [...new Set(rows.map((r) => r.supplierId).filter((x): x is string => !!x))]
+  const suppliers = supplierIds.length ? await db.supplier.findMany({ where: { id: { in: supplierIds } }, select: { id: true, name: true, cui: true, status: true } }) : []
+  const supplierById = new Map(suppliers.map((x) => [x.id, x]))
   const byPartner = new Map<string, typeof rates>()
   for (const r of rates) byPartner.set(r.partnerId, [...(byPartner.get(r.partnerId) ?? []), r])
   return {
-    partners: rows.map((p) => ({ ...p, coordsState: coordsState(p), rating: p.rating != null ? Number(p.rating) : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
+    partners: rows.map((p) => ({ ...p, supplier: p.supplierId ? supplierById.get(p.supplierId) ?? null : null, coordsState: coordsState(p), rating: p.rating != null ? Number(p.rating) : null, rates: (byPartner.get(p.id) ?? []).map((r) => ({ ...r, settlementRon: Number(r.settlementRon), salePriceRon: r.salePriceRon != null ? Number(r.salePriceRon) : null })) })),
     counts: Object.fromEntries(counts.map((c) => [c.status, c._count])),
   }
 }

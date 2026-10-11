@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { updateSupplier, type APISupplier } from "@/lib/api"
 import { X, Save } from "lucide-react"
+import { SupplierLinesField } from "@/components/supplier-lines-field"
 
 interface SupplierEditModalProps {
   supplier: Partial<APISupplier> & { id: string }
@@ -19,6 +20,7 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
     invoiceFetchMethod: supplier.invoiceFetchMethod || "efactura",
     invoiceSenderEmails: (supplier.invoiceSenderEmails || []).join(", "),
     category: supplier.category || "",
+    businessLineIds: (supplier.businessLineIds || []) as string[],
   })
   const [loading, setLoading] = useState(false)
   const [categories, setCategories] = useState<{id: string, name: string}[]>([])
@@ -138,6 +140,8 @@ export function SupplierEditModal({ supplier, onClose, onSuccess }: SupplierEdit
               </select>
             </div>
           </div>
+
+          <SupplierLinesField value={formData.businessLineIds} onChange={(v) => setFormData({ ...formData, businessLineIds: v })} />
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Email-uri expeditori (separate prin virgulă)</label>

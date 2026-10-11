@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
+import { ScopeError, normalizeBusinessLineIds, visibleOnLine } from '@/lib/suppliers/scope'
 
 // ─── GET /api/suppliers ───
 export async function GET(request: NextRequest) {
@@ -10,6 +11,7 @@ export async function GET(request: NextRequest) {
     const vatRegime = searchParams.get('vatRegime')
     const startDateStr = searchParams.get('startDate')
     const endDateStr = searchParams.get('endDate')
+    const businessLineId = searchParams.get('businessLineId')
     
     let tenantId = request.headers.get('x-tenant-id')
     if (!tenantId || tenantId === 'default_tenant') {
@@ -21,6 +23,9 @@ export async function GET(request: NextRequest) {
     
     if (status && status !== 'all') where.status = status
     if (vatRegime && vatRegime !== 'all') where.vatRegime = vatRegime
+    // Shared suppliers (no lines set) show on every line; scoped ones only on their own lines. No parameter = consolidated view.
+    const scope = visibleOnLine(businessLineId)
+    if (scope) where.AND = [scope]
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
@@ -74,6 +79,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { name, cui, iban, category, isRecurring, expectedDay } = body
+    const businessLineIds = await normalizeBusinessLineIds(body.businessLineIds)
     let tenantId = request.headers.get('x-tenant-id')
     if (!tenantId || tenantId === 'default_tenant') {
       const t = await db.tenantInstance.findFirst()
@@ -91,6 +97,7 @@ export async function POST(request: NextRequest) {
         cui,
         iban,
         category,
+        businessLineIds,
         isRecurring: isRecurring || false,
         expectedDay: isRecurring ? (expectedDay ? parseInt(expectedDay) : null) : null,
       },
@@ -98,6 +105,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data: supplier }, { status: 201 })
   } catch (error) {
+    if (error instanceof ScopeError) return NextResponse.json({ error: error.message }, { status: 400 })
     console.error('[API] POST /api/suppliers error:', error)
     return NextResponse.json({ error: 'Failed to create supplier' }, { status: 500 })
   }

@@ -9,6 +9,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table"
 import { fetchSuppliers, type APISupplier } from "@/lib/api"
+import { useBusinessLine } from "@/components/business-line-context"
 import { cn, formatDate, getInitials } from "@/lib/utils"
 import { Eye, Plus, Search, Building2 } from "lucide-react"
 import { toast } from "sonner"
@@ -73,7 +74,7 @@ const DraggableTableHeader = ({ header }: { header: Header<APISupplier, unknown>
   )
 }
 
-const defaultColumnOrder = ["select", "name", "category", "status", "recurrence", "stats", "totalAmount", "createdAt"]
+const defaultColumnOrder = ["select", "name", "category", "lines", "status", "recurrence", "stats", "totalAmount", "createdAt"]
 
 const statusConfig: Record<string, { label: string; class: string }> = {
   active: { label: "Activ", class: "bg-success/10 text-success" },
@@ -82,6 +83,7 @@ const statusConfig: Record<string, { label: string; class: string }> = {
 
 export default function SuppliersPage() {
   const router = useRouter()
+  const { activeLineId, isAll, lines } = useBusinessLine()
   const [globalFilter, setGlobalFilter] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [vatRegimeFilter, setVatRegimeFilter] = useState<string>("all")
@@ -123,6 +125,24 @@ export default function SuppliersPage() {
       loadSuppliers()
     } catch (err) {
       toast.error('Eroare la actualizarea furnizorilor')
+    }
+  }
+
+  const handleBulkAssignLines = async (value: string) => {
+    const selectedIds = Object.keys(rowSelection)
+    if (!selectedIds.length || !value) return
+    try {
+      const res = await fetch('/api/suppliers/bulk', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ supplierIds: selectedIds, data: { businessLineIds: value === 'all' ? [] : [value] } })
+      })
+      if (!res.ok) throw new Error('Failed to bulk assign')
+      toast.success(`${selectedIds.length} furnizori actualizați cu succes!`)
+      setRowSelection({})
+      loadSuppliers()
+    } catch (err) {
+      toast.error('Eroare la actualizarea liniilor de business')
     }
   }
 
@@ -187,6 +207,8 @@ export default function SuppliersPage() {
       if (statusFilter !== "all") params.status = statusFilter
       if (vatRegimeFilter !== "all") params.vatRegime = vatRegimeFilter
       if (globalFilter) params.search = globalFilter
+      // Per business line: shared suppliers (no lines set) + the ones scoped to this line. "Toate" = consolidated view.
+      if (!isAll) params.businessLineId = activeLineId
       if (startDate) params.startDate = startDate
       if (endDate) params.endDate = endDate
       const res = await fetchSuppliers(params)
@@ -196,7 +218,7 @@ export default function SuppliersPage() {
     } finally {
       setLoading(false)
     }
-  }, [statusFilter, vatRegimeFilter, globalFilter, startDate, endDate])
+  }, [statusFilter, vatRegimeFilter, globalFilter, startDate, endDate, isAll, activeLineId])
 
   useEffect(() => {
     loadSuppliers()
@@ -255,6 +277,19 @@ export default function SuppliersPage() {
         cell: ({ getValue }) => (
           <span className="text-xs text-foreground-secondary">{(getValue() as string) || "—"}</span>
         ),
+      },
+      {
+        id: "lines",
+        header: "Linii",
+        cell: ({ row }) => {
+          const ids = row.original.businessLineIds || []
+          if (ids.length === 0) return <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Toate</span>
+          return (
+            <span className="flex flex-wrap gap-1">
+              {ids.map((id) => <span key={id} className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">{lines.find((l) => l.id === id)?.name ?? id}</span>)}
+            </span>
+          )
+        },
       },
       {
         accessorKey: "status",
@@ -460,6 +495,22 @@ export default function SuppliersPage() {
               <option value="" disabled>Atribuie Categorie...</option>
               {categories.map(c => (
                 <option key={c.name} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+            <select
+              className="h-8 rounded-lg bg-background border border-border text-sm px-2 outline-none focus:ring-1 focus:ring-primary min-w-[170px]"
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleBulkAssignLines(e.target.value)
+                  e.target.value = ""
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="" disabled>Atribuie linie de business...</option>
+              <option value="all">Toate liniile (comun)</option>
+              {lines.map(l => (
+                <option key={l.id} value={l.id}>Doar {l.name}</option>
               ))}
             </select>
             <button 

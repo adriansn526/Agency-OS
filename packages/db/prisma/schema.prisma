@@ -908,6 +908,8 @@ model Supplier {
   vatRegime           String            @default("domestic") // domestic | intracommunity | extracommunity
   invoiceFetchMethod  String            @default("efactura") // efactura | email_parsing | api | manual
   invoiceSenderEmails String[]
+  /// Lines this supplier is shown on; EMPTY = all lines (shared). See prisma/sql/supplier_business_lines.sql
+  businessLineIds     String[]          @default([])
   iban                String?
   category            String?
   isRecurring         Boolean           @default(false)
@@ -1675,6 +1677,8 @@ model CommerceServicePartner {
   county          String?
   lat             Float?
   lng             Float?
+  /// Accounting supplier of this garage (invoices/payments); FK in SQL only
+  supplierId      String?
   coordsSource    String? // google | osm | manual
   coordsFetchedAt DateTime?
   phone           String?

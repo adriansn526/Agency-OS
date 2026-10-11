@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
+import { ScopeError, normalizeBusinessLineIds } from '@/lib/suppliers/scope'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -57,6 +58,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (body.iban !== undefined) dataToUpdate.iban = body.iban
     if (body.category !== undefined) dataToUpdate.category = body.category
     if (body.status !== undefined) dataToUpdate.status = body.status
+    if (body.businessLineIds !== undefined) dataToUpdate.businessLineIds = await normalizeBusinessLineIds(body.businessLineIds)
 
     const updated = await db.supplier.updateMany({
       where: { id: supplierId, tenantId },
@@ -69,6 +71,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (error instanceof ScopeError) return NextResponse.json({ error: error.message }, { status: 400 })
     console.error('[API] PATCH /api/suppliers/[id] error:', error)
     return NextResponse.json({ error: 'Failed to update supplier' }, { status: 500 })
   }

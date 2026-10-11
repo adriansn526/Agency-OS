@@ -57,3 +57,9 @@ Fiecare serviciu comandat → linie `CommerceOrderItem` (`supplierCode = SRV:<ti
 - Retur sau lucrare nereușită: nu e automatizat; se anulează/redeschide lucrarea și se rezolvă manual în decontare.
 - Prețul de vânzare al serviciului este TVA inclus (TVA din comandă = formula obișnuită, 21%).
 - Partenerul este notificat manual (mesaj de copiat + „marchează notificat").
+
+## Furnizori pe linii de business și legătura partener → furnizor
+
+**Furnizori pe linie.** `Supplier.businessLineIds` (migrare `supplier_business_lines.sql`): listă **goală = furnizor comun, apare pe toate liniile** (cazul tuturor furnizorilor existenți: software, bănci etc.); listă cu linii = apare doar pe acelea. `GET /api/suppliers?businessLineId=<id>` întoarce furnizorii comuni + cei ai liniei; fără parametru (sau `all`) = vedere consolidată. Lista Furnizori filtrează automat după linia activă și are coloana „Linii”; se editează din „Editează Fiscalitate”, în bulk (bara de selecție) și prin API (`businessLineIds` la POST/PATCH/bulk; ids inexistente → 400).
+
+**Partener → furnizor.** Prospect = lead CRM; partener acceptat = rând în registru (tarife, lucrări, decontare); furnizor = firma care ne facturează (CUI, IBAN, facturi, plăți). Legătura (`CommerceServicePartner.supplierId`) e opțională și se face din editorul partenerului: „Creează furnizor” (apare doar pe linia eCaroseria; CUI exact ca în factură, cu `RO` dacă e plătitor de TVA, pentru că potrivirea facturilor e pe CUI exact; fără CUI → preluare manuală) sau asociere cu un furnizor existent vizibil pe linie. Un CUI deja existent nu se dublează. În Decontări se arată furnizorul legat (sau un avertisment) și se recomandă numărul facturii lui ca referință.

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { auth } from '@/lib/auth'
+import { ScopeError, normalizeBusinessLineIds } from '@/lib/suppliers/scope'
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -25,6 +26,7 @@ export async function PATCH(request: NextRequest) {
     // Currently only supporting bulk category update, but easily extensible
     const updateData: any = {}
     if (data.category !== undefined) updateData.category = data.category
+    if (data.businessLineIds !== undefined) updateData.businessLineIds = await normalizeBusinessLineIds(data.businessLineIds)
 
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
@@ -46,6 +48,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: true, count: result.count })
 
   } catch (error: any) {
+    if (error instanceof ScopeError) return NextResponse.json({ error: error.message }, { status: 400 })
     console.error('[Suppliers Bulk PATCH]', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }

@@ -159,7 +159,9 @@ export async function updateJob(orderId: string, jobId: string, input: unknown, 
 
 export async function settlementReport(f: { partnerId?: string; from?: string; to?: string }) {
   const businessLineId = await bl()
-  const partners = await db.commerceServicePartner.findMany({ where: { businessLineId, ...(f.partnerId ? { id: f.partnerId } : {}) }, select: { id: true, name: true, city: true } })
+  const partners = await db.commerceServicePartner.findMany({ where: { businessLineId, ...(f.partnerId ? { id: f.partnerId } : {}) }, select: { id: true, name: true, city: true, supplierId: true } })
+  const suppliers = await db.supplier.findMany({ where: { id: { in: partners.map((p) => p.supplierId).filter((x): x is string => !!x) } }, select: { id: true, name: true, cui: true } })
+  const supplierById = new Map(suppliers.map((x) => [x.id, x]))
   const range: Prisma.CommerceServiceJobWhereInput = {}
   if (f.from || f.to) range.createdAt = { ...(f.from ? { gte: new Date(f.from) } : {}), ...(f.to ? { lte: new Date(f.to) } : {}) }
   const jobs = await db.commerceServiceJob.findMany({
@@ -171,7 +173,7 @@ export async function settlementReport(f: { partnerId?: string; from?: string; t
     const mine = jobs.filter((j) => j.partnerId === p.id)
     const sum = (st: JobStatus[], k: 'settlementRon' | 'saleRon') => mine.filter((j) => st.includes(j.status as JobStatus)).reduce((a, j) => a + num(j[k]), 0)
     return {
-      partner: p, jobs: mine.map((j) => ({ id: j.id, orderId: j.orderId, orderNumber: onum.get(j.orderId) ?? '', service: j.service, status: j.status, forProductName: j.forProductName, saleRon: num(j.saleRon), settlementRon: num(j.settlementRon), doneAt: j.doneAt, settledAt: j.settledAt, settlementRef: j.settlementRef, createdAt: j.createdAt })),
+      partner: { id: p.id, name: p.name, city: p.city }, supplier: p.supplierId ? supplierById.get(p.supplierId) ?? null : null, jobs: mine.map((j) => ({ id: j.id, orderId: j.orderId, orderNumber: onum.get(j.orderId) ?? '', service: j.service, status: j.status, forProductName: j.forProductName, saleRon: num(j.saleRon), settlementRon: num(j.settlementRon), doneAt: j.doneAt, settledAt: j.settledAt, settlementRef: j.settlementRef, createdAt: j.createdAt })),
       owedRon: round2(sum(['done'], 'settlementRon')), // finished, not yet paid to the partner
       settledRon: round2(sum(['settled'], 'settlementRon')),
       inProgressRon: round2(sum(['pending', 'scheduled'], 'settlementRon')),

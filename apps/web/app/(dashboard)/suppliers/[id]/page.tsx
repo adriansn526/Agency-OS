@@ -1,5 +1,6 @@
 "use client"
 
+import { useBusinessLine } from "@/components/business-line-context"
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { fetchSupplier, type APISupplierDetails } from "@/lib/api"
@@ -26,6 +27,7 @@ interface LedgerEntry {
 
 export default function SupplierDetailsPage() {
   const params = useParams()
+  const { lines } = useBusinessLine()
   const router = useRouter()
   const [supplier, setSupplier] = useState<APISupplierDetails | null>(null)
   const [loading, setLoading] = useState(true)
@@ -206,6 +208,12 @@ export default function SupplierDetailsPage() {
                 <span className="px-2 py-0.5 rounded-full bg-muted text-xs uppercase font-bold">
                   {supplier.status}
                 </span>
+                {(() => {
+                  const ids = ((supplier as any).businessLineIds || []) as string[]
+                  return ids.length === 0
+                    ? <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-xs">Toate liniile</span>
+                    : ids.map((id) => <span key={id} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">{lines.find((l) => l.id === id)?.name ?? id}</span>)
+                })()}
                 {supplier.isRecurring && (
                   <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 text-xs font-bold uppercase">
                     Recurent {supplier.expectedDay ? `(Ziua ${supplier.expectedDay})` : ""}
