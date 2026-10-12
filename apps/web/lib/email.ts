@@ -69,17 +69,17 @@ async function resolveSender(businessLine?: string, purpose: MailPurpose = 'gene
 
 /** Records a sent (or failed) email on the lead/client timeline. Never throws. */
 async function logSent(link: CommLink | undefined, businessLine: string | undefined, sender: { name: string; email: string }, purpose: MailPurpose | undefined,
-  m: { to: string; subject: string; text: string; source: string; messageId?: string; error?: string; attachments?: string[] }) {
+  m: { to: string; subject: string; text: string; source: string; messageId?: string; error?: string; attachments?: string[]; threadId?: string | null }) {
   if (!link || (!link.leadId && !link.clientId)) return
   await logCommunication({
     ...link, businessLineSlug: businessLine, channel: 'email', direction: 'outbound', subject: m.subject, body: m.text.slice(0, 20_000),
     fromAddr: `${sender.name} <${sender.email}>`, toAddr: m.to, emailStatus: m.error ? 'failed' : 'sent', mailbox: purpose ?? 'general',
-    externalId: m.messageId ?? null, metadata: { source: m.source, ...(m.error ? { error: m.error.slice(0, 500) } : {}), ...(m.attachments?.length ? { attachments: m.attachments } : {}) },
+    externalId: m.messageId ?? null, threadId: m.threadId ?? m.messageId ?? null, metadata: { source: m.source, ...(m.error ? { error: m.error.slice(0, 500) } : {}), ...(m.attachments?.length ? { attachments: m.attachments } : {}) },
   })
 }
 
 // ─── Generic transactional email (callers build the html/text) ───
-export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string; purpose?: MailPurpose; link?: CommLink; source?: string }) {
+export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string; purpose?: MailPurpose; link?: CommLink; source?: string; inReplyTo?: string; references?: string[]; threadId?: string | null }) {
   const sender = await resolveSender(input.businessLine, input.purpose)
   let result: { messageId: string }
   try {
@@ -89,14 +89,15 @@ export async function sendRawEmail(input: { to: string; subject: string; html: s
     bcc: sender.bcc,
     to: input.to,
     subject: input.subject,
+    ...(input.inReplyTo ? { inReplyTo: input.inReplyTo, references: input.references?.length ? input.references : [input.inReplyTo] } : {}),
     html: sender.signatureHtml ? input.html + sender.signatureHtml : input.html,
     text: input.text,
   })
   } catch (e) {
-    await logSent(input.link, input.businessLine, sender, input.purpose, { to: input.to, subject: input.subject, text: input.text, source: input.source ?? 'transactional', error: e instanceof Error ? e.message : String(e) })
+    await logSent(input.link, input.businessLine, sender, input.purpose, { to: input.to, subject: input.subject, text: input.text, source: input.source ?? 'transactional', error: e instanceof Error ? e.message : String(e), threadId: input.threadId })
     throw e
   }
-  await logSent(input.link, input.businessLine, sender, input.purpose, { to: input.to, subject: input.subject, text: input.text, source: input.source ?? 'transactional', messageId: result.messageId })
+  await logSent(input.link, input.businessLine, sender, input.purpose, { to: input.to, subject: input.subject, text: input.text, source: input.source ?? 'transactional', messageId: result.messageId, threadId: input.threadId })
   return { messageId: result.messageId, success: true }
 }
 
