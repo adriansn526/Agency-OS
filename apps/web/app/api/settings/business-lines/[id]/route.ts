@@ -12,10 +12,9 @@ export async function PATCH(
     
     // We expect { name, icon, color, config }
     const updateData: any = {}
-    if (body.name) {
-      updateData.name = body.name
-      updateData.slug = body.name.toLowerCase().replace(/[^a-z0-9]/g, '-')
-    }
+    // the slug is an identifier used by integrations (mail senders, storefront, scripts): renaming a line never changes it
+    if (body.name) updateData.name = String(body.name).trim()
+    if (body.domain !== undefined) updateData.domain = body.domain ? String(body.domain).trim() : null
     if (body.icon) updateData.icon = body.icon
     if (body.color) updateData.color = body.color
     if (body.isActive !== undefined) updateData.isActive = body.isActive

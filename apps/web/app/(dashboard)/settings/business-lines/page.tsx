@@ -5,6 +5,7 @@ import Link from "next/link"
 import { businessLines, type BusinessLine, type EntityType, type PipelineStage } from "@repo/mock-data"
 import { cn } from "@/lib/utils"
 import { MailboxManager } from "./mail-settings-card"
+import { EditLineModal, EntityTypeModal } from "./line-modals"
 import {
   ArrowLeft,
   Plus,
@@ -31,6 +32,8 @@ export default function BusinessLinesSettings() {
   const [loading, setLoading] = useState(true)
   const [expandedLine, setExpandedLine] = useState<string | null>(null)
   const [showNewLineModal, setShowNewLineModal] = useState(false)
+  const [editLine, setEditLine] = useState<any | null>(null)
+  const [etModal, setEtModal] = useState<{ line: any; entityType?: any } | null>(null)
 
   const fetchLines = async () => {
     try {
@@ -181,17 +184,24 @@ export default function BusinessLinesSettings() {
               {isExpanded && (
                 <div className="border-t border-border px-4 pb-4 pt-3 space-y-3">
                   {entityTypes.map((et: any) => (
-                    <EntityTypeCard key={et.id} entityType={et} blColor={bl.color} />
+                    <EntityTypeCard key={et.id} entityType={et} blColor={bl.color}
+                      onEdit={() => setEtModal({ line: bl, entityType: et })}
+                      onDelete={async () => {
+                        if (!confirm(`Ștergi tipul „${et.namePlural}”? Se poate șterge doar dacă nu există lead-uri sau clienți de acest tip.`)) return
+                        const res = await fetch(`/api/settings/business-lines/${bl.id}/entity-types/${et.id}`, { method: "DELETE" })
+                        if (!res.ok) { alert((await res.json().catch(() => ({}))).error || "Ștergerea a eșuat"); return }
+                        fetchLines()
+                      }} />
                   ))}
 
                   <MailboxManager businessLineId={bl.id} lineName={bl.name} />
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-2">
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-lg transition-colors">
+                    <button onClick={(e) => { e.stopPropagation(); setEtModal({ line: bl }) }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-lg transition-colors">
                       <Plus size={12} /> Adaugă Entity Type
                     </button>
-                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-lg transition-colors">
+                    <button onClick={(e) => { e.stopPropagation(); setEditLine(bl) }} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-lg transition-colors">
                       <Pencil size={12} /> Editează Linia
                     </button>
                     <button
@@ -210,6 +220,9 @@ export default function BusinessLinesSettings() {
           )
         })}
       </div>
+
+      {editLine && <EditLineModal line={editLine} onClose={() => setEditLine(null)} onSaved={() => { setEditLine(null); fetchLines() }} />}
+      {etModal && <EntityTypeModal lineId={etModal.line.id} entityType={etModal.entityType} onClose={() => setEtModal(null)} onSaved={() => { setEtModal(null); fetchLines() }} />}
 
       {/* New Business Line Modal */}
       {showNewLineModal && (
@@ -244,7 +257,7 @@ export default function BusinessLinesSettings() {
    Entity Type Card
    ============================================================ */
 
-function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; blColor: string }) {
+function EntityTypeCard({ entityType: et, blColor, onEdit, onDelete }: { entityType: EntityType; blColor: string; onEdit: () => void; onDelete: () => void }) {
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -288,6 +301,12 @@ function EntityTypeCard({ entityType: et, blColor }: { entityType: EntityType; b
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button onClick={(e) => { e.stopPropagation(); onEdit() }} className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-muted-foreground hover:text-foreground bg-surface border border-border/50 rounded-md"><Pencil size={10} /> Editează tipul</button>
+            <Link href="/settings/pipelines" className="px-2 py-1 text-[10px] font-medium text-primary hover:underline">Editează pipeline →</Link>
+            <button onClick={(e) => { e.stopPropagation(); onDelete() }} className="ml-auto flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-destructive/70 hover:text-destructive"><Trash2 size={10} /> Șterge tipul</button>
           </div>
 
           {/* Custom fields */}

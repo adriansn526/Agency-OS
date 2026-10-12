@@ -1,8 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
-import { businessLines as rawBusinessLines } from "@repo/mock-data"
-import type { PipelineStage, EntityType, BusinessLine } from "@repo/mock-data"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import {
   Plus, GripVertical, Pencil, Trash2, Check, X,
@@ -28,6 +26,12 @@ function getColorTw(key: string) {
   return colorOptions.find((c) => c.key === key)?.tw || "bg-muted-foreground"
 }
 
+/* ── data from /api/settings/pipelines (real business lines; `leads` = leads currently in the stage) ── */
+
+interface Stage { key: string; label: string; color: string; leads?: number }
+interface EntityType { id: string; name: string; namePlural: string; icon: string; pipeline: Stage[]; otherStatuses?: { status: string; leads: number }[] }
+interface BusinessLine { id: string; name: string; shortName: string; icon: string; color: string; configValid?: boolean; entityTypes: EntityType[] }
+
 /* ── deep clone helper ── */
 
 function cloneBLs(bls: BusinessLine[]): BusinessLine[] {
@@ -38,11 +42,25 @@ function cloneBLs(bls: BusinessLine[]): BusinessLine[] {
 
 export default function PipelinesSettingsPage() {
   // ── core state: mutable copy of business lines ──
-  const [blState, setBlState] = useState<BusinessLine[]>(() => cloneBLs(rawBusinessLines))
-  const [savedSnapshot, setSavedSnapshot] = useState<string>(() => JSON.stringify(rawBusinessLines))
+  const [blState, setBlState] = useState<BusinessLine[]>([])
+  const [savedSnapshot, setSavedSnapshot] = useState<string>("[]")
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  // removed stage that still holds leads -> stage its leads move to, per entity type
+  const [moves, setMoves] = useState<Record<string, Record<string, string>>>({})
+  const [moveTarget, setMoveTarget] = useState("")
+
+  const load = useCallback(async () => {
+    const r = await fetch("/api/settings/pipelines").then((x) => x.json()).catch(() => ({ data: [] }))
+    const data: BusinessLine[] = (r.data ?? []).map((l: BusinessLine) => ({ ...l, shortName: l.name }))
+    setBlState(cloneBLs(data)); setSavedSnapshot(JSON.stringify(data)); setMoves({})
+    setExpandedBL((cur) => cur || data[0]?.id || "")
+    setLoading(false)
+  }, [])
+  useEffect(() => { load() }, [load])
 
   // ── UI state ──
-  const [expandedBL, setExpandedBL] = useState<string>(rawBusinessLines[0]?.id || "")
+  const [expandedBL, setExpandedBL] = useState<string>("")
   const [editingStage, setEditingStage] = useState<string | null>(null)
   const [editLabel, setEditLabel] = useState("")
   const [editColor, setEditColor] = useState("")
@@ -85,22 +103,23 @@ export default function PipelinesSettingsPage() {
   }, [])
 
   const addStage = useCallback((blId: string, etId: string, label: string, color: string) => {
-    const key = label.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "")
-    if (!key || !label.trim()) return
+    const slug = label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 36)
+    if (!slug || !label.trim()) return
     setBlState((prev) => prev.map((bl) =>
       bl.id !== blId ? bl : {
         ...bl,
-        entityTypes: bl.entityTypes.map((et) =>
-          et.id !== etId ? et : {
-            ...et,
-            pipeline: [...et.pipeline, { key, label: label.trim(), color }],
-          }
-        ),
+        entityTypes: bl.entityTypes.map((et) => {
+          if (et.id !== etId) return et
+          let key = slug
+          for (let i = 2; et.pipeline.some((s) => s.key === key); i++) key = `${slug}_${i}`
+          return { ...et, pipeline: [...et.pipeline, { key, label: label.trim(), color, leads: 0 }] }
+        }),
       }
     ))
   }, [])
 
-  const removeStage = useCallback((blId: string, etId: string, stageKey: string) => {
+  const removeStage = useCallback((blId: string, etId: string, stageKey: string, moveTo?: string) => {
+    if (moveTo) setMoves((m) => ({ ...m, [etId]: { ...(m[etId] ?? {}), [stageKey]: moveTo } }))
     setBlState((prev) => prev.map((bl) =>
       bl.id !== blId ? bl : {
         ...bl,
@@ -112,7 +131,7 @@ export default function PipelinesSettingsPage() {
         ),
       }
     ))
-    setConfirmDelete(null)
+    setConfirmDelete(null); setMoveTarget("")
   }, [])
 
   const moveStage = useCallback((blId: string, etId: string, stageKey: string, direction: "up" | "down") => {
@@ -135,17 +154,37 @@ export default function PipelinesSettingsPage() {
   }, [])
 
   // ── save / revert ──
-  const handleSave = () => {
-    setSavedSnapshot(JSON.stringify(blState))
-    setToast("Pipeline-urile au fost salvate cu succes!")
-    setTimeout(() => setToast(null), 3000)
+  const handleSave = async () => {
+    setSaving(true)
+    const old = JSON.parse(savedSnapshot) as BusinessLine[]
+    const errors: string[] = []
+    let ok = 0
+    for (const bl of blState) {
+      for (const et of bl.entityTypes) {
+        const before = old.find((b) => b.id === bl.id)?.entityTypes.find((e) => e.id === et.id)
+        const strip = (p: Stage[]) => JSON.stringify(p.map(({ key, label, color }) => ({ key, label, color })))
+        if (!before || strip(before.pipeline) === strip(et.pipeline)) continue
+        const res = await fetch(`/api/settings/business-lines/${bl.id}/entity-types/${et.id}`, {
+          method: "PATCH", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pipeline: et.pipeline.map(({ key, label, color }) => ({ key, label, color })), moves: moves[et.id] }),
+        })
+        if (res.ok) ok++
+        else errors.push(`${bl.name} / ${et.namePlural}: ${(await res.json().catch(() => ({}))).error || res.status}`)
+      }
+    }
+    await load()
+    setSaving(false)
+    setToast(errors.length ? `Nu s-au salvat: ${errors.join("; ")}` : `Salvat (${ok} ${ok === 1 ? "pipeline" : "pipeline-uri"}).`)
+    setTimeout(() => setToast(null), errors.length ? 8000 : 3000)
   }
 
   const handleRevert = () => {
-    setBlState(JSON.parse(savedSnapshot))
+    setBlState(JSON.parse(savedSnapshot)); setMoves({})
     setToast("Modificările au fost anulate.")
     setTimeout(() => setToast(null), 3000)
   }
+
+  if (loading) return <div className="p-6 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>
 
   return (
     <div className="p-4 md:p-6 space-y-5 animate-fade-in max-w-5xl mx-auto pb-24">
@@ -168,8 +207,8 @@ export default function PipelinesSettingsPage() {
             <button onClick={handleRevert} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
               <Undo2 size={12} /> Anulează
             </button>
-            <button onClick={handleSave} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
-              <Save size={12} /> Salvează
+            <button onClick={handleSave} disabled={saving} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
+              <Save size={12} /> {saving ? "Se salvează…" : "Salvează"}
             </button>
           </div>
         )}
@@ -265,15 +304,28 @@ export default function PipelinesSettingsPage() {
                                     autoFocus
                                   />
                                 ) : (
-                                  <span className="text-sm font-medium text-foreground flex-1">{stage.label}</span>
+                                  <span className="text-sm font-medium text-foreground flex-1">{stage.label}{(stage.leads ?? 0) > 0 && <span className="ml-2 text-[10px] font-normal text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">{stage.leads} lead-uri</span>}</span>
                                 )}
 
                                 {/* Delete confirmation */}
                                 {isConfirmingDelete && (
                                   <div className="flex items-center gap-1.5 animate-fade-in">
-                                    <span className="text-[10px] text-red-400 font-medium">Ștergi?</span>
-                                    <button onClick={() => removeStage(bl.id, et.id, stage.key)} className="w-6 h-6 rounded-md flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 text-red-400"><Check size={12} /></button>
-                                    <button onClick={() => setConfirmDelete(null)} className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground"><X size={12} /></button>
+                                    {(stage.leads ?? 0) > 0 ? (
+                                      <>
+                                        <span className="text-[10px] text-red-400 font-medium">Mută {stage.leads} lead-uri în:</span>
+                                        <select value={moveTarget} onChange={(e) => setMoveTarget(e.target.value)} className="text-[10px] bg-muted border border-border rounded-md px-1.5 py-1 text-foreground">
+                                          <option value="">alege etapa…</option>
+                                          {et.pipeline.filter((s2) => s2.key !== stage.key).map((s2) => <option key={s2.key} value={s2.key}>{s2.label}</option>)}
+                                        </select>
+                                        <button disabled={!moveTarget} onClick={() => removeStage(bl.id, et.id, stage.key, moveTarget)} className="w-6 h-6 rounded-md flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 text-red-400 disabled:opacity-30"><Check size={12} /></button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <span className="text-[10px] text-red-400 font-medium">Ștergi?</span>
+                                        <button onClick={() => removeStage(bl.id, et.id, stage.key)} className="w-6 h-6 rounded-md flex items-center justify-center bg-red-500/10 hover:bg-red-500/20 text-red-400"><Check size={12} /></button>
+                                      </>
+                                    )}
+                                    <button onClick={() => { setConfirmDelete(null); setMoveTarget("") }} className="w-6 h-6 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground"><X size={12} /></button>
                                   </div>
                                 )}
 
@@ -313,6 +365,12 @@ export default function PipelinesSettingsPage() {
                           )
                         })}
                       </div>
+
+                      {(et.otherStatuses?.length ?? 0) > 0 && (
+                        <p className="text-[10px] text-muted-foreground mb-2">
+                          Lead-uri cu status în afara pipeline-ului: {et.otherStatuses!.map((o) => `${o.status} (${o.leads})`).join(", ")} — nu sunt modificate de această pagină.
+                        </p>
+                      )}
 
                       {/* Add new stage */}
                       {addingTo === et.id ? (
@@ -366,7 +424,7 @@ export default function PipelinesSettingsPage() {
             <div key={bl.id}>
               {bl.entityTypes.map((et) => (
                 <div key={et.id} className="mb-4 last:mb-0">
-                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{bl.icon} {bl.shortName} — {et.namePlural}</p>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">{bl.icon} {bl.name} — {et.namePlural}</p>
                   <div className="flex items-center gap-0 overflow-x-auto pb-1">
                     {et.pipeline.map((stage, idx) => {
                       const co = colorOptions.find((c) => c.key === stage.color)
