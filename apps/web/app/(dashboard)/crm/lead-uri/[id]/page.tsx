@@ -1,5 +1,6 @@
 "use client"
 
+import { EntityCommunications } from "@/components/communications/entity-timeline"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
@@ -46,10 +47,11 @@ const sourceLabels: Record<string, string> = {
 
 /* ── tab defs ── */
 
-type TabKey = "overview" | "oferte" | "activitate"
+type TabKey = "overview" | "comunicatii" | "oferte" | "activitate"
 
 const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
   { key: "overview",     label: "Prezentare",    icon: User },
+  { key: "comunicatii", label: "Comunicații",   icon: MessageSquare },
   { key: "oferte",       label: "Oferte",        icon: FileText },
   { key: "activitate",   label: "Activitate",    icon: Activity },
 ]
@@ -496,6 +498,11 @@ export default function SingleLeadPage() {
               </div>
             )}
           </div>
+        )}
+
+        {/* ═══ Comunicații (omnichannel) ═══ */}
+        {activeTab === "comunicatii" && (
+          <EntityCommunications leadId={lead.id} businessLineId={lead.businessLineId} defaultEmail={lead.email} defaultPhone={lead.phone} />
         )}
 
         {/* ═══ Activitate ═══ */}

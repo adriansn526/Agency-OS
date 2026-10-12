@@ -43,7 +43,7 @@ export async function notifyNewOrder(o: OrderSummary): Promise<void> {
   // Customer confirmation
   try {
     const { html, text } = customerEmail(o)
-    await sendRawEmail({ to: o.customer.email, subject: `Comanda ${o.number} a fost primită`, html, text, businessLine: 'ecaroseria', purpose: 'orders' })
+    await sendRawEmail({ to: o.customer.email, subject: `Comanda ${o.number} a fost primită`, html, text, businessLine: 'ecaroseria', purpose: 'orders', link: { leadId: o.leadId }, source: 'order' })
   } catch (e) { console.error('[storefront/orders] customer email failed', o.number, e) }
 
   // Internal: Telegram + activity feed in the ERP

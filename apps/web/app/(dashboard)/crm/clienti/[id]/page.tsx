@@ -1,5 +1,6 @@
 "use client"
 
+import { EntityCommunications } from "@/components/communications/entity-timeline"
 import { useState, useEffect, useMemo } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
@@ -477,7 +478,7 @@ export default function SingleClientPage() {
             : tab.key === "facturi" ? counts.invoices
             : tab.key === "proiecte" ? counts.projects
             : tab.key === "contracte" ? counts.contracts
-            : tab.key === "comunicatii" ? clientComms.length
+            : tab.key === "comunicatii" ? clientCommunications.total
             : tab.key === "activitate" ? clientActivities.length
             : undefined
           return (
@@ -571,8 +572,15 @@ export default function SingleClientPage() {
                 <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
                   <MessageSquare size={14} className="text-blue-400" /> Comunicare recentă
                 </h3>
-                {clientCommunications.length > 0 ? (
-                  <CommunicationTimeline entries={clientCommunications} compact maxItems={3} />
+                {clientCommunications.communications.length > 0 ? (
+                  <ul className="space-y-1.5">
+                    {clientCommunications.communications.slice(0, 3).map((c) => (
+                      <li key={c.id} className="text-xs text-foreground-secondary flex items-baseline gap-2">
+                        <span className="text-[10px] text-muted-foreground shrink-0">{new Date(c.createdAt).toLocaleDateString("ro-RO")}</span>
+                        <span className="truncate">{c.subject}</span>
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <p className="text-xs text-muted-foreground">Nicio comunicare recentă</p>
                 )}
@@ -805,40 +813,9 @@ export default function SingleClientPage() {
           </div>
         )}
 
-        {/* Comunicații — v8: uses CommunicationTimeline */}
+        {/* Comunicații — omnichannel timeline + composer (shares history with the lead it was converted from) */}
         {activeTab === "comunicatii" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">{clientCommunications.length} comunicăr{clientCommunications.length === 1 ? 'e' : 'i'}</p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setShowCallModal(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors"
-                >
-                  <Phone size={12} /> Apel Nou
-                </button>
-                <Link href={`/communications`}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors">
-                  <Plus size={12} /> Comunicare Nouă
-                </Link>
-              </div>
-            </div>
-            {clientCommunications.length > 0 ? (
-              <CommunicationTimeline entries={clientCommunications} />
-            ) : (
-              <div className="bg-surface rounded-xl border border-dashed border-border p-8 text-center">
-                <MessageSquare size={28} className="text-muted-foreground/30 mx-auto mb-3" />
-                <p className="text-sm font-medium text-foreground mb-1">Nicio comunicare</p>
-                <p className="text-xs text-muted-foreground mb-4">Înregistrează primul apel sau email pentru acest client</p>
-                <button
-                  onClick={() => setShowCallModal(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors"
-                >
-                  <Phone size={12} /> Înregistrează Apel
-                </button>
-              </div>
-            )}
-          </div>
+          <EntityCommunications clientId={id} businessLineId={(client as any).businessLineId} defaultEmail={client.email} defaultPhone={client.phone} />
         )}
 
         {/* Performance (Client-level KPIs) */}

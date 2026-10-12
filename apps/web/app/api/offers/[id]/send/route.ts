@@ -115,6 +115,7 @@ export async function POST(
         publicUrl,
         message: message || undefined,
         businessLine: offer.businessLine?.slug || undefined,
+        link: { clientId: offer.clientId },
       })
       emailSent = true
       console.log(`[SES] Email sent to ${email} for offer ${offer.number}`)

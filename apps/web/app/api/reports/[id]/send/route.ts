@@ -107,6 +107,7 @@ export async function POST(
       content,
       message: message || report.notes || undefined,
       businessLine: report.businessLine.slug,
+      link: { clientId: report.clientId },
       attachments: attachments.length > 0 ? attachments : undefined,
     })
 

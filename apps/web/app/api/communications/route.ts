@@ -1,27 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db, logActivity } from '@repo/db'
+import { timelineWhere } from '@/lib/comms/log'
 
 // ─── GET /api/communications ───
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const clientId = searchParams.get('clientId')
+    const leadId = searchParams.get('leadId')
     const channel = searchParams.get('channel')
     const businessLineId = searchParams.get('businessLineId')
     const search = searchParams.get('search')
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '50')
 
-    const where: any = {}
-    if (clientId) where.clientId = clientId
+    // A lead's and its converted client's history is one timeline, in both directions
+    const where: any = clientId || leadId ? await timelineWhere({ clientId: clientId ?? undefined, leadId: leadId ?? undefined }) : {}
     if (channel) where.channel = channel
     if (businessLineId) where.businessLineId = businessLineId
     if (search) {
-      where.OR = [
+      where.AND = [{ OR: [
         { subject: { contains: search, mode: 'insensitive' } },
         { body: { contains: search, mode: 'insensitive' } },
         { toAddr: { contains: search, mode: 'insensitive' } },
-      ]
+      ] }]
     }
 
     const [communications, total] = await Promise.all([
@@ -69,6 +71,8 @@ export async function POST(request: NextRequest) {
       data: {
         businessLineId: body.businessLineId || null,
         clientId: body.clientId || null,
+        leadId: body.leadId || null,
+        kind: body.kind || (body.channel === 'note' ? 'note' : 'message'),
         channel: body.channel,
         direction: body.direction || 'outbound',
         subject: body.subject,
@@ -95,7 +99,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Log activity
-    if (body.clientId) {
+    if (body.clientId || body.leadId) {
       await logActivity({
         businessLineId: body.businessLineId || '',
         userId: body.userId || 'system',
@@ -105,7 +109,8 @@ export async function POST(request: NextRequest) {
         entityId: communication.id,
         entityName: body.subject,
         details: { channel: body.channel, direction: body.direction },
-        clientId: body.clientId,
+        clientId: body.clientId || undefined,
+        leadId: body.leadId || undefined,
       })
     }
 

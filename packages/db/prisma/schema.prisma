@@ -162,6 +162,7 @@ model Lead {
   campaignLeads   CampaignLead[]
   businessLine    BusinessLine   @relation(fields: [businessLineId], references: [id])
   convertedTo     Client?        @relation(fields: [convertedToId], references: [id])
+  communications  Communication[]
 
   @@unique([externalId, externalSource])
   @@index([businessLineId, entityType])
@@ -456,11 +457,19 @@ model Communication {
   tags           String[]      @default([])
   attachments    String[]      @default([])
   metadata       Json?
+  leadId         String?
+  threadId       String?
+  kind           String        @default("message")
+  mailbox        String?
+  externalId     String?       @unique
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   businessLine   BusinessLine? @relation(fields: [businessLineId], references: [id])
   client         Client?       @relation(fields: [clientId], references: [id])
+  lead           Lead?         @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
+  @@index([leadId])
+  @@index([threadId])
   @@index([clientId])
   @@index([businessLineId])
   @@index([channel])
