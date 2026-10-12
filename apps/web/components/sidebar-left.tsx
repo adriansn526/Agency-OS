@@ -99,7 +99,7 @@ const coreModules: NavItem[] = [
 ]
 
 const secondaryModules: NavItem[] = [
-  { title: "Comunicare", href: "/communications", icon: Mail, badge: "Soon" },
+  { title: "Comunicare", href: "/communications", icon: Mail },
   { title: "Rapoarte", href: "/reports", icon: BarChart3 },
   { title: "SEO", href: "/seo", icon: Search },
   { title: "Monitoring", href: "/monitoring", icon: Radar },

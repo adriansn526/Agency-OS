@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import { cn, formatDate } from "@/lib/utils"
 import { CallLogModal } from "@/components/call-log-modal"
+import { SharedInbox } from "@/components/communications/shared-inbox"
 import { useAllCommunications, useCommunicationTemplates, useCommunicationStats, useCreateCommunication, type Communication } from "@/lib/hooks/use-communications"
 import {
   Phone, Mail, MessageSquare, Video, MessagesSquare,
@@ -11,7 +12,7 @@ import {
   ArrowUpRight, ArrowDownLeft, Loader2, Inbox,
 } from "lucide-react"
 
-type SubNav = "inbox" | "calls" | "templates" | "analytics"
+type SubNav = "shared" | "inbox" | "calls" | "templates" | "analytics"
 
 const channelConfig: Record<string, { label: string; icon: any; color: string; bg: string }> = {
   call: { label: "Apel", icon: Phone, color: "text-emerald-400", bg: "bg-emerald-500/10" },
@@ -22,7 +23,8 @@ const channelConfig: Record<string, { label: string; icon: any; color: string; b
 }
 
 export default function CommunicationsPage() {
-  const [activeView, setActiveView] = useState<SubNav>("inbox")
+  const [activeView, setActiveView] = useState<SubNav>("shared")
+  const [sharedCount, setSharedCount] = useState<number | undefined>(undefined)
   const [showCallModal, setShowCallModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -37,7 +39,8 @@ export default function CommunicationsPage() {
   }, [communications, activeView])
 
   const views: { value: SubNav; label: string; icon: any; count?: number }[] = [
-    { value: "inbox", label: "Toate", icon: Mail, count: total },
+    { value: "shared", label: "Inbox comun", icon: Inbox, count: sharedCount },
+    { value: "inbox", label: "Toate", icon: MailOpen, count: total },
     { value: "calls", label: "Apeluri", icon: Phone, count: channelStats.call || 0 },
     { value: "templates", label: "Template-uri", icon: FileText, count: templates.length },
     { value: "analytics", label: "Analytics", icon: BarChart3 },
@@ -99,6 +102,9 @@ export default function CommunicationsPage() {
           />
         </div>
       )}
+
+      {/* ═══ SHARED INBOX (unassigned inbound email) ═══ */}
+      {activeView === "shared" && <SharedInbox onCount={setSharedCount} />}
 
       {/* ═══ INBOX / CALLS VIEW ═══ */}
       {(activeView === "inbox" || activeView === "calls") && (
