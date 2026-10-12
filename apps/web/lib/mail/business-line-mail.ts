@@ -17,12 +17,14 @@ export interface LineMail {
   signatureHtml: string | null
 }
 
-export const MAIL_PURPOSES = ['general', 'orders', 'partners'] as const
-export type MailPurpose = (typeof MAIL_PURPOSES)[number]
-export const isMailPurpose = (v: string): v is MailPurpose => (MAIL_PURPOSES as readonly string[]).includes(v)
+/** Mailbox key within a line. "general" is the fallback for every other key; "orders" and "partners" are used by built-in flows. */
+export type MailPurpose = string
+export const MAILBOX_KEY_RE = /^[a-z0-9][a-z0-9-]{0,29}$/
+export const isMailPurpose = (v: string): v is MailPurpose => MAILBOX_KEY_RE.test(v)
 
 export const mailSettingsSchema = z.object({
   enabled: z.boolean(),
+  label: z.string().trim().max(80).nullish(),
   fromName: z.string().trim().min(1).max(120),
   fromEmail: z.string().trim().email().max(200),
   replyTo: z.string().trim().email().max(200).nullish().or(z.literal('')),
@@ -35,6 +37,14 @@ export const mailSettingsSchema = z.object({
   /** Omitted/empty = keep the stored password. */
   smtpPass: z.string().max(500).nullish(),
   allowSelfSigned: z.boolean().default(false),
+  // IMAP (receiving) — optional; imapPass omitted/empty keeps the stored one, no stored one = the SMTP password is used
+  imapEnabled: z.boolean().default(false),
+  imapHost: z.string().trim().max(200).regex(/^[A-Za-z0-9.-]*$/, 'Host IMAP invalid').nullish(),
+  imapPort: z.number().int().min(1).max(65535).default(993),
+  imapSecure: z.boolean().default(true),
+  imapUser: z.string().trim().max(200).nullish(),
+  imapPass: z.string().max(500).nullish(),
+  imapFolder: z.string().trim().min(1).max(100).default('INBOX'),
 })
 export type MailSettingsInput = z.infer<typeof mailSettingsSchema>
 
@@ -100,8 +110,16 @@ export async function saveMailSettings(businessLineId: string, purpose: MailPurp
     replyTo: input.replyTo || null, bcc: input.bcc || null, signatureHtml: input.signatureHtml || null,
     smtpHost: input.smtpHost, smtpPort: input.smtpPort, smtpSecure: input.smtpSecure, smtpUser: input.smtpUser,
     smtpPassEnc: passEnc, allowSelfSigned: input.allowSelfSigned,
+    label: input.label || null,
+    imapEnabled: input.imapEnabled, imapHost: input.imapHost || null, imapPort: input.imapPort, imapSecure: input.imapSecure,
+    imapUser: input.imapUser || null, imapFolder: input.imapFolder,
+    imapPassEnc: input.imapPass ? encrypt(input.imapPass) : existing?.imapPassEnc ?? null,
   }
-  const row = await db.businessLineMailbox.upsert({ where: { businessLineId_purpose: { businessLineId, purpose } }, create: { businessLineId, purpose, ...data }, update: data })
+  if (input.imapEnabled && !input.imapHost) throw new Error('Serverul IMAP este obligatoriu pentru a activa primirea')
+  // a different server/folder/user means a different mailbox: forget the sync position
+  const imapChanged = existing && (existing.imapHost !== data.imapHost || existing.imapFolder !== data.imapFolder || (existing.imapUser ?? existing.smtpUser) !== (data.imapUser ?? data.smtpUser))
+  const reset = imapChanged ? { imapLastUid: BigInt(0), imapUidValidity: null } : {}
+  const row = await db.businessLineMailbox.upsert({ where: { businessLineId_purpose: { businessLineId, purpose } }, create: { businessLineId, purpose, ...data }, update: { ...data, ...reset } })
   invalidateLineMail()
   return publicView(row)
 }
@@ -109,8 +127,8 @@ export async function saveMailSettings(businessLineId: string, purpose: MailPurp
 type Row = Awaited<ReturnType<typeof loadRows>>[number]
 /** Safe view for the UI: never includes the password, only whether one is stored. */
 export function publicView(r: Row) {
-  const { smtpPassEnc, ...rest } = r
-  return { ...rest, hasPassword: Boolean(smtpPassEnc) }
+  const { smtpPassEnc, imapPassEnc, imapUidValidity, imapLastUid, ...rest } = r
+  return { ...rest, imapLastUid: String(imapLastUid), hasPassword: Boolean(smtpPassEnc), hasImapPassword: Boolean(imapPassEnc) }
 }
 
 /** Opens a connection (and optionally sends a test message) with the SAVED settings of the line. */

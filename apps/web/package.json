@@ -48,6 +48,7 @@
     "dommatrix": "^0.1.1",
     "fast-xml-parser": "^5.11.1",
     "googleapis": "^171.4.0",
+    "imapflow": "^2.4.0",
     "lucide-react": "^0.478.0",
     "mailparser": "^3.9.28",
     "marked": "^18.0.13",

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { businessLines, type BusinessLine, type EntityType, type PipelineStage } from "@repo/mock-data"
 import { cn } from "@/lib/utils"
-import { MailSettingsCard, MAILBOX_PURPOSES } from "./mail-settings-card"
+import { MailboxManager } from "./mail-settings-card"
 import {
   ArrowLeft,
   Plus,
@@ -184,12 +184,7 @@ export default function BusinessLinesSettings() {
                     <EntityTypeCard key={et.id} entityType={et} blColor={bl.color} />
                   ))}
 
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold text-foreground-secondary">Căsuțe de email</p>
-                    {MAILBOX_PURPOSES.map((m) => (
-                      <MailSettingsCard key={m.key} businessLineId={bl.id} lineName={bl.name} purpose={m.key} label={m.label} hint={m.hint} placeholder={m.placeholder} />
-                    ))}
-                  </div>
+                  <MailboxManager businessLineId={bl.id} lineName={bl.name} />
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-2">

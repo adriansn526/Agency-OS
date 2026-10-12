@@ -1823,6 +1823,21 @@ model BusinessLineMailbox {
   smtpUser        String
   smtpPassEnc     String?
   allowSelfSigned Boolean      @default(false)
+  label           String?
+  imapEnabled     Boolean      @default(false)
+  imapHost        String?
+  imapPort        Int          @default(993)
+  imapSecure      Boolean      @default(true)
+  imapUser        String?
+  imapPassEnc     String?
+  imapFolder      String       @default("INBOX")
+  imapUidValidity BigInt?
+  imapLastUid     BigInt       @default(0)
+  imapLastSyncAt  DateTime?
+  imapLastOk      Boolean?
+  imapLastError   String?
+  imapSyncStartedAt DateTime?
+  imapLastCount   Int?
   lastTestAt      DateTime?
   lastTestOk      Boolean?
   lastTestError   String?

@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { db } from '@repo/db'
 import { sendRawEmail } from '@/lib/email'
-import { MAIL_PURPOSES } from '@/lib/mail/business-line-mail'
+import { MAILBOX_KEY_RE } from '@/lib/mail/business-line-mail'
 
 export const dynamic = 'force-dynamic'
 
 const schema = z.object({
   leadId: z.string().optional(),
   clientId: z.string().optional(),
-  purpose: z.enum(MAIL_PURPOSES).default('general'),
+  purpose: z.string().regex(MAILBOX_KEY_RE).default('general'),
   to: z.string().trim().email().optional(),
   subject: z.string().trim().min(1).max(300),
   body: z.string().trim().min(1).max(50_000),

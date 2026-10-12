@@ -34,7 +34,6 @@ const CHANNELS: Record<string, { label: string; icon: React.ElementType; color: 
 }
 const SOURCES: Record<string, string> = { offer: "Ofertă", report: "Raport", order: "Comandă", manual: "Manual", transactional: "Automat" }
 const CALL_RESULTS: Record<string, string> = { answered: "Răspuns", no_answer: "Fără răspuns", busy: "Ocupat", voicemail: "Mesagerie" }
-const MAILBOXES = [{ key: "general", label: "General (office@)" }, { key: "orders", label: "Comenzi (comenzi@)" }, { key: "partners", label: "Parteneri (parteneri@)" }]
 
 const inputCls = "w-full px-2.5 py-1.5 text-xs bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/40"
 
@@ -51,6 +50,7 @@ export function EntityCommunications({ leadId, clientId, businessLineId, default
   const [mode, setMode] = useState<Mode>("email")
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
+  const [mailboxes, setMailboxes] = useState<{ key: string; label: string; from: string }[]>([])
   const [f, setF] = useState({ mailbox: "general", to: "", subject: "", body: "", callResult: "answered", duration: "" })
 
   const qs = leadId ? `leadId=${leadId}` : `clientId=${clientId}`
@@ -62,6 +62,14 @@ export function EntityCommunications({ leadId, clientId, businessLineId, default
     } finally { setLoading(false) }
   }, [qs])
   useEffect(() => { load() }, [load])
+  useEffect(() => {
+    if (!businessLineId) return
+    fetch(`/api/settings/business-lines/${businessLineId}/mail`).then((r) => r.json()).then((j) => {
+      const list = ((j.data ?? []) as { purpose: string; label: string | null; fromEmail: string; enabled: boolean }[]).filter((m) => m.enabled)
+      setMailboxes(list.map((m) => ({ key: m.purpose, label: m.label || m.purpose, from: m.fromEmail })))
+      setF((p) => (list.some((m) => m.purpose === p.mailbox) || !list[0] ? p : { ...p, mailbox: list[0].purpose }))
+    }).catch(() => {})
+  }, [businessLineId])
 
   const counts = useMemo(() => items.reduce<Record<string, number>>((a, c) => { a[c.channel] = (a[c.channel] ?? 0) + 1; return a }, {}), [items])
   const shown = filter === "all" ? items : items.filter((c) => c.channel === filter)
@@ -125,7 +133,8 @@ export function EntityCommunications({ leadId, clientId, businessLineId, default
         {mode === "email" && (
           <div className="grid gap-2 sm:grid-cols-2">
             <select className={inputCls} value={f.mailbox} onChange={(e) => setF({ ...f, mailbox: e.target.value })}>
-              {MAILBOXES.map((m) => <option key={m.key} value={m.key}>De la: {m.label}</option>)}
+              {mailboxes.length === 0 && <option value="general">De la: expeditor implicit</option>}
+              {mailboxes.map((m) => <option key={m.key} value={m.key}>De la: {m.label} ({m.from})</option>)}
             </select>
             <input className={inputCls} type="email" value={f.to} onChange={(e) => setF({ ...f, to: e.target.value })} placeholder={defaultEmail ? `Către: ${defaultEmail}` : "Către"} />
           </div>
