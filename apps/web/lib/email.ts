@@ -1,12 +1,13 @@
 // ─── SMTP Email Service ───
 // Sends transactional emails via SMTP (mail@outcave.ro)
-import nodemailer from 'nodemailer'
+import nodemailer, { type Transporter } from 'nodemailer'
 import fs from 'fs'
 import path from 'path'
+import { getLineMail, type MailPurpose } from '@/lib/mail/business-line-mail'
 import { renderReportEmail, type ReportEmailContent } from '@/lib/reports/report-email'
 
 // Lazy Nodemailer transporter
-let _transporter: nodemailer.Transporter | null = null
+let _transporter: Transporter | null = null
 
 function getTransporter() {
   if (!_transporter) {
@@ -58,15 +59,23 @@ function getSender(businessLine?: string) {
   return DEFAULT_SENDER
 }
 
+/** Sender + transport for a line: its own SMTP account when configured and enabled, else the built-in defaults. */
+async function resolveSender(businessLine?: string, purpose: MailPurpose = 'general') {
+  const own = await getLineMail(businessLine, purpose)
+  if (own) return { email: own.email, name: own.name, replyTo: own.replyTo, bcc: own.bcc ?? undefined, signatureHtml: own.signatureHtml, transporter: own.transporter }
+  return { ...getSender(businessLine), bcc: undefined as string | undefined, signatureHtml: null as string | null, transporter: getTransporter() }
+}
+
 // ─── Generic transactional email (callers build the html/text) ───
-export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string }) {
-  const sender = getSender(input.businessLine)
-  const result = await getTransporter().sendMail({
+export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string; purpose?: MailPurpose }) {
+  const sender = await resolveSender(input.businessLine, input.purpose)
+  const result = await sender.transporter.sendMail({
     from: `${sender.name} <${sender.email}>`,
     replyTo: sender.replyTo,
+    bcc: sender.bcc,
     to: input.to,
     subject: input.subject,
-    html: input.html,
+    html: sender.signatureHtml ? input.html + sender.signatureHtml : input.html,
     text: input.text,
   })
   return { messageId: result.messageId, success: true }
@@ -88,15 +97,16 @@ interface SendOfferEmailInput {
 }
 
 export async function sendOfferEmail(input: SendOfferEmailInput) {
-  const sender = getSender(input.businessLine)
+  const sender = await resolveSender(input.businessLine)
   const fromAddress = `${sender.name} <${sender.email}>`
 
   const htmlBody = buildOfferEmailHtml(input, sender)
   const textBody = buildOfferEmailText(input)
 
-  const result = await getTransporter().sendMail({
+  const result = await sender.transporter.sendMail({
     from: fromAddress,
     replyTo: sender.replyTo,
+    bcc: sender.bcc,
     to: input.to,
     subject: input.subject,
     html: htmlBody,
@@ -291,7 +301,7 @@ interface SendReportEmailInput {
 }
 
 export async function sendReportEmailWithAttachments(input: SendReportEmailInput) {
-  const sender = getSender(input.businessLine)
+  const sender = await resolveSender(input.businessLine)
   const attachments = input.attachments || []
 
   // Inline logo for the signature (skipped silently if the file is missing)
@@ -313,9 +323,10 @@ export async function sendReportEmailWithAttachments(input: SendReportEmailInput
     logoCid: hasLogo ? 'asns-logo' : undefined,
   })
 
-  const result = await getTransporter().sendMail({
+  const result = await sender.transporter.sendMail({
     from: `${sender.name} <${sender.email}>`,
     replyTo: sender.replyTo,
+    bcc: sender.bcc,
     to: input.to,
     cc: input.cc && input.cc.length > 0 ? input.cc : undefined,
     subject: input.subject,

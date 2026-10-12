@@ -50,6 +50,7 @@ model BusinessLine {
   commerceListings     CommerceListing[]
   commercePricingRules CommercePricingRule[]
   commerceOrders       CommerceOrder[]
+  mailboxes            BusinessLineMailbox[]
 }
 
 model Client {
@@ -1794,4 +1795,31 @@ model CommerceScheduledJobRun {
   startedBy  String?
 
   @@index([jobKey, startedAt(sort: Desc)])
+}
+
+// ─── Per-business-line mailboxes by purpose (table via prisma/sql/business_line_mail_settings.sql) ───
+model BusinessLineMailbox {
+  id              String       @id @default(cuid())
+  businessLineId  String
+  purpose         String       @default("general")
+  enabled         Boolean      @default(false)
+  fromName        String
+  fromEmail       String
+  replyTo         String?
+  bcc             String?
+  signatureHtml   String?
+  smtpHost        String
+  smtpPort        Int          @default(465)
+  smtpSecure      Boolean      @default(true)
+  smtpUser        String
+  smtpPassEnc     String?
+  allowSelfSigned Boolean      @default(false)
+  lastTestAt      DateTime?
+  lastTestOk      Boolean?
+  lastTestError   String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now()) @updatedAt
+  businessLine    BusinessLine @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
+
+  @@unique([businessLineId, purpose])
 }
