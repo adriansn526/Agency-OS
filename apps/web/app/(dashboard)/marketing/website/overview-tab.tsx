@@ -63,9 +63,9 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
             <label className={labelCls} htmlFor="siteurl2">Adresa site-ului</label>
             <input id="siteurl2" className={inputCls} placeholder="https://exemplu.ro" value={siteUrl} onChange={(e) => setSiteUrl(e.target.value)} />
           </div>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={channel.isEnabled} onChange={(e) => run("toggle", () => api(`/api/website/channel?${q}`, "PATCH", { isEnabled: e.target.checked }), e.target.checked ? "Publicare activă" : "Publicare oprită")} />
-            Publicare activă <span className="text-muted-foreground">(oprită = API-ul răspunde 401)</span>
+          <label className="flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-1" checked={channel.isEnabled} onChange={(e) => run("toggle", () => api(`/api/website/channel?${q}`, "PATCH", { isEnabled: e.target.checked }), e.target.checked ? "Publicare activă" : "Publicare oprită")} />
+            <span>Publicare activă <span className="text-muted-foreground">(oprită = API-ul răspunde 401)</span></span>
           </label>
           <Button size="sm" variant="outline" disabled={busy === "save" || siteUrl === (channel.siteUrl ?? "")} onClick={() => run("save", () => api(`/api/website/channel?${q}`, "PATCH", { siteUrl }), "Salvat")}>Salvează adresa</Button>
         </CardContent>

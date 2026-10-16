@@ -6,7 +6,7 @@ import { Check, Loader2, Star, Trash2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { api, ApiError, fmtDate, inputCls, STATUS_RO } from "./shared"
+import { api, ApiError, fmtDate, selectCls, STATUS_RO } from "./shared"
 
 export function ReviewsTab({ lineId, onChanged }: { lineId: string; onChanged: () => Promise<void> }) {
   const [status, setStatus] = useState("pending")
@@ -29,7 +29,7 @@ export function ReviewsTab({ lineId, onChanged }: { lineId: string; onChanged: (
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <select aria-label="Stare" className={inputCls + " w-48"} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
+        <select aria-label="Stare" className={selectCls + " w-48"} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
           {["pending", "approved", "rejected"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}
         </select>
         <span className="text-sm text-muted-foreground">{data ? `${data.total} recenzii` : ""}</span>

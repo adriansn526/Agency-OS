@@ -6,7 +6,7 @@ import { BadgeCheck, Loader2, Plus, Search, Star, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { api, ApiError, Collection, fmtDate, inputCls, STATUS_RO } from "./shared"
+import { api, ApiError, Collection, fmtDate, inputCls, selectCls, STATUS_RO } from "./shared"
 import { EntryEditor } from "./entry-editor"
 
 export function EntriesTab({ lineId, onChanged }: { lineId: string; onChanged: () => Promise<void> }) {
@@ -47,10 +47,10 @@ export function EntriesTab({ lineId, onChanged }: { lineId: string; onChanged: (
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" aria-hidden />
           <input aria-label="Caută" className={inputCls + " pl-9"} placeholder="Caută după titlu, oraș sau slug" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <select aria-label="Colecție" className={inputCls + " w-44"} value={collectionId} onChange={(e) => { setCollectionId(e.target.value); setPage(1) }}>
+        <select aria-label="Colecție" className={selectCls + " w-48"} value={collectionId} onChange={(e) => { setCollectionId(e.target.value); setPage(1) }}>
           <option value="">Toate colecțiile</option>{collections.map((c) => <option key={c.id} value={c.id}>{c.namePlural}</option>)}
         </select>
-        <select aria-label="Stare" className={inputCls + " w-40"} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
+        <select aria-label="Stare" className={selectCls + " w-44"} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
           <option value="">Toate stările</option>{["draft", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}
         </select>
         <Button className="ml-auto" onClick={() => setEditing("new")}><Plus className="h-4 w-4 mr-1" /> Intrare nouă</Button>

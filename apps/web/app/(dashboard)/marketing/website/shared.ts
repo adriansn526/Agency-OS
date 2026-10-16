@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const inputCls =
   "h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60"
+/** Same look without w-full, for toolbar controls that set their own width */
+export const selectCls = inputCls.replace("w-full ", "")
 export const textareaCls = inputCls.replace("h-9 ", "min-h-[84px] py-2 ")
 export const labelCls = "block text-xs font-semibold text-foreground mb-1.5"
 

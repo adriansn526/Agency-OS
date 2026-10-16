@@ -1,6 +1,6 @@
 "use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { Modal } from "@/components/modal"
@@ -40,6 +40,9 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
   const [meta, setMeta] = useState<{ publishedAt?: string | null; tenantId?: string | null; leadId?: string | null } | null>(null)
   const [saving, setSaving] = useState(false)
   const [issues, setIssues] = useState<string[]>([])
+  const alertRef = useRef<HTMLUListElement>(null)
+  // the form scrolls inside the modal: bring the validation errors into view
+  useEffect(() => { if (issues.length) alertRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" }) }, [issues])
 
   useEffect(() => {
     if (!entryId) return
@@ -60,7 +63,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
     try {
       await api(entryId ? `/api/website/entries/${entryId}?${q}` : `/api/website/entries?${q}`, entryId ? "PATCH" : "POST", body)
       toast.success(entryId ? "Intrare salvată" : "Intrare creată"); onSaved()
-    } catch (e) { if (e instanceof ApiError) setIssues([e.message, ...(e.details ?? [])]); else toast.error("Eroare") }
+    } catch (e) { if (e instanceof ApiError) { setIssues([e.message, ...(e.details ?? [])]); toast.error(e.details?.[0] ?? e.message) } else toast.error("Eroare") }
     finally { setSaving(false) }
   }
 
@@ -68,7 +71,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
     <Modal open onClose={onClose} title={entryId ? "Editează intrarea" : "Intrare nouă"} description={collection ? `${collection.name} · ${collection.key}` : undefined} size="lg">
       {!draft ? <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Se încarcă…</div> : (
         <div className="flex flex-col gap-5">
-          {issues.length > 0 && <ul role="alert" className="rounded-md border border-destructive/50 p-3 text-sm text-destructive list-disc pl-6">{issues.map((m, i) => <li key={i}>{m}</li>)}</ul>}
+          {issues.length > 0 && <ul ref={alertRef} role="alert" className="rounded-md border border-destructive/50 p-3 text-sm text-destructive list-disc pl-6">{issues.map((m, i) => <li key={i}>{m}</li>)}</ul>}
 
           <section className="grid grid-cols-2 gap-3">
             {!entryId && <div className="col-span-2"><label className={labelCls} htmlFor="e-col">Colecție</label>
@@ -129,7 +132,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             </div>
           </section>
 
-          <div className="flex justify-end gap-2 pt-1 sticky bottom-0 bg-surface">
+          <div className="flex justify-end gap-2 sticky -bottom-6 -mx-6 -mb-6 px-6 py-3 border-t border-border bg-surface">
             <Button variant="ghost" onClick={onClose}>Renunță</Button>
             <Button disabled={saving || draft.title.trim().length < 2 || !draft.collectionId} onClick={save}>{saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />} {draft.status === "published" ? "Salvează și publică" : "Salvează"}</Button>
           </div>

@@ -31,7 +31,9 @@ export function CollectionsTab({ lineId, onChanged }: { lineId: string; onChange
     if (!editing) return
     setSaving(true); setIssues([])
     try {
-      const body = { name: editing.name, namePlural: editing.namePlural, kind: editing.kind, fields: editing.fields, sortOrder: Number(editing.sortOrder) || 0, ...(isNew ? { key: editing.key } : { isActive: editing.isActive }) }
+      // strip the transient raw-text helper used by the options input
+      const fields = (editing.fields ?? []).map(({ _opt, ...f }: Field & { _opt?: string }) => f)
+      const body = { name: editing.name, namePlural: editing.namePlural, kind: editing.kind, fields, sortOrder: Number(editing.sortOrder) || 0, ...(isNew ? { key: editing.key } : { isActive: editing.isActive }) }
       await api(isNew ? `/api/website/collections?${q}` : `/api/website/collections/${editing.id}?${q}`, isNew ? "POST" : "PATCH", body)
       toast.success("Colecție salvată"); setEditing(null); await load(); await onChanged()
     } catch (e) { if (e instanceof ApiError) { setIssues([e.message, ...(e.details ?? [])]) } else toast.error("Eroare") }
@@ -96,7 +98,7 @@ export function CollectionsTab({ lineId, onChanged }: { lineId: string; onChange
                     <input aria-label="Cheie" className={inputCls + " col-span-3"} placeholder="cheie" value={f.key} onChange={(e) => setField(i, { key: e.target.value })} />
                     <select aria-label="Tip câmp" className={inputCls + " col-span-3"} value={f.type} onChange={(e) => setField(i, { type: e.target.value as Field["type"] })}>{Object.entries(FIELD_TYPE_RO).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select>
                     <Button size="icon" variant="ghost" className="col-span-2 justify-self-end" aria-label="Elimină câmpul" onClick={() => setEditing({ ...editing, fields: (editing.fields ?? []).filter((_, j) => j !== i) })}><X className="h-4 w-4" /></Button>
-                    {f.type === "select" && <input aria-label="Opțiuni" className={inputCls + " col-span-12"} placeholder="Opțiuni separate prin virgulă" value={(f.options ?? []).join(", ")} onChange={(e) => setField(i, { options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })} />}
+                    {f.type === "select" && <input aria-label="Opțiuni" className={inputCls + " col-span-12"} placeholder="Opțiuni separate prin virgulă" value={(f as Field & { _opt?: string })._opt ?? (f.options ?? []).join(", ")} onChange={(e) => setField(i, { _opt: e.target.value, options: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) } as Partial<Field>)} />}
                     <div className="col-span-12 flex gap-4 text-xs">
                       <label className="flex items-center gap-1.5"><input type="checkbox" checked={!!f.required} onChange={(e) => setField(i, { required: e.target.checked })} /> Obligatoriu la publicare</label>
                       {(f.type === "text" || f.type === "select") && <label className="flex items-center gap-1.5"><input type="checkbox" checked={!!f.filterable} onChange={(e) => setField(i, { filterable: e.target.checked })} /> Filtrabil în API</label>}
