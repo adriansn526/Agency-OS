@@ -13,6 +13,7 @@ import {
   Plus, ArrowRight, Loader2, Trash2, UserPlus, Bot
 } from "lucide-react"
 import { getBusinessLine } from "@repo/mock-data"
+import { useBusinessLine } from "@/components/business-line-context"
 import { LeadWebsiteCard } from "@/components/website/lead-website-card"
 
 /* ── configs ── */
@@ -59,6 +60,16 @@ const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
 
 const defaultPipelineStages = ["contactat", "calificat", "oferta_trimisa", "negociere", "castigat"]
 
+/** Pipeline stage colours are semantic tokens in BusinessLine.config; the page renders Tailwind classes. */
+const tokenConf: Record<string, { color: string; bgColor: string }> = {
+  info: { color: "text-blue-400", bgColor: "bg-blue-500/10" },
+  warning: { color: "text-amber-400", bgColor: "bg-amber-500/10" },
+  accent: { color: "text-cyan-400", bgColor: "bg-cyan-500/10" },
+  primary: { color: "text-purple-400", bgColor: "bg-purple-500/10" },
+  success: { color: "text-emerald-400", bgColor: "bg-emerald-500/10" },
+  destructive: { color: "text-red-400", bgColor: "bg-red-500/10" },
+}
+
 /* ── page ── */
 
 export default function SingleLeadPage() {
@@ -90,15 +101,23 @@ export default function SingleLeadPage() {
     }
   }
 
-  // Derive pipeline stages from lead's business line
-  const pipelineStages = useMemo(() => {
-    if (!lead?.businessLine?.slug) return defaultPipelineStages
-    const bl = getBusinessLine(lead.businessLine.slug)
-    if (!bl) return defaultPipelineStages
-    const et = bl.entityTypes.find((e: any) => e.id === lead.entityType) || bl.entityTypes[0]
-    if (!et) return defaultPipelineStages
-    return et.pipeline.map((s: any) => s.key)
-  }, [lead])
+  // Pipeline of the lead's entity type. Business lines come from the database through the context (so types created in
+  // Settings, e.g. "parteneri", work); the static mock data is only the fallback while the context is still loading.
+  const { lines } = useBusinessLine()
+  const entityType = useMemo(() => {
+    const slug = lead?.businessLine?.slug
+    if (!slug) return null
+    const bl: any = lines.find((l: any) => l.slug === slug) ?? getBusinessLine(slug)
+    if (!bl) return null
+    return bl.entityTypes.find((e: any) => e.id === lead.entityType) || bl.entityTypes[0] || null
+  }, [lead, lines])
+  const pipelineStages: string[] = useMemo(() => (entityType ? entityType.pipeline.map((s: any) => s.key) : defaultPipelineStages), [entityType])
+  /** Label and colour for a stage key: known presets first, then what the line's own pipeline defines. */
+  const stageConf = useCallback((key: string) => {
+    if (statusConfig[key]) return statusConfig[key]
+    const st = entityType?.pipeline.find((s: any) => s.key === key)
+    return { label: st?.label ?? key, ...(tokenConf[st?.color] ?? { color: "text-muted-foreground", bgColor: "bg-muted" }) }
+  }, [entityType])
 
   // Fetch lead
   useEffect(() => {
@@ -135,7 +154,8 @@ export default function SingleLeadPage() {
       })
       if (res.ok) {
         const json = await res.json()
-        setLead(json.data)
+        // the PATCH response has no joined relations (businessLine…): keep them, they decide the pipeline shown
+        setLead((prev: any) => ({ ...prev, ...json.data }))
       }
     } catch {}
   }, [id, lead])
@@ -160,7 +180,7 @@ export default function SingleLeadPage() {
     )
   }
 
-  const sc = statusConfig[lead.status] || { label: lead.status, color: "text-muted-foreground", bgColor: "bg-muted" }
+  const sc = stageConf(lead.status)
   const pc = priorityConfig[lead.priority] || { label: lead.priority || 'N/A', color: "text-muted-foreground" }
 
   return (
@@ -431,7 +451,7 @@ export default function SingleLeadPage() {
                 <h3 className="text-sm font-semibold text-foreground mb-3">Pipeline</h3>
                 <div className="space-y-1.5">
                   {pipelineStages.map((stage) => {
-                    const stageConf = statusConfig[stage] || { label: stage, color: 'text-muted-foreground', bgColor: 'bg-muted' }
+                    const stageC = stageConf(stage)
                     const isCurrent = lead.status === stage
                     const isLost = lead.status === "pierdut"
                     const stageIdx = pipelineStages.indexOf(stage)
@@ -443,11 +463,11 @@ export default function SingleLeadPage() {
                         onClick={() => updateField({ status: stage })}
                         className={cn(
                           "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all text-left",
-                          isCurrent ? `${stageConf.bgColor} border border-current/20` : isPast ? "opacity-50 hover:opacity-80" : "opacity-30 hover:opacity-60"
+                          isCurrent ? `${stageC.bgColor} border border-current/20` : isPast ? "opacity-50 hover:opacity-80" : "opacity-30 hover:opacity-60"
                         )}
                       >
-                        <div className={cn("w-2 h-2 rounded-full", isCurrent ? stageConf.color.replace("text-", "bg-") : isPast ? "bg-muted-foreground" : "bg-muted-foreground/30")} />
-                        <span className={cn("font-medium", isCurrent ? stageConf.color : "text-muted-foreground")}>{stageConf.label}</span>
+                        <div className={cn("w-2 h-2 rounded-full", isCurrent ? stageC.color.replace("text-", "bg-") : isPast ? "bg-muted-foreground" : "bg-muted-foreground/30")} />
+                        <span className={cn("font-medium", isCurrent ? stageC.color : "text-muted-foreground")}>{stageC.label}</span>
                         {isCurrent && <span className="ml-auto text-[9px] font-bold uppercase">Curent</span>}
                         {isPast && <CheckCircle2 size={11} className="ml-auto text-muted-foreground" />}
                       </button>
