@@ -51,6 +51,7 @@ model BusinessLine {
   commercePricingRules CommercePricingRule[]
   commerceOrders       CommerceOrder[]
   mailboxes            BusinessLineMailbox[]
+  websiteChannel       WebsiteChannel?
 }
 
 model Client {
@@ -1846,4 +1847,143 @@ model BusinessLineMailbox {
   businessLine    BusinessLine @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
 
   @@unique([businessLineId, purpose])
+}
+
+// ─── Website module (Marketing → Website) ───
+// A business line publishes content (directory listings, projects, articles) to its site through
+// a public storefront API. Collections are defined per line, like BusinessLine.config.entityTypes.
+// DDL (manual, additive): packages/db/prisma/sql/website_module.sql
+
+model WebsiteChannel {
+  id             String       @id @default(cuid())
+  businessLineId String       @unique
+  isEnabled      Boolean      @default(true)
+  siteUrl        String?
+  /// Storefront API keys: [{ id, label, hash (sha256 hex), createdAt, lastUsedAt }]. Plain keys are shown once and never stored.
+  apiKeys        Json         @default("[]")
+  /// Defaults for SEO / site-wide settings
+  config         Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  businessLine   BusinessLine @relation(fields: [businessLineId], references: [id], onDelete: Cascade)
+}
+
+model WebsiteCollection {
+  id             String         @id @default(cuid())
+  businessLineId String
+  /// Stable identifier used in URLs and the API ("companii", "proiecte")
+  key            String
+  name           String
+  namePlural     String
+  /// listing | article | project | other
+  kind           String         @default("listing")
+  /// Custom fields for WebsiteEntry.data: [{ key, label, type: text|number|select|date|rating|list, options?, required?, filterable? }]
+  fields         Json           @default("[]")
+  sortOrder      Int            @default(0)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
+  entries        WebsiteEntry[]
+
+  @@unique([businessLineId, key])
+  @@index([businessLineId, sortOrder])
+}
+
+model WebsiteEntry {
+  id              String            @id @default(cuid())
+  businessLineId  String
+  collectionId    String
+  /// Unique per line and collection
+  slug            String
+  title           String
+  summary         String?
+  /// Sanitized HTML or markdown, depending on the collection
+  body            String?
+  /// draft | published | suspended
+  status          String            @default("draft")
+  verified        Boolean           @default(false)
+  featured        Boolean           @default(false)
+  city            String?
+  county          String?
+  address         String?
+  lat             Float?
+  lng             Float?
+  /// google | osm | manual (Google coordinates expire after 30 days, see docs/commerce-service-partners.md)
+  coordsSource    String?
+  coordsFetchedAt DateTime?
+  email           String?
+  phone           String?
+  websiteUrl      String?
+  coverUrl        String?
+  /// Cached from approved reviews
+  ratingAvg       Decimal?          @db.Decimal(3, 2)
+  ratingCount     Int               @default(0)
+  /// Values for the collection's custom fields, validated with zod on write
+  data            Json              @default("{}")
+  seoTitle        String?
+  seoDescription  String?
+  /// Links to the CRM and to an ERP tenant once a partner is activated (all optional, FKs only in SQL)
+  leadId          String?
+  clientId        String?
+  tenantId        String?
+  /// Import idempotency, e.g. externalSource "wp:companies", externalId "123"
+  externalSource  String?
+  externalId      String?
+  publishedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  media           WebsiteMedia[]
+  reviews         WebsiteReview[]
+
+  @@unique([businessLineId, collectionId, slug])
+  @@unique([businessLineId, externalSource, externalId])
+  @@index([businessLineId, collectionId, status])
+  @@index([county, city])
+  @@index([tenantId])
+  @@index([leadId])
+}
+
+model WebsiteMedia {
+  id         String       @id @default(cuid())
+  entryId    String
+  /// image | file
+  kind       String       @default("image")
+  /// Object key in the storage bucket (DigitalOcean Spaces)
+  storageKey String
+  url        String
+  alt        String?
+  mimeType   String?
+  sizeBytes  Int?
+  width      Int?
+  height     Int?
+  sortOrder  Int          @default(0)
+  createdAt  DateTime     @default(now())
+  entry      WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, sortOrder])
+}
+
+model WebsiteReview {
+  id             String       @id @default(cuid())
+  entryId        String
+  /// Denormalized for line-scoped queries
+  businessLineId String
+  authorName     String
+  authorEmail    String?
+  /// 1..5 (CHECK in SQL)
+  rating         Int
+  title          String?
+  body           String?
+  /// pending | approved | rejected
+  status         String       @default("pending")
+  /// site | import | manual
+  source         String       @default("site")
+  moderatedAt    DateTime?
+  moderatedBy    String?
+  createdAt      DateTime     @default(now())
+  entry          WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, status])
+  @@index([businessLineId, status])
 }
