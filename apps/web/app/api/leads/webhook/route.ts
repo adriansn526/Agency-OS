@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { sendTelegramAlert } from '@/lib/notifications/telegram'
 import { randomUUID } from 'crypto'
+import { resolveWebhookTarget } from '@/lib/leads/webhook-routing'
 
 export const dynamic = 'force-dynamic'
 
@@ -148,15 +149,24 @@ export async function POST(req: NextRequest) {
 
   // 5. Create lead in CRM
   try {
+    // The key's domain decides the business line (falls back to the client's line); see lib/leads/webhook-routing.ts
+    const lines = await db.businessLine.findMany({ where: { isActive: true }, select: { id: true, domain: true, config: true } })
+    const target = resolveWebhookTarget({
+      keyDomain: keyRecord.domain,
+      client: { businessLineId: keyRecord.client.businessLineId, entityType: keyRecord.client.entityType },
+      lines,
+      requestedEntityType: sanitize(body.entityType || body.entity_type || ''),
+    })
+
     const lead = await db.lead.create({
       data: {
-        businessLineId: keyRecord.client.businessLineId,
-        entityType: keyRecord.client.entityType,
+        businessLineId: target.businessLineId,
+        entityType: target.entityType,
         companyName: name || 'Cerere formular',
         contactPerson: name,
         email: email || 'necunoscut@formular.ro',
         phone: phone || null,
-        status: 'nou',
+        status: target.status,
         source: keyRecord.domain, // domeniul ca sursă
         notes: message || null,
         value: estimatedValue,
@@ -192,7 +202,7 @@ export async function POST(req: NextRequest) {
           entityType: 'lead',
           entityId: lead.id,
           entityName: `${name || email} — ${keyRecord.domain}`,
-          businessLineId: keyRecord.client.businessLineId,
+          businessLineId: target.businessLineId,
           details: {
             source: keyRecord.domain,
             service: service || 'cerere generală',
