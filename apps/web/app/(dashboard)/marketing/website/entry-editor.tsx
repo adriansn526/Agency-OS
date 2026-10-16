@@ -37,7 +37,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
 }) {
   const q = `lineId=${encodeURIComponent(lineId)}`
   const [draft, setDraft] = useState<Draft | null>(entryId ? null : empty(defaultCollectionId))
-  const [meta, setMeta] = useState<{ publishedAt?: string | null; tenantId?: string | null; leadId?: string | null } | null>(null)
+  const [meta, setMeta] = useState<{ publishedAt?: string | null; tenantId?: string | null; leadId?: string | null; lead?: { id: string; companyName: string; status: string } | null } | null>(null)
   const [saving, setSaving] = useState(false)
   const [issues, setIssues] = useState<string[]>([])
   const alertRef = useRef<HTMLUListElement>(null)
@@ -72,6 +72,18 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
       {!draft ? <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Se încarcă…</div> : (
         <div className="flex flex-col gap-5">
           {issues.length > 0 && <ul ref={alertRef} role="alert" className="rounded-md border border-destructive/50 p-3 text-sm text-destructive list-disc pl-6">{issues.map((m, i) => <li key={i}>{m}</li>)}</ul>}
+
+          {meta?.lead && (
+            <div className="flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+              <span>Partener din CRM: <a className="font-medium underline" href={`/crm/lead-uri/${meta.lead.id}`}>{meta.lead.companyName}</a> <span className="text-xs text-muted-foreground">({meta.lead.status})</span></span>
+              <Button size="sm" variant="ghost" disabled={saving} onClick={async () => {
+                if (!entryId || !confirm("Dezlegi intrarea de lead-ul din CRM? Profilul public rămâne neschimbat.")) return
+                setSaving(true)
+                try { await api(`/api/website/entries/${entryId}?${q}`, "PATCH", { leadId: null }); setMeta({ ...meta, leadId: null, lead: null }); toast.success("Dezlegat de CRM") }
+                catch (e) { toast.error(e instanceof ApiError ? e.message : "Eroare") } finally { setSaving(false) }
+              }}>Dezleagă</Button>
+            </div>
+          )}
 
           <section className="grid grid-cols-2 gap-3">
             {!entryId && <div className="col-span-2"><label className={labelCls} htmlFor="e-col">Colecție</label>

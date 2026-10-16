@@ -13,6 +13,7 @@ import {
   Plus, ArrowRight, Loader2, Trash2, UserPlus, Bot
 } from "lucide-react"
 import { getBusinessLine } from "@repo/mock-data"
+import { LeadWebsiteCard } from "@/components/website/lead-website-card"
 
 /* ── configs ── */
 
@@ -467,6 +468,8 @@ export default function SingleLeadPage() {
                   </button>
                 )}
               </div>
+
+              <LeadWebsiteCard lead={lead} />
             </div>
           </div>
         )}

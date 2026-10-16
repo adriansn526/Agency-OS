@@ -1,7 +1,7 @@
 /**
  * Database-backed checks of the storefront API (scoping, publication, privacy, filters).
  * Skipped unless WEBSITE_TEST_DATABASE_URL points at a scratch database that has packages/db/prisma/sql/website_module.sql applied
- * (plus stub "BusinessLine", "Lead", "Client" tables with an id column). NEVER point it at production: it writes and deletes rows.
+ * (created from a schema-only copy: pg_dump -s). NEVER point it at production: it writes and deletes rows.
  *
  *   WEBSITE_TEST_DATABASE_URL=postgresql://... npx tsx --test lib/website/storefront/__tests__/storefront.integration.test.ts
  */
@@ -29,8 +29,8 @@ before(async () => {
     detail: await import('../../../../app/api/storefront/website/entries/[collection]/[slug]/route'),
     sitemap: await import('../../../../app/api/storefront/website/sitemap/route'),
   }
-  await db.$executeRawUnsafe(`TRUNCATE "WebsiteReview","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","BusinessLine" CASCADE`)
-  await db.$executeRawUnsafe(`INSERT INTO "BusinessLine"(id) VALUES ('A'),('B'),('OFF')`)
+  await db.$executeRawUnsafe(`TRUNCATE "WebsiteReview","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","Lead","BusinessLine" CASCADE`)
+  for (const id of ['A', 'B', 'OFF']) await db.businessLine.create({ data: { id, slug: id.toLowerCase(), name: id, icon: 'x', color: '#000', config: { entityTypes: [] } } })
   const a = generateWebsiteKey('a'), b = generateWebsiteKey('b'), off = generateWebsiteKey('off')
   keyA = a.key; keyB = b.key; keyOff = off.key
   await db.websiteChannel.createMany({ data: [

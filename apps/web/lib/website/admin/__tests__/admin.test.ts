@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { DataValidationError, validateEntryData, validateFieldDefs, type CollectionField } from '../entry-data'
 import { slugify, uniqueSlug } from '../slug'
+import { normalizeWebsite } from '../url'
 
 const fields: CollectionField[] = [
   { key: 'cui', label: 'CUI', type: 'text', required: true },
@@ -60,4 +61,11 @@ test('uniqueSlug appends the first free suffix', async () => {
   const taken = new Set(['delta', 'delta-2'])
   assert.equal(await uniqueSlug('delta', async (s) => taken.has(s)), 'delta-3')
   assert.equal(await uniqueSlug('alfa', async (s) => taken.has(s)), 'alfa')
+})
+
+test('normalizeWebsite accepts typed addresses and rejects junk', () => {
+  assert.equal(normalizeWebsite('exemplu.ro'), 'https://exemplu.ro')
+  assert.equal(normalizeWebsite(' http://www.delta.ro/ '), 'http://www.delta.ro')
+  assert.equal(normalizeWebsite('https://delta.ro/contact'), 'https://delta.ro/contact')
+  for (const bad of ['', '   ', null, undefined, 'fara spatii.ro nu', 'javascript:alert(1)', 'localhost', 'ftp://x.ro']) assert.equal(normalizeWebsite(bad as string), null, String(bad))
 })

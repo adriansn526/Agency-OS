@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   const denied = await requireWebsiteAdmin(); if (denied) return denied
   const sp = new URL(req.url).searchParams
   return respond(() => listEntries(sp.get('lineId') ?? '', {
-    collectionId: sp.get('collectionId') ?? undefined, status: sp.get('status') ?? undefined,
+    collectionId: sp.get('collectionId') ?? undefined, leadId: sp.get('leadId') ?? undefined, status: sp.get('status') ?? undefined,
     q: sp.get('q')?.slice(0, 100) || undefined, page: Number(sp.get('page')) || 1,
   }))
 }

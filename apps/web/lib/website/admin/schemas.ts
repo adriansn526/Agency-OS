@@ -31,6 +31,7 @@ const entryFields = {
   seoTitle: optText(160), seoDescription: optText(320), data: z.record(z.string(), z.unknown()),
 }
 export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), data: entryFields.data.default({}) })
-export const entryPatch = z.object(entryFields).partial()
+export const entryPatch = z.object({ ...entryFields, leadId: z.string().min(1).max(60).nullable() }).partial()
+export const entryFromLead = z.object({ leadId: z.string().min(1).max(60), collectionId: z.string().min(1).max(60) })
 
 export const reviewPatch = z.object({ status: z.enum(['approved', 'rejected', 'pending']) })

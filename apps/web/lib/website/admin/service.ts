@@ -3,8 +3,9 @@ import { db, Prisma } from '@repo/db'
 import { z } from 'zod'
 import { AdminError } from './errors'
 import { validateEntryData, validateFieldDefs, type CollectionField } from './entry-data'
-import { collectionCreate, collectionPatch, channelPatch, entryCreate, entryPatch } from './schemas'
+import { collectionCreate, collectionPatch, channelPatch, entryCreate, entryFromLead, entryPatch } from './schemas'
 import { slugify, uniqueSlug } from './slug'
+import { normalizeWebsite } from './url'
 import { generateWebsiteKey, parseStoredKeys } from '../storefront/keys'
 import { invalidateWebsiteKeyCache } from '../storefront/auth'
 
@@ -135,7 +136,7 @@ export async function deleteCollection(lineId: string, id: string) {
 
 // ─── Entries ──────────────────────────────────────────────────────
 
-export interface EntryListQuery { collectionId?: string; status?: string; q?: string; page?: number }
+export interface EntryListQuery { collectionId?: string; status?: string; q?: string; page?: number; leadId?: string }
 
 export async function listEntries(lineId: string, q: EntryListQuery) {
   await assertLine(lineId)
@@ -143,6 +144,7 @@ export async function listEntries(lineId: string, q: EntryListQuery) {
   const where: Prisma.WebsiteEntryWhereInput = {
     businessLineId: lineId,
     ...(q.collectionId ? { collectionId: q.collectionId } : {}),
+    ...(q.leadId ? { leadId: q.leadId } : {}),
     ...(q.status && ['draft', 'published', 'suspended'].includes(q.status) ? { status: q.status } : {}),
     ...(q.q ? { OR: [{ title: { contains: q.q, mode: 'insensitive' } }, { city: { contains: q.q, mode: 'insensitive' } }, { slug: { contains: q.q, mode: 'insensitive' } }] } : {}),
   }
@@ -150,7 +152,7 @@ export async function listEntries(lineId: string, q: EntryListQuery) {
     db.websiteEntry.count({ where }),
     db.websiteEntry.findMany({
       where, orderBy: [{ updatedAt: 'desc' }], skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE,
-      select: { id: true, collectionId: true, slug: true, title: true, status: true, verified: true, featured: true, city: true, county: true, ratingAvg: true, ratingCount: true, updatedAt: true, publishedAt: true },
+      select: { id: true, collectionId: true, leadId: true, slug: true, title: true, status: true, verified: true, featured: true, city: true, county: true, ratingAvg: true, ratingCount: true, updatedAt: true, publishedAt: true },
     }),
   ])
   return { total, page, pageSize: PAGE_SIZE, items }
@@ -160,7 +162,8 @@ export async function getEntry(lineId: string, id: string) {
   await assertLine(lineId)
   const e = await db.websiteEntry.findFirst({ where: { id, businessLineId: lineId }, include: { media: { orderBy: { sortOrder: 'asc' } } } })
   if (!e) throw new AdminError('Intrarea nu există', 404)
-  return e
+  const lead = e.leadId ? await db.lead.findUnique({ where: { id: e.leadId }, select: { id: true, companyName: true, status: true, entityType: true } }) : null
+  return { ...e, lead }
 }
 
 async function collectionFor(lineId: string, collectionId: string) {
@@ -204,6 +207,7 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
   // data is re-validated whenever it, or the status that decides which fields are required, changes
   const data = input.data !== undefined || input.status !== undefined ? cleanData(fields, status, input.data ?? existing.data) : undefined
   const { data: _d, ...rest } = input
+  if (input.leadId) await assertLinkableLead(lineId, input.leadId, id)
   try {
     return await db.websiteEntry.update({
       where: { id },
@@ -221,6 +225,46 @@ export async function deleteEntry(lineId: string, id: string) {
   if (!e) throw new AdminError('Intrarea nu există', 404)
   await db.websiteEntry.delete({ where: { id } })
   return { deleted: id }
+}
+
+// ─── CRM link (partner lead ↔ website entry) ──────────────────────
+
+/** A lead can be linked from its own business line only, and to one entry at a time. */
+async function assertLinkableLead(lineId: string, leadId: string, exceptEntryId?: string) {
+  const lead = await db.lead.findFirst({ where: { id: leadId, businessLineId: lineId }, select: { id: true } })
+  if (!lead) throw new AdminError('Lead-ul nu există pe această linie', 404)
+  const other = await db.websiteEntry.findFirst({ where: { leadId, ...(exceptEntryId ? { NOT: { id: exceptEntryId } } : {}) }, select: { id: true, title: true } })
+  if (other) throw new AdminError(`Lead-ul este deja legat de intrarea „${other.title}”`, 409, { entryId: other.id })
+}
+
+/** Creates a DRAFT entry prefilled from a CRM lead and links it. Nothing is published automatically. */
+export async function createEntryFromLead(lineId: string, raw: unknown) {
+  await assertLine(lineId)
+  const input = entryFromLead.parse(raw)
+  const collection = await collectionFor(lineId, input.collectionId)
+  const lead = await db.lead.findFirst({ where: { id: input.leadId, businessLineId: lineId } })
+  if (!lead) throw new AdminError('Lead-ul nu există pe această linie', 404)
+  await assertLinkableLead(lineId, lead.id)
+
+  const fields = collection.fields as unknown as CollectionField[]
+  const data: Record<string, string> = {}
+  // reuse what the CRM already knows when the collection has a matching text field
+  if (lead.cui && fields.some((f) => f.key === 'cui' && f.type === 'text')) data.cui = lead.cui.trim().slice(0, 200)
+
+  const title = (lead.companyName || '').trim().slice(0, 160)
+  if (title.length < 2) throw new AdminError('Lead-ul nu are o denumire de companie utilizabilă', 422)
+  const slug = await uniqueSlug(slugify(title), async (s) => !!(await db.websiteEntry.findUnique({ where: { businessLineId_collectionId_slug: { businessLineId: lineId, collectionId: collection.id, slug: s } }, select: { id: true } })))
+  return db.websiteEntry.create({
+    data: {
+      businessLineId: lineId, collectionId: collection.id, slug, title, status: 'draft', leadId: lead.id, data,
+      email: lead.email && !lead.email.endsWith('@formular.ro') ? lead.email : null,
+      phone: lead.phone?.trim().slice(0, 40) || null,
+      city: lead.city?.trim().slice(0, 80) || null,
+      county: lead.county?.trim().slice(0, 80) || null,
+      address: lead.address?.trim().slice(0, 200) || null,
+      websiteUrl: normalizeWebsite(lead.website),
+    },
+  })
 }
 
 // ─── Reviews ──────────────────────────────────────────────────────

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { api, ApiError, Collection, fmtDate, inputCls, selectCls, STATUS_RO } from "./shared"
 import { EntryEditor } from "./entry-editor"
 
-export function EntriesTab({ lineId, onChanged }: { lineId: string; onChanged: () => Promise<void> }) {
+export function EntriesTab({ lineId, onChanged, initialEntryId = null }: { lineId: string; onChanged: () => Promise<void>; initialEntryId?: string | null }) {
   const q = `lineId=${encodeURIComponent(lineId)}`
   const [collections, setCollections] = useState<Collection[] | null>(null)
   const [collectionId, setCollectionId] = useState("")
@@ -18,7 +18,7 @@ export function EntriesTab({ lineId, onChanged }: { lineId: string; onChanged: (
   const [debounced, setDebounced] = useState("")
   const [page, setPage] = useState(1)
   const [data, setData] = useState<{ total: number; pageSize: number; items: any[] } | null>(null)
-  const [editing, setEditing] = useState<string | "new" | null>(null)
+  const [editing, setEditing] = useState<string | "new" | null>(initialEntryId)
 
   useEffect(() => { const t = setTimeout(() => { setDebounced(search); setPage(1) }, 300); return () => clearTimeout(t) }, [search])
   useEffect(() => { api<Collection[]>(`/api/website/collections?${q}`).then(setCollections).catch((e) => toast.error(e instanceof ApiError ? e.message : "Eroare")) }, [q])

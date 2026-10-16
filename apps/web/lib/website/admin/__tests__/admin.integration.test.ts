@@ -20,8 +20,8 @@ before(async () => {
   svc = await import('../service')
   ;({ AdminError } = await import('../errors'))
   ;({ DataValidationError } = await import('../entry-data'))
-  await db.$executeRawUnsafe(`TRUNCATE "WebsiteReview","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","BusinessLine" CASCADE`)
-  await db.$executeRawUnsafe(`INSERT INTO "BusinessLine"(id,name,slug) VALUES ('A','Linia A','a'),('B','Linia B','b')`)
+  await db.$executeRawUnsafe(`TRUNCATE "WebsiteReview","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","Lead","BusinessLine" CASCADE`)
+  for (const [id, name] of [['A', 'Linia A'], ['B', 'Linia B']] as [string, string][]) await db.businessLine.create({ data: { id, slug: id.toLowerCase(), name, icon: 'x', color: '#000', config: { entityTypes: [] } } })
 })
 after(async () => { if (db) await db.$disconnect() })
 
@@ -122,4 +122,51 @@ test('reviews: approving recomputes the entry rating; rejecting and deleting upd
   assert.equal(e.ratingAvg, null)
   assert.equal(e.ratingCount, 0)
   await rejects(svc.moderateReview('B', r1.id, null, { status: 'approved' }), AdminError, 404) // other line
+})
+
+// ─── CRM link ─────────────────────────────────────────────────────
+
+const mkLead = (businessLineId: string, over: Record<string, unknown> = {}) =>
+  db.lead.create({ data: { businessLineId, entityType: 'parteneri', companyName: 'Alfa Instalații SRL', contactPerson: 'Ion', email: 'ion@alfa.ro', status: 'prospect', ...over } })
+
+test('from-lead: creates a DRAFT prefilled from the lead and links it', { skip }, async () => {
+  const lead = await mkLead('A', { phone: '0722 111 222', city: 'Iași', county: 'Iași', address: 'Str. Lăpușneanu 1', website: 'alfa-instalatii.ro', cui: 'RO999' })
+  const e = await svc.createEntryFromLead('A', { leadId: lead.id, collectionId })
+  assert.equal(e.status, 'draft')
+  assert.equal(e.publishedAt, null)
+  assert.equal(e.leadId, lead.id)
+  assert.equal(e.title, 'Alfa Instalații SRL')
+  assert.equal(e.slug, 'alfa-instalatii-srl')
+  assert.deepEqual([e.email, e.phone, e.city, e.county, e.websiteUrl], ['ion@alfa.ro', '0722 111 222', 'Iași', 'Iași', 'https://alfa-instalatii.ro'])
+  assert.deepEqual(e.data, { cui: 'RO999' }) // collection has a text field "cui"
+  const full = await svc.getEntry('A', e.id)
+  assert.equal(full.lead?.companyName, 'Alfa Instalații SRL')
+  assert.deepEqual((await svc.listEntries('A', { leadId: lead.id })).items.map((i: any) => i.id), [e.id])
+})
+
+test('from-lead: a lead links to one entry only; other lines and unknown leads are 404', { skip }, async () => {
+  const lead = await mkLead('A', { companyName: 'Beta SRL' })
+  await svc.createEntryFromLead('A', { leadId: lead.id, collectionId })
+  await rejects(svc.createEntryFromLead('A', { leadId: lead.id, collectionId }), AdminError, 409)
+  const other = await mkLead('B', { companyName: 'Gamma SRL' })
+  await rejects(svc.createEntryFromLead('A', { leadId: other.id, collectionId }), AdminError, 404) // lead of line B
+  await rejects(svc.createEntryFromLead('A', { leadId: 'nope', collectionId }), AdminError, 404)
+})
+
+test('from-lead: CRM placeholder email and unusable website are dropped', { skip }, async () => {
+  const lead = await mkLead('A', { companyName: 'Delta Formular SRL', email: 'necunoscut@formular.ro', website: 'nu este un site' })
+  const e = await svc.createEntryFromLead('A', { leadId: lead.id, collectionId })
+  assert.equal(e.email, null)
+  assert.equal(e.websiteUrl, null)
+})
+
+test('link / unlink through updateEntry validates the lead', { skip }, async () => {
+  const entry = await svc.createEntry('A', { collectionId, title: 'Epsilon Construct' })
+  const lead = await mkLead('A', { companyName: 'Epsilon' })
+  assert.equal((await svc.updateEntry('A', entry.id, { leadId: lead.id })).leadId, lead.id)
+  const entry2 = await svc.createEntry('A', { collectionId, title: 'Epsilon Doi' })
+  await rejects(svc.updateEntry('A', entry2.id, { leadId: lead.id }), AdminError, 409) // already linked elsewhere
+  await rejects(svc.updateEntry('A', entry2.id, { leadId: (await mkLead('B')).id }), AdminError, 404) // other line
+  assert.equal((await svc.updateEntry('A', entry.id, { leadId: null })).leadId, null)
+  assert.equal((await svc.updateEntry('A', entry2.id, { leadId: lead.id })).leadId, lead.id) // free again
 })

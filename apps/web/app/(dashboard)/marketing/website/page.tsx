@@ -14,11 +14,22 @@ import { ReviewsTab } from "./reviews-tab"
 type Tab = "overview" | "entries" | "collections" | "reviews"
 
 export default function WebsitePage() {
-  const { activeLineId, activeLine } = useBusinessLine()
+  const { activeLineId, activeLine, setActiveLineId } = useBusinessLine()
+  const [openEntryId, setOpenEntryId] = useState<string | null>(null)
   const [tab, setTab] = useState<Tab>("overview")
   const [overview, setOverview] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Deep link from the CRM: /marketing/website?line=<id>&entry=<id> selects the line and opens that entry
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search)
+    const line = sp.get("line"), entry = sp.get("entry")
+    if (line) setActiveLineId(line)
+    if (entry) { setOpenEntryId(entry); setTab("entries") }
+    if (line || entry) window.history.replaceState(null, "", window.location.pathname)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const load = useCallback(async () => {
     if (!activeLineId || activeLineId === "all") { setOverview(null); return }
@@ -67,7 +78,7 @@ export default function WebsitePage() {
             ))}
           </div>
           {tab === "overview" && <OverviewTab lineId={activeLineId} overview={overview} reload={load} />}
-          {enabled && tab === "entries" && <EntriesTab lineId={activeLineId} onChanged={load} />}
+          {enabled && tab === "entries" && <EntriesTab lineId={activeLineId} onChanged={load} initialEntryId={openEntryId} />}
           {enabled && tab === "collections" && <CollectionsTab lineId={activeLineId} onChanged={load} />}
           {enabled && tab === "reviews" && <ReviewsTab lineId={activeLineId} onChanged={load} />}
         </>
