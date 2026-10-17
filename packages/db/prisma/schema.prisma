@@ -1987,3 +1987,47 @@ model WebsiteReview {
   @@index([entryId, status])
   @@index([businessLineId, status])
 }
+
+// ─── Website rules (pricing / routing / billing / recommendation) ───
+// DDL (manual, additive): packages/db/prisma/sql/website_rules.sql
+
+model WebsiteRule {
+  id             String    @id @default(cuid())
+  businessLineId String
+  /// pricing | routing | billing | recommendation
+  kind           String
+  name           String
+  /// Lower runs first; the first matching rule wins
+  priority       Int       @default(100)
+  isActive       Boolean   @default(true)
+  /// [{ field, op, value }] - all must match
+  conditions     Json      @default("[]")
+  /// Shape depends on kind, validated in lib/website/rules/actions.ts
+  action         Json
+  validFrom      DateTime?
+  /// Exclusive
+  validTo        DateTime?
+  createdBy      String?
+  updatedBy      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+
+  @@index([businessLineId, kind, priority])
+}
+
+/// Append-only change history; no FK on ruleId so it outlives a deleted rule
+model WebsiteRuleAudit {
+  id             String   @id @default(cuid())
+  businessLineId String
+  ruleId         String?
+  kind           String
+  /// create | update | delete | reorder
+  action         String
+  beforeData     Json?
+  afterData      Json?
+  userId         String?
+  createdAt      DateTime @default(now())
+
+  @@index([businessLineId, createdAt(sort: Desc)])
+  @@index([ruleId])
+}
