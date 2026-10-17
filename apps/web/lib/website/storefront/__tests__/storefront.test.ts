@@ -56,7 +56,7 @@ test('only filterable collection fields can be used as filters', () => {
 
 const entry = {
   slug: 'delta', title: 'Delta', summary: 's', body: '<p>b</p>', city: 'Cluj', county: 'Cluj', address: 'Str. 1', lat: 46.7, lng: 23.6,
-  coverUrl: null, verified: true, featured: false, ratingAvg: '4.60', ratingCount: 3, data: { tip: 'firma' },
+  coverUrl: null, logoUrl: null, verified: true, featured: false, ratingAvg: '4.60', ratingCount: 3, data: { tip: 'firma' },
   seoTitle: 't', seoDescription: 'd', phone: '0740', websiteUrl: 'https://d.ro', publishedAt: new Date('2026-01-01'), updatedAt: new Date('2026-02-01'),
   // private columns that must never be serialized
   email: 'secret@delta.ro', leadId: 'lead_1', clientId: 'cl_1', tenantId: 'tn_1', externalId: '7', externalSource: 'wp', status: 'published', businessLineId: 'bl',

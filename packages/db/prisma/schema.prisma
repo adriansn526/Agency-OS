@@ -1915,6 +1915,8 @@ model WebsiteEntry {
   phone           String?
   websiteUrl      String?
   coverUrl        String?
+  /// Company logo (square or wide); the site falls back to initials when empty
+  logoUrl         String?
   /// Cached from approved reviews
   ratingAvg       Decimal?          @db.Decimal(3, 2)
   ratingCount     Int               @default(0)

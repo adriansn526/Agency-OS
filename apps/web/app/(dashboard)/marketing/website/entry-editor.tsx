@@ -10,14 +10,14 @@ import { api, ApiError, Collection, Field, inputCls, labelCls, STATUS_RO, textar
 interface Draft {
   collectionId: string; title: string; slug: string; summary: string; body: string; status: string; verified: boolean; featured: boolean
   city: string; county: string; address: string; lat: string; lng: string
-  email: string; phone: string; websiteUrl: string; coverUrl: string; seoTitle: string; seoDescription: string
+  email: string; phone: string; websiteUrl: string; coverUrl: string; logoUrl: string; seoTitle: string; seoDescription: string
   data: Record<string, any>
 }
-const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", seoTitle: "", seoDescription: "", data: {} })
+const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", logoUrl: "", seoTitle: "", seoDescription: "", data: {} })
 const fromEntry = (e: any): Draft => ({
   collectionId: e.collectionId, title: e.title, slug: e.slug, summary: e.summary ?? "", body: e.body ?? "", status: e.status, verified: e.verified, featured: e.featured,
   city: e.city ?? "", county: e.county ?? "", address: e.address ?? "", lat: e.lat == null ? "" : String(e.lat), lng: e.lng == null ? "" : String(e.lng),
-  email: e.email ?? "", phone: e.phone ?? "", websiteUrl: e.websiteUrl ?? "", coverUrl: e.coverUrl ?? "", seoTitle: e.seoTitle ?? "", seoDescription: e.seoDescription ?? "", data: e.data ?? {},
+  email: e.email ?? "", phone: e.phone ?? "", websiteUrl: e.websiteUrl ?? "", coverUrl: e.coverUrl ?? "", logoUrl: e.logoUrl ?? "", seoTitle: e.seoTitle ?? "", seoDescription: e.seoDescription ?? "", data: e.data ?? {},
 })
 const num = (s: string) => (s.trim() === "" ? null : Number(s.replace(",", ".")))
 
@@ -59,7 +59,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
     const body: any = { ...rest, lat: num(lat), lng: num(lng), ...(slug ? { slug } : {}) }
     if (!entryId) body.collectionId = collectionId
     // empty strings mean "no value"; the API stores null
-    for (const k of ["summary", "body", "city", "county", "address", "email", "phone", "websiteUrl", "coverUrl", "seoTitle", "seoDescription"]) if (body[k] === "") body[k] = null
+    for (const k of ["summary", "body", "city", "county", "address", "email", "phone", "websiteUrl", "coverUrl", "logoUrl", "seoTitle", "seoDescription"]) if (body[k] === "") body[k] = null
     try {
       await api(entryId ? `/api/website/entries/${entryId}?${q}` : `/api/website/entries?${q}`, entryId ? "PATCH" : "POST", body)
       toast.success(entryId ? "Intrare salvată" : "Intrare creată"); onSaved()
@@ -132,6 +132,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <div><label className={labelCls} htmlFor="e-email">Email (nu apare public; la cereri)</label><input id="e-email" type="email" className={inputCls} value={draft.email} onChange={(e) => set("email", e.target.value)} /></div>
               <div><label className={labelCls} htmlFor="e-phone">Telefon</label><input id="e-phone" className={inputCls} value={draft.phone} onChange={(e) => set("phone", e.target.value)} /></div>
               <div><label className={labelCls} htmlFor="e-web">Website</label><input id="e-web" className={inputCls} placeholder="https://" value={draft.websiteUrl} onChange={(e) => set("websiteUrl", e.target.value)} /></div>
+              <div><label className={labelCls} htmlFor="e-logo">Logo (URL)</label><input id="e-logo" className={inputCls} placeholder="https://" value={draft.logoUrl} onChange={(e) => set("logoUrl", e.target.value)} /></div>
               <div><label className={labelCls} htmlFor="e-cover">Imagine de copertă (URL)</label><input id="e-cover" className={inputCls} placeholder="https://" value={draft.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} /></div>
             </div>
           </section>
