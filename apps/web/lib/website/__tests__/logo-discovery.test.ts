@@ -17,3 +17,8 @@ test('private and special addresses are refused', () => {
 test('safeFetch refuses loopback, metadata and non-http targets without connecting', async () => {
   for (const u of ['http://127.0.0.1:1/', 'http://169.254.169.254/latest/meta-data', 'http://[::1]/', 'file:///etc/passwd', 'ftp://example.com/']) assert.equal(await safeFetch(u, { maxBytes: 1000 }), null, u)
 })
+
+test('plugin, cookie-banner, badge and favicon images are not logos', () => {
+  const html = `<img src="/wp-content/plugins/cookie-law-info/lite/images/poweredbtcky.svg" alt="logo"><img src="/assets/donor/fav.png" class="logo"><img src="/img/anpc-logo.png" alt="logo"><img src="/img/logo.png" alt="logo">`
+  assert.deepEqual(extractLogoCandidates(html, 'https://x.ro'), ['https://x.ro/img/logo.png'])
+})

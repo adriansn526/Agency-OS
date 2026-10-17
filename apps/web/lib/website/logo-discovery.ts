@@ -51,13 +51,16 @@ export async function safeFetch(start: string, o: { maxBytes: number; timeoutMs?
   } catch { return null }
 }
 
+/** Images that are not the firm's logo even when they carry "logo" in the markup: plugins (cookie banners), badges, payment / social icons, favicons. */
+const NOT_A_LOGO = /cookie|consent|gdpr|poweredby|powered-by|\/plugins\/|trustpilot|badge|payment|visa|mastercard|anpc|facebook|instagram|linkedin|youtube|google|favicon|\bfav[._-]|sprite/i
+
 const attr = (tag: string, name: string) => new RegExp(`\\b${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i').exec(tag)?.slice(2).find((v) => v !== undefined)
 
 function resolve(raw: string | undefined, base: string): string | null {
   if (!raw) return null
   const v = raw.trim().replace(/&amp;/g, '&')
   if (!v || v.startsWith('data:') || v.startsWith('javascript:')) return null
-  try { const u = new URL(v, base); return /^https?:$/.test(u.protocol) ? u.toString() : null } catch { return null }
+  try { const u = new URL(v, base); return /^https?:$/.test(u.protocol) && !NOT_A_LOGO.test(u.pathname) ? u.toString() : null } catch { return null }
 }
 
 /** Ranked, de-duplicated absolute logo URLs found in `html`. */
