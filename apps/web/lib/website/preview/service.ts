@@ -10,6 +10,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
+import { categoryTitles } from '../glossary/seed'
 
 export const PREVIEW_TOKEN_RE = /^pv_[A-Za-z0-9_-]{40,60}$/
 export const DEFAULT_VALIDITY_DAYS = 14
@@ -60,6 +61,7 @@ export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRo
   return {
     title: e.title, summary: e.summary, city: e.city, county: e.county, address: e.address, email: e.email, phone: e.phone, websiteUrl: e.websiteUrl,
     body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind })),
+    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii),
     data: e.data ?? {}, fields: Array.isArray(e.collection.fields) ? e.collection.fields : [], collection: { key: e.collection.key, name: e.collection.name },
     expiresAt: e.previewExpiresAt!.toISOString(),
   }
