@@ -6,6 +6,7 @@ import { validateEntryData, validateFieldDefs, type CollectionField } from './en
 import { collectionCreate, collectionPatch, channelPatch, entryCreate, entryFromLead, entryPatch } from './schemas'
 import { slugify, uniqueSlug } from './slug'
 import { normalizeWebsite } from './url'
+import { validityDays } from '../preview/service'
 import { generateWebsiteKey, parseStoredKeys } from '../storefront/keys'
 import { invalidateWebsiteKeyCache } from '../storefront/auth'
 
@@ -33,7 +34,7 @@ export async function getOverview(lineId: string) {
   return {
     line,
     channel: {
-      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt,
+      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config),
       // hashes never leave the server
       keys: parseStoredKeys(channel.apiKeys).map((k) => ({ id: k.id, label: k.label, createdAt: k.createdAt, lastUsedAt: k.lastUsedAt ?? null })),
     },
@@ -56,9 +57,10 @@ export async function enableChannel(lineId: string, raw: unknown) {
 export async function updateChannel(lineId: string, raw: unknown) {
   await assertLine(lineId)
   const input = channelPatch.parse(raw)
-  const exists = await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { id: true } })
+  const exists = await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { id: true, config: true } })
   if (!exists) throw new AdminError('Modulul Website nu este activat pe această linie', 404)
-  await db.websiteChannel.update({ where: { businessLineId: lineId }, data: { ...(input.siteUrl !== undefined ? { siteUrl: input.siteUrl } : {}), ...(input.isEnabled !== undefined ? { isEnabled: input.isEnabled } : {}) } })
+  const config = input.previewValidityDays !== undefined ? ({ ...((exists.config ?? {}) as Record<string, unknown>), previewValidityDays: input.previewValidityDays } as Prisma.InputJsonValue) : undefined
+  await db.websiteChannel.update({ where: { businessLineId: lineId }, data: { ...(input.siteUrl !== undefined ? { siteUrl: input.siteUrl } : {}), ...(input.isEnabled !== undefined ? { isEnabled: input.isEnabled } : {}), ...(config ? { config } : {}) } })
   invalidateWebsiteKeyCache()
   return getOverview(lineId)
 }

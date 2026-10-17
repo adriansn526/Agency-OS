@@ -18,7 +18,7 @@ export const collectionCreate = z.object({
 })
 export const collectionPatch = collectionCreate.omit({ key: true }).partial().extend({ isActive: z.boolean().optional() })
 
-export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional() }).partial()
+export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional(), previewValidityDays: z.number().int().min(1).max(90).optional() }).partial()
 
 const entryFields = {
   title: z.string().trim().min(2).max(160), slug: z.string().trim().regex(keyRe, 'Slug invalid').optional(),
