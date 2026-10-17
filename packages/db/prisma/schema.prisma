@@ -1899,7 +1899,7 @@ model WebsiteEntry {
   summary         String?
   /// Sanitized HTML or markdown, depending on the collection
   body            String?
-  /// draft | published | suspended
+  /// draft | preview | published | suspended (preview = private page shown only through its token link; never in the public API)
   status          String            @default("draft")
   verified        Boolean           @default(false)
   featured        Boolean           @default(false)
@@ -1930,6 +1930,11 @@ model WebsiteEntry {
   externalSource  String?
   externalId      String?
   publishedAt     DateTime?
+  /// sha256 of the preview link token, generated when the preview is sent
+  previewTokenHash String?          @unique
+  previewSentAt    DateTime?
+  /// previewSentAt + validity (default 14 days, editable in the UI)
+  previewExpiresAt DateTime?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -1942,6 +1947,7 @@ model WebsiteEntry {
   @@index([county, city])
   @@index([tenantId])
   @@index([leadId])
+  @@index([status, previewExpiresAt])
 }
 
 model WebsiteMedia {
