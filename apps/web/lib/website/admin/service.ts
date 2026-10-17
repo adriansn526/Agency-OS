@@ -145,7 +145,7 @@ export async function listEntries(lineId: string, q: EntryListQuery) {
     businessLineId: lineId,
     ...(q.collectionId ? { collectionId: q.collectionId } : {}),
     ...(q.leadId ? { leadId: q.leadId } : {}),
-    ...(q.status && ['draft', 'published', 'suspended'].includes(q.status) ? { status: q.status } : {}),
+    ...(q.status && ['draft', 'preview', 'published', 'suspended'].includes(q.status) ? { status: q.status } : {}),
     ...(q.q ? { OR: [{ title: { contains: q.q, mode: 'insensitive' } }, { city: { contains: q.q, mode: 'insensitive' } }, { slug: { contains: q.q, mode: 'insensitive' } }] } : {}),
   }
   const [total, items] = await Promise.all([

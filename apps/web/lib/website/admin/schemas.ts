@@ -23,7 +23,7 @@ export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().opti
 const entryFields = {
   title: z.string().trim().min(2).max(160), slug: z.string().trim().regex(keyRe, 'Slug invalid').optional(),
   summary: optText(500), body: optText(50_000),
-  status: z.enum(['draft', 'published', 'suspended']), verified: z.boolean(), featured: z.boolean(),
+  status: z.enum(['draft', 'preview', 'published', 'suspended']), verified: z.boolean(), featured: z.boolean(),
   city: optText(80), county: optText(80), address: optText(200),
   lat: z.number().min(-90).max(90).nullish(), lng: z.number().min(-180).max(180).nullish(),
   email: z.string().trim().email().max(200).nullish().transform((v) => (v ? v : null)),
