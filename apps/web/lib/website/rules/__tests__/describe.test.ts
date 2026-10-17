@@ -36,6 +36,8 @@ test('conditions read as sentences', () => {
   assert.equal(describeCondition({ field: 'budget', op: 'exists', value: false }, f), 'Buget (RON) nu este completat')
   assert.match(describeCondition({ field: 'data.cui', op: 'eq', value: 'RO1' }, f), /^CUI \(câmp companie\) este RO1$/)
   assert.equal(describeCondition({ field: 'unknown_now', op: 'eq', value: 'x' }, f), 'unknown_now este x') // never crashes on a removed field
+  assert.equal(describeCondition({ field: 'entry', op: 'eq', value: 'e_1' }, f, { e_1: 'Constructii Delta SRL' }), 'Firma (profil) este Constructii Delta SRL')
+  assert.equal(describeCondition({ field: 'entry', op: 'eq', value: 'e_2' }, f, { e_1: 'Delta' }), 'Firma (profil) este e_2') // unknown id falls back to the id
 })
 
 test('actions read as sentences', () => {

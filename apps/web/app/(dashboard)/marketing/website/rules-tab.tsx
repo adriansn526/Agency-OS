@@ -31,6 +31,7 @@ export function RulesTab({ lineId }: { lineId: string }) {
   const [showHistory, setShowHistory] = useState(false)
   const [historyKey, setHistoryKey] = useState(0)
   const [busy, setBusy] = useState<string | null>(null)
+  const [names, setNames] = useState<Record<string, string>>({})
 
   const load = useCallback(async () => {
     try {
@@ -39,6 +40,16 @@ export function RulesTab({ lineId }: { lineId: string }) {
     } catch (e) { toast.error(e instanceof ApiError ? e.message : "Eroare") }
   }, [q])
   useEffect(() => { load() }, [load])
+
+  // firms referenced by rule conditions are shown by name, not by id
+  useEffect(() => {
+    const ids = new Set<string>()
+    for (const r of data?.items ?? []) for (const c of r.conditions) if (c.field === "entry" && typeof c.value === "string") ids.add(c.value)
+    const missing = [...ids].filter((id) => !(id in names))
+    if (!missing.length) return
+    Promise.all(missing.map((id) => api(`/api/website/entries/${id}?${q}`).then((e) => [id, e.title as string] as const).catch(() => [id, id] as const)))
+      .then((pairs) => setNames((n) => ({ ...n, ...Object.fromEntries(pairs) })))
+  }, [data, names, q])
 
   const fields = useMemo(() => buildFieldOptions(collections), [collections])
   const rules = useMemo(() => (data?.items ?? []).filter((r) => r.kind === kind), [data, kind])
@@ -105,7 +116,7 @@ export function RulesTab({ lineId }: { lineId: string }) {
                 <div className="text-sm mt-0.5"><b>{describeAction(kind, r.action)}</b></div>
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {r.conditions.length === 0 ? <span className="text-xs text-muted-foreground">oricând (regulă generală)</span>
-                    : r.conditions.map((c, k) => <span key={k} className="rounded-full bg-muted px-2 py-0.5 text-xs">{describeCondition(c, fields)}</span>)}
+                    : r.conditions.map((c, k) => <span key={k} className="rounded-full bg-muted px-2 py-0.5 text-xs">{describeCondition(c, fields, names)}</span>)}
                 </div>
               </div>
               <div className="flex flex-col items-end gap-1">
@@ -122,7 +133,7 @@ export function RulesTab({ lineId }: { lineId: string }) {
             <div><span className="text-xs text-muted-foreground">Implicit (dacă nicio regulă nu se potrivește)</span><div className="font-medium">{describeAction(kind, DEFAULT_ACTIONS[kind] as unknown as Record<string, unknown>)}</div></div>
           </div>
         </div>
-        <div className="lg:col-span-2"><RulesSimulator lineId={lineId} kind={kind} fields={fields} collections={collections} /></div>
+        <div className="lg:col-span-2"><RulesSimulator lineId={lineId} kind={kind} fields={fields} collections={collections} names={names} /></div>
       </div>
 
       {showHistory && (<section><h3 className="text-sm font-semibold mb-2">Istoric modificări</h3><RulesHistory lineId={lineId} reloadKey={historyKey} /></section>)}

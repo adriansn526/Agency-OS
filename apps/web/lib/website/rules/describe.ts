@@ -37,10 +37,12 @@ export const TRACE_LABEL: Record<string, string> = {
 
 const fmtValue = (v: Condition['value']): string => (v === undefined ? '' : typeof v === 'boolean' ? (v ? 'Da' : 'Nu') : Array.isArray(v) ? v.join(', ') : String(v))
 
-export function describeCondition(c: Condition, fields: FieldOption[]): string {
+/** `names` maps ids to display names (firms), so a condition on "entry" reads as the firm's name instead of an id. */
+export function describeCondition(c: Condition, fields: FieldOption[], names: Record<string, string> = {}): string {
   const label = fields.find((f) => f.key === c.field)?.label ?? c.field
   if (c.op === 'exists') return `${label} ${(c.value ?? true) === true ? 'este completat' : 'nu este completat'}`
-  return `${label} ${OP_LABEL[c.op]} ${fmtValue(c.value)}`
+  const value = c.field === 'entry' && typeof c.value === 'string' ? names[c.value] ?? c.value : fmtValue(c.value)
+  return `${label} ${OP_LABEL[c.op]} ${value}`
 }
 
 export function describeAction(kind: RuleKind, a: Record<string, unknown>): string {

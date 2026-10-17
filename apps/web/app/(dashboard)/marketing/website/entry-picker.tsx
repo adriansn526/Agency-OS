@@ -40,7 +40,7 @@ export function EntryPicker({ lineId, value, onChange, onPick, label = "Caută f
           {results.map((r) => (
             <li key={r.id}>
               <button type="button" className="w-full text-left px-3 py-2 hover:bg-muted" onClick={async () => {
-                onChange(r.id); setText(""); setResults([])
+                setTitle(r.title); onChange(r.id); setText(""); setResults([])
                 if (onPick) { try { onPick(await api(`/api/website/entries/${r.id}?${q}`)) } catch { /* optional helper */ } }
               }}>
                 {r.title} <span className="text-xs text-muted-foreground">{[r.city, r.county].filter(Boolean).join(", ")}</span>
