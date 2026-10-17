@@ -147,5 +147,9 @@ export async function listAudit(lineId: string, q: { ruleId?: string; page?: num
     db.websiteRuleAudit.count({ where }),
     db.websiteRuleAudit.findMany({ where, orderBy: { createdAt: 'desc' }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
   ])
-  return { total, page, pageSize: PAGE_SIZE, items }
+  // show who made each change by name (audit rows only store the user id)
+  const ids = [...new Set(items.map((i) => i.userId).filter((x): x is string => !!x))]
+  const users = ids.length ? await db.user.findMany({ where: { id: { in: ids } }, select: { id: true, name: true, email: true } }) : []
+  const who = new Map(users.map((u) => [u.id, u.name || u.email]))
+  return { total, page, pageSize: PAGE_SIZE, items: items.map((i) => ({ ...i, userName: i.userId ? who.get(i.userId) ?? null : null })) }
 }

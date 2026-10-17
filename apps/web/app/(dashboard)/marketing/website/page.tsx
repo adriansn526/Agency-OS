@@ -10,8 +10,9 @@ import { OverviewTab } from "./overview-tab"
 import { EntriesTab } from "./entries-tab"
 import { CollectionsTab } from "./collections-tab"
 import { ReviewsTab } from "./reviews-tab"
+import { RulesTab } from "./rules-tab"
 
-type Tab = "overview" | "entries" | "collections" | "reviews"
+type Tab = "overview" | "entries" | "collections" | "rules" | "reviews"
 
 export default function WebsitePage() {
   const { activeLineId, activeLine, setActiveLineId } = useBusinessLine()
@@ -47,6 +48,7 @@ export default function WebsitePage() {
     { key: "overview", label: "Prezentare" },
     { key: "entries", label: "Intrări" },
     { key: "collections", label: "Colecții" },
+    { key: "rules", label: "Reguli" },
     { key: "reviews", label: "Recenzii", badge: pending },
   ]
 
@@ -80,6 +82,7 @@ export default function WebsitePage() {
           {tab === "overview" && <OverviewTab lineId={activeLineId} overview={overview} reload={load} />}
           {enabled && tab === "entries" && <EntriesTab lineId={activeLineId} onChanged={load} initialEntryId={openEntryId} />}
           {enabled && tab === "collections" && <CollectionsTab lineId={activeLineId} onChanged={load} />}
+          {enabled && tab === "rules" && <RulesTab lineId={activeLineId} />}
           {enabled && tab === "reviews" && <ReviewsTab lineId={activeLineId} onChanged={load} />}
         </>
       )}

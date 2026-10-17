@@ -18,7 +18,8 @@ before(async () => {
   ;({ db } = await import('@repo/db'))
   svc = await import('../service')
   ;({ AdminError } = await import('../../admin/errors'))
-  await db.$executeRawUnsafe(`TRUNCATE "WebsiteRuleAudit","WebsiteRule","WebsiteChannel","BusinessLine" CASCADE`)
+  await db.$executeRawUnsafe(`TRUNCATE "WebsiteRuleAudit","WebsiteRule","WebsiteChannel","BusinessLine","User" CASCADE`)
+  await db.user.create({ data: { id: 'u2', name: 'Adrian Test', email: 'adrian@example.invalid', password: 'x', role: 'admin' } })
   for (const id of ['A', 'B']) await db.businessLine.create({ data: { id, slug: id.toLowerCase(), name: id, icon: 'x', color: '#000', config: { entityTypes: [] } } })
 })
 after(async () => { if (db) await db.$disconnect() })
@@ -63,12 +64,14 @@ test('update: partial changes, action re-validated against the rule kind, audit 
   assert.deepEqual(u.action, { amountRon: 12.5, freeFirstN: 3 })
   await rejects(svc.updateRule('A', r.id, 'u2', { action: { chargeAt: 'delivery' } })) // wrong shape for pricing
   await rejects(svc.updateRule('A', r.id, 'u2', { validFrom: '2026-07-01', validTo: '2026-06-01' }), AdminError, 422)
-  const { items } = await svc.listAudit('A', { ruleId: r.id })
-  assert.deepEqual(items.map((i: any) => i.action).sort(), ['create', 'update'])
-  const upd = items.find((i: any) => i.action === 'update')
+  const items: any[] = (await svc.listAudit('A', { ruleId: r.id })).items
+  assert.deepEqual(items.map((i) => i.action).sort(), ['create', 'update'])
+  const upd = items.find((i) => i.action === 'update')
   assert.equal(upd.beforeData.name, 'De editat')
   assert.equal(upd.afterData.name, 'Editată')
   assert.equal(upd.userId, 'u2')
+  assert.equal(upd.userName, 'Adrian Test') // resolved from the User table
+  assert.equal(items.find((i) => i.action === 'create').userName, null) // unknown id: no name, no crash
 })
 
 test('delete: the rule goes away, its history stays', { skip }, async () => {

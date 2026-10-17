@@ -32,13 +32,7 @@ export type BillingAction = z.infer<typeof billingAction>
 export type RecommendationAction = z.infer<typeof recommendationAction>
 export interface ActionByKind { pricing: PricingAction; routing: RoutingAction; billing: BillingAction; recommendation: RecommendationAction }
 
-/** What applies when no rule matches. Safe by design: free, one firm, charged only when the firm accepts. */
-export const DEFAULT_ACTIONS: ActionByKind = {
-  pricing: { amountRon: 0, freeFirstN: 0 },
-  routing: { mode: 'single', maxFirms: 1, maxAcceptances: 1, selection: 'nearest' },
-  billing: { chargeAt: 'acceptance' },
-  recommendation: { minReviews: 5, minRating: 4.5, requireVerified: true },
-}
+export { DEFAULT_ACTIONS } from './defaults'
 
 export function parseAction<K extends RuleKind>(kind: K, raw: unknown, limits: { maxPriceRon?: number } = {}): ActionByKind[K] {
   const schema = kind === 'pricing' ? pricingAction(limits.maxPriceRon) : kind === 'routing' ? routingAction : kind === 'billing' ? billingAction : recommendationAction
