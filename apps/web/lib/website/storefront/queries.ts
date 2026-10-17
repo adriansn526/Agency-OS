@@ -33,7 +33,8 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
   const key = sp.get('collection') ?? ''
   const collection = isSlug(key) ? await activeCollection(ctx, key) : null
   // parse first with the collection's fields so unknown filters are rejected, not silently ignored
-  const q = parseListQuery(sp, ((collection?.fields as FieldDef[] | undefined) ?? []))
+  const fieldDefs = (collection?.fields as FieldDef[] | undefined) ?? []
+  const q = parseListQuery(sp, fieldDefs)
   if (!collection) return null
 
   const where: Prisma.WebsiteEntryWhereInput = {
@@ -47,8 +48,9 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     ...(q.q
       ? { OR: [{ title: { contains: q.q, mode: 'insensitive' } }, { summary: { contains: q.q, mode: 'insensitive' } }, { city: { contains: q.q, mode: 'insensitive' } }] }
       : {}),
+    // list fields hold several values (e.g. a firm's service categories): match membership; other fields: equality
     ...(Object.keys(q.fieldFilters).length
-      ? { AND: Object.entries(q.fieldFilters).map(([k, v]) => ({ data: { path: [k], equals: v } })) }
+      ? { AND: Object.entries(q.fieldFilters).map(([k, v]) => ({ data: { path: [k], ...(fieldDefs.find((f) => f.key === k)?.type === 'list' ? { array_contains: v } : { equals: v }) } })) }
       : {}),
   }
 
@@ -56,10 +58,18 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     db.websiteEntry.count({ where }),
     db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit }),
   ])
+  // `facet=county`: number of published entries per county for the same filters (without the county filter itself)
+  let facets: { county: { value: string; count: number }[] } | undefined
+  if (sp.get('facet') === 'county') {
+    const { county: _omit, ...withoutCounty } = where
+    const groups = await db.websiteEntry.groupBy({ by: ['county'], where: withoutCounty, _count: { _all: true }, orderBy: { county: 'asc' } })
+    facets = { county: groups.filter((g) => g.county).map((g) => ({ value: g.county!, count: g._count._all })) }
+  }
   return {
     collection: serializeCollection(collection),
     total, page: q.page, limit: q.limit, pages: Math.max(1, Math.ceil(total / q.limit)),
     items: rows.map((e) => serializeListItem(e, collection.key)),
+    ...(facets ? { facets } : {}),
   }
 }
 

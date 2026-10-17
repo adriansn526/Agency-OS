@@ -36,7 +36,7 @@ before(async () => {
   await db.websiteChannel.createMany({ data: [
     { businessLineId: 'A', apiKeys: [a.stored] }, { businessLineId: 'B', apiKeys: [b.stored] }, { businessLineId: 'OFF', isEnabled: false, apiKeys: [off.stored] },
   ] })
-  const fields = [{ key: 'tip', label: 'Tip', type: 'select', filterable: true }, { key: 'intern', label: 'Intern', type: 'text' }]
+  const fields = [{ key: 'tip', label: 'Tip', type: 'select', filterable: true }, { key: 'intern', label: 'Intern', type: 'text' }, { key: 'servicii', label: 'Servicii', type: 'list', filterable: true }]
   await db.websiteCollection.createMany({ data: [
     { id: 'cA', businessLineId: 'A', key: 'companii', name: 'Companie', namePlural: 'Companii', fields },
     { id: 'cA2', businessLineId: 'A', key: 'ascunsa', name: 'x', namePlural: 'x', isActive: false },
@@ -44,8 +44,8 @@ before(async () => {
   ] })
   const base = { businessLineId: 'A', collectionId: 'cA' }
   await db.websiteEntry.createMany({ data: [
-    { ...base, id: 'e1', slug: 'delta', title: 'Delta Construct', city: 'Cluj-Napoca', county: 'Cluj', status: 'published', verified: true, featured: true, email: 'secret@delta.ro', leadId: null, tenantId: 'tn1', phone: '0740', data: { tip: 'general', intern: 'x' }, ratingAvg: 4.5, ratingCount: 2, publishedAt: new Date() },
-    { ...base, id: 'e2', slug: 'alfa', title: 'Alfa Instalatii', city: 'Iasi', county: 'Iasi', status: 'published', data: { tip: 'instalatii' }, publishedAt: new Date() },
+    { ...base, id: 'e1', slug: 'delta', title: 'Delta Construct', city: 'Cluj-Napoca', county: 'Cluj', status: 'published', verified: true, featured: true, email: 'secret@delta.ro', leadId: null, tenantId: 'tn1', phone: '0740', data: { tip: 'general', intern: 'x', servicii: ['sanitare', 'electrice'] }, ratingAvg: 4.5, ratingCount: 2, publishedAt: new Date() },
+    { ...base, id: 'e2', slug: 'alfa', title: 'Alfa Instalatii', city: 'Iasi', county: 'Iasi', status: 'published', data: { tip: 'instalatii', servicii: ['electrice'] }, publishedAt: new Date() },
     { ...base, id: 'e3', slug: 'draft-co', title: 'Draft SRL', status: 'draft' },
     { ...base, id: 'e4', slug: 'susp-co', title: 'Suspended SRL', status: 'suspended' },
     { businessLineId: 'B', collectionId: 'cB', id: 'e5', slug: 'beta', title: 'Beta (alta linie)', status: 'published' },
@@ -92,6 +92,17 @@ test('filters: county (case-insensitive), search, verified, filterable field; un
   assert.deepEqual(await slugs('f.tip=instalatii'), ['alfa'])
   assert.equal((await get(routes.entries!, '/e?collection=companii&f.intern=x', keyA)).status, 400)
   assert.equal((await get(routes.entries!, '/e?collection=companii&limit=999', keyA)).status, 400)
+})
+
+test('list fields filter by membership; facet=county counts ignore the county filter', { skip }, async () => {
+  const slugs = async (q: string) => (await (await get(routes.entries!, `/e?collection=companii&${q}`, keyA)).json()).items.map((e: any) => e.slug).sort()
+  assert.deepEqual(await slugs('f.servicii=sanitare'), ['delta'])
+  assert.deepEqual(await slugs('f.servicii=electrice'), ['alfa', 'delta'])
+  assert.deepEqual(await slugs('f.servicii=electrice&county=iasi'), ['alfa'])
+  assert.deepEqual(await slugs('f.servicii=nimic'), [])
+  const body = await (await get(routes.entries!, '/e?collection=companii&f.servicii=electrice&county=iasi&facet=county', keyA)).json()
+  assert.deepEqual(body.facets.county, [{ value: 'Cluj', count: 1 }, { value: 'Iasi', count: 1 }])
+  assert.equal((await (await get(routes.entries!, '/e?collection=companii', keyA)).json()).facets, undefined)
 })
 
 test('pagination reports totals', { skip }, async () => {
