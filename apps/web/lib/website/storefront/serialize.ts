@@ -7,7 +7,7 @@
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
   city: string | null; county: string | null; address: string | null; lat: number | null; lng: number | null
-  coverUrl: string | null; verified: boolean; featured: boolean
+  coverUrl: string | null; logoUrl: string | null; verified: boolean; featured: boolean
   ratingAvg: { toString(): string } | number | null; ratingCount: number
   data: unknown; seoTitle: string | null; seoDescription: string | null
   phone: string | null; websiteUrl: string | null
@@ -24,7 +24,7 @@ export function serializeListItem(e: EntryRow, collectionKey: string) {
   return {
     collection: collectionKey, slug: e.slug, title: e.title, summary: e.summary,
     city: e.city, county: e.county, address: e.address, lat: e.lat, lng: e.lng,
-    coverUrl: e.coverUrl, verified: e.verified, featured: e.featured,
+    coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured,
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
   }
