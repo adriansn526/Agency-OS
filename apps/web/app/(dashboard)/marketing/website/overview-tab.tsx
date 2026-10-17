@@ -11,6 +11,7 @@ import { api, ApiError, fmtDate, inputCls, labelCls } from "./shared"
 export function OverviewTab({ lineId, overview, reload }: { lineId: string; overview: any; reload: () => Promise<void> }) {
   const channel = overview?.channel
   const [siteUrl, setSiteUrl] = useState<string>(channel?.siteUrl ?? "")
+  const [validity, setValidity] = useState<number>(channel?.previewValidityDays ?? 14)
   const [label, setLabel] = useState("")
   const [newKey, setNewKey] = useState<{ key: string; label: string } | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
@@ -67,6 +68,14 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
             <input type="checkbox" className="mt-1" checked={channel.isEnabled} onChange={(e) => run("toggle", () => api(`/api/website/channel?${q}`, "PATCH", { isEnabled: e.target.checked }), e.target.checked ? "Publicare activă" : "Publicare oprită")} />
             <span>Publicare activă <span className="text-muted-foreground">(oprită = API-ul răspunde 401)</span></span>
           </label>
+          <div>
+            <label className={labelCls} htmlFor="pv-days">Valabilitatea linkului de previzualizare (zile de la trimitere)</label>
+            <div className="flex items-center gap-2">
+              <input id="pv-days" type="number" min={1} max={90} className={inputCls + " w-24"} value={validity} onChange={(e) => setValidity(Number(e.target.value))} />
+              <Button size="sm" variant="outline" disabled={busy === "validity" || !Number.isInteger(validity) || validity < 1 || validity > 90 || validity === (channel.previewValidityDays ?? 14)} onClick={() => run("validity", () => api(`/api/website/channel?${q}`, "PATCH", { previewValidityDays: validity }), "Valabilitate salvată")}>Salvează</Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Se aplică linkurilor generate de acum încolo; cele deja trimise își păstrează data.</p>
+          </div>
           <Button size="sm" variant="outline" disabled={busy === "save" || siteUrl === (channel.siteUrl ?? "")} onClick={() => run("save", () => api(`/api/website/channel?${q}`, "PATCH", { siteUrl }), "Salvat")}>Salvează adresa</Button>
         </CardContent>
       </Card>
