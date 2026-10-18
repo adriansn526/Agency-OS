@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { websiteHandler } from '@/lib/website/storefront/auth'
 import { lookupPreview, respondPreview, serializePreview } from '@/lib/website/preview/service'
 import { AdminError } from '@/lib/website/admin/errors'
+import { onPreviewViewed } from '@/lib/crm/pipeline-events'
 import { getTaxonomy } from '@/lib/website/glossary/live'
 
 export const runtime = 'nodejs'
@@ -13,6 +14,7 @@ const gone = (state: 'invalid' | 'expired') => NextResponse.json({ error: state 
 /** GET /api/storefront/website/preview/{token} → the private profile preview (404 unknown, 410 expired). Server-to-server only (ws_ key). */
 export const GET = websiteHandler<{ token: string }>(async (_req, ctx, { token }) => {
   const r = await lookupPreview(ctx.businessLineId, token)
+  if (r.state === 'ok') await onPreviewViewed(r.entry.leadId)
   return r.state === 'ok' ? serializePreview(r.entry, await getTaxonomy(ctx.businessLineId)) : gone(r.state)
 })
 

@@ -1,4 +1,5 @@
 /** Admin operations of the Website module. Every function is scoped to one business line; callers are admin-guarded. */
+import { onProfilePublished } from '@/lib/crm/pipeline-events'
 import { db, Prisma } from '@repo/db'
 import { z } from 'zod'
 import { AdminError } from './errors'
@@ -233,6 +234,7 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
       data: { ...rest, ...(data !== undefined ? { data } : {}), ...(status === 'published' && !existing.publishedAt ? { publishedAt: new Date() } : {}) },
     })
     if (isService) invalidateTaxonomy(lineId)
+    if (saved.status === 'published' && existing.status !== 'published') await onProfilePublished(saved.leadId)
     return saved
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new AdminError('Slug-ul este deja folosit în această colecție', 409)
