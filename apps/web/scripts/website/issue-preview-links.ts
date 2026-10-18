@@ -22,7 +22,7 @@ async function main() {
   if (!v.apply) { console.log('REGIM DE PROBĂ: nu s-a generat nimic. Adaugă --apply.'); return }
   for (const e of entries) {
     const r = await issuePreview(line.id, e.id)
-    console.log(`${e.title}\t${r.expiresAt.toISOString().slice(0, 10)}\t${v.site.replace(/\/$/, '')}/previzualizare/${r.token}`)
+    console.log(`${e.title}\t${r.expiresAt.toISOString().slice(0, 10)}\t${v.site.replace(/\/$/, '')}/p/${r.token}`)
   }
 }
 main().catch((e) => { console.error('EȘEC:', e.message); process.exitCode = 1 }).finally(() => db.$disconnect())

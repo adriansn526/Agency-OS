@@ -12,11 +12,18 @@ import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { categoryTitles } from '../glossary/seed'
 
-export const PREVIEW_TOKEN_RE = /^pv_[A-Za-z0-9_-]{40,60}$/
+/** Short code (10 chars of base58, ~58 bits, used in /p/<code> links) or the long legacy form pv_… (still valid for links already issued). */
+export const PREVIEW_TOKEN_RE = /^(?:[1-9A-HJ-NP-Za-km-z]{10}|pv_[A-Za-z0-9_-]{40,60})$/
+const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 export const DEFAULT_VALIDITY_DAYS = 14
 export const MAX_VALIDITY_DAYS = 90
 
-export const generatePreviewToken = () => `pv_${randomBytes(32).toString('base64url')}`
+/** 10 random base58 characters (rejection sampling keeps every character equally likely). */
+export function generatePreviewToken(): string {
+  let out = ''
+  while (out.length < 10) for (const b of randomBytes(16)) { if (b < 232 && out.length < 10) out += BASE58[b % 58] } // 232 = 4 × 58
+  return out
+}
 export const hashPreviewToken = (t: string) => createHash('sha256').update(t).digest('hex')
 
 export function validityDays(config: unknown): number {
@@ -33,10 +40,17 @@ export async function issuePreview(lineId: string, entryId: string, o: { days?: 
   const days = o.days ?? validityDays(channel?.config)
   if (!Number.isInteger(days) || days < 1 || days > MAX_VALIDITY_DAYS) throw new AdminError(`Valabilitatea trebuie să fie între 1 și ${MAX_VALIDITY_DAYS} zile`, 422)
   const now = o.now ?? new Date()
-  const token = generatePreviewToken()
   const expiresAt = new Date(now.getTime() + days * 86_400_000)
-  await db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: hashPreviewToken(token), previewSentAt: now, previewExpiresAt: expiresAt } })
-  return { token, expiresAt, days, entry }
+  for (let attempt = 0; ; attempt++) {
+    const token = generatePreviewToken()
+    try {
+      await db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: hashPreviewToken(token), previewSentAt: now, previewExpiresAt: expiresAt } })
+      return { token, expiresAt, days, entry }
+    } catch (e) {
+      if (attempt < 3 && e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') continue // hash collision with another preview: draw again
+      throw e
+    }
+  }
 }
 
 export type PreviewLookup = { state: 'invalid' } | { state: 'expired' } | { state: 'ok'; entry: Awaited<ReturnType<typeof findRow>> & object }

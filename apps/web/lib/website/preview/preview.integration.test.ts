@@ -21,6 +21,15 @@ before(async () => {
 })
 after(async () => { if (db) await db.$disconnect() })
 
+test('short tokens: 10 base58 characters, well spread, legacy long form still accepted', () => {
+  const seen = new Set<string>(); const counts = new Map<string, number>()
+  for (let i = 0; i < 5000; i++) { const t = S.generatePreviewToken(); assert.match(t, /^[1-9A-HJ-NP-Za-km-z]{10}$/); seen.add(t); for (const ch of t) counts.set(ch, (counts.get(ch) ?? 0) + 1) }
+  assert.equal(seen.size, 5000)                       // no repeats in 5000 draws
+  assert.equal(counts.size, 58)                        // every character of the alphabet shows up
+  const expected = 50000 / 58; for (const n of counts.values()) assert.ok(n > expected * 0.8 && n < expected * 1.2)  // roughly uniform
+  assert.match('pv_' + 'a'.repeat(43), S.PREVIEW_TOKEN_RE)
+})
+
 test('validity: default 14 days, channel setting, bounds', () => {
   assert.equal(S.validityDays(null), 14); assert.equal(S.validityDays({ previewValidityDays: 30 }), 30)
   assert.equal(S.validityDays({ previewValidityDays: 0 }), 14); assert.equal(S.validityDays({ previewValidityDays: 400 }), 14)
@@ -29,7 +38,7 @@ test('validity: default 14 days, channel setting, bounds', () => {
 test('issue: clock starts at sending, only the hash is stored, re-issue invalidates the old link', { skip }, async () => {
   const now = new Date('2026-11-01T10:00:00Z')
   const a = await S.issuePreview('bl', entryId, { now })
-  assert.match(a.token, S.PREVIEW_TOKEN_RE); assert.equal(a.expiresAt.getTime(), now.getTime() + 14 * DAY)
+  assert.match(a.token, S.PREVIEW_TOKEN_RE); assert.match(a.token, /^[1-9A-HJ-NP-Za-km-z]{10}$/); assert.equal(a.expiresAt.getTime(), now.getTime() + 14 * DAY)
   const row = await db.websiteEntry.findUnique({ where: { id: entryId } })
   assert.equal(row.previewTokenHash, S.hashPreviewToken(a.token)); assert.notEqual(row.previewTokenHash, a.token)
   const b = await S.issuePreview('bl', entryId, { now, days: 3 })
@@ -43,6 +52,8 @@ test('lookup: expired, malformed, other line, and non-preview entries', { skip }
   const t = (await S.issuePreview('bl', entryId, { now: new Date('2026-11-01T10:00:00Z') })).token
   assert.equal((await S.lookupPreview('bl', t, new Date('2026-11-15T10:00:01Z'))).state, 'expired')
   assert.equal((await S.lookupPreview('bl', 'pv_short')).state, 'invalid')
+  assert.equal((await S.lookupPreview('bl', '0OIl000000')).state, 'invalid') // characters outside base58
+  assert.equal((await S.lookupPreview('bl', 'abc')).state, 'invalid')
   assert.equal((await S.lookupPreview('other', t, new Date('2026-11-02T00:00:00Z'))).state, 'invalid')
   await db.websiteEntry.update({ where: { id: entryId }, data: { status: 'draft' } })
   assert.equal((await S.lookupPreview('bl', t, new Date('2026-11-02T00:00:00Z'))).state, 'invalid')
