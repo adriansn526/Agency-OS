@@ -5,7 +5,7 @@
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { assertLine } from '../admin/service'
-import { fetchOperator, registerName, searchOperators, ANRE_PUBLIC_LIST, type AnreOperator } from './anre'
+import { registerName, resolveOperator, searchOperators, ANRE_PUBLIC_LIST, type AnreOperator } from './anre'
 
 export const VERIFIED_KEY = 'autorizatii_verificate'
 
@@ -26,8 +26,8 @@ export function decodeVerified(list: unknown): VerifiedAuth[] {
 /** Authorizations that are still valid on `now` (a verification does not outlive the expiry date printed on it). */
 export const activeVerified = (list: VerifiedAuth[], now = new Date()) => list.filter((a) => a.expires >= now.toISOString().slice(0, 10))
 
-type Deps = { search: typeof searchOperators; fetchOp: typeof fetchOperator }
-const live: Deps = { search: searchOperators, fetchOp: fetchOperator }
+type Deps = { search: (q: string, county?: string) => Promise<AnreOperator[]>; resolve: (ref: string) => Promise<AnreOperator | null> }
+const live: Deps = { search: (q, county) => searchOperators(q, county), resolve: (ref) => resolveOperator(ref) }
 
 async function entryOf(lineId: string, id: string) {
   await assertLine(lineId)
@@ -37,18 +37,17 @@ async function entryOf(lineId: string, id: string) {
 }
 
 /** Candidates from the register for the team to compare (name, address, representative, authorizations). Nothing is saved. */
-export async function searchAnre(lineId: string, entryId: string, query: string | undefined, deps: Deps = live): Promise<{ query: string; operators: AnreOperator[]; current: VerifiedAuth[] }> {
+export async function searchAnre(lineId: string, entryId: string, query: string | undefined, county: string | undefined, deps: Deps = live): Promise<{ query: string; operators: AnreOperator[]; current: VerifiedAuth[] }> {
   const e = await entryOf(lineId, entryId)
   const q = (query ?? '').trim() || registerName(e.title)
-  const found = await deps.search(q)
-  const operators = (await Promise.all(found.slice(0, 5).map((o) => deps.fetchOp(o.id)))).filter((o): o is AnreOperator => !!o)
+  const operators = await deps.search(q, county)
   return { query: q, operators, current: decodeVerified((e.data as Record<string, unknown> | null)?.[VERIFIED_KEY]) }
 }
 
 /** The team confirmed that this register operator is the firm: its currently valid, granted authorizations are re-read from the register and stored. */
-export async function confirmAnre(lineId: string, entryId: string, operatorId: number, user: { id?: string | null; name?: string | null }, deps: Deps = live, now = new Date()) {
+export async function confirmAnre(lineId: string, entryId: string, ref: string, user: { id?: string | null; name?: string | null }, deps: Deps = live, now = new Date()) {
   const e = await entryOf(lineId, entryId)
-  const op = await deps.fetchOp(operatorId)
+  const op = await deps.resolve(ref)
   if (!op) throw new AdminError('Operatorul nu există în registrul ANRE', 404)
   const today = now.toISOString().slice(0, 10)
   const valid = op.authorizations.filter((a) => /acordat/i.test(a.state) && a.expires >= today)
@@ -57,7 +56,7 @@ export async function confirmAnre(lineId: string, entryId: string, operatorId: n
   const prev = decodeVerified((e.data as Record<string, unknown> | null)?.[VERIFIED_KEY]).filter((a) => a.issuer !== 'ANRE')
   await ensureField(e.collectionId)
   await db.websiteEntry.update({ where: { id: e.id }, data: { data: { ...((e.data ?? {}) as Record<string, unknown>), [VERIFIED_KEY]: [...prev, ...items].map(encodeVerified) } as Prisma.InputJsonValue } })
-  await db.activity.create({ data: { businessLineId: lineId, userId: user.id ?? 'system', userName: user.name ?? 'System', action: 'authorizations_verified', entityType: 'website_entry', entityId: e.id, entityName: e.title, leadId: e.leadId ?? undefined, details: { issuer: 'ANRE', operatorId, operator: op.name, representative: op.representative, address: op.address, authorizations: valid.map((a) => ({ type: a.type, number: a.number, expires: a.expires })) } as Prisma.InputJsonValue } })
+  await db.activity.create({ data: { businessLineId: lineId, userId: user.id ?? 'system', userName: user.name ?? 'System', action: 'authorizations_verified', entityType: 'website_entry', entityId: e.id, entityName: e.title, leadId: e.leadId ?? undefined, details: { issuer: 'ANRE', operator: op.name, representative: op.representative, address: op.address, authorizations: valid.map((a) => ({ type: a.type, number: a.number, expires: a.expires })) } as Prisma.InputJsonValue } })
   return { verified: items }
 }
 

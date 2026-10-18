@@ -32,8 +32,8 @@ export function AuthorizationsPanel({ lineId, entryId, value, onChanged }: { lin
   }
   async function confirm(op: any) {
     if (!window.confirm(`Confirmi că „${op.name}” (${op.address}, reprezentant ${op.representative}) este aceeași firmă? Autorizațiile valide vor apărea pe profil ca „verificat de IntraConstruct”.`)) return
-    setBusy(`c${op.id}`)
-    try { await api(`/api/website/entries/${entryId}/authorizations?${q0}`, "POST", { operatorId: op.id }); toast.success("Autorizații verificate salvate"); setOps(null); await refresh() }
+    setBusy(`c${op.ref}`)
+    try { await api(`/api/website/entries/${entryId}/authorizations?${q0}`, "POST", { ref: op.ref }); toast.success("Autorizații verificate salvate"); setOps(null); await refresh() }
     catch (e) { toast.error(e instanceof ApiError ? e.message : "Eroare") } finally { setBusy(null) }
   }
   async function remove(number: string) {
@@ -61,16 +61,16 @@ export function AuthorizationsPanel({ lineId, entryId, value, onChanged }: { lin
         </ul>
       ) : <p className="text-sm text-muted-foreground">Nicio autorizație verificată.</p>}
       <div className="flex gap-2">
-        <input aria-label="Nume în registrul ANRE" className={inputCls} placeholder="Nume firmă în registrul ANRE (implicit: denumirea fără SRL)" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input aria-label="Nume în registrul ANRE" className={inputCls} placeholder="Nume firmă în registrul ANRE (implicit: denumirea fără SRL); se caută în toate județele" value={query} onChange={(e) => setQuery(e.target.value)} />
         <Button size="sm" variant="outline" disabled={busy === "search"} onClick={search}>{busy === "search" ? "Se caută…" : "Caută în ANRE"}</Button>
       </div>
       {ops && ops.length > 0 && (
         <ul className="space-y-2">
           {ops.map((o) => (
-            <li key={o.id} className="rounded-md border border-border p-2 text-sm">
+            <li key={o.ref} className="rounded-md border border-border p-2 text-sm">
               <b>{o.name}</b> · {o.address}<br /><span className="text-muted-foreground">Reprezentant: {o.representative}</span>
               <ul className="mt-1 text-xs">{o.authorizations.map((a: any) => <li key={a.number}>{a.type} nr. {a.number} · {fmtDate(a.issued)} – {fmtDate(a.expires)} · {a.state}</li>)}</ul>
-              <Button size="sm" className="mt-2" disabled={busy === `c${o.id}`} onClick={() => confirm(o)}>Este aceeași firmă — verifică</Button>
+              <Button size="sm" className="mt-2" disabled={busy === `c${o.ref}`} onClick={() => confirm(o)}>Este aceeași firmă — verifică</Button>
             </li>
           ))}
         </ul>

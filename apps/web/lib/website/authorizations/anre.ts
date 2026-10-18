@@ -6,7 +6,8 @@ export const ANRE_BASE = 'https://portal.anre.ro'
 export const ANRE_PUBLIC_LIST = `${ANRE_BASE}/PublicLists/AtestatGN`
 
 export interface AnreAuth { number: string; type: string; issued: string; expires: string; state: string }
-export interface AnreOperator { id: number; name: string; address: string; locality: string; county: string; phone: string; representative: string; authorizations: AnreAuth[] }
+/** `ref` identifies a register row (county + exact name and address); the register offers no public id on its list rows. */
+export interface AnreOperator { ref: string; name: string; address: string; locality: string; county: string; phone: string; representative: string; authorizations: AnreAuth[] }
 type Fetch = typeof fetch
 
 /** What each authorization type allows (the portal's own descriptions are long; these are the common ones). */
@@ -33,24 +34,50 @@ export function parseAuthorizations(detaliu: string): AnreAuth[] {
   return out
 }
 
-/** Candidate operators by (part of) the name, e.g. "MELIORSTAL" → [{ id: 4747, name: "MELIORSTAL" }]. */
-export async function searchOperators(name: string, f: Fetch = fetch): Promise<{ id: number; name: string }[]> {
-  const q = name.trim()
-  if (q.length < 3) return []
-  const res = await f(`${ANRE_BASE}/PublicLists/LicenteAutorizatii/GetAgenti`, { method: 'POST', headers: { ...UA, 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ 'filter[filters][0][value]': q, 'filter[filters][0][field]': 'Nume', 'filter[filters][0][operator]': 'contains', 'filter[logic]': 'and', text: q }), signal: AbortSignal.timeout(15_000) })
+const post = async (path: string, body: URLSearchParams, f: Fetch, timeoutMs = 25_000) => {
+  const res = await f(`${ANRE_BASE}${path}`, { method: 'POST', headers: { ...UA, 'Content-Type': 'application/x-www-form-urlencoded' }, body, signal: AbortSignal.timeout(timeoutMs) })
   if (!res.ok) throw new Error(`ANRE ${res.status}`)
-  const j = (await res.json()) as { IdAgentEconomic: number; Nume: string }[]
-  return (Array.isArray(j) ? j : []).slice(0, 10).map((x) => ({ id: x.IdAgentEconomic, name: x.Nume }))
+  return res.json()
 }
 
-/** One operator with all its authorizations. null when the id is unknown to the register. */
-export async function fetchOperator(id: number, f: Fetch = fetch): Promise<AnreOperator | null> {
-  if (!Number.isInteger(id) || id <= 0) return null
-  const res = await f(`${ANRE_BASE}/PublicLists/AtestatGN/GetAtestatGN`, { method: 'POST', headers: { ...UA, 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ 'Agents[0].IdAgentEconomic': String(id), page: '1', pageSize: '10', skip: '0', take: '10' }), signal: AbortSignal.timeout(20_000) })
+export const norm = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9& ]+/g, ' ').replace(/\s+/g, ' ').trim()
+export const encodeRef = (countyId: number, name: string, address: string) => Buffer.from(JSON.stringify([countyId, name, address])).toString('base64url')
+export function decodeRef(ref: string): { countyId: number; name: string; address: string } | null {
+  try { const [c, n, a] = JSON.parse(Buffer.from(ref, 'base64url').toString()); return Number.isInteger(c) && typeof n === 'string' && typeof a === 'string' ? { countyId: c, name: n, address: a } : null } catch { return null }
+}
+
+export async function listCounties(f: Fetch = fetch): Promise<{ id: number; name: string }[]> {
+  const res = await f(`${ANRE_BASE}/Dictionary/GetJudete`, { headers: UA, signal: AbortSignal.timeout(15_000) })
   if (!res.ok) throw new Error(`ANRE ${res.status}`)
-  const j = (await res.json()) as { Data?: { Societate: string; Sediu: string; Localitate: string; Judet: string; TelefonFax: string; ReprezentantLegal: string; Detaliu: string }[] }
-  const r = j.Data?.[0]
-  return r ? { id, name: r.Societate, address: r.Sediu.replace(/;\s*$/, ''), locality: r.Localitate, county: r.Judet, phone: r.TelefonFax, representative: r.ReprezentantLegal.replace(/^Administrator:\s*:?\s*/i, '').trim(), authorizations: parseAuthorizations(r.Detaliu) } : null
+  return ((await res.json()) as { IdJudet: number; Nume: string }[]).map((x) => ({ id: x.IdJudet, name: x.Nume }))
+}
+
+/** Every authorized operator of one county, with its authorizations (the register's own list, same query as the public page). */
+export async function listOperators(countyId: number, f: Fetch = fetch): Promise<AnreOperator[]> {
+  const j = (await post('/PublicLists/AtestatGN/GetAtestatGN', new URLSearchParams({ 'Judet[0].IdJudet': String(countyId), page: '1', pageSize: '2000', skip: '0', take: '2000' }), f, 30_000)) as { Data?: { Societate: string; Sediu: string; Localitate: string; Judet: string; TelefonFax: string; ReprezentantLegal: string; Detaliu: string }[] }
+  // the register leaves some fields empty (null) on some rows
+  return (j.Data ?? []).map((r) => { const name = r.Societate ?? '', address = (r.Sediu ?? '').replace(/;\s*$/, ''); return { ref: encodeRef(countyId, name, address), name, address, locality: r.Localitate ?? '', county: r.Judet ?? '', phone: r.TelefonFax ?? '', representative: (r.ReprezentantLegal ?? '').replace(/^Administrator:\s*:?\s*/i, '').trim(), authorizations: parseAuthorizations(r.Detaliu ?? '') } })
+}
+
+/** Operators whose name contains the query, in one county (by name) or in all of them. At most 10, for the team to compare. */
+export async function searchOperators(name: string, county?: string, f: Fetch = fetch): Promise<AnreOperator[]> {
+  const q = norm(name)
+  if (q.length < 3) return []
+  const all = await listCounties(f)
+  const wanted = county?.trim() ? all.filter((c) => norm(c.name) === norm(county)) : all
+  const found: AnreOperator[] = []
+  for (let i = 0; i < wanted.length; i += 6) {
+    const parts = await Promise.all(wanted.slice(i, i + 6).map((c) => listOperators(c.id, f)))
+    for (const ops of parts) found.push(...ops.filter((o) => norm(o.name).includes(q)))
+  }
+  return found.slice(0, 10)
+}
+
+/** The register row a ref points to (re-read from the register; nothing the client sent is trusted). */
+export async function resolveOperator(ref: string, f: Fetch = fetch): Promise<AnreOperator | null> {
+  const r = decodeRef(ref)
+  if (!r) return null
+  return (await listOperators(r.countyId, f)).find((o) => o.name === r.name && o.address === r.address) ?? null
 }
 
 /** "MELIORSTAL SRL" → "MELIORSTAL" (the register lists names without the legal form). */
