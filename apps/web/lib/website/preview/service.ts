@@ -13,6 +13,7 @@ import { AdminError } from '../admin/errors'
 import { categoryTitles } from '../glossary/taxonomy'
 import type { LiveTaxonomy } from '../glossary/live'
 import { effectiveLayout } from '../layout/blocks'
+import { buildOffer, type Offer } from './offer'
 import { claimSlots, type ClaimResult } from '../founding/service'
 
 /** Short code (10 chars of base58, ~58 bits, used in /p/<code> links) or the long legacy form pv_… (still valid for links already issued). */
@@ -74,8 +75,9 @@ export async function lookupPreview(lineId: string, token: string, now = new Dat
 }
 
 /** What the firm sees: its own profile data, never CRM / ERP ids. */
-export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRow>>>, tax?: LiveTaxonomy) {
+export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRow>>>, tax?: LiveTaxonomy, offer?: Offer) {
   return {
+    ...(offer ? { offer: offer.lines } : {}),
     title: e.title, summary: e.summary, city: e.city, county: e.county, address: e.address, email: e.email, phone: e.phone, websiteUrl: e.websiteUrl,
     body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind })),
     layout: effectiveLayout(e.layout),
@@ -125,11 +127,12 @@ export async function respondPreview(lineId: string, token: string, raw: unknown
     Object.assign(cf, { preview_raspuns: 'refuzat', preview_raspuns_la: now.toISOString() })
     leadData = { status: 'refuzat', optOut: true, customFields: cf as Prisma.InputJsonValue }
   }
+  const offer = input.action === 'accept' ? await buildOffer(lineId, entry).catch(() => null) : null
   await db.$transaction([
     db.lead.update({ where: { id: lead.id }, data: leadData }),
     db.activity.create({ data: {
       businessLineId: lineId, userName: 'Partener (previzualizare)', action: ACTIONS[input.action], entityType: 'lead', entityId: lead.id, entityName: lead.companyName, leadId: lead.id,
-      details: { ...details, entryId: entry.id, at: now.toISOString(), ip: meta?.ip, userAgent: meta?.userAgent } as Prisma.InputJsonValue,
+      details: { ...details, ...(offer ? { offerShown: offer.lines, offerTerms: offer.terms } : {}), entryId: entry.id, at: now.toISOString(), ip: meta?.ip, userAgent: meta?.userAgent } as Prisma.InputJsonValue,
     } }),
     ...(input.action === 'decline' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: null, previewExpiresAt: now } })] : []),
     ...(input.action === 'accept' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { partnerAccess: true } })] : []),

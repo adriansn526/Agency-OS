@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { websiteHandler } from '@/lib/website/storefront/auth'
 import { lookupPreview, respondPreview, serializePreview } from '@/lib/website/preview/service'
 import { AdminError } from '@/lib/website/admin/errors'
+import { buildOffer } from '@/lib/website/preview/offer'
 import { onPreviewViewed } from '@/lib/crm/pipeline-events'
 import { getTaxonomy } from '@/lib/website/glossary/live'
 
@@ -15,7 +16,7 @@ const gone = (state: 'invalid' | 'expired') => NextResponse.json({ error: state 
 export const GET = websiteHandler<{ token: string }>(async (_req, ctx, { token }) => {
   const r = await lookupPreview(ctx.businessLineId, token)
   if (r.state === 'ok') await onPreviewViewed(r.entry.leadId)
-  return r.state === 'ok' ? serializePreview(r.entry, await getTaxonomy(ctx.businessLineId)) : gone(r.state)
+  return r.state === 'ok' ? serializePreview(r.entry, await getTaxonomy(ctx.businessLineId), await buildOffer(ctx.businessLineId, r.entry).catch(() => undefined)) : gone(r.state)
 })
 
 /** POST { action: 'accept' | 'changes' | 'decline', … } */
