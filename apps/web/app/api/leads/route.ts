@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
+import { customFieldCondition } from '@/lib/crm/custom-field-filter'
 
 /* ── Direct model fields that can be filtered ── */
 const DIRECT_FIELDS = new Set([
@@ -20,22 +21,11 @@ const NUMBER_FIELDS = new Set([
 ])
 
 /* ── Build a Prisma "where" clause from a single filter condition ── */
-function buildFilterCondition(filter: { field: string; operator: string; value: any }): Record<string, any> | null {
+async function buildFilterCondition(filter: { field: string; operator: string; value: any }, businessLine?: string | null): Promise<Record<string, any> | null> {
   const { field, operator, value } = filter
 
-  // Custom fields (stored in JSON)
-  if (field.startsWith('cf.')) {
-    const jsonKey = field.replace('cf.', '')
-    // Prisma JSON filtering with path
-    switch (operator) {
-      case 'exists':
-        return { customFields: { path: [jsonKey], not: null as any } } // Prisma doesn't support this well, skip
-      case 'not_exists':
-        return null // Can't easily query JSON null in Prisma
-      default:
-        return null // JSON filtering is limited — handled client-side
-    }
-  }
+  // Custom fields (stored in JSON): matched in SQL
+  if (field.startsWith('cf.')) return customFieldCondition(field, operator, value, businessLine)
 
   // Direct field filtering
   if (!DIRECT_FIELDS.has(field)) return null
@@ -120,7 +110,7 @@ export async function GET(request: NextRequest) {
         if (Array.isArray(filters)) {
           for (const f of filters) {
             if (f.field && f.operator) {
-              const condition = buildFilterCondition(f)
+              const condition = await buildFilterCondition(f, businessLine)
               if (condition) andConditions.push(condition)
             }
           }

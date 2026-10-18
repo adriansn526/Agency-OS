@@ -1,12 +1,12 @@
 "use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import { MessageSquare, Phone } from "lucide-react"
+import { ChevronDown, MessageSquare, Phone } from "lucide-react"
 import { Modal } from "@/components/modal"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { fmtTimer, OUTCOMES, quickCallbacks, telHref, toLocalInput, type OutcomeValue } from "./call-utils"
+import { fmtTimer, OUTCOMES, quickCallbacks, telHref, companyProfile, phoneTag, toLocalInput, type OutcomeValue } from "./call-utils"
 
 const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
 const labelCls = "block text-xs font-semibold text-foreground mb-1.5"
@@ -58,6 +58,8 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
   }, [leadId])
   // the consent may have just changed in this form: the server decides, so refresh the preview after saving the call (see save) and on template change
   useEffect(() => { if (templateId) void loadSms(templateId) }, [templateId, loadSms])
+  const profile = useMemo(() => companyProfile(lead), [lead])
+  const [aboutOpen, setAboutOpen] = useState(true)
 
   if (!open || !leadId) return null
   const phones = [lead?.phone, lead?.phone2, lead?.phone3].filter((p: string | null) => p && p.toUpperCase() !== "N/A")
@@ -99,13 +101,36 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
             {phones.length === 0 && <span className="text-sm text-destructive">Firma nu are număr de telefon.</span>}
             {phones.map((p: string) => (
               <a key={p} href={telHref(p) ?? undefined} onClick={() => setRunning(true)} className={cn("inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold bg-primary text-primary-foreground hover:opacity-90", !telHref(p) && "opacity-50 pointer-events-none")}>
-                <Phone size={14} /> Sună {p}
+                <Phone size={14} /> Sună {p}{phoneTag(profile.phoneTags, p) && <span className="text-[10px] font-normal opacity-80">· {phoneTag(profile.phoneTags, p)}</span>}
               </a>
             ))}
             <span className="ml-auto text-xs text-muted-foreground" aria-live="polite">Etapă: <b>{lead.status}</b>{lead.customFields?.rezultat_apel ? ` · ultimul rezultat: ${lead.customFields.rezultat_apel}` : ""}</span>
             {(running || elapsed > 0) && <span className="inline-flex items-center gap-1 text-sm font-mono" aria-label="Durata apelului"><span className={cn("h-2 w-2 rounded-full", running ? "bg-red-500 animate-pulse" : "bg-muted-foreground")} />{fmtTimer(elapsed)}
               <button type="button" className="ml-1 text-xs underline text-muted-foreground" onClick={() => setRunning((r) => !r)}>{running ? "Oprește" : "Reia"}</button></span>}
           </div>
+
+          <section aria-label="Despre firmă" className="rounded-lg border border-border bg-muted/30">
+            <button type="button" aria-expanded={aboutOpen} onClick={() => setAboutOpen((o) => !o)} className="flex w-full items-center justify-between px-3 py-2 text-sm font-semibold">
+              Despre firmă <ChevronDown size={14} className={cn("transition-transform", aboutOpen && "rotate-180")} />
+            </button>
+            {aboutOpen && (
+              <div className="flex flex-col gap-3 border-t border-border px-3 py-3 text-sm">
+                {profile.people.length > 0 && <p><span className="text-muted-foreground">Persoane de contact: </span>{profile.people.map((x) => `${x.name}${x.role ? ` (${x.role})` : ""}`).join(" · ")}</p>}
+                {profile.facts.length > 0 && <dl className="grid gap-x-6 gap-y-1.5 sm:grid-cols-2">
+                  {profile.facts.map((f) => (
+                    <div key={f.label} className="flex gap-2"><dt className="shrink-0 text-muted-foreground">{f.label}:</dt>
+                      <dd className={cn("min-w-0 break-words", f.warn && "font-semibold text-destructive")}>{f.href ? <a href={f.href} target="_blank" rel="noopener noreferrer" className="underline">{f.value}</a> : f.value}</dd></div>
+                  ))}
+                </dl>}
+                {profile.signals.length > 0 && <ul className="flex flex-col gap-1 border-t border-border pt-2">
+                  {profile.signals.map((f) => (
+                    <li key={f.label} className={cn(f.warn && "text-destructive")}><span className="text-muted-foreground">{f.label}: </span>{f.href ? <a href={f.href} target="_blank" rel="noopener noreferrer" className="underline">{f.value}</a> : f.value}</li>
+                  ))}
+                </ul>}
+                {profile.people.length + profile.facts.length + profile.signals.length === 0 && <p className="text-muted-foreground">Nu avem alte date despre această firmă.</p>}
+              </div>
+            )}
+          </section>
 
           <fieldset>
             <legend className={labelCls}>Rezultatul apelului</legend>

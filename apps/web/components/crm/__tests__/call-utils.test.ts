@@ -23,3 +23,24 @@ test('month grid: Monday-first weeks covering the whole month, no empty trailing
   assert.equal(monthGrid(2026, 1).length, 5)   // February 2026 fits in 5 weeks
 })
 test('the outcomes offered match the ones the server accepts', () => { assert.deepEqual(OUTCOMES.map((o) => o.value), ['nu_raspunde', 'interesat', 'revin', 'refuza', 'numar_gresit']) })
+
+import { companyProfile, phoneTag } from '../call-utils'
+test('companyProfile: builds facts, people, signals and phone tags from lead + details; skips what is missing', () => {
+  const lead = {
+    companyName: 'X', caenDescription: 'Lucrări de instalații', caenCode: '4322', cui: '123', employees: 12, revenue: 2500000, foundedYear: 2004, website: 'https://www.x.ro/', email: 'N/A', contactPerson: 'N/A', companyStatus: 'Funcțiune',
+    customFields: { pilot: 'da', suprapunere_crm: 'da', suprapunere_crm_linii: 'agency', detalii: {
+      forma_juridica: 'SRL', benzi: { vechime: '20+ ani', angajati: '10-49 (mică)' }, an_financiar: 2023, profit_net: 14233, inactiv_fiscal: true,
+      persoane: [{ nume: 'Voinea Victoria', roluri: ['Administrator', 'Director General'] }],
+      emailuri: [{ email: 'office@x.ro' }], telefoane: [{ numar: '0722752842', tip: 'mobil', partajat_cu: 1 }, { numar: '0245620750', tip: 'fix', partajat_cu: 0 }],
+      etichete: { pagini_aurii: [{ url: 'https://paginiaurii.ro/x' }], fonduri_digitalizare: [{ program: 'Digitalizare IMM', ajutor_ron: 203581 }] } } },
+  }
+  const p = companyProfile(lead)
+  const f = (l: string) => p.facts.find((x) => x.label === l)
+  assert.equal(f('Angajați')?.value, '12 · 10-49 (mică)'); assert.match(f('Cifra de afaceri')!.value, /2\.?500\.?000 lei \(2023\)/); assert.equal(f('Website')?.value, 'x.ro'); assert.equal(f('Website')?.href, 'https://www.x.ro/')
+  assert.equal(f('Email')?.value, 'office@x.ro'); assert.equal(f('Atenție')?.warn, true)
+  assert.deepEqual(p.people, [{ name: 'Voinea Victoria', role: 'Administrator, Director General' }])
+  assert.deepEqual(p.signals.map((x) => x.label), ['Pagini Aurii', 'Fonduri digitalizare', 'Există și în CRM'])
+  assert.equal(phoneTag(p.phoneTags, '0722 752 842'), 'mobil · partajat cu 1 firmă'); assert.equal(phoneTag(p.phoneTags, '+40245620750'), 'fix'); assert.equal(phoneTag(p.phoneTags, '0700000000'), '')
+  const bare = companyProfile({ companyName: 'Y', contactPerson: 'Ion Pop', contactRole: 'Director', customFields: null })
+  assert.deepEqual([bare.facts.length, bare.people, bare.signals.length], [0, [{ name: 'Ion Pop', role: 'Director' }], 0])
+})
