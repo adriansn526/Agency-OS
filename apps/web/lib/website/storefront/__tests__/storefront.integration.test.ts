@@ -41,6 +41,7 @@ before(async () => {
     { id: 'cA', businessLineId: 'A', key: 'companii', name: 'Companie', namePlural: 'Companii', fields },
     { id: 'cA2', businessLineId: 'A', key: 'ascunsa', name: 'x', namePlural: 'x', isActive: false },
     { id: 'cB', businessLineId: 'B', key: 'companii', name: 'Companie', namePlural: 'Companii' },
+    { id: 'cP', businessLineId: 'A', key: 'proiecte', name: 'Proiect', namePlural: 'Proiecte', kind: 'project', fields: [{ key: 'categorie', label: 'Categorie', type: 'text', filterable: true }] },
   ] })
   const base = { businessLineId: 'A', collectionId: 'cA' }
   await db.websiteEntry.createMany({ data: [
@@ -49,6 +50,8 @@ before(async () => {
     { ...base, id: 'e3', slug: 'draft-co', title: 'Draft SRL', status: 'draft' },
     { ...base, id: 'e4', slug: 'susp-co', title: 'Suspended SRL', status: 'suspended' },
     { businessLineId: 'B', collectionId: 'cB', id: 'e5', slug: 'beta', title: 'Beta (alta linie)', status: 'published' },
+    { businessLineId: 'A', collectionId: 'cP', id: 'p1', slug: 'baie-1', title: 'Renovare baie', status: 'published', parentId: 'e1', city: 'Cluj-Napoca', data: { categorie: 'instalatii-sanitare' }, publishedAt: new Date() },
+    { businessLineId: 'A', collectionId: 'cP', id: 'p2', slug: 'baie-2', title: 'Proiect firmă nepublicată', status: 'published', parentId: 'e3', publishedAt: new Date() },
     { businessLineId: 'A', collectionId: 'cA2', id: 'e6', slug: 'in-ascunsa', title: 'In colectie inactiva', status: 'published' },
   ] })
   await db.websiteReview.createMany({ data: [
@@ -70,7 +73,7 @@ test('missing, malformed, unknown and disabled-channel keys get 401', { skip }, 
 
 test('collections: only the key line, only active ones, with published counts', { skip }, async () => {
   const body = await (await get(routes.collections!, '/c', keyA)).json()
-  assert.deepEqual(body.items.map((c: any) => [c.key, c.total]), [['companii', 2]])
+  assert.deepEqual(body.items.map((c: any) => [c.key, c.total]).sort(), [['companii', 2], ['proiecte', 1]]) // the project of an unpublished firm is not counted
 })
 
 test('list: published entries of the line only (no drafts, no other lines, no inactive collections)', { skip }, async () => {
@@ -105,6 +108,20 @@ test('list fields filter by membership; facet=county counts ignore the county fi
   assert.equal((await (await get(routes.entries!, '/e?collection=companii', keyA)).json()).facets, undefined)
 })
 
+test('projects: filtered by parent slug, parent summary in list and detail, hidden while the firm is not published', { skip }, async () => {
+  const list = await (await get(routes.entries!, '/e?collection=proiecte&parent=delta', keyA)).json()
+  assert.deepEqual(list.items.map((e: any) => e.slug), ['baie-1'])
+  assert.deepEqual(list.items[0].parent, { slug: 'delta', title: 'Delta Construct', city: 'Cluj-Napoca', county: 'Cluj', logoUrl: null, verified: true })
+  assert.deepEqual((await (await get(routes.entries!, '/e?collection=proiecte&parent=draft-co', keyA)).json()).items, []) // parent is a draft
+  assert.deepEqual((await (await get(routes.entries!, '/e?collection=proiecte', keyA)).json()).items.map((e: any) => e.slug), ['baie-1'])
+  assert.equal((await get(routes.entries!, '/e?collection=proiecte&parent=BAD%20SLUG', keyA)).status, 400)
+  const d = await (await get(routes.detail!, '/d', keyA, { collection: 'proiecte', slug: 'baie-1' })).json()
+  assert.equal(d.parent.slug, 'delta'); assert.equal(d.title, 'Renovare baie')
+  assert.equal((await get(routes.detail!, '/d', keyA, { collection: 'proiecte', slug: 'baie-2' })).status, 404)
+  const firm = await (await get(routes.detail!, '/d', keyA, { collection: 'companii', slug: 'delta' })).json()
+  assert.equal(firm.parent, null); assert.deepEqual(firm.services.map((x: any) => x.slug), [])
+})
+
 test('pagination reports totals', { skip }, async () => {
   const body = await (await get(routes.entries!, '/e?collection=companii&limit=1&page=2', keyA)).json()
   assert.deepEqual([body.total, body.pages, body.items.length, body.items[0].slug], [2, 2, 1, 'alfa'])
@@ -130,5 +147,5 @@ test('detail: drafts, suspended, other lines and bad slugs are not reachable', {
 
 test('sitemap lists published entries of active collections for the line', { skip }, async () => {
   const body = await (await get(routes.sitemap!, '/s', keyA)).json()
-  assert.deepEqual(body.items.map((i: any) => i.slug).sort(), ['alfa', 'delta'])
+  assert.deepEqual(body.items.map((i: any) => i.slug).sort(), ['alfa', 'baie-1', 'delta'])
 })

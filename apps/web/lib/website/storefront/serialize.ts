@@ -4,6 +4,8 @@
  * moderation data never leave the ERP. New columns stay private until added here.
  */
 
+import { categoryTitles } from '../glossary/taxonomy'
+
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
   city: string | null; county: string | null; address: string | null; lat: number | null; lng: number | null
@@ -11,6 +13,7 @@ interface EntryRow {
   ratingAvg: { toString(): string } | number | null; ratingCount: number
   data: unknown; seoTitle: string | null; seoDescription: string | null
   phone: string | null; websiteUrl: string | null
+  parent?: { slug: string; title: string; city: string | null; county: string | null; logoUrl: string | null; verified: boolean } | null
   publishedAt: Date | null; updatedAt: Date
 }
 interface MediaRow { url: string; alt: string | null; kind: string; width: number | null; height: number | null }
@@ -27,6 +30,9 @@ export function serializeListItem(e: EntryRow, collectionKey: string) {
     coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured,
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
+    // a firm's own page for its projects; the service categories chosen by a firm come with their titles
+    parent: e.parent ? { slug: e.parent.slug, title: e.parent.title, city: e.parent.city, county: e.parent.county, logoUrl: e.parent.logoUrl, verified: e.parent.verified } : null,
+    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii),
   }
 }
 

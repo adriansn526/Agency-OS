@@ -8,6 +8,8 @@ import { serializeCollection, serializeDetail, serializeListItem } from './seria
 /** Children (a firm's projects) are public only while their parent entry is published. */
 const PARENT_PUBLISHED: Prisma.WebsiteEntryWhereInput = { OR: [{ parentId: null }, { parent: { status: 'published' } }] }
 
+const PARENT_SELECT = { slug: true, title: true, city: true, county: true, logoUrl: true, verified: true } satisfies Prisma.WebsiteEntrySelect
+
 const activeCollection = (ctx: WebsiteContext, key: string) =>
   db.websiteCollection.findFirst({ where: { businessLineId: ctx.businessLineId, key, isActive: true } })
 
@@ -18,7 +20,7 @@ export async function listCollections(ctx: WebsiteContext) {
   })
   const counts = await db.websiteEntry.groupBy({
     by: ['collectionId'],
-    where: { businessLineId: ctx.businessLineId, status: 'published' },
+    where: { businessLineId: ctx.businessLineId, status: 'published', ...PARENT_PUBLISHED },
     _count: { _all: true },
   })
   const byId = new Map(counts.map((c) => [c.collectionId, c._count._all]))
@@ -46,6 +48,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     status: 'published',
     ...(q.verified ? { verified: true } : {}),
     ...(q.featured ? { featured: true } : {}),
+    ...(q.parent ? { parent: { slug: q.parent } } : {}),
     ...(q.county ? { county: { equals: q.county, mode: 'insensitive' } } : {}),
     ...(q.city ? { city: { equals: q.city, mode: 'insensitive' } } : {}),
     ...(q.q
@@ -60,7 +63,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
 
   const [total, rows] = await Promise.all([
     db.websiteEntry.count({ where }),
-    db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit }),
+    db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT } } }),
   ])
   // `facet=county`: number of published entries per county for the same filters (without the county filter itself)
   let facets: { county: { value: string; count: number }[] } | undefined
@@ -84,6 +87,7 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
   const entry = await db.websiteEntry.findFirst({
     where: { businessLineId: ctx.businessLineId, collectionId: collection.id, slug, status: 'published', ...PARENT_PUBLISHED },
     include: {
+      parent: { select: PARENT_SELECT },
       media: { orderBy: { sortOrder: 'asc' }, take: 60 },
       reviews: { where: { status: 'approved' }, orderBy: { createdAt: 'desc' }, take: 20 },
     },

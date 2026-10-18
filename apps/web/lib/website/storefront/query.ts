@@ -16,6 +16,8 @@ export interface ListQuery {
   limit: number
   /** Equality filters on collection fields flagged `filterable`, from `f.<key>=<value>` */
   fieldFilters: Record<string, string>
+  /** Slug of the parent entry (a firm's projects): `parent=<slug>` */
+  parent: string | null
 }
 
 const KEY_RE = /^[a-z0-9_-]{1,60}$/
@@ -64,6 +66,7 @@ export function parseListQuery(sp: URLSearchParams, fields: FieldDef[]): ListQue
     page: int(sp, 'page', 1, 1, 1000),
     limit: int(sp, 'limit', 20, 1, MAX_LIMIT),
     fieldFilters,
+    parent: (() => { const v = text(sp, 'parent', 120); if (v && !KEY_RE.test(v)) throw new WebsiteInputError('Parametrul „parent” este invalid'); return v })(),
   }
 }
 
