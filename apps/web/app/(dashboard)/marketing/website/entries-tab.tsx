@@ -51,7 +51,7 @@ export function EntriesTab({ lineId, onChanged, initialEntryId = null }: { lineI
           <option value="">Toate colecțiile</option>{collections.map((c) => <option key={c.id} value={c.id}>{c.namePlural}</option>)}
         </select>
         <select aria-label="Stare" className={selectCls + " w-44"} value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
-          <option value="">Toate stările</option>{["draft", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}
+          <option value="">Toate stările</option>{["draft", "preview", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}
         </select>
         <Button className="ml-auto" onClick={() => setEditing("new")}><Plus className="h-4 w-4 mr-1" /> Intrare nouă</Button>
       </div>

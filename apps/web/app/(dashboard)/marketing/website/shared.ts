@@ -18,7 +18,7 @@ export async function api<T = any>(url: string, method = "GET", body?: unknown):
   return j.data as T
 }
 
-export const STATUS_RO: Record<string, string> = { draft: "Ciornă", published: "Publicat", suspended: "Suspendat", pending: "În așteptare", approved: "Aprobată", rejected: "Respinsă" }
+export const STATUS_RO: Record<string, string> = { draft: "Ciornă", preview: "Previzualizare (privat)", published: "Publicat", suspended: "Suspendat", pending: "În așteptare", approved: "Aprobată", rejected: "Respinsă" }
 export const KIND_RO: Record<string, string> = { listing: "Listă (directoare)", article: "Articole", project: "Proiecte", other: "Altele" }
 export const FIELD_TYPE_RO: Record<string, string> = { text: "Text", number: "Număr", select: "Alegere", date: "Dată", rating: "Rating 0–5", list: "Listă" }
 

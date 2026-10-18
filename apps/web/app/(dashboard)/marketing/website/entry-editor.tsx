@@ -94,7 +94,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <div className="col-span-2"><label className={labelCls} htmlFor="e-title">Titlu</label><input id="e-title" className={inputCls} value={draft.title} onChange={(e) => set("title", e.target.value)} /></div>
             <div><label className={labelCls} htmlFor="e-slug">Slug (în URL)</label><input id="e-slug" className={inputCls} placeholder={entryId ? "" : "se generează din titlu"} value={draft.slug} onChange={(e) => set("slug", e.target.value)} /></div>
             <div><label className={labelCls} htmlFor="e-status">Stare</label>
-              <select id="e-status" className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>{["draft", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}</select></div>
+              <select id="e-status" className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>{["draft", "preview", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}</select></div>
             <div><label className={labelCls} htmlFor="e-plan">Plan</label>
               <select id="e-plan" className={inputCls} value={draft.plan} onChange={(e) => set("plan", e.target.value)}><option value="gratuit">Gratuit (cererile directe se plătesc per cerere)</option><option value="abonament">Abonament (cereri directe incluse)</option></select></div>
             <div><label className={labelCls} htmlFor="e-planuntil">Abonament valabil până la</label><input id="e-planuntil" type="date" className={inputCls} value={draft.planUntil} disabled={draft.plan !== "abonament"} onChange={(e) => set("planUntil", e.target.value)} /></div>
