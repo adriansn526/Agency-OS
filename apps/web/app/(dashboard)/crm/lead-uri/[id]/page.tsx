@@ -16,6 +16,7 @@ import { getBusinessLine } from "@repo/mock-data"
 import { useBusinessLine } from "@/components/business-line-context"
 import { LeadWebsiteCard } from "@/components/website/lead-website-card"
 import { CallModal } from "@/components/crm/call-modal"
+import { CustomFieldsCard } from "@/components/crm/custom-fields-card"
 
 /* ── configs ── */
 
@@ -364,6 +365,8 @@ export default function SingleLeadPage() {
                   )}
                 </div>
               )}
+
+              <CustomFieldsCard lead={lead} defs={entityType?.customFields ?? []} onSaved={(cf) => setLead((prev: any) => ({ ...prev, customFields: cf }))} />
 
               {/* Google Places data (service-partner prospects) */}
               {lead.customFields?.google && (

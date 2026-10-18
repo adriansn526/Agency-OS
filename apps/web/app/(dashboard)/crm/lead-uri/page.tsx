@@ -302,6 +302,18 @@ export default function LeadPage() {
     router.push(`/crm/lead-uri/${lead.id}`)
   }, [router])
 
+  const handleBulkPilot = async (pilot: boolean) => {
+    const n = selectedIds.size
+    if (!confirm(pilot ? `Adaug ${n} firme în pilot? Vor apărea în coada de apeluri.` : `Scot ${n} firme din pilot? Dispar din coada de apeluri.`)) return
+    try {
+      const res = await fetch('/api/crm/leads/pilot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ leadIds: Array.from(selectedIds), pilot }) })
+      const j = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(j.error || 'Eroare')
+      alert(`${j.data.updated} din ${j.data.requested} firme actualizate${j.data.updated < j.data.requested ? ' (restul erau deja în starea cerută)' : ''}.`)
+      clearSelection(); fetchLeads()
+    } catch (e) { alert(e instanceof Error ? e.message : 'Eroare la actualizarea pilotului.') }
+  }
+
   const handleBulkDelete = async () => {
     if (!confirm(`Sigur vrei să ștergi ${selectedIds.size} lead-uri?`)) return
     setLoading(true)
@@ -472,6 +484,12 @@ export default function LeadPage() {
                 </div>
               )}
             </div>
+            <button onClick={() => handleBulkPilot(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
+              Adaugă în pilot
+            </button>
+            <button onClick={() => handleBulkPilot(false)} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors">
+              Scoate din pilot
+            </button>
             <button onClick={handleBulkDelete} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium bg-red-600/10 text-red-400 rounded-lg hover:bg-red-600/20 transition-colors">
               <Trash2 size={12} /> Șterge
             </button>
