@@ -25,6 +25,8 @@ export const COLLECTION_FIELDS: CollectionField[] = [
   { key: 'servicii', label: 'Servicii (categorii)', type: 'list', filterable: true },
   { key: 'program', label: 'Program de lucru', type: 'text' },
   { key: 'certificari', label: 'Autorizații și certificări', type: 'list' },
+  { key: 'tema', label: 'Temă de culoare', type: 'text' },
+  { key: 'accent', label: 'Culoare de accent', type: 'text' },
 ]
 
 export interface SegmentFilter { field: string; operator: string; value: unknown }

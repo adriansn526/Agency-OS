@@ -5,6 +5,7 @@ import { AdminError } from '../admin/errors'
 import { normalizeWebsite } from '../admin/url'
 import { CATEGORIES, GROUPS, isCategorySlug } from '../glossary/taxonomy'
 import { nationalPhone } from '../../prospectare/import-mapping'
+import { THEME_PRESETS } from '../theme'
 
 /** Name and CUI are not editable here: changing them needs re-verification by the team. */
 export const LOCKED_FIELDS = ['title', 'cui'] as const
@@ -22,6 +23,9 @@ export const profilePatch = z.object({
   }),
   servicii: z.array(z.string().trim()).max(12).optional().refine((a) => !a || a.every(isCategorySlug), 'Categorie necunoscută'),
   certificari: z.array(z.string().trim().min(1).max(120)).max(20).optional(),
+  /** colour theme: a preset key and/or a custom #rrggbb accent (null clears) */
+  tema: z.enum(THEME_PRESETS as [string, ...string[]]).nullish().transform((v) => v ?? null),
+  accent: z.string().trim().regex(/^#[0-9a-fA-F]{6}$/, 'Culoare invalidă (#rrggbb)').nullish().transform((v) => (v ? v.toLowerCase() : null)),
 }).strict().partial()
 
 type EntryWithMedia = Prisma.WebsiteEntryGetPayload<{ include: { media: true } }>
@@ -32,6 +36,7 @@ export function serializeProfile(e: EntryWithMedia) {
     id: e.id, slug: e.slug, status: e.status, title: e.title, cui: typeof d.cui === 'string' ? d.cui : null,
     summary: e.summary, body: e.body, phone: e.phone, email: e.email, websiteUrl: e.websiteUrl, address: e.address, city: e.city, county: e.county,
     logoUrl: e.logoUrl, coverUrl: e.coverUrl,
+    tema: typeof d.tema === 'string' ? d.tema : null, accent: typeof d.accent === 'string' ? d.accent : null,
     servicii: Array.isArray(d.servicii) ? d.servicii.map(String) : [], program: typeof d.program === 'string' ? d.program : null, certificari: Array.isArray(d.certificari) ? d.certificari.map(String) : [],
     media: e.media.filter((m) => m.kind === 'image').map((m) => ({ id: m.id, url: m.url, alt: m.alt, width: m.width, height: m.height })),
     locked: [...LOCKED_FIELDS], publicPath: e.status === 'published' ? `/companii/${e.slug}` : null,
@@ -52,6 +57,13 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   }
   set('summary', p.summary); set('body', p.body); set('address', p.address); set('city', p.city); set('county', p.county); set('email', p.email); set('websiteUrl', p.websiteUrl)
   if (p.phone !== undefined) set('phone', p.phone ? nationalPhone(p.phone) ?? p.phone : null)
+  for (const k of ['tema', 'accent'] as const) {
+    const v = p[k]
+    if (v === undefined) continue
+    if (v === (typeof d[k] === 'string' ? d[k] : null)) continue
+    if (v === null) delete d[k]; else d[k] = v
+    changed.push(k)
+  }
   for (const k of ['servicii', 'program', 'certificari'] as const) {
     const v = p[k]
     if (v === undefined) continue
@@ -60,7 +72,7 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
     changed.push(k)
   }
   if (!changed.length) return { changed }
-  if (changed.some((k) => ['servicii', 'program', 'certificari'].includes(k))) column.data = d as Prisma.InputJsonValue
+  if (changed.some((k) => ['servicii', 'program', 'certificari', 'tema', 'accent'].includes(k))) column.data = d as Prisma.InputJsonValue
   await db.$transaction([
     db.websiteEntry.update({ where: { id: entry.id }, data: column }),
     db.activity.create({ data: {

@@ -116,6 +116,10 @@ test('profile edit: whitelisted fields go live at once and are logged; name and 
   await assert.rejects(P.updateProfile(entry, { cui: '999' }), /Date invalide/)
   await assert.rejects(P.updateProfile(entry, { servicii: ['inexistent'] }), /Date invalide/)
   assert.equal((await db.websiteEntry.findUnique({ where: { id: 'a' } })).title, 'Firma A')
+  assert.deepEqual((await P.updateProfile((await A.sessionEntry('bl', s.sessionToken, T0))!, { tema: 'verde', accent: '#16A34A' })).changed.sort(), ['accent', 'tema'])
+  assert.deepEqual((await db.websiteEntry.findUnique({ where: { id: 'a' } })).data.accent, '#16a34a')
+  assert.deepEqual((await P.updateProfile((await A.sessionEntry('bl', s.sessionToken, T0))!, { tema: null, accent: null })).changed.sort(), ['accent', 'tema'])
+  assert.equal('tema' in (await db.websiteEntry.findUnique({ where: { id: 'a' } })).data, false) // cleared, not stored as null
   const p = P.serializeProfile((await A.sessionEntry('bl', s.sessionToken, T0))!)
   assert.deepEqual(p.locked, ['title', 'cui']); assert.equal(p.publicPath, null); assert.ok(p.categories.length >= 20)
 })
