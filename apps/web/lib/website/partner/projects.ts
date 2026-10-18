@@ -112,11 +112,19 @@ export async function deleteProject(parent: Parent, id: string, store?: ObjectSt
 export async function addProjectImage(parent: Parent, id: string, file: Buffer, alt: unknown, store?: ObjectStore) {
   await owned(parent, id)
   const m = (await uploadEntryImage(parent.businessLineId, id, 'image', file, { alt, store, maxImages: MAX_PROJECT_IMAGES })) as { id: string; url: string; alt: string | null; width: number | null; height: number | null }
+  // the first photo is the project's cover (cards, social previews)
+  await db.websiteEntry.updateMany({ where: { id, coverUrl: null }, data: { coverUrl: m.url } })
   return { id: m.id, url: m.url, alt: m.alt, width: m.width, height: m.height }
 }
 export async function removeProjectImage(parent: Parent, id: string, mediaId: string, store?: ObjectStore) {
-  await owned(parent, id)
-  return deleteGalleryImage(parent.businessLineId, id, mediaId, store)
+  const cur = await owned(parent, id)
+  const gone = cur.media.find((m) => m.id === mediaId)
+  const r = await deleteGalleryImage(parent.businessLineId, id, mediaId, store)
+  if (gone && cur.coverUrl === gone.url) {
+    const next = cur.media.find((m) => m.id !== mediaId && m.kind === 'image')
+    await db.websiteEntry.update({ where: { id }, data: { coverUrl: next?.url ?? null } })
+  }
+  return r
 }
 export async function setProjectImageAlt(parent: Parent, id: string, mediaId: string, raw: unknown) {
   await owned(parent, id)
