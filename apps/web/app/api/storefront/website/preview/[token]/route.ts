@@ -21,7 +21,7 @@ export const POST = websiteHandler<{ token: string }>(async (req, ctx, { token }
   try { body = await req.json() } catch { return NextResponse.json({ error: 'JSON invalid' }, { status: 400 }) }
   try {
     const r = await respondPreview(ctx.businessLineId, token, body)
-    return r.state === 'ok' ? { ok: true, action: r.action } : gone(r.state)
+    return r.state === 'ok' ? { ok: true, action: r.action, ...(r.founder ? { founder: r.founder } : {}) } : gone(r.state)
   } catch (e) {
     if (e instanceof ZodError) return NextResponse.json({ error: 'invalid', issues: e.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, { status: 422 })
     if (e instanceof AdminError) return NextResponse.json({ error: e.message }, { status: e.status })

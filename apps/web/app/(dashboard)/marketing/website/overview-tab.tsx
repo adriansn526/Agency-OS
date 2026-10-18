@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { api, ApiError, fmtDate, inputCls, labelCls } from "./shared"
+import { FoundingCard } from "./founding-card"
 
 export function OverviewTab({ lineId, overview, reload }: { lineId: string; overview: any; reload: () => Promise<void> }) {
   const channel = overview?.channel
@@ -120,6 +121,8 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
           <div className="text-xs text-muted-foreground flex items-center gap-2">Endpoint: <Badge variant="secondary">/api/storefront/website/…</Badge> · documentație în <code>docs/website-module.md</code></div>
         </CardContent>
       </Card>
+
+      <FoundingCard lineId={lineId} />
     </div>
   )
 }

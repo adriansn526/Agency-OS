@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { randomBytes } from 'crypto'
 import { dispatchEmails } from '@/lib/marketing/dispatch'
-import { previewVarsFor, templateNeedsPreview, unsubscribeUrl, type PreviewVars } from '@/lib/website/preview/campaign'
+import { assertOutreachAllowed, OutreachBlocked, previewVarsFor, templateNeedsPreview, unsubscribeUrl, type PreviewVars } from '@/lib/website/preview/campaign'
 
 // ─── GET /api/marketing/campaigns/[id] ───
 export async function GET(
@@ -406,6 +406,7 @@ export async function POST(
 
     return NextResponse.json({ error: 'Invalid action. Use ?action=generate or ?action=send' }, { status: 400 })
   } catch (error) {
+    if (error instanceof OutreachBlocked) return NextResponse.json({ error: error.message }, { status: 409 })
     console.error('[API] POST /api/marketing/campaigns/[id] error:', error)
     return NextResponse.json({ error: 'Failed to process campaign action' }, { status: 500 })
   }
@@ -414,6 +415,7 @@ export async function POST(
 /** Campaign templates that send a firm its private website preview: one fresh link per lead; leads without a preview profile are left out. */
 async function previewContext(campaign: any, leads: { id: string }[]) {
   const needs = templateNeedsPreview(campaign.template?.body ?? '')
+  if (needs) assertOutreachAllowed()
   const channel = await db.websiteChannel.findUnique({ where: { businessLineId: campaign.businessLineId }, select: { siteUrl: true } })
   const siteUrl = channel?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro'
   const vars = needs ? await previewVarsFor(campaign.businessLineId, leads.map((l) => l.id), { siteUrl }) : new Map<string, PreviewVars>()
@@ -461,6 +463,7 @@ function populateTemplate(
     .replace(/\{\{preview_link\}\}/g, extra?.preview?.preview_link || '')
     .replace(/\{\{preview_expires\}\}/g, extra?.preview?.preview_expires || '')
     .replace(/\{\{unsubscribe_link\}\}/g, extra?.unsubscribe || '')
+    .replace(/\{\{founder_offer\}\}/g, extra?.preview?.founder_offer || '')
 }
 
 // ─── Slugify company name for unique codes ───

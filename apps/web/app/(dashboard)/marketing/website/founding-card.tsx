@@ -1,0 +1,60 @@
+"use client"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useCallback, useEffect, useState } from "react"
+import { toast } from "sonner"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { api, ApiError, fmtDate, inputCls, labelCls } from "./shared"
+
+/** Founding-partner programme: capacity per county × service, price-lock period, benefit text, and who holds each place. */
+export function FoundingCard({ lineId }: { lineId: string }) {
+  const q = `lineId=${encodeURIComponent(lineId)}`
+  const [data, setData] = useState<any>(null)
+  const [form, setForm] = useState<{ enabled: boolean; perCombo: number; lockMonths: number; benefit: string } | null>(null)
+  const [busy, setBusy] = useState<string | null>(null)
+
+  const load = useCallback(async () => { const d = await api(`/api/website/founding?${q}`); setData(d); setForm(d.config) }, [q])
+  useEffect(() => { load().catch(() => undefined) }, [load])
+  async function run(name: string, fn: () => Promise<void>, ok: string) {
+    setBusy(name)
+    try { await fn(); toast.success(ok) } catch (e) { toast.error(e instanceof ApiError ? [e.message, ...(e.details ?? [])].join(" — ") : "Eroare") } finally { setBusy(null) }
+  }
+  if (!data || !form) return null
+  const dirty = JSON.stringify(form) !== JSON.stringify(data.config)
+
+  return (
+    <Card className="lg:col-span-3">
+      <CardHeader><CardTitle>Parteneri fondatori</CardTitle></CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <p className="text-sm text-muted-foreground">Locuri limitate pe fiecare județ și serviciu, ocupate în ordinea acceptării. Când e oprit, nu se ocupă niciun loc și campaniile nu menționează oferta.</p>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.enabled} onChange={(e) => setForm({ ...form, enabled: e.target.checked })} /> Program activ</label>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div><label className={labelCls} htmlFor="f-per">Locuri pe județ și serviciu</label><input id="f-per" type="number" min={1} max={50} className={inputCls} value={form.perCombo} onChange={(e) => setForm({ ...form, perCombo: Number(e.target.value) })} /></div>
+          <div><label className={labelCls} htmlFor="f-lock">Luni de preț garantat (0 = fără)</label><input id="f-lock" type="number" min={0} max={36} className={inputCls} value={form.lockMonths} onChange={(e) => setForm({ ...form, lockMonths: Number(e.target.value) })} /></div>
+          <div className="sm:col-span-3"><label className={labelCls} htmlFor="f-ben">Ce primește un partener fondator (apare în mesajul de campanie)</label><input id="f-ben" maxLength={240} className={inputCls} value={form.benefit} onChange={(e) => setForm({ ...form, benefit: e.target.value })} placeholder="ex: preț de lansare garantat 12 luni și prioritate la cereri" /></div>
+        </div>
+        <div><Button size="sm" disabled={!dirty || busy === "save"} onClick={() => run("save", async () => { setData(await api(`/api/website/founding?${q}`, "PUT", form)) }, "Salvat")}>Salvează setările</Button>{form.enabled && !form.benefit && <span className="ml-3 text-xs text-muted-foreground">Fără text de beneficiu, campaniile nu menționează oferta.</span>}</div>
+
+        <div>
+          <h3 className="text-sm font-semibold mb-2">Locuri ocupate ({data.totalSlots})</h3>
+          {data.combos.length === 0 ? <p className="text-sm text-muted-foreground">Niciun loc ocupat încă.</p> : (
+            <ul className="divide-y divide-border rounded-md border border-border">
+              {data.combos.map((c: any) => (
+                <li key={`${c.county}-${c.category}`} className="p-3 text-sm">
+                  <div className="flex items-center justify-between"><span className="font-medium">{c.categoryTitle} · {c.county}</span><span className="text-muted-foreground">{c.taken}/{c.total} ocupate · {c.left} libere</span></div>
+                  <ul className="mt-1 space-y-1">
+                    {c.firms.map((f: any) => (
+                      <li key={f.slotId} className="flex items-center justify-between text-muted-foreground"><span>{f.title} · din {fmtDate(f.claimedAt)}{f.lockUntil ? ` · preț garantat până la ${fmtDate(f.lockUntil)}` : ""}</span>
+                        <Button size="sm" variant="ghost" aria-label={`Eliberează locul lui ${f.title}`} disabled={busy === f.slotId} onClick={() => { if (confirm(`Eliberezi locul ocupat de ${f.title}?`)) void run(f.slotId, async () => { await api(`/api/website/founding/${f.slotId}?${q}`, "DELETE"); await load() }, "Loc eliberat") }}>Eliberează</Button>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
