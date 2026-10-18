@@ -128,6 +128,7 @@ export async function respondPreview(lineId: string, token: string, raw: unknown
       details: { ...details, entryId: entry.id, at: now.toISOString(), ip: meta?.ip, userAgent: meta?.userAgent } as Prisma.InputJsonValue,
     } }),
     ...(input.action === 'decline' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: null, previewExpiresAt: now } })] : []),
+    ...(input.action === 'accept' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { partnerAccess: true } })] : []),
   ])
   return { state: 'ok' as const, action }
 }

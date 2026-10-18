@@ -9,14 +9,14 @@ import { EntryImages, type MediaItem } from "./entry-images"
 import { api, ApiError, Collection, Field, inputCls, labelCls, STATUS_RO, textareaCls } from "./shared"
 
 interface Draft {
-  collectionId: string; title: string; slug: string; summary: string; body: string; status: string; verified: boolean; featured: boolean
+  collectionId: string; title: string; slug: string; summary: string; body: string; status: string; verified: boolean; featured: boolean; partnerAccess: boolean
   city: string; county: string; address: string; lat: string; lng: string
   email: string; phone: string; websiteUrl: string; coverUrl: string; logoUrl: string; seoTitle: string; seoDescription: string
   data: Record<string, any>
 }
-const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", logoUrl: "", seoTitle: "", seoDescription: "", data: {} })
+const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, partnerAccess: false, city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", logoUrl: "", seoTitle: "", seoDescription: "", data: {} })
 const fromEntry = (e: any): Draft => ({
-  collectionId: e.collectionId, title: e.title, slug: e.slug, summary: e.summary ?? "", body: e.body ?? "", status: e.status, verified: e.verified, featured: e.featured,
+  collectionId: e.collectionId, title: e.title, slug: e.slug, summary: e.summary ?? "", body: e.body ?? "", status: e.status, verified: e.verified, featured: e.featured, partnerAccess: !!e.partnerAccess,
   city: e.city ?? "", county: e.county ?? "", address: e.address ?? "", lat: e.lat == null ? "" : String(e.lat), lng: e.lng == null ? "" : String(e.lng),
   email: e.email ?? "", phone: e.phone ?? "", websiteUrl: e.websiteUrl ?? "", coverUrl: e.coverUrl ?? "", logoUrl: e.logoUrl ?? "", seoTitle: e.seoTitle ?? "", seoDescription: e.seoDescription ?? "", data: e.data ?? {},
 })
@@ -96,6 +96,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <select id="e-status" className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>{["draft", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}</select></div>
             <div className="col-span-2 flex gap-5 text-sm">
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.verified} onChange={(e) => set("verified", e.target.checked)} /> Verificat</label>
+              <label className="flex items-center gap-2" title="Firma poate intra în „Profilul meu” (link pe email / cod SMS) și își poate edita profilul"><input type="checkbox" checked={draft.partnerAccess} onChange={(e) => set("partnerAccess", e.target.checked)} /> Acces „Profilul meu”</label>
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(e) => set("featured", e.target.checked)} /> Recomandat (apare primul)</label>
               {meta?.tenantId && <span className="text-xs text-muted-foreground self-center">Partener activ în ERP</span>}
             </div>

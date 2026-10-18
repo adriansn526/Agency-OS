@@ -23,14 +23,14 @@ export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().opti
 const entryFields = {
   title: z.string().trim().min(2).max(160), slug: z.string().trim().regex(keyRe, 'Slug invalid').optional(),
   summary: optText(500), body: optText(50_000),
-  status: z.enum(['draft', 'preview', 'published', 'suspended']), verified: z.boolean(), featured: z.boolean(),
+  status: z.enum(['draft', 'preview', 'published', 'suspended']), verified: z.boolean(), featured: z.boolean(), partnerAccess: z.boolean(),
   city: optText(80), county: optText(80), address: optText(200),
   lat: z.number().min(-90).max(90).nullish(), lng: z.number().min(-180).max(180).nullish(),
   email: z.string().trim().email().max(200).nullish().transform((v) => (v ? v : null)),
   phone: optText(40), websiteUrl: url, coverUrl: url, logoUrl: url,
   seoTitle: optText(160), seoDescription: optText(320), data: z.record(z.string(), z.unknown()),
 }
-export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), data: entryFields.data.default({}) })
+export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), partnerAccess: entryFields.partnerAccess.default(false), data: entryFields.data.default({}) })
 export const entryPatch = z.object({ ...entryFields, leadId: z.string().min(1).max(60).nullable() }).partial()
 export const entryFromLead = z.object({ leadId: z.string().min(1).max(60), collectionId: z.string().min(1).max(60) })
 

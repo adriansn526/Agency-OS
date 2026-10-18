@@ -1937,6 +1937,10 @@ model WebsiteEntry {
   previewSentAt    DateTime?
   /// previewSentAt + validity (default 14 days, editable in the UI)
   previewExpiresAt DateTime?
+  /// The firm may log in ("Profilul meu") and edit this entry; set when it accepts the preview or by the team
+  partnerAccess    Boolean           @default(false)
+  partnerLogins    WebsitePartnerLogin[]
+  partnerSessions  WebsitePartnerSession[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -2038,4 +2042,35 @@ model WebsiteRuleAudit {
 
   @@index([businessLineId, createdAt(sort: Desc)])
   @@index([ruleId])
+}
+
+/// One-time login proof for a partner: sha256 of the emailed link token, or of "entryId:code" for the SMS code.
+model WebsitePartnerLogin {
+  id        String       @id @default(cuid())
+  entryId   String
+  /// email | sms
+  channel   String
+  codeHash  String       @unique
+  expiresAt DateTime
+  attempts  Int          @default(0)
+  usedAt    DateTime?
+  createdAt DateTime     @default(now())
+  entry     WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, createdAt])
+}
+
+/// Partner session; only the sha256 of the session token is stored.
+model WebsitePartnerSession {
+  id         String       @id @default(cuid())
+  entryId    String
+  tokenHash  String       @unique
+  expiresAt  DateTime
+  lastUsedAt DateTime     @default(now())
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime     @default(now())
+  entry      WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
 }
