@@ -22,6 +22,9 @@ export const COLLECTION_FIELDS: CollectionField[] = [
   { key: 'banda_cifra_afaceri', label: 'Cifră de afaceri', type: 'text' },
   { key: 'banda_vechime', label: 'Vechime', type: 'text' },
   { key: 'an_infiintare', label: 'An înființare', type: 'number' },
+  { key: 'servicii', label: 'Servicii (categorii)', type: 'list', filterable: true },
+  { key: 'program', label: 'Program de lucru', type: 'text' },
+  { key: 'certificari', label: 'Autorizații și certificări', type: 'list' },
 ]
 
 export interface SegmentFilter { field: string; operator: string; value: unknown }
