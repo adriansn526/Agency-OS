@@ -12,6 +12,7 @@ import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { categoryTitles } from '../glossary/seed'
 import { effectiveLayout } from '../layout/blocks'
+import { claimSlots, type ClaimResult } from '../founding/service'
 
 /** Short code (10 chars of base58, ~58 bits, used in /p/<code> links) or the long legacy form pv_… (still valid for links already issued). */
 export const PREVIEW_TOKEN_RE = /^(?:[1-9A-HJ-NP-Za-km-z]{10}|pv_[A-Za-z0-9_-]{40,60})$/
@@ -132,5 +133,8 @@ export async function respondPreview(lineId: string, token: string, raw: unknown
     ...(input.action === 'decline' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: null, previewExpiresAt: now } })] : []),
     ...(input.action === 'accept' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { partnerAccess: true } })] : []),
   ])
-  return { state: 'ok' as const, action }
+  // accepting is what claims founding-partner places (first come, first served); a failure here must never undo the firm's answer
+  let founder: ClaimResult | undefined
+  if (input.action === 'accept') founder = await claimSlots({ id: entry.id, businessLineId: lineId, county: entry.county, data: entry.data }, now).catch((e) => { console.error('[founding] claim failed', e instanceof Error ? e.message : e); return undefined })
+  return { state: 'ok' as const, action, founder }
 }

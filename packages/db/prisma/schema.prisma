@@ -1948,6 +1948,7 @@ model WebsiteEntry {
   /// Home page blocks chosen by the firm (see lib/website/layout.ts); null = default layout
   layout           Json?
   layoutVersions   WebsiteLayoutVersion[]
+  foundingSlots    WebsiteFoundingSlot[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -2094,4 +2095,20 @@ model WebsiteLayoutVersion {
   entry     WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
   @@index([entryId, createdAt])
+}
+
+/// A "founding partner" place: limited per county × service category (capacity in WebsiteChannel.config.founding). Claimed when a firm accepts.
+model WebsiteFoundingSlot {
+  id             String       @id @default(cuid())
+  businessLineId String
+  entryId        String
+  county         String
+  category       String
+  claimedAt      DateTime     @default(now())
+  /// launch price is guaranteed until this date (null = no price lock)
+  lockUntil      DateTime?
+  entry          WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@unique([entryId, county, category])
+  @@index([businessLineId, county, category])
 }

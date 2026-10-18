@@ -15,7 +15,8 @@ export const TEMPLATES = [
 Am pregătit pentru {{company_name}} o pagină în IntraConstruct.ro, portalul firmelor de construcții și instalații, folosind date publice (ONRC și site-ul firmei). O puteți vedea aici, privat, până la {{preview_expires}}:
 {{preview_link}}
 
-Dacă vă convine, o publicăm și puteți primi cereri de ofertă de la clienți din {{county}}. [DE COMPLETAT: oferta de lansare — condițiile comerciale după ce sunt stabilite; „locuri limitate de partener fondator” doar dacă sunt configurate și reale]
+Dacă vă convine, o publicăm și puteți primi cereri de ofertă de la clienți din {{county}}.
+{{founder_offer}}
 
 Nu vă convine? Puteți corecta datele sau refuza direct din pagină, iar noi nu vă mai contactăm.
 

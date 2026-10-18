@@ -63,7 +63,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
 
   const [total, rows] = await Promise.all([
     db.websiteEntry.count({ where }),
-    db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT } } }),
+    db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT }, _count: { select: { foundingSlots: true } } } }),
   ])
   // `facet=county`: number of published entries per county for the same filters (without the county filter itself)
   let facets: { county: { value: string; count: number }[] } | undefined
@@ -88,6 +88,7 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
     where: { businessLineId: ctx.businessLineId, collectionId: collection.id, slug, status: 'published', ...PARENT_PUBLISHED },
     include: {
       parent: { select: PARENT_SELECT },
+      _count: { select: { foundingSlots: true } },
       media: { orderBy: { sortOrder: 'asc' }, take: 60 },
       reviews: { where: { status: 'approved' }, orderBy: { createdAt: 'desc' }, take: 20 },
     },

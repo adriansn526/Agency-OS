@@ -15,6 +15,7 @@ interface EntryRow {
   data: unknown; seoTitle: string | null; seoDescription: string | null
   phone: string | null; websiteUrl: string | null
   layout?: unknown
+  _count?: { foundingSlots: number }
   parent?: { slug: string; title: string; city: string | null; county: string | null; logoUrl: string | null; verified: boolean } | null
   publishedAt: Date | null; updatedAt: Date
 }
@@ -29,7 +30,7 @@ export function serializeListItem(e: EntryRow, collectionKey: string) {
   return {
     collection: collectionKey, slug: e.slug, title: e.title, summary: e.summary,
     city: e.city, county: e.county, address: e.address, lat: e.lat, lng: e.lng,
-    coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured,
+    coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured, founder: (e._count?.foundingSlots ?? 0) > 0,
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
     // a firm's own page for its projects; the service categories chosen by a firm come with their titles

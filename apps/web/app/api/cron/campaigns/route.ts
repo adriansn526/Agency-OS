@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { dispatchEmails, withinSendingWindow } from '@/lib/marketing/dispatch'
-import { unsubscribeUrl } from '@/lib/website/preview/campaign'
+import { templateNeedsPreview, unsubscribeUrl } from '@/lib/website/preview/campaign'
 
 // ─── GET /api/cron/campaigns ───
 // Cron job endpoint: processes scheduled campaigns that are due
@@ -77,6 +77,12 @@ export async function GET(request: NextRequest) {
             data: { status: 'completed', completedAt: now } as any,
           })
           results.push({ id: campaign.id, name: campaign.name, sent: 0, status: 'completed (no leads)' })
+          continue
+        }
+
+        // outreach with a preview link stays blocked until the legal documents are published
+        if (templateNeedsPreview(campaign.template?.body ?? '') && process.env.OUTREACH_LEGAL_READY !== '1') {
+          results.push({ id: campaign.id, name: campaign.name, sent: 0, status: 'blocked: legal documents not published (OUTREACH_LEGAL_READY)' })
           continue
         }
 

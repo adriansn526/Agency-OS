@@ -29,3 +29,10 @@ test('unfinished template spots are detected', () => {
   assert.equal(hasDraftMarker('Oferta: [DE COMPLETAT: preț]'), true); assert.equal(hasDraftMarker('ofertă [de completat]'), true)
   assert.equal(hasDraftMarker('Salut {{company_name}}'), false)
 })
+
+test('outreach with a preview link is blocked until the legal documents are declared published', async () => {
+  const { assertOutreachAllowed, OutreachBlocked } = await import('../../website/preview/campaign')
+  assert.throws(() => assertOutreachAllowed({}), OutreachBlocked)
+  assert.throws(() => assertOutreachAllowed({ OUTREACH_LEGAL_READY: '0' }), OutreachBlocked)
+  assert.doesNotThrow(() => assertOutreachAllowed({ OUTREACH_LEGAL_READY: '1' }))
+})
