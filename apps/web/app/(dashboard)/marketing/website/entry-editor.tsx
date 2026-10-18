@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { Modal } from "@/components/modal"
 import { Button } from "@/components/ui/button"
+import { EntryImages, type MediaItem } from "./entry-images"
 import { api, ApiError, Collection, Field, inputCls, labelCls, STATUS_RO, textareaCls } from "./shared"
 
 interface Draft {
@@ -37,6 +38,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
 }) {
   const q = `lineId=${encodeURIComponent(lineId)}`
   const [draft, setDraft] = useState<Draft | null>(entryId ? null : empty(defaultCollectionId))
+  const [media, setMedia] = useState<MediaItem[]>([])
   const [meta, setMeta] = useState<{ publishedAt?: string | null; tenantId?: string | null; leadId?: string | null; lead?: { id: string; companyName: string; status: string } | null } | null>(null)
   const [saving, setSaving] = useState(false)
   const [issues, setIssues] = useState<string[]>([])
@@ -46,7 +48,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
 
   useEffect(() => {
     if (!entryId) return
-    api(`/api/website/entries/${entryId}?${q}`).then((e) => { setDraft(fromEntry(e)); setMeta(e) }).catch((e) => { toast.error(e instanceof ApiError ? e.message : "Eroare"); onClose() })
+    api(`/api/website/entries/${entryId}?${q}`).then((e) => { setDraft(fromEntry(e)); setMeta(e); setMedia(e.media ?? []) }).catch((e) => { toast.error(e instanceof ApiError ? e.message : "Eroare"); onClose() })
   }, [entryId, q, onClose])
 
   const collection = collections.find((c) => c.id === draft?.collectionId)
@@ -136,6 +138,13 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <div><label className={labelCls} htmlFor="e-cover">Imagine de copertă (URL)</label><input id="e-cover" className={inputCls} placeholder="https://" value={draft.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} /></div>
             </div>
           </section>
+
+          {entryId ? (
+            <EntryImages lineId={lineId} entryId={entryId} logoUrl={draft.logoUrl} coverUrl={draft.coverUrl} media={media}
+              onLogo={(u) => set("logoUrl", u)} onCover={(u) => set("coverUrl", u)} onMedia={setMedia} />
+          ) : (
+            <p className="text-xs text-muted-foreground">Salvează intrarea ca să poți încărca logo și imagini.</p>
+          )}
 
           <section>
             <h3 className="text-sm font-semibold mb-2">SEO</h3>
