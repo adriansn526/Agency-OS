@@ -9,6 +9,8 @@ import type { CollectionField } from '../../lib/website/admin/entry-data'
 const NEW_FIELDS: CollectionField[] = [
   { key: 'program', label: 'Program de lucru', type: 'text' },
   { key: 'certificari', label: 'Autorizații și certificări', type: 'list' },
+  { key: 'tema', label: 'Temă de culoare', type: 'text' },
+  { key: 'accent', label: 'Culoare de accent', type: 'text' },
 ]
 
 async function main() {
