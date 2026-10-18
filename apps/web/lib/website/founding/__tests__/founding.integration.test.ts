@@ -90,10 +90,10 @@ test('the campaign sentence is computed from real counts and disappears when it 
 test('overview, settings and freeing a place', { skip }, async () => {
   const o = await F.overview('bl'); assert.ok(o.totalSlots >= 1); assert.equal(o.config.perCombo, 1)
   assert.deepEqual(Object.keys(o.combos[0]!.firms[0]!).sort(), ['claimedAt', 'entryId', 'lockUntil', 'slotId', 'title'])
-  const saved = await F.saveConfig('bl', { enabled: true, perCombo: 4, lockMonths: 0, benefit: ' test ' }); assert.deepEqual(saved, { enabled: true, perCombo: 4, lockMonths: 0, benefit: 'test' })
+  const saved = await F.saveConfig('bl', { enabled: true, perCombo: 4, lockMonths: 0, benefit: ' test ' }); assert.deepEqual(saved, { enabled: true, perCombo: 4, lockMonths: 0, benefit: 'test', includeSubscription: true, subscriptionValueRon: 0, subscriptionFounderRon: 0, graceDays: 30, minProfileScore: 80, maxMissedRequests: 3 })
   await assert.rejects(F.saveConfig('bl', { enabled: true, perCombo: 0 }), /too_small|Too small|>=1|Number must/i)
   assert.equal(await F.saveConfig('nope', { enabled: true }), null)
   const slot = o.combos[0]!.firms[0]!
   assert.deepEqual(await F.removeSlot('other', slot.slotId), { removed: 0 })       // another line cannot free it
-  assert.deepEqual(await F.removeSlot('bl', slot.slotId), { removed: 1 })
+  assert.equal((await F.removeSlot('bl', slot.slotId)).removed, 1)
 })

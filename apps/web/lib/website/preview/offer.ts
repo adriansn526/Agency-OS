@@ -6,7 +6,7 @@ import { db } from '@repo/db'
 import { resolveRule } from '../rules/engine'
 import type { Facts, RuleKind, RuleLike } from '../rules/types'
 import type { BillingAction, PricingAction, RoutingAction } from '../rules/actions'
-import { founderOffer, foundingConfig } from '../founding/service'
+import { founderOffer, foundingConfig, subscriptionTerms } from '../founding/service'
 
 export interface Offer {
   /** One short sentence per point, ready to show. */
@@ -42,7 +42,8 @@ export async function buildOffer(lineId: string, entry: { county: string | null;
   const at = (f: boolean) => ({ pricing: resolveRule('pricing', facts(f), like).action, routing: resolveRule('routing', facts(f), like).action, billing: resolveRule('billing', facts(f), like).action })
   const std = at(false)
   const cfg = foundingConfig(channel?.config)
-  const text = await founderOffer(lineId, entry, cfg)
+  const base = await founderOffer(lineId, entry, cfg)
+  const text = base ? [base, subscriptionTerms(cfg)].filter(Boolean).join(' ') : ''
   const fo = text ? at(true) : null
   const lines = offerLines(std.pricing, std.routing, std.billing, fo ? { pricing: fo.pricing, text } : null)
   return { lines, terms: { amountRon: std.pricing.amountRon, freeFirstN: std.pricing.freeFirstN, chargeAt: std.billing.chargeAt, maxFirms: std.routing.maxFirms, founderAmountRon: fo ? fo.pricing.amountRon : null } }
