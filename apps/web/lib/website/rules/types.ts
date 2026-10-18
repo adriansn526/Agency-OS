@@ -28,11 +28,12 @@ export const FACT_CATALOG: Record<string, { label: string; type: 'string' | 'num
   founding:       { label: 'Partener fondator', type: 'boolean', ops: ['eq'] },
   plan:           { label: 'Plan (gratuit / PRO)', type: 'string', ops: ['eq', 'in'] },
   requestType:    { label: 'Tip cerere (direct / general)', type: 'string', ops: ['eq'] },
+  category:       { label: 'Categorie (serviciu cerut)', type: 'string', ops: ['eq', 'in'] },
   specialization: { label: 'Specializare', type: 'string', list: true, ops: ['eq', 'in', 'contains'] },
   budget:         { label: 'Buget (RON)', type: 'number', ops: ['gte', 'lte', 'exists'] },
   urgency:        { label: 'Urgență', type: 'string', ops: ['eq', 'in', 'exists'] },
 }
-export const FIELD_RE = /^(collection|entry|account|tip|county|city|verified|founding|plan|requestType|specialization|budget|urgency|data\.[a-z0-9_]{1,40})$/
+export const FIELD_RE = /^(collection|entry|account|tip|county|city|verified|founding|plan|requestType|category|specialization|budget|urgency|data\.[a-z0-9_]{1,40})$/
 
 export interface RuleLike {
   id: string

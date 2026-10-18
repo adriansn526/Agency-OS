@@ -116,8 +116,8 @@ test('pricing: bounded by the line limit, max 2 decimals, free-first-N defaults 
 })
 
 test('routing: single means one firm; multi needs 2+ firms and acceptances ≤ firms', () => {
-  assert.deepEqual(parseAction('routing', { mode: 'single' }), { mode: 'single', maxFirms: 1, maxAcceptances: 1, selection: 'nearest' })
-  assert.deepEqual(parseAction('routing', { mode: 'multi', maxFirms: 5, maxAcceptances: 3, selection: 'rating' }), { mode: 'multi', maxFirms: 5, maxAcceptances: 3, selection: 'rating' })
+  assert.deepEqual(parseAction('routing', { mode: 'single' }), { mode: 'single', maxFirms: 1, maxAcceptances: 1, selection: 'nearest', minReviews: 0, minRating: 0 })
+  assert.deepEqual(parseAction('routing', { mode: 'multi', maxFirms: 5, maxAcceptances: 3, selection: 'rating' }), { mode: 'multi', maxFirms: 5, maxAcceptances: 3, selection: 'rating', minReviews: 0, minRating: 0 })
   assert.throws(() => parseAction('routing', { mode: 'single', maxFirms: 3, maxAcceptances: 1 }))
   assert.throws(() => parseAction('routing', { mode: 'multi', maxFirms: 1, maxAcceptances: 1 }))
   assert.throws(() => parseAction('routing', { mode: 'multi', maxFirms: 3, maxAcceptances: 4 }))

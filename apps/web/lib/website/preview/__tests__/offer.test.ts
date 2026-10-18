@@ -2,8 +2,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { offerLines } from '../offer'
 
-const single = { mode: 'single', maxFirms: 1, maxAcceptances: 1, selection: 'nearest' } as const
-const multi = { mode: 'multi', maxFirms: 3, maxAcceptances: 3, selection: 'nearest' } as const
+const single = { mode: 'single', maxFirms: 1, maxAcceptances: 1, selection: 'nearest', minReviews: 0, minRating: 0 } as const
+const multi = { mode: 'multi', maxFirms: 3, maxAcceptances: 3, selection: 'nearest', minReviews: 0, minRating: 0 } as const
 
 test('free by default: nothing to pay now, requests free', () => {
   const l = offerLines({ amountRon: 0, freeFirstN: 0 }, single, { chargeAt: 'acceptance' }, null)
