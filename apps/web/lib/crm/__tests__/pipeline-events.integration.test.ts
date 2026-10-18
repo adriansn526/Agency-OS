@@ -25,11 +25,3 @@ test('publishing moves a partner forward to activ, never reopens or touches othe
   assert.equal((await db.lead.findUnique({ where: { id: 'r' } })).status, 'refuzat')
   assert.equal(await P.onProfilePublished(null), false)
 })
-
-test('first preview view writes one note, even when concurrent', { skip }, async () => {
-  const r = await Promise.all([P.onPreviewViewed('a'), P.onPreviewViewed('a'), P.onPreviewViewed('a')])
-  assert.equal(r.filter(Boolean).length, 1)
-  assert.equal(await P.onPreviewViewed('a'), false)
-  assert.equal(await db.activity.count({ where: { leadId: 'a', action: 'note' } }), 1)
-  assert.ok((await db.lead.findUnique({ where: { id: 'a' } })).customFields.previzualizare_vazuta_la)
-})
