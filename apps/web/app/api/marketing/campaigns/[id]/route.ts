@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { randomBytes } from 'crypto'
+import { dispatchEmails } from '@/lib/marketing/dispatch'
+import { previewVarsFor, templateNeedsPreview, unsubscribeUrl, type PreviewVars } from '@/lib/website/preview/campaign'
 
 // ─── GET /api/marketing/campaigns/[id] ───
 export async function GET(
@@ -181,8 +183,10 @@ export async function POST(
         })).map(cl => cl.uniqueCode)
       )
 
+      const pc = await previewContext(campaign, uniqueLeads)
+      const targetLeads = pc.needs ? uniqueLeads.filter((l) => pc.vars.has(l.id)) : uniqueLeads
       const campaignLeads = await Promise.all(
-        uniqueLeads.map(async (lead) => {
+        targetLeads.map(async (lead) => {
           // Generate a slug-based unique code from company name
           let uniqueCode = slugify(lead.companyName || 'lead')
           // Ensure uniqueness by appending counter if needed
@@ -197,7 +201,8 @@ export async function POST(
 
           const lpLink = `https://${blDomain}/lp/${uniqueCode}`
           const messageBody = populateTemplate(
-            campaign.template!.body, lead, campaign.businessLine!, uniqueCode, lpLink
+            campaign.template!.body, lead, campaign.businessLine!, uniqueCode, lpLink,
+            { preview: pc.vars.get(lead.id), unsubscribe: unsubscribeUrl(pc.siteUrl, lead.email ?? undefined) }
           )
 
           return db.campaignLead.create({
@@ -215,15 +220,16 @@ export async function POST(
       // Update campaign stats
       await db.marketingCampaign.update({
         where: { id },
-        data: { totalLeads: existingLeadIds.size + uniqueLeads.length },
+        data: { totalLeads: existingLeadIds.size + targetLeads.length },
       })
 
       return NextResponse.json({
         data: {
           generated: campaignLeads.length,
           dedupSkipped,
+          withoutPreview: uniqueLeads.length - targetLeads.length,
           skipped: existingLeadIds.size,
-          total: existingLeadIds.size + uniqueLeads.length,
+          total: existingLeadIds.size + targetLeads.length,
         },
       })
     }
@@ -289,7 +295,9 @@ export async function POST(
             })).map(cl => cl.uniqueCode)
           )
 
-          for (const lead of uniqueLeads) {
+          const pc = await previewContext(campaign, uniqueLeads)
+          const targetLeads = pc.needs ? uniqueLeads.filter((l) => pc.vars.has(l.id)) : uniqueLeads
+          for (const lead of targetLeads) {
             let uniqueCode = slugify(lead.companyName || 'lead')
             let codeCandidate = uniqueCode
             let counter = 2
@@ -302,7 +310,8 @@ export async function POST(
 
             const lpLink = `https://${blDomain}/lp/${uniqueCode}`
             const messageBody = populateTemplate(
-              campaign.template!.body, lead, campaign.businessLine!, uniqueCode, lpLink
+              campaign.template!.body, lead, campaign.businessLine!, uniqueCode, lpLink,
+              { preview: pc.vars.get(lead.id), unsubscribe: unsubscribeUrl(pc.siteUrl, lead.email ?? undefined) }
             )
 
             await db.campaignLead.create({
@@ -318,7 +327,7 @@ export async function POST(
 
           await db.marketingCampaign.update({
             where: { id },
-            data: { totalLeads: uniqueLeads.length },
+            data: { totalLeads: targetLeads.length },
           })
 
           // Re-fetch pending leads after generation
@@ -328,7 +337,7 @@ export async function POST(
             take: 100,
           })
 
-          console.log(`[Campaign] Auto-generated ${uniqueLeads.length} leads, now sending...`)
+          console.log(`[Campaign] Auto-generated ${targetLeads.length} leads, now sending...`)
         }
 
         if (pendingLeads.length === 0) {
@@ -365,23 +374,10 @@ export async function POST(
           }
         }
       } else if (campaign.channel === 'email') {
-        // TODO: Implement bulk email via SES
-        // For now, mark as sent
-        for (const cl of pendingLeads) {
-          await db.campaignLead.update({
-            where: { id: cl.id },
-            data: { status: 'sent', sentAt: new Date() },
-          })
-          await db.lead.update({
-            where: { id: cl.leadId },
-            data: {
-              lastCampaignAt: new Date(),
-              lastCampaignId: campaign.id,
-              campaignCount: { increment: 1 },
-            } as any,
-          })
-          sentCount++
-        }
+        // real delivery through the line's "partners" mailbox (see lib/marketing/dispatch.ts); a lead is "sent" only if the mail server accepted it
+        const pc = await previewContext(campaign, [])
+        const r = await dispatchEmails(pendingLeads as any, { campaignId: campaign.id, lineSlug: campaign.businessLine?.slug, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(pc.siteUrl, e) })
+        sentCount += r.sent
       }
 
       // Update campaign stats
@@ -415,6 +411,15 @@ export async function POST(
   }
 }
 
+/** Campaign templates that send a firm its private website preview: one fresh link per lead; leads without a preview profile are left out. */
+async function previewContext(campaign: any, leads: { id: string }[]) {
+  const needs = templateNeedsPreview(campaign.template?.body ?? '')
+  const channel = await db.websiteChannel.findUnique({ where: { businessLineId: campaign.businessLineId }, select: { siteUrl: true } })
+  const siteUrl = channel?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro'
+  const vars = needs ? await previewVarsFor(campaign.businessLineId, leads.map((l) => l.id), { siteUrl }) : new Map<string, PreviewVars>()
+  return { needs, vars, siteUrl }
+}
+
 // ─── Helpers ───
 
 function buildQuickFilter(filter: { field: string; operator: string; value: any }): Record<string, any> | null {
@@ -438,7 +443,8 @@ function populateTemplate(
   lead: any,
   businessLine: any,
   uniqueCode: string,
-  lpLink?: string
+  lpLink?: string,
+  extra?: { preview?: PreviewVars; unsubscribe?: string }
 ): string {
   return template
     .replace(/\{\{company_name\}\}/g, lead.companyName || '')
@@ -452,6 +458,9 @@ function populateTemplate(
     .replace(/\{\{unique_code\}\}/g, uniqueCode)
     .replace(/\{\{bl_name\}\}/g, businessLine.name || '')
     .replace(/\{\{link\}\}/g, lpLink || '')
+    .replace(/\{\{preview_link\}\}/g, extra?.preview?.preview_link || '')
+    .replace(/\{\{preview_expires\}\}/g, extra?.preview?.preview_expires || '')
+    .replace(/\{\{unsubscribe_link\}\}/g, extra?.unsubscribe || '')
 }
 
 // ─── Slugify company name for unique codes ───

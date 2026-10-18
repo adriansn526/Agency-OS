@@ -79,7 +79,7 @@ async function logSent(link: CommLink | undefined, businessLine: string | undefi
 }
 
 // ─── Generic transactional email (callers build the html/text) ───
-export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string; purpose?: MailPurpose; link?: CommLink; source?: string; inReplyTo?: string; references?: string[]; threadId?: string | null }) {
+export async function sendRawEmail(input: { to: string; subject: string; html: string; text: string; businessLine?: string; purpose?: MailPurpose; link?: CommLink; source?: string; inReplyTo?: string; references?: string[]; threadId?: string | null; headers?: Record<string, string> }) {
   const sender = await resolveSender(input.businessLine, input.purpose)
   let result: { messageId: string }
   try {
@@ -89,6 +89,7 @@ export async function sendRawEmail(input: { to: string; subject: string; html: s
     bcc: sender.bcc,
     to: input.to,
     subject: input.subject,
+    ...(input.headers ? { headers: input.headers } : {}),
     ...(input.inReplyTo ? { inReplyTo: input.inReplyTo, references: input.references?.length ? input.references : [input.inReplyTo] } : {}),
     html: sender.signatureHtml ? input.html + sender.signatureHtml : input.html,
     text: input.text,
