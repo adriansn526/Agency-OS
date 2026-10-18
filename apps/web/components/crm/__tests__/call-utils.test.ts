@@ -44,3 +44,7 @@ test('companyProfile: builds facts, people, signals and phone tags from lead + d
   const bare = companyProfile({ companyName: 'Y', contactPerson: 'Ion Pop', contactRole: 'Director', customFields: null })
   assert.deepEqual([bare.facts.length, bare.people, bare.signals.length], [0, [{ name: 'Ion Pop', role: 'Director' }], 0])
 })
+
+test('companyProfile: no lead yet (modal still loading) gives an empty profile instead of throwing', () => {
+  for (const x of [null, undefined]) assert.deepEqual(companyProfile(x), { facts: [], people: [], signals: [], phoneTags: {} })
+})

@@ -53,7 +53,8 @@ const ron = (n: number) => `${Math.round(n).toLocaleString('ro-RO')} lei`
 const link = (u: string) => (/^https?:\/\//i.test(u) ? u : `https://${u}`)
 
 /** Everything useful before dialling, from the lead and the prospecting details kept in customFields.detalii (pure; missing data is skipped). */
-export function companyProfile(lead: any): CompanyProfile {
+export function companyProfile(input: any): CompanyProfile {
+  const lead = input ?? {}   // the modal calls this before the lead has loaded
   const d = (lead?.customFields?.detalii ?? {}) as Record<string, any>
   const facts: Fact[] = []
   const add = (label: string, value: unknown, extra: Partial<Fact> = {}) => { const v = s(value); if (v) facts.push({ label, value: v, ...extra }) }
