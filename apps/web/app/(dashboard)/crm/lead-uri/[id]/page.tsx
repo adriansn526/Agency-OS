@@ -15,6 +15,7 @@ import {
 import { getBusinessLine } from "@repo/mock-data"
 import { useBusinessLine } from "@/components/business-line-context"
 import { LeadWebsiteCard } from "@/components/website/lead-website-card"
+import { CallModal } from "@/components/crm/call-modal"
 
 /* ── configs ── */
 
@@ -82,6 +83,7 @@ export default function SingleLeadPage() {
   const [error, setError] = useState(false)
   const [leadOffers, setLeadOffers] = useState<any[]>([])
   const [isCallingAI, setIsCallingAI] = useState(false)
+  const [callOpen, setCallOpen] = useState(false)
 
   const initiateAICall = async () => {
     if (!lead?.phone) return alert('Lead-ul nu are număr de telefon asociat.')
@@ -195,6 +197,7 @@ export default function SingleLeadPage() {
             {isCallingAI ? <Loader2 size={12} className="animate-spin" /> : <Bot size={12} />}
             Inițiază Apel AI
           </button>
+          <button type="button" onClick={() => setCallOpen(true)} disabled={!lead?.phone} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"><Phone size={12} /> Apel cu acțiuni</button>
           <a href={lead?.phone ? `tel:${lead.phone}` : '#'} className={cn("flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-muted text-foreground border border-border rounded-lg hover:bg-muted/80 transition-colors", !lead?.phone && "opacity-50 cursor-not-allowed")}>
             <Phone size={12} />
             Apel (Standard)
@@ -548,6 +551,7 @@ export default function SingleLeadPage() {
         setLead({ ...lead, status: 'castigat', convertedToId: clientId })
         setShowConvertModal(false)
       }} />}
+      <CallModal open={callOpen} leadId={callOpen && lead ? lead.id : null} lineSlug={lead?.businessLine?.slug ?? ""} onClose={() => setCallOpen(false)} onSaved={() => { fetch(`/api/leads/${id}`).then((r) => r.json()).then((j) => j.data && setLead(j.data)).catch(() => {}) }} />
     </div>
   )
 }
