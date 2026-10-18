@@ -1,5 +1,6 @@
 "use client"
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AuthorizationsPanel } from "./authorizations-panel"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
@@ -111,7 +112,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <section>
               <h3 className="text-sm font-semibold mb-2">Câmpuri {collection.name.toLowerCase()}</h3>
               <div className="grid grid-cols-2 gap-3">
-                {collection.fields.map((f) => (
+                {collection.fields.filter((f) => f.key !== "autorizatii_verificate").map((f) => (
                   <div key={f.key} className={f.type === "list" ? "col-span-2" : ""}>
                     <label className={labelCls} htmlFor={`cf-${f.key}`}>{f.label}{f.required && draft.status === "published" && <span className="text-destructive"> *</span>}</label>
                     <FieldInput f={f} value={draft.data[f.key]} onChange={(v) => set("data", { ...draft.data, [f.key]: v })} />
@@ -120,6 +121,8 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               </div>
             </section>
           )}
+
+          {entryId && collection?.key === "companii" && <AuthorizationsPanel lineId={lineId} entryId={entryId} value={draft.data.autorizatii_verificate} onChanged={(list) => set("data", { ...draft.data, autorizatii_verificate: list })} />}
 
           <section>
             <h3 className="text-sm font-semibold mb-2">Locație</h3>
