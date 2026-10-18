@@ -16,6 +16,7 @@ import type { Facts, RuleKind, RuleLike } from '../rules/types'
 import { getTaxonomy } from '../glossary/live'
 import { nationalPhone } from '../../prospectare/import-mapping'
 import type { Notifier } from '../partner/auth'
+import { planActive } from '../plan'
 import { pickFirms, teaserText, type Candidate } from './routing'
 
 export const REQUEST_TTL_HOURS = 72
@@ -48,7 +49,6 @@ const toLike = (r: { id: string; kind: string; name: string; priority: number; i
 type Req = { type: string; category: string; county: string; city: string | null; budgetRon: number | null; urgency: string | null }
 type EntryLike = { id: string; plan: string; planUntil: Date | null; verified: boolean }
 
-const planActive = (e: EntryLike, now: Date) => e.plan === 'abonament' && (!e.planUntil || e.planUntil > now)
 
 function requestFacts(r: Req): Facts {
   return { requestType: r.type, county: r.county, city: r.city ?? undefined, category: r.category, specialization: [r.category], budget: r.budgetRon ?? undefined, urgency: r.urgency ?? undefined }
