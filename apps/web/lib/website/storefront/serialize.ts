@@ -5,6 +5,7 @@
  */
 
 import { categoryTitles } from '../glossary/taxonomy'
+import { effectiveLayout } from '../layout/blocks'
 
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
@@ -13,6 +14,7 @@ interface EntryRow {
   ratingAvg: { toString(): string } | number | null; ratingCount: number
   data: unknown; seoTitle: string | null; seoDescription: string | null
   phone: string | null; websiteUrl: string | null
+  layout?: unknown
   parent?: { slug: string; title: string; city: string | null; county: string | null; logoUrl: string | null; verified: boolean } | null
   publishedAt: Date | null; updatedAt: Date
 }
@@ -39,6 +41,8 @@ export function serializeListItem(e: EntryRow, collectionKey: string) {
 export function serializeDetail(e: EntryRow, collectionKey: string, media: MediaRow[], reviews: ReviewRow[]) {
   return {
     ...serializeListItem(e, collectionKey),
+    // the firm's chosen home blocks (always valid: damaged storage falls back to the default)
+    ...(collectionKey === 'companii' ? { layout: effectiveLayout(e.layout) } : {}),
     body: e.body, phone: e.phone, websiteUrl: e.websiteUrl,
     seo: { title: e.seoTitle, description: e.seoDescription },
     media: media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),

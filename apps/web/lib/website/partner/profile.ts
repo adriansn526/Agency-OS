@@ -36,6 +36,8 @@ export function serializeProfile(e: EntryWithMedia) {
     id: e.id, slug: e.slug, status: e.status, title: e.title, cui: typeof d.cui === 'string' ? d.cui : null,
     summary: e.summary, body: e.body, phone: e.phone, email: e.email, websiteUrl: e.websiteUrl, address: e.address, city: e.city, county: e.county,
     logoUrl: e.logoUrl, coverUrl: e.coverUrl,
+    // company facts the website shows (read-only here): used by the editor's live preview
+    facts: Object.fromEntries(['forma_juridica', 'an_infiintare', 'banda_vechime', 'banda_angajati', 'banda_cifra_afaceri', 'regiune'].filter((k) => typeof d[k] === 'string' || typeof d[k] === 'number').map((k) => [k, d[k]])),
     tema: typeof d.tema === 'string' ? d.tema : null, accent: typeof d.accent === 'string' ? d.accent : null,
     servicii: Array.isArray(d.servicii) ? d.servicii.map(String) : [], program: typeof d.program === 'string' ? d.program : null, certificari: Array.isArray(d.certificari) ? d.certificari.map(String) : [],
     media: e.media.filter((m) => m.kind === 'image').map((m) => ({ id: m.id, url: m.url, alt: m.alt, width: m.width, height: m.height })),

@@ -1945,6 +1945,9 @@ model WebsiteEntry {
   children         WebsiteEntry[]    @relation("EntryChildren")
   partnerLogins    WebsitePartnerLogin[]
   partnerSessions  WebsitePartnerSession[]
+  /// Home page blocks chosen by the firm (see lib/website/layout.ts); null = default layout
+  layout           Json?
+  layoutVersions   WebsiteLayoutVersion[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -2078,4 +2081,17 @@ model WebsitePartnerSession {
   entry      WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
   @@index([entryId])
+}
+
+/// History of a firm's home layout (last 20 kept); restoring creates a new version.
+model WebsiteLayoutVersion {
+  id        String       @id @default(cuid())
+  entryId   String
+  layout    Json
+  /// partner | restore | reset
+  source    String       @default("partner")
+  createdAt DateTime     @default(now())
+  entry     WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId, createdAt])
 }

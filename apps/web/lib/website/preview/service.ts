@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { categoryTitles } from '../glossary/seed'
+import { effectiveLayout } from '../layout/blocks'
 
 /** Short code (10 chars of base58, ~58 bits, used in /p/<code> links) or the long legacy form pv_… (still valid for links already issued). */
 export const PREVIEW_TOKEN_RE = /^(?:[1-9A-HJ-NP-Za-km-z]{10}|pv_[A-Za-z0-9_-]{40,60})$/
@@ -75,6 +76,7 @@ export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRo
   return {
     title: e.title, summary: e.summary, city: e.city, county: e.county, address: e.address, email: e.email, phone: e.phone, websiteUrl: e.websiteUrl,
     body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind })),
+    layout: effectiveLayout(e.layout),
     services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii),
     data: e.data ?? {}, fields: Array.isArray(e.collection.fields) ? e.collection.fields : [], collection: { key: e.collection.key, name: e.collection.name },
     expiresAt: e.previewExpiresAt!.toISOString(),

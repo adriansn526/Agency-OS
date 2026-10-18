@@ -1,0 +1,48 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { BLOCK_TYPES, canonical, CATALOG, defaultLayout, effectiveLayout, MAX_BLOCKS, parseLayout } from '../blocks'
+
+const ok = (raw: unknown) => { const r = parseLayout(raw); assert.ok(r.ok, JSON.stringify(r)); return (r as { ok: true; layout: ReturnType<typeof defaultLayout> }).layout }
+const bad = (raw: unknown) => { const r = parseLayout(raw); assert.equal(r.ok, false, JSON.stringify(raw)); return (r as { ok: false; issues: string[] }).issues }
+
+test('catalog is consistent: unique types, hero locked and first, field keys unique per block', () => {
+  assert.equal(new Set(BLOCK_TYPES).size, BLOCK_TYPES.length); assert.equal(CATALOG[0]!.type, 'hero'); assert.equal(CATALOG[0]!.locked, true)
+  for (const b of CATALOG) assert.equal(new Set(b.fields.map((f) => f.key)).size, b.fields.length, b.type)
+})
+test('the default layout is valid and canonical', () => {
+  const d = defaultLayout()
+  assert.deepEqual(ok(d), d); assert.equal(d.blocks[0]!.type, 'hero'); assert.ok(d.blocks.every((b) => b.enabled))
+})
+test('hero is forced first and enabled; empty values are dropped; booleans false mean automatic', () => {
+  const l = ok({ blocks: [{ type: 'services', enabled: false, props: { title: '  Ce facem  ', max: 6 } }, { type: 'hero', enabled: false, props: { headline: 'Titlu', subheadline: '', hidePhone: false, hideLogo: true } }] })
+  assert.deepEqual(l.blocks.map((b) => b.type), ['hero', 'services'])
+  assert.deepEqual(l.blocks[0], { type: 'hero', enabled: true, props: { headline: 'Titlu', hideLogo: true } })
+  assert.deepEqual(l.blocks[1], { type: 'services', enabled: false, props: { title: 'Ce facem', max: 6 } })
+  assert.deepEqual(ok([]).blocks.map((b) => b.type), ['hero']) // a bare array is accepted; hero is added
+})
+test('rejects unknown types, duplicates, extra props, wrong types, over-long text and too many items', () => {
+  assert.match(bad({ blocks: [{ type: 'script', props: {} }] })[0]!, /tip necunoscut/)
+  assert.match(bad({ blocks: [{ type: 'steps', props: {} }, { type: 'steps', props: {} }] })[0]!, /de două ori/)
+  assert.ok(bad({ blocks: [{ type: 'steps', props: { html: '<b>x</b>' } }] }).length)
+  assert.ok(bad({ blocks: [{ type: 'services', props: { max: 'mulți' } }] }).length)
+  assert.ok(bad({ blocks: [{ type: 'services', props: { max: 2 } }] }).length)           // below the minimum
+  assert.ok(bad({ blocks: [{ type: 'services', props: { title: 'x'.repeat(101) } }] }).length)
+  assert.ok(bad({ blocks: [{ type: 'why', props: { reasons: new Array(4).fill({ title: 'a', text: 'b' }) } }] }).length)
+  assert.ok(bad({ blocks: [{ type: 'faq', props: { items: [{ q: 'întrebare', a: 'răspuns', extra: 1 }] } }] }).length)
+  assert.ok(bad({ blocks: [{ type: 'steps', enabled: 'da', props: {} }] }).length)
+  assert.ok(bad({ blocks: new Array(MAX_BLOCKS + 1).fill({ type: 'steps' }) }).length)
+  for (const raw of [null, undefined, 'x', 42, {}, { blocks: 'nu' }]) assert.ok(bad(raw).length)
+})
+test('text is kept as plain text (markup is data, never interpreted here)', () => {
+  const l = ok({ blocks: [{ type: 'about', props: { text: '<script>alert(1)</script> Firma noastră' } }] })
+  assert.equal(l.blocks[1]!.props.text, '<script>alert(1)</script> Firma noastră') // rendered by React as text; the length limit is the only rule
+})
+test('areas, faq and reasons round-trip', () => {
+  const raw = { blocks: [{ type: 'areas', props: { areas: ['Târgu Mureș', 'Ungheni'] } }, { type: 'faq', props: { items: [{ q: 'Cât costă?', a: 'Depinde de lucrare.' }] } }, { type: 'why', props: { reasons: [{ title: 'Rapid', text: 'Răspundem în aceeași zi.' }] } }] }
+  const l = ok(raw); assert.equal(canonical(ok(l)), canonical(l)) // idempotent
+})
+test('effective layout falls back to the default for missing or damaged storage', () => {
+  assert.equal(canonical(effectiveLayout(null)), canonical(defaultLayout()))
+  assert.equal(canonical(effectiveLayout({ blocks: [{ type: 'nope' }] })), canonical(defaultLayout()))
+  assert.equal(canonical(effectiveLayout('garbage')), canonical(defaultLayout()))
+})
