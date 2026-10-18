@@ -41,3 +41,67 @@ export function monthGrid(year: number, month: number): { date: Date; inMonth: b
 }
 
 export const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+/* ── Company details shown while calling ── */
+export interface Fact { label: string; value: string; href?: string; warn?: boolean }
+export interface CompanyProfile { facts: Fact[]; people: { name: string; role: string }[]; signals: Fact[]; phoneTags: Record<string, string> }
+
+const s = (v: unknown): string => (typeof v === 'string' || typeof v === 'number' ? String(v).trim() : '')
+const isNA = (v: unknown) => !s(v) || s(v).toUpperCase() === 'N/A'
+const digits = (p: string) => p.replace(/\D/g, '').replace(/^0040/, '0').replace(/^40(?=\d{9}$)/, '0')
+const ron = (n: number) => `${Math.round(n).toLocaleString('ro-RO')} lei`
+const link = (u: string) => (/^https?:\/\//i.test(u) ? u : `https://${u}`)
+
+/** Everything useful before dialling, from the lead and the prospecting details kept in customFields.detalii (pure; missing data is skipped). */
+export function companyProfile(lead: any): CompanyProfile {
+  const d = (lead?.customFields?.detalii ?? {}) as Record<string, any>
+  const facts: Fact[] = []
+  const add = (label: string, value: unknown, extra: Partial<Fact> = {}) => { const v = s(value); if (v) facts.push({ label, value: v, ...extra }) }
+
+  add('Activitate', lead.caenDescription || d.caen?.specializare)
+  add('CAEN', [lead.caenCode, d.caen?.sectiune].filter((x) => !isNA(x)).join(' · '))
+  add('Formă juridică', d.forma_juridica)
+  const year = Number(lead.foundedYear) || null
+  add('Înființată', year ? `${year}${d.benzi?.vechime ? ` (${d.benzi.vechime})` : ''}` : d.benzi?.vechime)
+  add('Angajați', lead.employees != null ? `${lead.employees}${d.benzi?.angajati ? ` · ${d.benzi.angajati}` : ''}` : d.benzi?.angajati)
+  const rev = Number(lead.revenue)
+  add('Cifra de afaceri', Number.isFinite(rev) && lead.revenue != null ? `${ron(rev)}${d.an_financiar ? ` (${d.an_financiar})` : ''}` : d.benzi?.cifra_afaceri)
+  if (typeof d.profit_net === 'number') add('Profit net', ron(d.profit_net))
+  add('CUI', lead.cui, {}); add('Reg. Com.', d.reg_com)
+  add('Adresă', lead.address)
+  add('Regiune', d.adresa?.regiune)
+  if (!isNA(lead.website)) add('Website', s(lead.website).replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, ''), { href: link(s(lead.website)) })
+  const emails = [...new Set([lead.email, lead.email2, ...(Array.isArray(d.emailuri) ? d.emailuri.map((e: any) => e?.email) : [])].filter((e) => !isNA(e) && String(e).includes('@')).map(s))]
+  if (emails.length) add('Email', emails.join(', '))
+  if (d.platitor_tva === true) add('TVA', 'plătitor')
+  if (d.inactiv_fiscal === true) facts.push({ label: 'Atenție', value: 'inactiv fiscal', warn: true })
+  if (lead.companyStatus && lead.companyStatus !== 'Funcțiune') facts.push({ label: 'Stare firmă', value: s(lead.companyStatus), warn: true })
+
+  const people: CompanyProfile['people'] = []
+  const seen = new Set<string>()
+  for (const p of Array.isArray(d.persoane) ? d.persoane : []) {
+    const name = s(p?.nume); if (!name || seen.has(name.toLowerCase())) continue
+    seen.add(name.toLowerCase()); people.push({ name, role: Array.isArray(p?.roluri) ? p.roluri.map(s).filter(Boolean).join(', ') : s(p?.rol) })
+  }
+  if (!isNA(lead.contactPerson) && !seen.has(s(lead.contactPerson).toLowerCase())) people.unshift({ name: s(lead.contactPerson), role: isNA(lead.contactRole) ? '' : s(lead.contactRole) })
+
+  const signals: Fact[] = []
+  const pa = d.etichete?.pagini_aurii
+  if (Array.isArray(pa) && pa[0]?.url) signals.push({ label: 'Pagini Aurii', value: 'listare găsită', href: s(pa[0].url) })
+  const fd = d.etichete?.fonduri_digitalizare
+  if (Array.isArray(fd) && fd.length) signals.push({ label: 'Fonduri digitalizare', value: fd.map((x: any) => `${s(x?.program) || 'program'}${Number(x?.ajutor_ron) ? ` (${ron(Number(x.ajutor_ron))})` : ''}`).join('; ') })
+  if (lead.customFields?.suprapunere_crm === 'da') signals.push({ label: 'Există și în CRM', value: s(lead.customFields.suprapunere_crm_linii) || 'altă linie', warn: true })
+  if (lead.customFields?.preview_raspuns) signals.push({ label: 'Răspuns la previzualizare', value: s(lead.customFields.preview_raspuns) })
+  else if (lead.customFields?.previzualizare_vazuta_la) signals.push({ label: 'Previzualizare', value: 'a deschis pagina' })
+  if (!isNA(lead.notes)) signals.push({ label: 'Note', value: s(lead.notes) })
+
+  // phone type and whether other firms share the number (a shared number is usually an accountant or an office)
+  const phoneTags: Record<string, string> = {}
+  for (const t of Array.isArray(d.telefoane) ? d.telefoane : []) {
+    const key = digits(s(t?.numar)); if (!key) continue
+    phoneTags[key] = [t?.tip === 'mobil' ? 'mobil' : t?.tip === 'fix' ? 'fix' : '', Number(t?.partajat_cu) > 0 ? `partajat cu ${t.partajat_cu} ${Number(t.partajat_cu) === 1 ? 'firmă' : 'firme'}` : ''].filter(Boolean).join(' · ')
+  }
+  return { facts, people, signals, phoneTags }
+}
+
+export const phoneTag = (tags: Record<string, string>, phone: string) => tags[digits(phone)] ?? ''
