@@ -32,7 +32,7 @@ const entryFields = {
   plan: z.enum(['gratuit', 'abonament']), planUntil: z.string().datetime({ offset: true }).nullable().transform((v) => (v ? new Date(v) : null)),
   seoTitle: optText(160), seoDescription: optText(320), data: z.record(z.string(), z.unknown()),
 }
-export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), partnerAccess: entryFields.partnerAccess.default(false), data: entryFields.data.default({}) })
+export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), partnerAccess: entryFields.partnerAccess.default(false), plan: entryFields.plan.default('gratuit'), planUntil: entryFields.planUntil.default(null), data: entryFields.data.default({}) })
 export const entryPatch = z.object({ ...entryFields, leadId: z.string().min(1).max(60).nullable() }).partial()
 export const entryFromLead = z.object({ leadId: z.string().min(1).max(60), collectionId: z.string().min(1).max(60) })
 
