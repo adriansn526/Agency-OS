@@ -170,3 +170,14 @@ test('link / unlink through updateEntry validates the lead', { skip }, async () 
   assert.equal((await svc.updateEntry('A', entry.id, { leadId: null })).leadId, null)
   assert.equal((await svc.updateEntry('A', entry2.id, { leadId: lead.id })).leadId, lead.id) // free again
 })
+
+test('channel: the sending window is saved, validated and returned with the overview', { skip }, async () => {
+  const before = await svc.getOverview('A')
+  assert.deepEqual(before.channel!.sendingWindow, { days: [1, 2, 3, 4, 5], from: 9, to: 18 })
+  const o = await svc.updateChannel('A', { sendingWindow: { days: [6, 1, 1], from: 10, to: 14 } })
+  assert.deepEqual(o.channel!.sendingWindow, { days: [1, 6], from: 10, to: 14 })
+  await assert.rejects(svc.updateChannel('A', { sendingWindow: { days: [], from: 9, to: 18 } }))
+  await assert.rejects(svc.updateChannel('A', { sendingWindow: { days: [1], from: 15, to: 9 } }))
+  assert.deepEqual((await svc.getOverview('A')).channel!.sendingWindow, { days: [1, 6], from: 10, to: 14 })
+  await svc.updateChannel('A', { sendingWindow: { days: [1, 2, 3, 4, 5], from: 9, to: 18 } })
+})

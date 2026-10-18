@@ -1,4 +1,5 @@
 /** Admin operations of the Website module. Every function is scoped to one business line; callers are admin-guarded. */
+import { parseSendingWindow } from '@/lib/marketing/sending-window'
 import { onProfilePublished } from '@/lib/crm/pipeline-events'
 import { db, Prisma } from '@repo/db'
 import { z } from 'zod'
@@ -38,7 +39,7 @@ export async function getOverview(lineId: string) {
   return {
     line,
     channel: {
-      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config), legalEmail: ((channel.config as { legalEmail?: unknown } | null)?.legalEmail as string | undefined) ?? null,
+      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config), legalEmail: ((channel.config as { legalEmail?: unknown } | null)?.legalEmail as string | undefined) ?? null, sendingWindow: parseSendingWindow((channel.config as { sendingWindow?: unknown } | null)?.sendingWindow),
       // hashes never leave the server
       keys: parseStoredKeys(channel.apiKeys).map((k) => ({ id: k.id, label: k.label, createdAt: k.createdAt, lastUsedAt: k.lastUsedAt ?? null })),
     },
@@ -65,6 +66,7 @@ export async function updateChannel(lineId: string, raw: unknown) {
   if (!exists) throw new AdminError('Modulul Website nu este activat pe această linie', 404)
   let nextConfig: Record<string, unknown> | undefined
   if (input.previewValidityDays !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), previewValidityDays: input.previewValidityDays }
+  if (input.sendingWindow !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), sendingWindow: input.sendingWindow }
   if (input.legalEmail !== undefined) { nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>) }; if (input.legalEmail) nextConfig.legalEmail = input.legalEmail; else delete nextConfig.legalEmail }
   const config = nextConfig ? (nextConfig as Prisma.InputJsonValue) : undefined
   await db.websiteChannel.update({ where: { businessLineId: lineId }, data: { ...(input.siteUrl !== undefined ? { siteUrl: input.siteUrl } : {}), ...(input.isEnabled !== undefined ? { isEnabled: input.isEnabled } : {}), ...(config ? { config } : {}) } })
