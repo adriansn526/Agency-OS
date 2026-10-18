@@ -35,7 +35,7 @@ export async function getOverview(lineId: string) {
   return {
     line,
     channel: {
-      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config),
+      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config), legalEmail: ((channel.config as { legalEmail?: unknown } | null)?.legalEmail as string | undefined) ?? null,
       // hashes never leave the server
       keys: parseStoredKeys(channel.apiKeys).map((k) => ({ id: k.id, label: k.label, createdAt: k.createdAt, lastUsedAt: k.lastUsedAt ?? null })),
     },
@@ -60,7 +60,10 @@ export async function updateChannel(lineId: string, raw: unknown) {
   const input = channelPatch.parse(raw)
   const exists = await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { id: true, config: true } })
   if (!exists) throw new AdminError('Modulul Website nu este activat pe această linie', 404)
-  const config = input.previewValidityDays !== undefined ? ({ ...((exists.config ?? {}) as Record<string, unknown>), previewValidityDays: input.previewValidityDays } as Prisma.InputJsonValue) : undefined
+  let nextConfig: Record<string, unknown> | undefined
+  if (input.previewValidityDays !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), previewValidityDays: input.previewValidityDays }
+  if (input.legalEmail !== undefined) { nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>) }; if (input.legalEmail) nextConfig.legalEmail = input.legalEmail; else delete nextConfig.legalEmail }
+  const config = nextConfig ? (nextConfig as Prisma.InputJsonValue) : undefined
   await db.websiteChannel.update({ where: { businessLineId: lineId }, data: { ...(input.siteUrl !== undefined ? { siteUrl: input.siteUrl } : {}), ...(input.isEnabled !== undefined ? { isEnabled: input.isEnabled } : {}), ...(config ? { config } : {}) } })
   invalidateWebsiteKeyCache()
   return getOverview(lineId)

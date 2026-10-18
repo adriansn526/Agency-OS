@@ -22,6 +22,7 @@ before(async () => {
   routes = {
     verify: await import('../../../../app/api/storefront/website/partner/verify/route'), me: await import('../../../../app/api/storefront/website/partner/me/route'),
     logout: await import('../../../../app/api/storefront/website/partner/logout/route'), layout: await import('../../../../app/api/storefront/website/partner/layout/route'),
+    legal: await import('../../../../app/api/storefront/website/legal-company/route'),
     versions: await import('../../../../app/api/storefront/website/partner/layout/versions/route'), login: await import('../../../../app/api/storefront/website/partner/login/route'),
   }
   await db.$executeRawUnsafe(`TRUNCATE "WebsiteLayoutVersion","WebsitePartnerSession","WebsitePartnerLogin","WebsiteEntry","WebsiteCollection","WebsiteChannel","Activity","Lead","BusinessLine" CASCADE`)
@@ -75,6 +76,14 @@ test('layout: needs the session; bad blocks are 422 with the reasons; a good lay
   const v = await (await call(routes.versions, 'GET', { session })).json(); assert.equal(v.items.length, 1)
   assert.equal(JSON.stringify(await (await call(routes.layout, 'GET', { session })).json()).includes('tn-secret'), false)
   const del = await (await call(routes.layout, 'DELETE', { session })).json(); assert.equal(del.customized, false)
+})
+
+test('legal company: needs the key; returns the company data, with the line\'s contact email when set', { skip }, async () => {
+  assert.equal((await call(routes.legal, 'GET', { key: null })).status, 401)
+  const a = await (await call(routes.legal, 'GET')).json()
+  assert.deepEqual(Object.keys(a).sort(), ['address', 'cui', 'email', 'name', 'reg']); assert.ok(a.name.length > 0 && !JSON.stringify(a).includes('undefined'))
+  await db.websiteChannel.update({ where: { businessLineId: 'bl' }, data: { config: { legalEmail: 'parteneri@intraconstruct.ro' } } })
+  assert.equal((await (await call(routes.legal, 'GET')).json()).email, 'parteneri@intraconstruct.ro')
 })
 
 test('logout ends the session', { skip }, async () => {

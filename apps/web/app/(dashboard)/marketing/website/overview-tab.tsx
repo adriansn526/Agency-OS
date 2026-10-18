@@ -12,6 +12,7 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
   const channel = overview?.channel
   const [siteUrl, setSiteUrl] = useState<string>(channel?.siteUrl ?? "")
   const [validity, setValidity] = useState<number>(channel?.previewValidityDays ?? 14)
+  const [legalEmail, setLegalEmail] = useState<string>(channel?.legalEmail ?? "")
   const [label, setLabel] = useState("")
   const [newKey, setNewKey] = useState<{ key: string; label: string } | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
@@ -75,6 +76,14 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
               <Button size="sm" variant="outline" disabled={busy === "validity" || !Number.isInteger(validity) || validity < 1 || validity > 90 || validity === (channel.previewValidityDays ?? 14)} onClick={() => run("validity", () => api(`/api/website/channel?${q}`, "PATCH", { previewValidityDays: validity }), "Valabilitate salvată")}>Salvează</Button>
             </div>
             <p className="text-xs text-muted-foreground mt-1">Se aplică linkurilor generate de acum încolo; cele deja trimise își păstrează data.</p>
+          </div>
+          <div>
+            <label className={labelCls} htmlFor="legal-email">Email de contact în documentele juridice</label>
+            <div className="flex items-center gap-2">
+              <input id="legal-email" type="email" className={inputCls} placeholder="parteneri@intraconstruct.ro" value={legalEmail} onChange={(e) => setLegalEmail(e.target.value)} />
+              <Button size="sm" variant="outline" disabled={busy === "legal" || legalEmail === (channel.legalEmail ?? "")} onClick={() => run("legal", () => api(`/api/website/channel?${q}`, "PATCH", { legalEmail: legalEmail.trim() || null }), "Email salvat")}>Salvează</Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Datele societății (denumire, CUI, sediu) vin din Setări → Companie; goală, se folosește emailul societății.</p>
           </div>
           <Button size="sm" variant="outline" disabled={busy === "save" || siteUrl === (channel.siteUrl ?? "")} onClick={() => run("save", () => api(`/api/website/channel?${q}`, "PATCH", { siteUrl }), "Salvat")}>Salvează adresa</Button>
         </CardContent>
