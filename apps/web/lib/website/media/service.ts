@@ -23,10 +23,11 @@ async function tryRemove(store: ObjectStore, url: string | null | undefined) {
   if (key) await store.remove(key).catch((e) => console.error('[website-media] could not delete', key, e instanceof Error ? e.message : e))
 }
 
-export async function uploadEntryImage(lineId: string, entryId: string, kind: ImageKind, file: Buffer, o: { alt?: unknown; store?: ObjectStore } = {}) {
+export async function uploadEntryImage(lineId: string, entryId: string, kind: ImageKind, file: Buffer, o: { alt?: unknown; store?: ObjectStore; maxImages?: number } = {}) {
   const store = o.store ?? spacesStore
   const entry = await entryOf(lineId, entryId)
-  if (kind === 'image' && (await db.websiteMedia.count({ where: { entryId, kind: 'image' } })) >= MAX_GALLERY) throw new AdminError(`Maxim ${MAX_GALLERY} de imagini în galerie`, 409)
+  const cap = o.maxImages ?? MAX_GALLERY
+  if (kind === 'image' && (await db.websiteMedia.count({ where: { entryId, kind: 'image' } })) >= cap) throw new AdminError(`Maxim ${cap} de imagini`, 409)
   const img = await processImage(file, kind)
   const key = newKey(lineId, entryId, kind)
   await store.put(key, img.buffer, img.mime)

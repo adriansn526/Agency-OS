@@ -1939,6 +1939,10 @@ model WebsiteEntry {
   previewExpiresAt DateTime?
   /// The firm may log in ("Profilul meu") and edit this entry; set when it accepts the preview or by the team
   partnerAccess    Boolean           @default(false)
+  /// Child entries (a firm's projects): visible publicly only while the parent is published
+  parentId         String?
+  parent           WebsiteEntry?     @relation("EntryChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children         WebsiteEntry[]    @relation("EntryChildren")
   partnerLogins    WebsitePartnerLogin[]
   partnerSessions  WebsitePartnerSession[]
   createdAt       DateTime          @default(now())
@@ -1954,6 +1958,7 @@ model WebsiteEntry {
   @@index([tenantId])
   @@index([leadId])
   @@index([status, previewExpiresAt])
+  @@index([parentId])
 }
 
 model WebsiteMedia {
