@@ -7,6 +7,7 @@ import { useBusinessLine } from "@/components/business-line-context"
 import { BusinessLineBadge } from "@/components/business-line-switcher"
 import { cn, formatCurrency, formatDate, getInitials } from "@/lib/utils"
 import { NewLeadModal } from "@/components/entity-forms"
+import { stagesFor } from "@/lib/crm/pipeline-stages"
 import { FilterBar, type FilterCondition } from "@/components/lead-filters"
 import {
   Plus, GripVertical, Calendar, DollarSign, ArrowUpRight,
@@ -230,8 +231,8 @@ export default function LeadPage() {
   // Dynamic kanban columns from business line config
   const kanbanColumns: KanbanColumn[] = useMemo(() => {
     if (!activeLine) return [] // "Toate" → no kanban
-    const et = (activeLine as any).entityTypes?.find((e: any) => e.id === activeEntityTypeId) || (activeLine as any).entityTypes?.[0]
-    if (!et) {
+    const stages = stagesFor((activeLine as any).entityTypes, activeEntityTypeId)
+    if (stages.length === 0) {
       // Fallback: default pipeline
       return [
         { status: "contactat", label: "Contactat", ...stageColorMap.contactat! },
@@ -242,7 +243,7 @@ export default function LeadPage() {
         { status: "pierdut", label: "Pierdut", ...stageColorMap.pierdut! },
       ]
     }
-    return et.pipeline.map((s: any) => {
+    return stages.map((s) => {
       const colors = stageColorMap[s.key] || { color: "text-muted-foreground", bgColor: "bg-muted", borderColor: "border-muted" }
       return { status: s.key, label: s.label, ...colors }
     })
@@ -253,8 +254,8 @@ export default function LeadPage() {
     if (!activeLine) {
       return [{ value: "all", label: "Toate" }]
     }
-    const et = (activeLine as any).entityTypes?.find((e: any) => e.id === activeEntityTypeId) || (activeLine as any).entityTypes?.[0]
-    if (!et) {
+    const stages = stagesFor((activeLine as any).entityTypes, activeEntityTypeId)
+    if (stages.length === 0) {
       return [
         { value: "all", label: "Toate" },
         { value: "contactat", label: "Contactat" }, { value: "calificat", label: "Calificat" },
@@ -264,7 +265,7 @@ export default function LeadPage() {
     }
     return [
       { value: "all", label: "Toate" },
-      ...et.pipeline.map((s: any) => ({ value: s.key, label: s.label })),
+      ...stages.map((s) => ({ value: s.key, label: s.label })),
     ]
   }, [activeLine, activeEntityTypeId])
 
