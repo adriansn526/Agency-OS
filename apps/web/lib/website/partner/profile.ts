@@ -30,6 +30,12 @@ export const profilePatch = z.object({
 
 type EntryWithMedia = Prisma.WebsiteEntryGetPayload<{ include: { media: true } }>
 
+/** The hero background video (two media rows of kind "file": the video and its poster), or null. */
+function heroVideoOf(media: EntryWithMedia['media']) {
+  const v = media.find((m) => m.kind === 'file' && m.alt === 'hero-video'), p = media.find((m) => m.kind === 'file' && m.alt === 'hero-poster')
+  return v && p ? { url: v.url, posterUrl: p.url, bytes: v.sizeBytes } : null
+}
+
 export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy) {
   const d = (e.data ?? {}) as Record<string, unknown>
   return {
@@ -40,6 +46,7 @@ export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy) {
     facts: Object.fromEntries(['forma_juridica', 'an_infiintare', 'banda_vechime', 'banda_angajati', 'banda_cifra_afaceri', 'regiune'].filter((k) => typeof d[k] === 'string' || typeof d[k] === 'number').map((k) => [k, d[k]])),
     tema: typeof d.tema === 'string' ? d.tema : null, accent: typeof d.accent === 'string' ? d.accent : null,
     servicii: Array.isArray(d.servicii) ? d.servicii.map(String) : [], program: typeof d.program === 'string' ? d.program : null, certificari: Array.isArray(d.certificari) ? d.certificari.map(String) : [],
+    heroVideo: heroVideoOf(e.media),
     media: e.media.filter((m) => m.kind === 'image').map((m) => ({ id: m.id, url: m.url, alt: m.alt, width: m.width, height: m.height })),
     locked: [...LOCKED_FIELDS], publicPath: e.status === 'published' ? `/companii/${e.slug}` : null,
     categories: tax.categories, groups: tax.groups,

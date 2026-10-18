@@ -5,9 +5,11 @@
  */
 import { z } from 'zod'
 
-export type FieldKind = 'text' | 'textarea' | 'number' | 'bool' | 'list' | 'pairs'
+export type FieldKind = 'text' | 'textarea' | 'number' | 'bool' | 'list' | 'pairs' | 'select'
 export interface Field {
   key: string; label: string; kind: FieldKind; max?: number; min?: number; maxItems?: number; placeholder?: string
+  /** select: the allowed values (the first is what "automatic" means when the field is left empty) */
+  options?: { value: string; label: string }[]
   /** pairs: names of the two keys of each item, with their labels */
   pair?: { a: string; b: string; aLabel: string; bLabel: string; aMax: number; bMax: number }
 }
@@ -22,6 +24,13 @@ export const CATALOG: BlockDef[] = [
     { key: 'ctaLabel', label: 'Text buton', kind: 'text', max: 40, placeholder: 'Cere ofertă gratuită' },
     { key: 'hidePhone', label: 'Ascunde butonul „Sună acum”', kind: 'bool' },
     { key: 'hideLogo', label: 'Ascunde logo-ul din banner', kind: 'bool' },
+    { key: 'bg', label: 'Fundal', kind: 'select', options: [{ value: 'auto', label: 'Automat (imaginea de copertă sau degrade)' }, { value: 'video', label: 'Video (încarcă mai jos)' }, { value: 'gradient', label: 'Degrade' }, { value: 'color', label: 'Culoare unică' }] },
+    { key: 'color', label: 'Culoarea fundalului (pentru „Culoare unică”)', kind: 'select', options: [{ value: 'ink', label: 'Închis' }, { value: 'brand', label: 'Portocaliu' }, { value: 'trust', label: 'Verde' }] },
+    { key: 'overlay', label: 'Întunecare peste imagine / video', kind: 'select', options: [{ value: '50', label: 'Medie' }, { value: '0', label: 'Fără' }, { value: '25', label: 'Ușoară' }, { value: '70', label: 'Puternică' }] },
+    { key: 'height', label: 'Înălțime', kind: 'select', options: [{ value: 'm', label: 'Medie' }, { value: 's', label: 'Mică' }, { value: 'l', label: 'Mare' }] },
+    { key: 'align', label: 'Aliniere text', kind: 'select', options: [{ value: 'left', label: 'Stânga' }, { value: 'center', label: 'Centru' }] },
+    { key: 'secondaryLabel', label: 'Al doilea buton (text)', kind: 'text', max: 40, placeholder: 'ex: Vezi lucrările noastre' },
+    { key: 'secondaryTarget', label: 'Al doilea buton duce la', kind: 'select', options: [{ value: 'proiecte', label: 'Proiecte' }, { value: 'servicii', label: 'Servicii' }, { value: 'contact', label: 'Contact' }] },
   ] },
   { type: 'trust', label: 'Pe scurt (cifre)', description: 'Ani de activitate, angajați, domenii și zona de lucru, din datele firmei.', fields: [] },
   { type: 'services', label: 'Servicii', description: 'Serviciile alese în profil, cu buton de cerere de ofertă.', fields: [title('Ce putem face pentru dumneavoastră'), { key: 'max', label: 'Câte servicii se afișează', kind: 'number', min: 3, max: 12 }] },
@@ -51,6 +60,7 @@ function fieldSchema(f: Field): z.ZodTypeAny {
   switch (f.kind) {
     case 'text': case 'textarea': return text(f.max ?? 200)
     case 'bool': return z.boolean()
+    case 'select': return z.union([z.literal(''), z.enum(f.options!.map((o) => o.value) as [string, ...string[]])])   // '' = automatic
     case 'number': return z.number().int().min(f.min ?? 0).max(f.max ?? 100)
     case 'list': return z.array(text(f.max ?? 100).min(1)).max(f.maxItems ?? 20)
     case 'pairs': { const p = f.pair!; return z.array(z.object({ [p.a]: text(p.aMax).min(1), [p.b]: text(p.bMax).min(1) }).strict()).max(f.maxItems ?? 10) }

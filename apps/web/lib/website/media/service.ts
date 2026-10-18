@@ -80,3 +80,49 @@ export async function entryObjectUrls(entryId: string): Promise<string[]> {
 export async function removeObjects(urls: string[], store: ObjectStore = spacesStore) {
   for (const u of urls) await tryRemove(store, u)
 }
+
+// ─── Hero background video ─────────────────────────────────────────
+// Stored as two WebsiteMedia rows of kind "file" (the table only allows image|file), told apart by `alt`: the video (video/mp4) and its poster (image/webp).
+export const HERO_VIDEO_ALT = 'hero-video'
+export const HERO_POSTER_ALT = 'hero-poster'
+
+export interface HeroVideoInfo { url: string; posterUrl: string; width: number | null; height: number | null; bytes: number | null }
+
+export async function getHeroVideo(entryId: string): Promise<HeroVideoInfo | null> {
+  const rows = await db.websiteMedia.findMany({ where: { entryId, kind: 'file', alt: { in: [HERO_VIDEO_ALT, HERO_POSTER_ALT] } } })
+  const v = rows.find((r) => r.alt === HERO_VIDEO_ALT), p = rows.find((r) => r.alt === HERO_POSTER_ALT)
+  return v && p ? { url: v.url, posterUrl: p.url, width: v.width, height: v.height, bytes: v.sizeBytes } : null
+}
+
+export async function clearHeroVideo(lineId: string, entryId: string, store: ObjectStore = spacesStore) {
+  await entryOf(lineId, entryId)
+  const rows = await db.websiteMedia.findMany({ where: { entryId, kind: 'file', alt: { in: [HERO_VIDEO_ALT, HERO_POSTER_ALT] } } })
+  await db.websiteMedia.deleteMany({ where: { id: { in: rows.map((r) => r.id) } } })
+  for (const r of rows) await tryRemove(store, r.url)
+  return { removed: rows.length }
+}
+
+/** Replaces the hero video: transcodes the upload (see video.ts), stores video and poster, then retires the previous ones. */
+export async function uploadHeroVideo(lineId: string, entryId: string, file: Buffer, o: { store?: ObjectStore; transcode?: typeof import('./video').transcodeHeroVideo } = {}) {
+  const store = o.store ?? spacesStore
+  await entryOf(lineId, entryId)
+  const { transcodeHeroVideo } = o.transcode ? { transcodeHeroVideo: o.transcode } : await import('./video')
+  const v = await transcodeHeroVideo(file)
+  const id = randomBytes(8).toString('hex')
+  const vKey = `${PUBLIC_PREFIX}${lineId}/${entryId}/hero-${id}.mp4`, pKey = `${PUBLIC_PREFIX}${lineId}/${entryId}/hero-poster-${id}.webp`
+  await store.put(vKey, v.video, 'video/mp4')
+  try { await store.put(pKey, v.poster, 'image/webp') } catch (e) { await store.remove(vKey).catch(() => undefined); throw e }
+  const previous = await db.websiteMedia.findMany({ where: { entryId, kind: 'file', alt: { in: [HERO_VIDEO_ALT, HERO_POSTER_ALT] } } })
+  try {
+    await db.$transaction([
+      db.websiteMedia.deleteMany({ where: { id: { in: previous.map((r) => r.id) } } }),
+      db.websiteMedia.create({ data: { entryId, kind: 'file', storageKey: vKey, url: store.publicUrl(vKey), alt: HERO_VIDEO_ALT, mimeType: 'video/mp4', sizeBytes: v.video.length, width: v.width, height: v.height, sortOrder: 900 } }),
+      db.websiteMedia.create({ data: { entryId, kind: 'file', storageKey: pKey, url: store.publicUrl(pKey), alt: HERO_POSTER_ALT, mimeType: 'image/webp', sizeBytes: v.poster.length, width: v.posterWidth, height: v.posterHeight, sortOrder: 901 } }),
+    ])
+  } catch (e) {
+    await Promise.all([store.remove(vKey), store.remove(pKey)]).catch(() => undefined)
+    throw e
+  }
+  for (const r of previous) await tryRemove(store, r.url)
+  return { video: store.publicUrl(vKey), poster: store.publicUrl(pKey), width: v.width, height: v.height, seconds: v.seconds, bytes: v.video.length }
+}
