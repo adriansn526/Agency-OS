@@ -5,6 +5,9 @@ import { WebsiteInputError } from './auth'
 import { parseListQuery, isSlug, type FieldDef } from './query'
 import { serializeCollection, serializeDetail, serializeListItem } from './serialize'
 
+/** Children (a firm's projects) are public only while their parent entry is published. */
+const PARENT_PUBLISHED: Prisma.WebsiteEntryWhereInput = { OR: [{ parentId: null }, { parent: { status: 'published' } }] }
+
 const activeCollection = (ctx: WebsiteContext, key: string) =>
   db.websiteCollection.findFirst({ where: { businessLineId: ctx.businessLineId, key, isActive: true } })
 
@@ -49,9 +52,10 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
       ? { OR: [{ title: { contains: q.q, mode: 'insensitive' } }, { summary: { contains: q.q, mode: 'insensitive' } }, { city: { contains: q.q, mode: 'insensitive' } }] }
       : {}),
     // list fields hold several values (e.g. a firm's service categories): match membership; other fields: equality
-    ...(Object.keys(q.fieldFilters).length
-      ? { AND: Object.entries(q.fieldFilters).map(([k, v]) => ({ data: { path: [k], ...(fieldDefs.find((f) => f.key === k)?.type === 'list' ? { array_contains: v } : { equals: v }) } })) }
-      : {}),
+    AND: [
+      PARENT_PUBLISHED,
+      ...Object.entries(q.fieldFilters).map(([k, v]) => ({ data: { path: [k], ...(fieldDefs.find((f) => f.key === k)?.type === 'list' ? { array_contains: v } : { equals: v }) } })),
+    ],
   }
 
   const [total, rows] = await Promise.all([
@@ -78,7 +82,7 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
   const collection = await activeCollection(ctx, collectionKey)
   if (!collection) return null
   const entry = await db.websiteEntry.findFirst({
-    where: { businessLineId: ctx.businessLineId, collectionId: collection.id, slug, status: 'published' },
+    where: { businessLineId: ctx.businessLineId, collectionId: collection.id, slug, status: 'published', ...PARENT_PUBLISHED },
     include: {
       media: { orderBy: { sortOrder: 'asc' }, take: 60 },
       reviews: { where: { status: 'approved' }, orderBy: { createdAt: 'desc' }, take: 20 },
@@ -90,7 +94,7 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
 /** Slugs and last-modified dates of everything published, for the site's sitemap. */
 export async function sitemap(ctx: WebsiteContext) {
   const rows = await db.websiteEntry.findMany({
-    where: { businessLineId: ctx.businessLineId, status: 'published', collection: { isActive: true } },
+    where: { businessLineId: ctx.businessLineId, status: 'published', collection: { isActive: true }, ...PARENT_PUBLISHED },
     select: { slug: true, updatedAt: true, collection: { select: { key: true } } },
     orderBy: { updatedAt: 'desc' },
     take: 50_000,
