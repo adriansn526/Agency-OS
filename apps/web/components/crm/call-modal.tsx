@@ -33,6 +33,7 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
   const [templateId, setTemplateId] = useState("")
   const [sms, setSms] = useState<{ text: string; length: number; blockers: string[]; alreadySent: boolean } | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
+  const [deliveries, setDeliveries] = useState<{ id: string; at: string; subject: string | null; state: "delivered" | "failed" | "pending" | "unknown"; deliveredAt: string | null }[]>([])
   const timer = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // load the lead and the SMS templates each time the modal opens for a lead; start from a clean form
@@ -44,6 +45,7 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
       const cf = (l.customFields ?? {}) as Record<string, string>
       setConsentSms(cf.acord_sms === "da" || cf.acord_sms === "nu" ? cf.acord_sms : ""); setConsentEmail(cf.acord_email === "da" || cf.acord_email === "nu" ? cf.acord_email : "")
     }).catch(() => toast.error("Nu am putut încărca firma"))
+    call(`/api/crm/calls/${leadId}/sms/delivery`).then((d: any) => setDeliveries(Array.isArray(d) ? d : [])).catch(() => setDeliveries([]))
     call(`/api/marketing/templates?businessLine=${encodeURIComponent(lineSlug)}&channel=sms`).then((t: any) => setTemplates(Array.isArray(t) ? t : [])).catch(() => setTemplates([]))
   }, [open, leadId, lineSlug])
 
@@ -51,6 +53,11 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
     if (running) timer.current = setInterval(() => setElapsed((s) => s + 1), 1000)
     return () => { if (timer.current) clearInterval(timer.current) }
   }, [running])
+
+  const refreshDelivery = useCallback(async () => {
+    if (!leadId) return
+    try { const d = await call(`/api/crm/calls/${leadId}/sms/delivery`); setDeliveries(Array.isArray(d) ? d : []) } catch { /* the list stays as it was */ }
+  }, [leadId])
 
   const loadSms = useCallback(async (id: string) => {
     if (!leadId || !id) { setSms(null); return }
@@ -86,7 +93,7 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
     setBusy("sms")
     try {
       await call(`/api/crm/calls/${leadId}/sms`, "POST", { templateId, resend })
-      toast.success("SMS trimis"); await loadSms(templateId); onSaved?.()
+      toast.success("SMS trimis"); await loadSms(templateId); void refreshDelivery(); onSaved?.()
     } catch (e: any) {
       if (e.status === 409 && e.blockers?.[0] === "already_sent") { if (confirm(`${e.message}\n\nRetrimiți?`)) await sendSms(true) }
       else toast.error(e.message)
@@ -184,6 +191,22 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
                 {sms.blockers.length > 0 && <ul className="list-disc pl-5 text-xs text-destructive" role="alert">{sms.blockers.map((b) => <li key={b}>{b}</li>)}</ul>}
                 {sms.alreadySent && <p className="text-xs text-amber-600">Linkul acestei firme a fost deja trimis; retrimiterea îl înlocuiește.</p>}
                 <Button type="button" size="sm" variant="outline" disabled={sms.blockers.length > 0 || busy === "sms"} onClick={() => sendSms()}>{busy === "sms" ? "Se trimite…" : "Trimite SMS"}</Button>
+              </div>
+            )}
+            {deliveries.length > 0 && (
+              <div className="mt-3 border-t border-border pt-2" aria-label="SMS trimise">
+                <div className="mb-1 flex items-center justify-between text-xs font-semibold">SMS trimise <button type="button" className="font-normal underline text-muted-foreground" onClick={() => void refreshDelivery()}>Verifică din nou</button></div>
+                <ul className="flex flex-col gap-1 text-xs">
+                  {deliveries.slice(0, 4).map((d) => (
+                    <li key={d.id} className="flex flex-wrap items-center gap-2">
+                      <span className="text-muted-foreground">{new Date(d.at).toLocaleString("ro-RO", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                      <span className="min-w-0 truncate">{(d.subject ?? "SMS").replace(/^SMS:\s*/, "")}</span>
+                      <span className={cn("ml-auto rounded-full px-2 py-0.5", d.state === "delivered" && "bg-green-500/15 text-green-600", d.state === "failed" && "bg-destructive/15 text-destructive", (d.state === "pending" || d.state === "unknown") && "bg-muted text-muted-foreground")}>
+                        {d.state === "delivered" ? "Livrat" : d.state === "failed" ? "Eșuat" : d.state === "pending" ? "Trimis, neconfirmat încă" : "Fără urmărire"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
             <p className="mt-2 text-xs text-muted-foreground">SMS-ul se poate trimite doar cu „Acord SMS = da" salvat pe fișă. Salvează întâi apelul dacă tocmai ai primit acordul.</p>
