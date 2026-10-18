@@ -7,6 +7,7 @@ import { collectionCreate, collectionPatch, channelPatch, entryCreate, entryFrom
 import { slugify, uniqueSlug } from './slug'
 import { normalizeWebsite } from './url'
 import { validityDays } from '../preview/service'
+import { entryObjectUrls, removeObjects } from '../media/service'
 import { generateWebsiteKey, parseStoredKeys } from '../storefront/keys'
 import { invalidateWebsiteKeyCache } from '../storefront/auth'
 
@@ -225,7 +226,9 @@ export async function deleteEntry(lineId: string, id: string) {
   await assertLine(lineId)
   const e = await db.websiteEntry.findFirst({ where: { id, businessLineId: lineId }, select: { id: true } })
   if (!e) throw new AdminError('Intrarea nu există', 404)
+  const urls = await entryObjectUrls(id)
   await db.websiteEntry.delete({ where: { id } })
+  await removeObjects(urls) // best effort: files of a deleted entry must not stay public
   return { deleted: id }
 }
 
