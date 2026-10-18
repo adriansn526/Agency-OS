@@ -18,7 +18,13 @@ export async function GET(req: NextRequest) {
         AND "customFields"->'rawFormData' IS NOT NULL;
     `
 
-    const keys = result.map(r => r.key).filter(k => k !== 'undefined' && k !== 'null')
+    // top-level scalar custom fields (pilot, regiune, rezultat_apel …), not nested objects
+    const top = await db.$queryRaw<{ key: string }[]>`
+      SELECT DISTINCT e.key FROM "Lead", jsonb_each("customFields") AS e
+      WHERE "businessLineId" = ${businessLineId} AND jsonb_typeof("customFields") = 'object' AND jsonb_typeof(e.value) IN ('string', 'number')
+      LIMIT 200;
+    `
+    const keys = [...new Set([...result, ...top].map(r => r.key))].filter(k => k !== 'undefined' && k !== 'null')
 
     return NextResponse.json({ keys })
   } catch (error) {
