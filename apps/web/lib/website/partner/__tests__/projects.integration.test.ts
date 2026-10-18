@@ -62,8 +62,11 @@ test('photos: stored in the public prefix, capped at 12, removable, alt text; de
   for (let i = 1; i < 12; i++) await PR.addProjectImage(a, p.id, await img(), null, store)
   await assert.rejects(PR.addProjectImage(a, p.id, await img(), null, store), /Maxim 12/)
   const before = objects.size
+  assert.equal((await db.websiteEntry.findUnique({ where: { id: p.id } })).coverUrl, m.url) // first photo = cover
   await PR.removeProjectImage(a, p.id, m.id, store)
   assert.equal(objects.size, before - 1)
+  const after = await db.websiteEntry.findUnique({ where: { id: p.id }, include: { media: { orderBy: { sortOrder: 'asc' } } } })
+  assert.equal(after.coverUrl, after.media[0].url) // cover moves to the next photo
   await PR.deleteProject(a, p.id, store)
   assert.equal(await db.websiteMedia.count({ where: { entryId: p.id } }), 0)
   assert.ok([...objects.keys()].every((k) => !k.includes(`/${p.id}/`)))
