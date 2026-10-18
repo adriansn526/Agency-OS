@@ -6,6 +6,7 @@ import { Copy, KeyRound, Loader2, Trash2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { SuggestionsCard } from "./suggestions-card"
 import { api, ApiError, fmtDate, inputCls, labelCls } from "./shared"
 
 export function OverviewTab({ lineId, overview, reload }: { lineId: string; overview: any; reload: () => Promise<void> }) {
@@ -79,6 +80,8 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
           <Button size="sm" variant="outline" disabled={busy === "save" || siteUrl === (channel.siteUrl ?? "")} onClick={() => run("save", () => api(`/api/website/channel?${q}`, "PATCH", { siteUrl }), "Salvat")}>Salvează adresa</Button>
         </CardContent>
       </Card>
+
+      <SuggestionsCard lineId={lineId} />
 
       <Card className="lg:col-span-2">
         <CardHeader><CardTitle className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Chei API</CardTitle></CardHeader>

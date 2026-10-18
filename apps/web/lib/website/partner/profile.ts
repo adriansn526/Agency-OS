@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { normalizeWebsite } from '../admin/url'
-import { CATEGORIES, GROUPS, isCategorySlug } from '../glossary/taxonomy'
+import { getTaxonomy, unknownCategories, type LiveTaxonomy } from '../glossary/live'
 import { nationalPhone } from '../../prospectare/import-mapping'
 import { THEME_PRESETS } from '../theme'
 
@@ -21,7 +21,7 @@ export const profilePatch = z.object({
     if (!u) ctx.addIssue({ code: 'custom', message: 'Adresă de website invalidă' })
     return u
   }),
-  servicii: z.array(z.string().trim()).max(12).optional().refine((a) => !a || a.every(isCategorySlug), 'Categorie necunoscută'),
+  servicii: z.array(z.string().trim().min(1).max(60)).max(12).optional(),
   certificari: z.array(z.string().trim().min(1).max(120)).max(20).optional(),
   /** colour theme: a preset key and/or a custom #rrggbb accent (null clears) */
   tema: z.enum(THEME_PRESETS as [string, ...string[]]).nullish().transform((v) => v ?? null),
@@ -30,7 +30,7 @@ export const profilePatch = z.object({
 
 type EntryWithMedia = Prisma.WebsiteEntryGetPayload<{ include: { media: true } }>
 
-export function serializeProfile(e: EntryWithMedia) {
+export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy) {
   const d = (e.data ?? {}) as Record<string, unknown>
   return {
     id: e.id, slug: e.slug, status: e.status, title: e.title, cui: typeof d.cui === 'string' ? d.cui : null,
@@ -42,7 +42,7 @@ export function serializeProfile(e: EntryWithMedia) {
     servicii: Array.isArray(d.servicii) ? d.servicii.map(String) : [], program: typeof d.program === 'string' ? d.program : null, certificari: Array.isArray(d.certificari) ? d.certificari.map(String) : [],
     media: e.media.filter((m) => m.kind === 'image').map((m) => ({ id: m.id, url: m.url, alt: m.alt, width: m.width, height: m.height })),
     locked: [...LOCKED_FIELDS], publicPath: e.status === 'published' ? `/companii/${e.slug}` : null,
-    categories: CATEGORIES.map((c) => ({ slug: c.slug, title: c.title, group: c.group })), groups: GROUPS.map((g) => ({ slug: g.slug, title: g.title })),
+    categories: tax.categories, groups: tax.groups,
   }
 }
 
@@ -50,6 +50,10 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   const parsed = profilePatch.safeParse(raw)
   if (!parsed.success) throw new AdminError('Date invalide', 422, parsed.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
   const p = parsed.data
+  if (p.servicii) {
+    const bad = unknownCategories(await getTaxonomy(entry.businessLineId), p.servicii)
+    if (bad.length) throw new AdminError('Date invalide', 422, [`servicii: categorie necunoscută (${bad.join(', ')})`])
+  }
   const d = { ...((entry.data ?? {}) as Record<string, unknown>) }
   const column: Prisma.WebsiteEntryUpdateInput = {}
   const changed: string[] = []
