@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@repo/db'
 import { dispatchEmails, withinSendingWindow } from '@/lib/marketing/dispatch'
+import { loadSendingWindow } from '@/lib/marketing/sending-window'
 import { templateNeedsPreview, unsubscribeUrl } from '@/lib/website/preview/campaign'
 
 // ─── GET /api/cron/campaigns ───
@@ -114,8 +115,8 @@ export async function GET(request: NextRequest) {
             }
           }
         } else if (campaign.channel === 'email') {
-          // outreach goes out on weekdays 9:00-18:00 (Bucharest); the next run picks the rest up
-          if (!withinSendingWindow(now)) { results.push({ id: campaign.id, name: campaign.name, sent: 0, status: 'waiting for the sending window' }); continue }
+          // outreach goes out inside the line's sending window (default weekdays 9:00-18:00, Bucharest); the next run picks the rest up
+          if (!withinSendingWindow(now, await loadSendingWindow(campaign.businessLineId))) { results.push({ id: campaign.id, name: campaign.name, sent: 0, status: 'waiting for the sending window' }); continue }
           const channel = await db.websiteChannel.findUnique({ where: { businessLineId: campaign.businessLineId }, select: { siteUrl: true } })
           const siteUrl = channel?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro'
           const r = await dispatchEmails(pendingLeads.slice(0, 50) as any, { campaignId: campaign.id, lineSlug: (campaign as any).businessLine?.slug, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(siteUrl, e) }, undefined, now)

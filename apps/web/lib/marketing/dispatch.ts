@@ -3,6 +3,7 @@
  * Every message goes out through the line's mailbox ("partners"), is logged on the lead's timeline, and carries List-Unsubscribe headers.
  * A lead is marked "sent" only when the mail server accepted the message; otherwise "failed" (so a retry or a report is possible, and nothing is faked).
  */
+import { withinWindow, type SendingWindow } from './sending-window'
 import { db } from '@repo/db'
 import { sendRawEmail } from '@/lib/email'
 
@@ -61,10 +62,7 @@ export async function dispatchEmails(items: DispatchItem[], ctx: DispatchCtx, de
   return { sent, failed }
 }
 
-/** Outreach goes out on weekdays, 9:00–18:00 Europe/Bucharest. */
-export function withinSendingWindow(now = new Date()): boolean {
-  const p = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Bucharest', weekday: 'short', hour: '2-digit', hour12: false }).formatToParts(now)
-  const wd = p.find((x) => x.type === 'weekday')!.value
-  const h = Number(p.find((x) => x.type === 'hour')!.value) % 24
-  return !['Sat', 'Sun'].includes(wd) && h >= 9 && h < 18
+/** Outreach goes out inside the line's sending window (default: weekdays, 9:00–18:00 Europe/Bucharest; see sending-window.ts). */
+export function withinSendingWindow(now = new Date(), window?: SendingWindow): boolean {
+  return withinWindow(now, window)
 }

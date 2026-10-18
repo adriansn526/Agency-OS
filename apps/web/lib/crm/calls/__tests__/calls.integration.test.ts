@@ -106,3 +106,14 @@ test('opened-links queue: real visits in the last 14 days, newest first, minus a
   assert.deepEqual(r.map((x: any) => x.id), ['v2', 'v1', 'v8']); assert.equal(r[1]!.views, 2); assert.ok(r[0]!.lastViewAt)
   assert.equal((await Q.queueCounts('bl')).opened, 3)
 })
+
+test('the sending window is editable per line: Saturday is blocked by default and allowed after the channel setting changes', { skip }, async () => {
+  const win = (r: { blockers: string[] }) => r.blockers.some((b) => b.startsWith('SMS-urile se trimit doar'))
+  assert.equal(win(await M.smsPreview('h', 't-plain', SAT)), true)
+  await db.websiteChannel.update({ where: { businessLineId: 'bl' }, data: { config: { sendingWindow: { days: [1, 2, 3, 4, 5, 6], from: 8, to: 20 } } } })
+  const p = await M.smsPreview('h', 't-plain', SAT)
+  assert.equal(win(p), false)
+  await db.websiteChannel.update({ where: { businessLineId: 'bl' }, data: { config: { sendingWindow: { days: [2], from: 9, to: 10 } } } })
+  assert.match((await M.smsPreview('h', 't-plain', SAT)).blockers.join(' '), /doar marți, între 9:00 și 10:00/)
+  await db.websiteChannel.update({ where: { businessLineId: 'bl' }, data: { config: {} } })
+})

@@ -1,11 +1,12 @@
 /**
  * Sending an SMS from the call modal. Hard rules (there is no override): the firm must have agreed to an SMS (acord_sms = da), must not have opted out, and the
- * message goes out only on weekdays 9:00-18:00 (Bucharest). Templates with a preview link need the legal documents to be published and a private preview to exist;
+ * message goes out only on the line's sending window (default weekdays 9:00-18:00, Bucharest). Templates with a preview link need the legal documents to be published and a private preview to exist;
  * the link is created at the moment of sending (a previous link would stop working, so re-sending asks for explicit confirmation).
  */
 import { db, Prisma } from '@repo/db'
 import { logCommunication } from '@/lib/comms/log'
 import { withinSendingWindow } from '@/lib/marketing/dispatch'
+import { DEFAULT_WINDOW, describeWindow, loadSendingWindow, type SendingWindow } from '@/lib/marketing/sending-window'
 import { populateTemplate } from '@/lib/marketing/template'
 import { assertOutreachAllowed, OutreachBlocked, previewVarsFor, templateNeedsPreview, unsubscribeUrl, type PreviewVars } from '@/lib/website/preview/campaign'
 import { nationalPhone } from '@/lib/prospectare/import-mapping'
@@ -18,7 +19,7 @@ type TemplateRow = { id: string; businessLineId: string; name: string; channel: 
 export const smsLength = (s: string) => s.length
 
 /** Reasons the SMS cannot be sent right now (empty = ready). Pure apart from the clock and the environment passed in. */
-export function smsBlockers(lead: LeadRow, template: TemplateRow, o: { now: Date; legalReady: boolean; hasPreview: boolean }): string[] {
+export function smsBlockers(lead: LeadRow, template: TemplateRow, o: { now: Date; legalReady: boolean; hasPreview: boolean; window?: SendingWindow }): string[] {
   const out: string[] = []
   const cf = (lead.customFields ?? {}) as Record<string, unknown>
   if (!nationalPhone(lead.phone)) out.push('Firma nu are un număr de telefon valid')
@@ -26,7 +27,7 @@ export function smsBlockers(lead: LeadRow, template: TemplateRow, o: { now: Date
   if (cf.acord_sms !== 'da') out.push('Lipsește acordul pentru SMS (bifează „Acord SMS” după ce l-ai primit la telefon)')
   if (template.channel !== 'sms') out.push('Șablonul nu este pentru SMS')
   if (template.businessLineId !== lead.businessLineId) out.push('Șablonul aparține altei linii de business')
-  if (!withinSendingWindow(o.now)) out.push('SMS-urile se trimit doar luni–vineri, între 9:00 și 18:00')
+  if (!withinSendingWindow(o.now, o.window)) out.push(`SMS-urile se trimit doar ${describeWindow(o.window ?? DEFAULT_WINDOW)}`)
   if (templateNeedsPreview(template.body)) {
     if (!o.legalReady) out.push('Documentele juridice nu sunt marcate ca publicate (OUTREACH_LEGAL_READY)')
     if (!o.hasPreview) out.push('Firma nu are o previzualizare privată pentru link')
@@ -55,7 +56,7 @@ export async function smsPreview(leadId: string, templateId: string, now = new D
   const fake: PreviewVars = { preview_link: `${siteUrl.replace(/\/$/, '')}/p/••••••••••`, preview_expires: '(14 zile de la trimitere)', founder_offer: '' }
   const text = populateTemplate(template.body, lead, lead.businessLine, '', undefined, { preview: fake, unsubscribe: unsubscribeUrl(siteUrl) })
   const hasActiveLink = !!entry?.previewSentAt && !!entry.previewExpiresAt && entry.previewExpiresAt > now
-  return { text, length: smsLength(text), blockers: smsBlockers(lead, template, { now, legalReady: process.env.OUTREACH_LEGAL_READY === '1', hasPreview: !!entry }), alreadySent: hasActiveLink }
+  return { text, length: smsLength(text), blockers: smsBlockers(lead, template, { now, legalReady: process.env.OUTREACH_LEGAL_READY === '1', hasPreview: !!entry, window: await loadSendingWindow(lead.businessLineId) }), alreadySent: hasActiveLink }
 }
 
 export interface SmsDeps { send: (to: string, body: string) => Promise<{ messageId: string }> }
@@ -64,7 +65,7 @@ export async function sendLeadSms(leadId: string, templateId: string, user: { na
   const now = o.now ?? new Date()
   const { lead, template } = await load(leadId, templateId)
   const { siteUrl, entry } = await context(lead, template)
-  const blockers = smsBlockers(lead, template, { now, legalReady: process.env.OUTREACH_LEGAL_READY === '1', hasPreview: !!entry })
+  const blockers = smsBlockers(lead, template, { now, legalReady: process.env.OUTREACH_LEGAL_READY === '1', hasPreview: !!entry, window: await loadSendingWindow(lead.businessLineId) })
   if (blockers.length) throw new SmsBlocked(blockers[0]!, blockers)
   if (entry?.previewSentAt && entry.previewExpiresAt && entry.previewExpiresAt > now && !o.resend) {
     throw new SmsBlocked('Linkul de previzualizare a fost deja trimis. Dacă retrimiți, linkul vechi nu va mai funcționa; confirmă retrimiterea.', ['already_sent'])

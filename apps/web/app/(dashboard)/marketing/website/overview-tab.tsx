@@ -14,6 +14,7 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
   const channel = overview?.channel
   const [siteUrl, setSiteUrl] = useState<string>(channel?.siteUrl ?? "")
   const [validity, setValidity] = useState<number>(channel?.previewValidityDays ?? 14)
+  const [win, setWin] = useState<{ days: number[]; from: number; to: number }>(channel?.sendingWindow ?? { days: [1, 2, 3, 4, 5], from: 9, to: 18 })
   const [legalEmail, setLegalEmail] = useState<string>(channel?.legalEmail ?? "")
   const [label, setLabel] = useState("")
   const [newKey, setNewKey] = useState<{ key: string; label: string } | null>(null)
@@ -78,6 +79,20 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
               <Button size="sm" variant="outline" disabled={busy === "validity" || !Number.isInteger(validity) || validity < 1 || validity > 90 || validity === (channel.previewValidityDays ?? 14)} onClick={() => run("validity", () => api(`/api/website/channel?${q}`, "PATCH", { previewValidityDays: validity }), "Valabilitate salvată")}>Salvează</Button>
             </div>
             <p className="text-xs text-muted-foreground mt-1">Se aplică linkurilor generate de acum încolo; cele deja trimise își păstrează data.</p>
+          </div>
+          <div>
+            <span className={labelCls}>Fereastra de trimitere (SMS din modalul de apel și campanii email)</span>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+              {["Lu", "Ma", "Mi", "Jo", "Vi", "Sâ", "Du"].map((n, i) => (
+                <label key={n} className="flex items-center gap-1"><input type="checkbox" checked={win.days.includes(i + 1)} onChange={(e) => setWin((w) => ({ ...w, days: e.target.checked ? [...w.days, i + 1].sort() : w.days.filter((d) => d !== i + 1) }))} aria-label={["luni", "marți", "miercuri", "joi", "vineri", "sâmbătă", "duminică"][i]} /> {n}</label>
+              ))}
+              <span className="text-muted-foreground">între</span>
+              <select aria-label="De la ora" className={inputCls + " w-20"} value={win.from} onChange={(e) => setWin((w) => ({ ...w, from: Number(e.target.value) }))}>{Array.from({ length: 24 }, (_, h) => <option key={h} value={h}>{h}:00</option>)}</select>
+              <span className="text-muted-foreground">și</span>
+              <select aria-label="Până la ora" className={inputCls + " w-20"} value={win.to} onChange={(e) => setWin((w) => ({ ...w, to: Number(e.target.value) }))}>{Array.from({ length: 24 }, (_, h) => <option key={h + 1} value={h + 1}>{h + 1}:00</option>)}</select>
+              <Button size="sm" variant="outline" disabled={busy === "window" || win.days.length === 0 || win.to <= win.from || JSON.stringify(win) === JSON.stringify(channel.sendingWindow)} onClick={() => run("window", () => api(`/api/website/channel?${q}`, "PATCH", { sendingWindow: win }), "Fereastră salvată")}>Salvează</Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Ora României. În afara ferestrei, butonul „Trimite SMS” e blocat și campaniile de email așteaptă următoarea rulare. Prospectarea în afara programului obișnuit poate deranja și are riscuri juridice.</p>
           </div>
           <div>
             <label className={labelCls} htmlFor="legal-email">Email de contact în documentele juridice</label>

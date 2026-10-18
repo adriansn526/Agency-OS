@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { sendingWindowSchema } from '@/lib/marketing/sending-window'
 import { FIELD_TYPES } from './entry-data'
 
 const keyRe = /^[a-z0-9_-]{2,60}$/
@@ -18,7 +19,7 @@ export const collectionCreate = z.object({
 })
 export const collectionPatch = collectionCreate.omit({ key: true }).partial().extend({ isActive: z.boolean().optional() })
 
-export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional(), previewValidityDays: z.number().int().min(1).max(90).optional(), legalEmail: z.string().trim().email().max(200).nullable().optional() }).partial()
+export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional(), previewValidityDays: z.number().int().min(1).max(90).optional(), legalEmail: z.string().trim().email().max(200).nullable().optional(), sendingWindow: sendingWindowSchema }).partial()
 
 const entryFields = {
   title: z.string().trim().min(2).max(160), slug: z.string().trim().regex(keyRe, 'Slug invalid').optional(),
