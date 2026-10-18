@@ -28,6 +28,7 @@ const entryFields = {
   lat: z.number().min(-90).max(90).nullish(), lng: z.number().min(-180).max(180).nullish(),
   email: z.string().trim().email().max(200).nullish().transform((v) => (v ? v : null)),
   phone: optText(40), websiteUrl: url, coverUrl: url, logoUrl: url,
+  plan: z.enum(['gratuit', 'abonament']), planUntil: z.string().datetime({ offset: true }).nullable().transform((v) => (v ? new Date(v) : null)),
   seoTitle: optText(160), seoDescription: optText(320), data: z.record(z.string(), z.unknown()),
 }
 export const entryCreate = z.object({ collectionId: z.string().min(1), ...entryFields, status: entryFields.status.default('draft'), verified: entryFields.verified.default(false), featured: entryFields.featured.default(false), partnerAccess: entryFields.partnerAccess.default(false), data: entryFields.data.default({}) })

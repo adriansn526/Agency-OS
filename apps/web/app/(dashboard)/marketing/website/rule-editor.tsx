@@ -16,7 +16,7 @@ interface Draft { name: string; isActive: boolean; validFrom: string; validTo: s
 
 const DEFAULT_DRAFT_ACTION: Record<RuleKind, Record<string, any>> = {
   pricing: { amountRon: "0", freeFirstN: "0" },
-  routing: { mode: "single", maxFirms: "3", maxAcceptances: "3", selection: "nearest" },
+  routing: { mode: "single", maxFirms: "3", maxAcceptances: "3", selection: "nearest", minReviews: "0", minRating: "0" },
   billing: { chargeAt: "acceptance" },
   recommendation: { minReviews: "5", minRating: "4.5", requireVerified: true },
 }
@@ -27,6 +27,7 @@ function toDraft(rule: RuleRow | null, kind: RuleKind): Draft {
   if (!rule) return { name: "", isActive: true, validFrom: "", validTo: "", conditions: [], action: { ...DEFAULT_DRAFT_ACTION[kind] } }
   const a: Record<string, any> = { ...rule.action }
   for (const k of ["amountRon", "freeFirstN", "maxFirms", "maxAcceptances", "minReviews", "minRating"]) if (k in a) a[k] = String(a[k])
+  if (kind === "routing") { a.minReviews ??= "0"; a.minRating ??= "0" }
   return {
     name: rule.name, isActive: rule.isActive, validFrom: dateOnly(rule.validFrom), validTo: dateOnly(rule.validTo), action: a,
     conditions: rule.conditions.map((c: any) => ({ field: c.field, op: c.op, raw: Array.isArray(c.value) ? "" : c.value === undefined ? "" : String(c.value), list: Array.isArray(c.value) ? c.value : [] })),
@@ -89,7 +90,7 @@ export function RuleEditor({ lineId, kind, rule, fields, limits, onClose, onSave
     const a = d.action
     const action =
       kind === "pricing" ? { amountRon: num(a.amountRon), freeFirstN: num(a.freeFirstN || 0) }
-      : kind === "routing" ? (a.mode === "multi" ? { mode: "multi", maxFirms: num(a.maxFirms), maxAcceptances: num(a.maxAcceptances), selection: a.selection } : { mode: "single", maxFirms: 1, maxAcceptances: 1, selection: a.selection })
+      : kind === "routing" ? (a.mode === "multi" ? { mode: "multi", maxFirms: num(a.maxFirms), maxAcceptances: num(a.maxAcceptances), selection: a.selection, minReviews: num(a.minReviews || 0), minRating: num(a.minRating || 0) } : { mode: "single", maxFirms: 1, maxAcceptances: 1, selection: a.selection, minReviews: num(a.minReviews || 0), minRating: num(a.minRating || 0) })
       : kind === "billing" ? { chargeAt: a.chargeAt }
       : { minReviews: num(a.minReviews), minRating: num(a.minRating), requireVerified: !!a.requireVerified }
 
@@ -161,6 +162,8 @@ export function RuleEditor({ lineId, kind, rule, fields, limits, onClose, onSave
               </>}
               <div className="col-span-2"><label className={labelCls} htmlFor="a-sel">Cum se aleg firmele</label>
                 <select id="a-sel" className={inputCls} value={d.action.selection} onChange={(e) => setAction({ selection: e.target.value })}>{Object.entries(SELECTION_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></div>
+              <div><label className={labelCls} htmlFor="a-minrev">Doar firme cu minim … recenzii</label><input id="a-minrev" type="number" min={0} className={inputCls} value={d.action.minReviews} onChange={(e) => setAction({ minReviews: e.target.value })} /></div>
+              <div><label className={labelCls} htmlFor="a-minrate">Și media minimă (0–5)</label><input id="a-minrate" type="number" min={0} max={5} step="0.1" className={inputCls} value={d.action.minRating} onChange={(e) => setAction({ minRating: e.target.value })} /></div>
             </div>
           )}
           {kind === "billing" && (

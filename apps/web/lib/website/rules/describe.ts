@@ -4,12 +4,12 @@ import { FACT_CATALOG, type Condition, type Op, type RuleKind } from './types'
 export interface FieldOption { key: string; label: string; type: 'string' | 'number' | 'boolean'; list?: boolean; ops: Op[]; options?: string[] }
 interface CollectionLike { key?: string; name: string; fields: { key: string; label: string; type: string; options?: string[] }[] }
 
-/** Facts that exist today. `account` and `plan` come with partner accounts and are not offered until then. */
-const HIDDEN_FACTS = new Set(['account', 'plan'])
+/** Facts that exist today. `account` is not offered yet. */
+const HIDDEN_FACTS = new Set(['account'])
 
 export function buildFieldOptions(collections: CollectionLike[]): FieldOption[] {
   const keys = collections.map((c) => c.key).filter((k): k is string => !!k)
-  const fixedOptions: Record<string, string[] | undefined> = { requestType: ['direct', 'general'], collection: keys.length ? keys : undefined }
+  const fixedOptions: Record<string, string[] | undefined> = { requestType: ['direct', 'general'], plan: ['gratuit', 'abonament'], collection: keys.length ? keys : undefined }
   const base: FieldOption[] = Object.entries(FACT_CATALOG).filter(([k]) => !HIDDEN_FACTS.has(k)).map(([key, m]) => ({ key, label: m.label, type: m.type, list: m.list, ops: m.ops, options: fixedOptions[key] }))
   const seen = new Set<string>()
   const custom: FieldOption[] = []
@@ -45,6 +45,11 @@ export function describeCondition(c: Condition, fields: FieldOption[], names: Re
   return `${label} ${OP_LABEL[c.op]} ${value}`
 }
 
+const reviewFilter = (a: Record<string, unknown>) => {
+  const n = Number(a.minReviews ?? 0), r = Number(a.minRating ?? 0)
+  return n > 0 || r > 0 ? ` · doar firme cu ${n > 0 ? `≥ ${n} recenzii` : ''}${n > 0 && r > 0 ? ' și ' : ''}${r > 0 ? `media ≥ ${r}` : ''}` : ''
+}
+
 export function describeAction(kind: RuleKind, a: Record<string, unknown>): string {
   switch (kind) {
     case 'pricing': {
@@ -53,8 +58,8 @@ export function describeAction(kind: RuleKind, a: Record<string, unknown>): stri
     }
     case 'routing':
       return a.mode === 'multi'
-        ? `Până la ${a.maxFirms} firme, max ${a.maxAcceptances} acceptări · ${SELECTION_LABEL[String(a.selection)] ?? a.selection}`
-        : 'O singură firmă'
+        ? `Până la ${a.maxFirms} firme, max ${a.maxAcceptances} acceptări · ${SELECTION_LABEL[String(a.selection)] ?? a.selection}${reviewFilter(a)}`
+        : `O singură firmă${a.selection ? ` · ${SELECTION_LABEL[String(a.selection)] ?? a.selection}` : ''}${reviewFilter(a)}`
     case 'billing':
       return a.chargeAt === 'delivery' ? 'Taxare la livrare' : 'Taxare la acceptare'
     case 'recommendation':

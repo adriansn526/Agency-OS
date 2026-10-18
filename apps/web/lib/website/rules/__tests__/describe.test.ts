@@ -11,7 +11,7 @@ const collections = [{ key: 'companii', name: 'Companie', fields: [
 test('field options: built-in facts without the ones that do not exist yet, plus custom fields typed by their definition', () => {
   const f = buildFieldOptions(collections)
   const keys = f.map((x) => x.key)
-  assert.equal(keys.includes('account') || keys.includes('plan'), false)
+  assert.equal(keys.includes('account'), false)
   assert.ok(['county', 'budget', 'verified', 'specialization', 'entry'].every((k) => keys.includes(k)))
   assert.equal(keys.filter((k) => k === 'data.cui').length, 1) // same key in two collections is listed once
   const sel = f.find((x) => x.key === 'data.tip_activitate')!

@@ -14,6 +14,9 @@ export const routingAction = z.strictObject({
   maxFirms: z.number().int().min(1).max(10).default(1),
   maxAcceptances: z.number().int().min(1).max(10).default(1),
   selection: z.enum(['nearest', 'rating', 'round_robin']).default('nearest'),
+  /** Only firms with at least this many approved reviews / this average receive requests (0 = no filter) */
+  minReviews: z.number().int().min(0).max(1000).default(0),
+  minRating: z.number().min(0).max(5).default(0),
 }).superRefine((a, ctx) => {
   if (a.mode === 'single' && (a.maxFirms !== 1 || a.maxAcceptances !== 1)) ctx.addIssue({ code: 'custom', message: 'O singură firmă: numărul de firme și de acceptări trebuie să fie 1' })
   if (a.mode === 'multi' && a.maxFirms < 2) ctx.addIssue({ code: 'custom', message: 'Mai multe firme: minim 2' })

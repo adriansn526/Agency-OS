@@ -1949,6 +1949,10 @@ model WebsiteEntry {
   layout           Json?
   layoutVersions   WebsiteLayoutVersion[]
   foundingSlots    WebsiteFoundingSlot[]
+  /// gratuit | abonament (abonament: direct requests arrive with full contact data, no per-request fee)
+  plan             String            @default("gratuit")
+  planUntil        DateTime?
+  requestDeliveries WebsiteRequestDelivery[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   collection      WebsiteCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
@@ -2111,4 +2115,54 @@ model WebsiteFoundingSlot {
 
   @@unique([entryId, county, category])
   @@index([businessLineId, county, category])
+}
+
+model WebsiteRequest {
+  id             String   @id @default(cuid())
+  businessLineId String
+  /// direct (from a firm profile) | general (from a service page)
+  type           String
+  directEntryId  String?
+  category       String
+  county         String
+  city           String?
+  description    String
+  budgetRon      Int?
+  urgency        String?
+  customerName   String
+  customerEmail  String
+  customerPhone  String
+  maxAcceptances Int      @default(1)
+  /// sent | unrouted | closed
+  status         String   @default("sent")
+  routing        Json?
+  sourcePage     String?
+  ipHash         String?
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  deliveries     WebsiteRequestDelivery[]
+
+  @@index([businessLineId, createdAt(sort: Desc)])
+  @@index([customerEmail, createdAt])
+  @@index([customerPhone, createdAt])
+}
+
+model WebsiteRequestDelivery {
+  id             String         @id @default(cuid())
+  requestId      String
+  entryId        String
+  businessLineId String
+  /// sent | accepted | declined | expired | full
+  status         String         @default("sent")
+  chargedRon     Decimal?       @db.Decimal(10, 2)
+  /// abonament | gratuit | tarif | livrare
+  chargeReason   String?
+  sentAt         DateTime       @default(now())
+  respondedAt    DateTime?
+  request        WebsiteRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  entry          WebsiteEntry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@unique([requestId, entryId])
+  @@index([entryId, status, sentAt(sort: Desc)])
+  @@index([businessLineId, sentAt(sort: Desc)])
 }

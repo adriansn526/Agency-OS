@@ -9,14 +9,14 @@ import { EntryImages, type MediaItem } from "./entry-images"
 import { api, ApiError, Collection, Field, inputCls, labelCls, STATUS_RO, textareaCls } from "./shared"
 
 interface Draft {
-  collectionId: string; title: string; slug: string; summary: string; body: string; status: string; verified: boolean; featured: boolean; partnerAccess: boolean
+  collectionId: string; title: string; slug: string; summary: string; body: string; status: string; verified: boolean; featured: boolean; partnerAccess: boolean; plan: string; planUntil: string
   city: string; county: string; address: string; lat: string; lng: string
   email: string; phone: string; websiteUrl: string; coverUrl: string; logoUrl: string; seoTitle: string; seoDescription: string
   data: Record<string, any>
 }
-const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, partnerAccess: false, city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", logoUrl: "", seoTitle: "", seoDescription: "", data: {} })
+const empty = (collectionId: string): Draft => ({ collectionId, title: "", slug: "", summary: "", body: "", status: "draft", verified: false, featured: false, partnerAccess: false, plan: "gratuit", planUntil: "", city: "", county: "", address: "", lat: "", lng: "", email: "", phone: "", websiteUrl: "", coverUrl: "", logoUrl: "", seoTitle: "", seoDescription: "", data: {} })
 const fromEntry = (e: any): Draft => ({
-  collectionId: e.collectionId, title: e.title, slug: e.slug, summary: e.summary ?? "", body: e.body ?? "", status: e.status, verified: e.verified, featured: e.featured, partnerAccess: !!e.partnerAccess,
+  collectionId: e.collectionId, title: e.title, slug: e.slug, summary: e.summary ?? "", body: e.body ?? "", status: e.status, verified: e.verified, featured: e.featured, partnerAccess: !!e.partnerAccess, plan: e.plan ?? "gratuit", planUntil: e.planUntil ? String(e.planUntil).slice(0, 10) : "",
   city: e.city ?? "", county: e.county ?? "", address: e.address ?? "", lat: e.lat == null ? "" : String(e.lat), lng: e.lng == null ? "" : String(e.lng),
   email: e.email ?? "", phone: e.phone ?? "", websiteUrl: e.websiteUrl ?? "", coverUrl: e.coverUrl ?? "", logoUrl: e.logoUrl ?? "", seoTitle: e.seoTitle ?? "", seoDescription: e.seoDescription ?? "", data: e.data ?? {},
 })
@@ -58,7 +58,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
     if (!draft) return
     setSaving(true); setIssues([])
     const { collectionId, slug, lat, lng, ...rest } = draft
-    const body: any = { ...rest, lat: num(lat), lng: num(lng), ...(slug ? { slug } : {}) }
+    const body: any = { ...rest, planUntil: rest.planUntil ? new Date(`${rest.planUntil}T23:59:59`).toISOString() : null, lat: num(lat), lng: num(lng), ...(slug ? { slug } : {}) }
     if (!entryId) body.collectionId = collectionId
     // empty strings mean "no value"; the API stores null
     for (const k of ["summary", "body", "city", "county", "address", "email", "phone", "websiteUrl", "coverUrl", "logoUrl", "seoTitle", "seoDescription"]) if (body[k] === "") body[k] = null
@@ -94,6 +94,9 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <div><label className={labelCls} htmlFor="e-slug">Slug (în URL)</label><input id="e-slug" className={inputCls} placeholder={entryId ? "" : "se generează din titlu"} value={draft.slug} onChange={(e) => set("slug", e.target.value)} /></div>
             <div><label className={labelCls} htmlFor="e-status">Stare</label>
               <select id="e-status" className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>{["draft", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}</select></div>
+            <div><label className={labelCls} htmlFor="e-plan">Plan</label>
+              <select id="e-plan" className={inputCls} value={draft.plan} onChange={(e) => set("plan", e.target.value)}><option value="gratuit">Gratuit (cererile directe se plătesc per cerere)</option><option value="abonament">Abonament (cereri directe incluse)</option></select></div>
+            <div><label className={labelCls} htmlFor="e-planuntil">Abonament valabil până la</label><input id="e-planuntil" type="date" className={inputCls} value={draft.planUntil} disabled={draft.plan !== "abonament"} onChange={(e) => set("planUntil", e.target.value)} /></div>
             <div className="col-span-2 flex gap-5 text-sm">
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.verified} onChange={(e) => set("verified", e.target.checked)} /> Verificat</label>
               <label className="flex items-center gap-2" title="Firma poate intra în „Profilul meu” (link pe email / cod SMS) și își poate edita profilul"><input type="checkbox" checked={draft.partnerAccess} onChange={(e) => set("partnerAccess", e.target.checked)} /> Acces „Profilul meu”</label>
