@@ -136,7 +136,8 @@ export async function sendSMS(
   })
 
   return {
-    messageId: data.id || data.data?.id || '',
+    // SMSO answers { status: 200, responseToken, transaction_cost }; the token is what the status endpoint takes
+    messageId: data.responseToken || data.data?.responseToken || data.id || data.data?.id || '',
     status: data.status || 'sent',
     to: phone,
   }
@@ -187,13 +188,13 @@ export async function sendBulkSMS(
  */
 export async function getDeliveryReport(messageId: string): Promise<{
   status: string
+  sentAt?: string
   deliveredAt?: string
 }> {
-  const data = await smsoFetch(`/report/${messageId}`)
-  return {
-    status: data.status || 'unknown',
-    deliveredAt: data.deliveredAt || data.data?.deliveredAt,
-  }
+  // GET /status?responseToken=… → { status: 200, data: { status: 'sent' | 'delivered' | …, sent_at, delivered_at, receiver } }
+  const data = await smsoFetch(`/status?responseToken=${encodeURIComponent(messageId)}`)
+  const d = data.data ?? data
+  return { status: String(d.status || 'unknown'), sentAt: d.sent_at ?? undefined, deliveredAt: d.delivered_at ?? undefined }
 }
 
 /**
