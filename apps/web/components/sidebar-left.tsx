@@ -7,6 +7,7 @@ import { useBusinessLine } from "@/components/business-line-context"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
+  Phone,
   Users,
   UserPlus,
   Contact,
@@ -61,6 +62,7 @@ const coreModules: NavItem[] = [
       { title: "Dashboard", href: "/crm", icon: LayoutDashboard },
       { title: "Clienți", href: "/crm/clienti", icon: Contact },
       { title: "Lead-uri", href: "/crm/lead-uri", icon: Target },
+      { title: "Apeluri", href: "/crm/apeluri", icon: Phone },
     ],
   },
   {

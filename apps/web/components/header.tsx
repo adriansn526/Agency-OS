@@ -14,6 +14,7 @@ const breadcrumbMap: Record<string, string> = {
   "/crm": "CRM",
   "/crm/clienti": "Clienți",
   "/crm/lead-uri": "Lead-uri",
+  "/crm/apeluri": "Apeluri",
   "/projects": "Proiecte",
   "/finance": "Financiar",
   "/offers": "Oferte",
