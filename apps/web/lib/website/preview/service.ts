@@ -13,6 +13,7 @@ import { AdminError } from '../admin/errors'
 import { categoryTitles } from '../glossary/taxonomy'
 import type { LiveTaxonomy } from '../glossary/live'
 import { effectiveLayout } from '../layout/blocks'
+import { announceAnswer } from './views'
 import { buildOffer, type Offer } from './offer'
 import { claimSlots, type ClaimResult } from '../founding/service'
 
@@ -137,6 +138,7 @@ export async function respondPreview(lineId: string, token: string, raw: unknown
     ...(input.action === 'decline' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { previewTokenHash: null, previewExpiresAt: now } })] : []),
     ...(input.action === 'accept' ? [db.websiteEntry.update({ where: { id: entry.id }, data: { partnerAccess: true } })] : []),
   ])
+  void announceAnswer(lead.id, lead.companyName, input.action, input.action === 'changes' ? input.message : input.action === 'decline' ? input.reason : `${input.contactName}${input.contactRole ? ` (${input.contactRole})` : ''}`).catch(() => undefined)
   // accepting is what claims founding-partner places (first come, first served); a failure here must never undo the firm's answer
   let founder: ClaimResult | undefined
   if (input.action === 'accept') founder = await claimSlots({ id: entry.id, businessLineId: lineId, county: entry.county, data: entry.data }, now).catch((e) => { console.error('[founding] claim failed', e instanceof Error ? e.message : e); return undefined })

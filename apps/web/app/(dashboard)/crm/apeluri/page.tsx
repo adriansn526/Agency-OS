@@ -7,11 +7,16 @@ import { CallModal } from "@/components/crm/call-modal"
 import { dayKey, monthGrid, telHref } from "@/components/crm/call-utils"
 import { cn } from "@/lib/utils"
 
-interface Item { id: string; companyName: string; contactPerson: string | null; phone: string | null; county: string | null; city: string | null; status: string; nextAction: string | null; nextActionDate: string | null; acordSms: string | null; rezultatApel: string | null }
+interface Item { id: string; companyName: string; contactPerson: string | null; phone: string | null; county: string | null; city: string | null; status: string; nextAction: string | null; nextActionDate: string | null; acordSms: string | null; rezultatApel: string | null; views?: number | null; lastViewAt?: string | null }
 
 const MONTHS = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"]
 const WEEKDAYS = ["Lu", "Ma", "Mi", "Jo", "Vi", "Sâ", "Du"]
 const hhmm = (iso: string) => new Date(iso).toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })
+
+function ago(iso: string): string {
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60_000))
+  return m < 1 ? "acum" : m < 60 ? `acum ${m} min` : m < 1440 ? `acum ${Math.round(m / 60)} h` : `acum ${Math.round(m / 1440)} zile`
+}
 
 function Row({ it, onOpen, when }: { it: Item; onOpen: () => void; when?: boolean }) {
   return (
@@ -19,6 +24,7 @@ function Row({ it, onOpen, when }: { it: Item; onOpen: () => void; when?: boolea
       <button type="button" onClick={onOpen} className="flex w-full items-center gap-3 rounded-lg border border-border px-3 py-2.5 text-left hover:bg-muted/50">
         {when && it.nextActionDate && <span className="w-14 shrink-0 text-xs font-semibold text-amber-600">{new Date(it.nextActionDate) < new Date() ? "întârziat" : hhmm(it.nextActionDate)}</span>}
         <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{it.companyName}</span><span className="block truncate text-xs text-muted-foreground">{[it.city, it.county].filter(Boolean).join(", ")}{it.contactPerson ? ` · ${it.contactPerson}` : ""}{it.rezultatApel ? ` · ${it.rezultatApel}` : ""}</span></span>
+        {it.lastViewAt && <span className="shrink-0 rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-600" title="Ultima deschidere a linkului">👀 {it.views && it.views > 1 ? `${it.views}× · ` : ""}{ago(it.lastViewAt)}</span>}
         {it.acordSms === "da" && <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">SMS ok</span>}
         <span className="hidden text-xs text-muted-foreground sm:inline">{it.phone}</span>
         <Phone size={14} className={cn("shrink-0", telHref(it.phone) ? "text-primary" : "text-muted-foreground/40")} />
@@ -47,7 +53,7 @@ export default function ApeluriPage() {
   useEffect(() => { void loadQueue() }, [loadQueue])
   useEffect(() => { if (tab === "calendar") void loadCal() }, [tab, loadCal])
 
-  const queue: Item[] = useMemo(() => (data ? [...data.due, ...data.uncalled.items] : []), [data])
+  const queue: Item[] = useMemo(() => (data ? [...data.opened, ...data.due, ...data.uncalled.items].filter((x: Item, i: number, a: Item[]) => a.findIndex((y) => y.id === x.id) === i) : []), [data])
   const byDay = useMemo(() => { const m = new Map<string, Item[]>(); for (const it of cal) { const k = dayKey(new Date(it.nextActionDate!)); m.set(k, [...(m.get(k) ?? []), it]) } return m }, [cal])
   const next = () => { const i = queue.findIndex((q) => q.id === openId); const n = queue[i + 1] ?? null; setOpenId(n?.id ?? null) }
   const grid = useMemo(() => monthGrid(ym.y, ym.m), [ym])
@@ -65,8 +71,8 @@ export default function ApeluriPage() {
       </div>
 
       {data && (
-        <div className="grid grid-cols-3 gap-3">
-          {[["De sunat acum", data.counts.due, "reapeluri scadente"], ["Programate", data.counts.upcoming, "reapeluri viitoare"], ["Nesunate", data.counts.uncalled, "din pilot"]].map(([l, n, s]) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[["Au deschis linkul", data.counts.opened, "fără răspuns încă"], ["De sunat acum", data.counts.due, "reapeluri scadente"], ["Programate", data.counts.upcoming, "reapeluri viitoare"], ["Nesunate", data.counts.uncalled, "din pilot"]].map(([l, n, s]) => (
             <div key={String(l)} className="rounded-xl border border-border p-4"><div className="text-2xl font-bold">{n as number}</div><div className="text-sm font-medium">{l}</div><div className="text-xs text-muted-foreground">{s}</div></div>
           ))}
         </div>
@@ -74,6 +80,10 @@ export default function ApeluriPage() {
 
       {tab === "coada" ? (
         <div className="space-y-6">
+          <section aria-label="Au deschis linkul">
+            <h2 className="mb-2 text-sm font-semibold">👀 Au deschis linkul ({data?.opened.length ?? 0})</h2>
+            {!data ? <p className="text-sm text-muted-foreground">Se încarcă…</p> : data.opened.length === 0 ? <p className="text-sm text-muted-foreground">Nicio firmă nu a deschis linkul în ultimele 14 zile (sau toate au fost sunate / au răspuns).</p> : <ul className="space-y-2">{data.opened.map((it: Item) => <Row key={it.id} it={it} onOpen={() => setOpenId(it.id)} />)}</ul>}
+          </section>
           <section aria-label="Reapeluri scadente">
             <h2 className="mb-2 text-sm font-semibold">Reapeluri scadente ({data?.due.length ?? 0})</h2>
             {!data ? <p className="text-sm text-muted-foreground">Se încarcă…</p> : data.due.length === 0 ? <p className="text-sm text-muted-foreground">Niciun reapel scadent.</p> : <ul className="space-y-2">{data.due.map((it: Item) => <Row key={it.id} it={it} when onOpen={() => setOpenId(it.id)} />)}</ul>}

@@ -54,7 +54,7 @@ test('the queue: callbacks due first, uncalled pilot firms in calling order, nob
   const due = await Q.dueCallbacks('bl'); assert.deepEqual(due.map((x) => x.id), ['e'])
   const u = await Q.uncalled('bl'); assert.deepEqual(u.items.map((x) => x.id), ['a'])   // b, f, d, h already worked; c has no phone; e has a result; g is not in the pilot
   assert.equal(u.total, 1)
-  assert.deepEqual(await Q.queueCounts('bl'), { due: 1, upcoming: 1, uncalled: 1 })
+  assert.deepEqual(await Q.queueCounts('bl'), { due: 1, upcoming: 1, uncalled: 1, opened: 0 })
   const cal = await Q.callbacksBetween('bl', new Date(), new Date(Date.now() + 10 * 86_400_000)); assert.deepEqual(cal.map((x) => x.id), ['a'])
   assert.deepEqual((await Q.callbacksBetween('bl', new Date(Date.now() + 6 * 86_400_000), new Date(Date.now() + 9 * 86_400_000))).map((x) => x.id), [])   // outside the range
   assert.equal(cal[0]!.acordSms, null); assert.equal(due[0]!.rezultatApel, 'Nu răspunde')
@@ -91,4 +91,18 @@ test('SMS: sent once with a real private link, logged on the timeline; re-sendin
   await M.sendLeadSms('a', 't-sms', {}, { deps, now: MON, resend: true }); assert.equal(sent.length, 2)
   assert.equal((await V.lookupPreview('bl', link!, MON)).state, 'invalid')                                        // the old link stopped working, as warned
   await M.sendLeadSms('a', 't-plain', {}, { deps, now: MON }); assert.equal(sent.length, 3); assert.match(sent[2]!.body, /Bună ziua, A!/)   // a template without a link needs no preview and is not blocked by the earlier send
+})
+
+test('opened-links queue: real visits in the last 14 days, newest first, minus answered / called-since / closed / opted-out', { skip }, async () => {
+  const day = (offset: number) => new Date(Date.now() - offset * 86_400_000).toISOString()
+  const mkv = (id: string, cf: object, o: object = {}) => db.lead.create({ data: { id, businessLineId: 'bl', entityType: 'parteneri', status: 'prospect', companyName: id.toUpperCase(), contactPerson: 'N/A', email: 'N/A', phone: '0730111111', customFields: cf, ...o } })
+  await mkv('v1', { previzualizari: 2, ultima_previzualizare_la: day(1) }); await mkv('v2', { previzualizari: 1, ultima_previzualizare_la: day(0.1) })
+  await mkv('v3', { previzualizari: 1, ultima_previzualizare_la: day(20) })                                  // too old
+  await mkv('v4', { previzualizari: 1, ultima_previzualizare_la: day(1), preview_raspuns: 'acceptat' })      // answered
+  await mkv('v5', { previzualizari: 1, ultima_previzualizare_la: day(1), data_apel: '2999-01-01' })          // called after the visit
+  await mkv('v6', { previzualizari: 1, ultima_previzualizare_la: day(1) }, { status: 'refuzat' }); await mkv('v7', { previzualizari: 1, ultima_previzualizare_la: day(1) }, { optOut: true })
+  await mkv('v8', { previzualizari: 1, ultima_previzualizare_la: day(2), data_apel: '2000-01-01' })          // called before the visit: still follow up
+  const r = await Q.openedLinks('bl')
+  assert.deepEqual(r.map((x: any) => x.id), ['v2', 'v1', 'v8']); assert.equal(r[1]!.views, 2); assert.ok(r[0]!.lastViewAt)
+  assert.equal((await Q.queueCounts('bl')).opened, 3)
 })
