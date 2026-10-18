@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { slugify } from '../admin/slug'
-import { isCategorySlug } from '../glossary/taxonomy'
+import { getTaxonomy, isLiveCategory } from '../glossary/live'
 import type { CollectionField } from '../admin/entry-data'
 import { deleteGalleryImage, removeObjects, entryObjectUrls, updateGalleryAlt, uploadEntryImage } from '../media/service'
 import type { ObjectStore } from '../media/storage'
@@ -26,10 +26,14 @@ const thisYear = () => new Date().getFullYear()
 export const projectInput = z.object({
   title: z.string().trim().min(3).max(120),
   summary: text(300), body: text(5000), city: text(80),
-  categorie: z.string().trim().refine(isCategorySlug, 'Categorie necunoscută').nullish().transform((v) => v ?? null),
+  categorie: z.string().trim().min(1).max(60).nullish().transform((v) => v ?? null),
   an: z.number().int().min(1950).max(thisYear() + 1).nullish().transform((v) => v ?? null),
 }).strict()
 export const projectPatch = projectInput.partial()
+
+async function checkCategory(lineId: string, categorie: string | null | undefined) {
+  if (categorie && !isLiveCategory(await getTaxonomy(lineId), categorie)) throw new AdminError('Date invalide', 422, ['categorie: categorie necunoscută'])
+}
 
 type Parent = { id: string; businessLineId: string; county: string | null; city: string | null; title: string; leadId: string | null }
 
@@ -68,6 +72,7 @@ export async function listProjects(parent: Parent) {
 export async function createProject(parent: Parent, raw: unknown) {
   const p = projectInput.safeParse(raw)
   if (!p.success) throw new AdminError('Date invalide', 422, p.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
+  await checkCategory(parent.businessLineId, p.data.categorie)
   if ((await db.websiteEntry.count({ where: { parentId: parent.id } })) >= MAX_PROJECTS) throw new AdminError(`Maxim ${MAX_PROJECTS} de proiecte`, 409)
   const col = await ensureCollection(parent.businessLineId)
   const slug = `${slugify(p.data.title).slice(0, 60)}-${randomBytes(3).toString('hex')}`
@@ -87,6 +92,7 @@ export async function updateProject(parent: Parent, id: string, raw: unknown) {
   await owned(parent, id)
   const p = projectPatch.safeParse(raw)
   if (!p.success) throw new AdminError('Date invalide', 422, p.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
+  await checkCategory(parent.businessLineId, p.data.categorie)
   const cur = await owned(parent, id)
   const d = { ...((cur.data ?? {}) as Record<string, unknown>) }
   if (p.data.categorie !== undefined) { if (p.data.categorie) d.categorie = p.data.categorie; else delete d.categorie }

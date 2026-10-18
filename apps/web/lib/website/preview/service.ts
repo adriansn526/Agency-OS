@@ -10,7 +10,8 @@ import { createHash, randomBytes } from 'node:crypto'
 import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
-import { categoryTitles } from '../glossary/seed'
+import { categoryTitles } from '../glossary/taxonomy'
+import type { LiveTaxonomy } from '../glossary/live'
 import { effectiveLayout } from '../layout/blocks'
 import { claimSlots, type ClaimResult } from '../founding/service'
 
@@ -73,12 +74,12 @@ export async function lookupPreview(lineId: string, token: string, now = new Dat
 }
 
 /** What the firm sees: its own profile data, never CRM / ERP ids. */
-export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRow>>>) {
+export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRow>>>, tax?: LiveTaxonomy) {
   return {
     title: e.title, summary: e.summary, city: e.city, county: e.county, address: e.address, email: e.email, phone: e.phone, websiteUrl: e.websiteUrl,
     body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind })),
     layout: effectiveLayout(e.layout),
-    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii),
+    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii, tax?.categories),
     data: e.data ?? {}, fields: Array.isArray(e.collection.fields) ? e.collection.fields : [], collection: { key: e.collection.key, name: e.collection.name },
     expiresAt: e.previewExpiresAt!.toISOString(),
   }

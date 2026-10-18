@@ -4,6 +4,7 @@ import type { WebsiteContext } from './auth'
 import { WebsiteInputError } from './auth'
 import { parseListQuery, isSlug, type FieldDef } from './query'
 import { serializeCollection, serializeDetail, serializeListItem } from './serialize'
+import { getTaxonomy } from '../glossary/live'
 
 /** Children (a firm's projects) are public only while their parent entry is published. */
 const PARENT_PUBLISHED: Prisma.WebsiteEntryWhereInput = { OR: [{ parentId: null }, { parent: { status: 'published' } }] }
@@ -61,6 +62,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     ],
   }
 
+  const tax = await getTaxonomy(ctx.businessLineId)
   const [total, rows] = await Promise.all([
     db.websiteEntry.count({ where }),
     db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT }, _count: { select: { foundingSlots: true } } } }),
@@ -75,7 +77,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
   return {
     collection: serializeCollection(collection),
     total, page: q.page, limit: q.limit, pages: Math.max(1, Math.ceil(total / q.limit)),
-    items: rows.map((e) => serializeListItem(e, collection.key)),
+    items: rows.map((e) => serializeListItem(e, collection.key, tax.categories)),
     ...(facets ? { facets } : {}),
   }
 }
@@ -93,7 +95,7 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
       reviews: { where: { status: 'approved' }, orderBy: { createdAt: 'desc' }, take: 20 },
     },
   })
-  return entry ? serializeDetail(entry, collection.key, entry.media, entry.reviews) : null
+  return entry ? serializeDetail(entry, collection.key, entry.media, entry.reviews, (await getTaxonomy(ctx.businessLineId)).categories) : null
 }
 
 /** Slugs and last-modified dates of everything published, for the site's sitemap. */

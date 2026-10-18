@@ -93,7 +93,7 @@ export function taxonomyProblems(): string[] {
 }
 
 /** Category slugs → titles, for pages that show a firm's services. Unknown slugs are dropped. */
-export function categoryTitles(slugs: unknown): { slug: string; title: string }[] {
+export function categoryTitles(slugs: unknown, categories: { slug: string; title: string }[] = CATEGORIES): { slug: string; title: string }[] {
   const list = Array.isArray(slugs) ? slugs.map(String) : []
-  return list.map((s) => CATEGORIES.find((c) => c.slug === s)).filter((c): c is (typeof CATEGORIES)[number] => !!c).map((c) => ({ slug: c.slug, title: c.title }))
+  return list.map((s) => categories.find((c) => c.slug === s)).filter((c): c is { slug: string; title: string } => !!c).map((c) => ({ slug: c.slug, title: c.title }))
 }

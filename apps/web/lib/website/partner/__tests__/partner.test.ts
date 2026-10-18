@@ -22,6 +22,6 @@ test('theme: only known presets and #rrggbb colours; null clears', () => {
 test('profile patch: only whitelisted fields, strict, categories from the taxonomy, website normalised', () => {
   const ok = profilePatch.parse({ summary: ' Firmă serioasă ', websiteUrl: 'firma.ro', servicii: ['instalatii-sanitare', 'climatizare'], certificari: ['ANRE'] })
   assert.equal(ok.summary, 'Firmă serioasă'); assert.equal(ok.websiteUrl, 'https://firma.ro')
-  for (const bad of [{ title: 'Alt nume' }, { cui: '1' }, { status: 'published' }, { logoUrl: 'https://x' }, { servicii: ['inexistent'] }, { websiteUrl: 'nu e un site' }, { email: 'x' }, { certificari: [''] }, { servicii: new Array(13).fill('demolari') }])
+  for (const bad of [{ title: 'Alt nume' }, { cui: '1' }, { status: 'published' }, { logoUrl: 'https://x' }, { websiteUrl: 'nu e un site' }, { email: 'x' }, { certificari: [''] }, { servicii: new Array(13).fill('demolari') }])
     assert.equal(profilePatch.safeParse(bad).success, false, JSON.stringify(bad))
 })

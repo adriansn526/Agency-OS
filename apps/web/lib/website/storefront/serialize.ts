@@ -26,7 +26,8 @@ interface CollectionRow { key: string; name: string; namePlural: string; kind: s
 const num = (v: EntryRow['ratingAvg']): number | null => (v == null ? null : Number(v.toString()))
 const iso = (d: Date | null) => (d ? d.toISOString() : null)
 
-export function serializeListItem(e: EntryRow, collectionKey: string) {
+/** `cats`: the line's live service categories (slug → title); defaults to the built-in list. */
+export function serializeListItem(e: EntryRow, collectionKey: string, cats?: { slug: string; title: string }[]) {
   return {
     collection: collectionKey, slug: e.slug, title: e.title, summary: e.summary,
     city: e.city, county: e.county, address: e.address, lat: e.lat, lng: e.lng,
@@ -35,13 +36,15 @@ export function serializeListItem(e: EntryRow, collectionKey: string) {
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
     // a firm's own page for its projects; the service categories chosen by a firm come with their titles
     parent: e.parent ? { slug: e.parent.slug, title: e.parent.title, city: e.parent.city, county: e.parent.county, logoUrl: e.parent.logoUrl, verified: e.parent.verified } : null,
-    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii),
+    services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii, cats),
+    // a project's service category with its title (for the project page)
+    ...(collectionKey === 'proiecte' ? { category: categoryTitles([(e.data as Record<string, unknown> | null)?.categorie], cats)[0] ?? null } : {}),
   }
 }
 
-export function serializeDetail(e: EntryRow, collectionKey: string, media: MediaRow[], reviews: ReviewRow[]) {
+export function serializeDetail(e: EntryRow, collectionKey: string, media: MediaRow[], reviews: ReviewRow[], cats?: { slug: string; title: string }[]) {
   return {
-    ...serializeListItem(e, collectionKey),
+    ...serializeListItem(e, collectionKey, cats),
     // the firm's chosen home blocks (always valid: damaged storage falls back to the default)
     ...(collectionKey === 'companii' ? { layout: effectiveLayout(e.layout) } : {}),
     body: e.body, phone: e.phone, websiteUrl: e.websiteUrl,

@@ -120,6 +120,6 @@ test('profile edit: whitelisted fields go live at once and are logged; name and 
   assert.deepEqual((await db.websiteEntry.findUnique({ where: { id: 'a' } })).data.accent, '#16a34a')
   assert.deepEqual((await P.updateProfile((await A.sessionEntry('bl', s.sessionToken, T0))!, { tema: null, accent: null })).changed.sort(), ['accent', 'tema'])
   assert.equal('tema' in (await db.websiteEntry.findUnique({ where: { id: 'a' } })).data, false) // cleared, not stored as null
-  const p = P.serializeProfile((await A.sessionEntry('bl', s.sessionToken, T0))!)
+  const p = P.serializeProfile((await A.sessionEntry('bl', s.sessionToken, T0))!, (await import('../../glossary/live')).builtInTaxonomy())
   assert.deepEqual(p.locked, ['title', 'cui']); assert.equal(p.publicPath, null); assert.ok(p.categories.length >= 20)
 })

@@ -8,6 +8,8 @@ import { slugify, uniqueSlug } from './slug'
 import { normalizeWebsite } from './url'
 import { validityDays } from '../preview/service'
 import { entryObjectUrls, removeObjects } from '../media/service'
+import { invalidateTaxonomy } from '../glossary/live'
+import { assertServiceEntry, assertServiceRemovable } from '../glossary/validate'
 import { generateWebsiteKey, parseStoredKeys } from '../storefront/keys'
 import { invalidateWebsiteKeyCache } from '../storefront/auth'
 
@@ -189,13 +191,16 @@ export async function createEntry(lineId: string, raw: unknown) {
   const input = entryCreate.parse(raw)
   const collection = await collectionFor(lineId, input.collectionId)
   const data = cleanData(collection.fields as unknown as CollectionField[], input.status, input.data)
+  if (collection.key === 'servicii') await assertServiceEntry(lineId, data as Record<string, unknown>, input.slug ?? slugify(input.title))
   const slug = input.slug
     ? input.slug
     : await uniqueSlug(slugify(input.title), async (s) => !!(await db.websiteEntry.findUnique({ where: { businessLineId_collectionId_slug: { businessLineId: lineId, collectionId: collection.id, slug: s } }, select: { id: true } })))
   try {
-    return await db.websiteEntry.create({
+    const created = await db.websiteEntry.create({
       data: { ...input, slug, data, businessLineId: lineId, collectionId: collection.id, publishedAt: input.status === 'published' ? new Date() : null },
     })
+    if (collection.key === 'servicii') invalidateTaxonomy(lineId)
+    return created
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new AdminError(`Slug-ul „${slug}” este deja folosit în această colecție`, 409)
     throw e
@@ -214,11 +219,21 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
   const data = input.data !== undefined || input.status !== undefined ? cleanData(fields, status, input.data ?? existing.data) : undefined
   const { data: _d, ...rest } = input
   if (input.leadId) await assertLinkableLead(lineId, input.leadId, id)
+  const isService = existing.collection.key === 'servicii'
+  if (isService) {
+    const merged = (data ?? (existing.data as Record<string, unknown>)) as Record<string, unknown>
+    await assertServiceEntry(lineId, merged, input.slug ?? existing.slug, id)
+    // suspending or renaming a service takes its old slug out of use
+    if (status === 'suspended' && existing.status !== 'suspended') await assertServiceRemovable(lineId, existing)
+    if (input.slug && input.slug !== existing.slug) await assertServiceRemovable(lineId, existing)
+  }
   try {
-    return await db.websiteEntry.update({
+    const saved = await db.websiteEntry.update({
       where: { id },
       data: { ...rest, ...(data !== undefined ? { data } : {}), ...(status === 'published' && !existing.publishedAt ? { publishedAt: new Date() } : {}) },
     })
+    if (isService) invalidateTaxonomy(lineId)
+    return saved
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new AdminError('Slug-ul este deja folosit în această colecție', 409)
     throw e
@@ -227,11 +242,13 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
 
 export async function deleteEntry(lineId: string, id: string) {
   await assertLine(lineId)
-  const e = await db.websiteEntry.findFirst({ where: { id, businessLineId: lineId }, select: { id: true } })
+  const e = await db.websiteEntry.findFirst({ where: { id, businessLineId: lineId }, select: { id: true, slug: true, data: true, collection: { select: { key: true } } } })
   if (!e) throw new AdminError('Intrarea nu există', 404)
+  if (e.collection.key === 'servicii') await assertServiceRemovable(lineId, e)
   const urls = await entryObjectUrls(id)
   await db.websiteEntry.delete({ where: { id } })
   await removeObjects(urls) // best effort: files of a deleted entry must not stay public
+  if (e.collection.key === 'servicii') invalidateTaxonomy(lineId)
   return { deleted: id }
 }
 
