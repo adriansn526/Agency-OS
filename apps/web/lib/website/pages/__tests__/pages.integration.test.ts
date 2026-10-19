@@ -81,3 +81,11 @@ test('menu placement: pages default to "Pagini", can be moved under "Servicii" o
   assert.deepEqual((await listPublicPages(ctx, 'alfa')).items.find((i: any) => i.slug === a.slug)?.menu, 'servicii')
   await S.updatePage(f, a.id, { menu: 'ascuns' }); assert.equal((await listPublicPages(ctx, 'alfa')).items.some((i: any) => i.slug === a.slug), false)
 })
+
+test('the team can create pages for a firm on the free plan (onboarding); the limit still applies', { skip }, async () => {
+  const free = await firm('f2')
+  await assert.rejects(S.createPage(free, { title: 'De la firmă' }, NOW), /incluse în abonament/)
+  const p = await S.createPage(free, { title: 'De la echipă' }, NOW, { team: true }); assert.equal(p.status, 'draft')
+  for (const t of ['A', 'B', 'C', 'D']) await S.createPage(free, { title: `Pagina ${t}` }, NOW, { team: true })
+  await assert.rejects(S.createPage(free, { title: 'A șasea' }, NOW, { team: true }), /Maxim 5/)
+})
