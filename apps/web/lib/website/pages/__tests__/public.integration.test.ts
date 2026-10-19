@@ -54,7 +54,7 @@ test('an image of another firm in a stored layout is never served, and a broken 
 test('the firm menu and the sitemap list only published pages of published firms', { skip }, async () => {
   const f = await firm('f1'); const id = (await S.listPages(f, NOW)).items.find((p: any) => p.slug === 'despre-noi')!.id
   await db.websiteEntry.update({ where: { id }, data: { layout: { version: 2, blocks: [node('h', 'heading', { text: 'x' })] } } })
-  assert.deepEqual((await P.listPublicPages(ctx, 'alfa')).items, [{ title: 'Despre noi', slug: 'despre-noi' }]); assert.deepEqual((await P.listPublicPages(ctx, 'beta')).items, [])
+  assert.deepEqual((await P.listPublicPages(ctx, 'alfa')).items, [{ title: 'Despre noi', slug: 'despre-noi', menu: 'pagini' }]); assert.deepEqual((await P.listPublicPages(ctx, 'beta')).items, [])
   await db.websiteCollection.updateMany({ where: { businessLineId: 'bl', key: 'pagini' }, data: { isActive: true } })
   const sm = (await Q.sitemap(ctx)).items.filter((i: any) => i.collection === 'pagini')
   assert.deepEqual(sm.map((i: any) => [i.firm, i.slug]), [['alfa', 'despre-noi']])

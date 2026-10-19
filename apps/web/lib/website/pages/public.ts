@@ -4,7 +4,7 @@ import type { WebsiteContext } from '../storefront/auth'
 import { WebsiteInputError } from '../storefront/auth'
 import { isSlug } from '../storefront/query'
 import { mediaRefs, parsePageLayout, emptyPageLayout, type PageLayout } from './blocks'
-import { PAGES_KEY } from './service'
+import { menuOf, PAGES_KEY } from './service'
 
 export interface PublicPage {
   firm: { slug: string; title: string }
@@ -35,12 +35,12 @@ export async function getPublicPage(ctx: WebsiteContext, firmSlug: string, pageS
   }
 }
 
-/** Published pages of one firm (for its menu), oldest first. */
+/** Published pages of one firm that belong in its menu (not the hidden ones), oldest first, each with the menu it sits under. */
 export async function listPublicPages(ctx: WebsiteContext, firmSlug: string) {
   if (!isSlug(firmSlug)) throw new WebsiteInputError('Adresă invalidă')
   const rows = await db.websiteEntry.findMany({
     where: { businessLineId: ctx.businessLineId, status: 'published', collection: { key: PAGES_KEY }, parent: { slug: firmSlug, status: 'published', collection: { key: 'companii' } } },
     select: { title: true, data: true, publishedAt: true }, orderBy: [{ publishedAt: 'asc' }, { title: 'asc' }], take: 20,
   })
-  return { items: rows.map((r) => ({ title: r.title, slug: String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? '') })).filter((r) => r.slug) }
+  return { items: rows.map((r) => ({ title: r.title, slug: String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? ''), menu: menuOf(r.data) })).filter((r) => r.slug && r.menu !== 'ascuns') }
 }
