@@ -102,9 +102,14 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
 export async function sitemap(ctx: WebsiteContext) {
   const rows = await db.websiteEntry.findMany({
     where: { businessLineId: ctx.businessLineId, status: 'published', collection: { isActive: true }, ...PARENT_PUBLISHED },
-    select: { slug: true, updatedAt: true, collection: { select: { key: true } } },
+    select: { slug: true, updatedAt: true, data: true, collection: { select: { key: true } }, parent: { select: { slug: true } } },
     orderBy: { updatedAt: 'desc' },
     take: 50_000,
   })
-  return { items: rows.map((r) => ({ collection: r.collection.key, slug: r.slug, updatedAt: r.updatedAt.toISOString() })) }
+  // custom pages are addressed by the firm and their own slug (the entry slug carries a random suffix)
+  return { items: rows.flatMap((r) => {
+    if (r.collection.key !== 'pagini') return [{ collection: r.collection.key, slug: r.slug, updatedAt: r.updatedAt.toISOString() }]
+    const page = String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? '')
+    return page && r.parent ? [{ collection: 'pagini', slug: page, firm: r.parent.slug, updatedAt: r.updatedAt.toISOString() }] : []
+  }) }
 }
