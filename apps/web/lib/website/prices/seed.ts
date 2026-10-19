@@ -13,7 +13,8 @@ import { PRICE_PAGES, type PricePageSeed } from './pages'
 
 export const PRICES_KEY = 'preturi'
 export const PRICES_SOURCE = 'prices:v1'
-export const PLACEHOLDER = '[DE COMPLETAT]'
+export { PLACEHOLDER } from '../content/blocks'
+import { PLACEHOLDER } from '../content/blocks'
 const YEAR = 2026
 
 export const PRICES_FIELDS: CollectionField[] = [
