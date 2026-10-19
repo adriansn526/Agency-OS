@@ -6,6 +6,7 @@ import { ChevronDown, MessageSquare, Phone } from "lucide-react"
 import { Modal } from "@/components/modal"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { PORTAL_REASONS, PORTAL_USE, PORTAL_USE_LABEL, type PortalReason, type PortalUse } from "@/lib/crm/calls/outcome"
 import { fmtTimer, OUTCOMES, quickCallbacks, telHref, companyProfile, phoneTag, toLocalInput, type OutcomeValue } from "./call-utils"
 
 const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -26,6 +27,9 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
   const [outcome, setOutcome] = useState<OutcomeValue | null>(null)
   const [consentSms, setConsentSms] = useState<"" | "da" | "nu">("")
   const [consentEmail, setConsentEmail] = useState<"" | "da" | "nu">("")
+  const [portalUse, setPortalUse] = useState<"" | PortalUse>("")
+  const [portalNames, setPortalNames] = useState("")
+  const [portalReason, setPortalReason] = useState<"" | PortalReason>("")
   const [callback, setCallback] = useState("")
   const [notes, setNotes] = useState("")
   const [elapsed, setElapsed] = useState(0)
@@ -44,6 +48,7 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
       setLead(l)
       const cf = (l.customFields ?? {}) as Record<string, string>
       setConsentSms(cf.acord_sms === "da" || cf.acord_sms === "nu" ? cf.acord_sms : ""); setConsentEmail(cf.acord_email === "da" || cf.acord_email === "nu" ? cf.acord_email : "")
+      setPortalUse((PORTAL_USE.find((u) => PORTAL_USE_LABEL[u] === cf.alte_portaluri) ?? "") as "" | PortalUse); setPortalNames(typeof cf.alte_portaluri_nume === "string" ? cf.alte_portaluri_nume : ""); setPortalReason((PORTAL_REASONS.find((r) => r === cf.alte_portaluri_motiv) ?? "") as "" | PortalReason)
     }).catch(() => toast.error("Nu am putut încărca firma"))
     call(`/api/crm/calls/${leadId}/sms/delivery`).then((d: any) => setDeliveries(Array.isArray(d) ? d : [])).catch(() => setDeliveries([]))
     call(`/api/marketing/templates?businessLine=${encodeURIComponent(lineSlug)}&channel=sms`).then((t: any) => setTemplates(Array.isArray(t) ? t : [])).catch(() => setTemplates([]))
@@ -80,6 +85,7 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
     try {
       await call(`/api/crm/calls/${leadId}/call`, "POST", {
         outcome, notes: notes.trim() || undefined, consentSms: consentSms || null, consentEmail: consentEmail || null,
+        otherPortals: { use: portalUse || null, names: portalUse && portalUse !== "nu" ? portalNames.trim() || null : null, reason: portalUse && portalUse !== "nu" ? portalReason || null : null },
         callbackAt: callback && !noCallback ? new Date(callback).toISOString() : null, durationSec: elapsed > 0 ? elapsed : null,
       })
       toast.success("Apel salvat")
@@ -160,6 +166,29 @@ export function CallModal({ leadId, lineSlug, open, onClose, onSaved, onNext }: 
               <select id="cm-mail" className={inputCls} value={consentEmail} onChange={(e) => setConsentEmail(e.target.value as any)}><option value="">— nespecificat</option><option value="da">Da</option><option value="nu">Nu</option></select>
             </div>
           </div>
+
+          <fieldset className="rounded-lg border border-border p-3">
+            <legend className="px-1 text-xs font-semibold">Alte portaluri (întrebarea din apel)</legend>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div>
+                <label className={labelCls} htmlFor="cm-pu">Primește cereri din alte portaluri?</label>
+                <select id="cm-pu" className={inputCls} value={portalUse} onChange={(e) => setPortalUse(e.target.value as "" | PortalUse)}><option value="">— nespecificat</option>{PORTAL_USE.map((u) => <option key={u} value={u}>{PORTAL_USE_LABEL[u]}</option>)}</select>
+              </div>
+              {portalUse && portalUse !== "nu" && (
+                <>
+                  <div>
+                    <label className={labelCls} htmlFor="cm-pn">Care (cum le-a numit)</label>
+                    <input id="cm-pn" className={inputCls} maxLength={120} value={portalNames} onChange={(e) => setPortalNames(e.target.value)} placeholder="doar ce spune el" />
+                  </div>
+                  <div>
+                    <label className={labelCls} htmlFor="cm-pr">Principala nemulțumire</label>
+                    <select id="cm-pr" className={inputCls} value={portalReason} onChange={(e) => setPortalReason(e.target.value as "" | PortalReason)}><option value="">— nespecificat</option>{PORTAL_REASONS.map((r) => <option key={r} value={r}>{r}</option>)}</select>
+                  </div>
+                </>
+              )}
+            </div>
+            <p className="mt-1.5 text-xs text-muted-foreground">Nu numi tu portalul și nu cere prețuri; notează doar ce spune firma.</p>
+          </fieldset>
 
           {!noCallback && (
             <div>

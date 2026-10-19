@@ -13,6 +13,9 @@ export const PILOT_FIELDS: FieldDef[] = [
   { key: 'acord_email', type: 'select', label: 'Acord email (la telefon)', options: ['da', 'nu'] },
   { key: 'rezultat_apel', type: 'select', label: 'Rezultat apel', options: ['Nu răspunde', 'Interesat', 'Revin mai târziu', 'Refuză', 'Număr greșit'] },
   { key: 'data_apel', type: 'text', label: 'Data apelului (AAAA-LL-ZZ)' },
+  { key: 'alte_portaluri', type: 'select', label: 'Alte portaluri', options: ['Nu folosește', 'Folosește unul', 'Folosește mai multe'] },
+  { key: 'alte_portaluri_nume', type: 'text', label: 'Care portaluri (cum le-a numit firma)' },
+  { key: 'alte_portaluri_motiv', type: 'select', label: 'Principala nemulțumire față de ele', options: ['Mulți ofertanți pe aceeași cerere', 'Abonament fără lucrări', 'Cereri false sau fără buget', 'Prea scump', 'Mulțumit', 'Altul'] },
 ]
 export const SEGMENT_NAME = 'Pilot — acord SMS'
 export const SEGMENT_FILTERS = [{ field: 'cf.pilot', operator: 'equals', value: 'da' }, { field: 'cf.acord_sms', operator: 'equals', value: 'da' }]
@@ -74,6 +77,20 @@ export async function planPilot(lineId: string): Promise<PilotPlan & { leadIds: 
   const marked = leadIds.length ? await db.lead.count({ where: { id: { in: leadIds }, customFields: { path: ['pilot'], equals: 'da' } } }) : 0
   const seg = await db.marketingSegment.findFirst({ where: { businessLineId: lineId, name: SEGMENT_NAME }, select: { id: true } })
   return { fieldsToAdd: PILOT_FIELDS.filter((f) => !have.has(f.key)).map((f) => f.key), leadsToMark: leadIds.length - marked, segmentExists: !!seg, callable: rows.length, withoutPhone, leadIds, rows }
+}
+
+/** Adds the pilot's custom fields to the "parteneri" type of the line when they are missing (idempotent). Returns how many were added. */
+export async function ensurePilotFields(lineId: string): Promise<number> {
+  const line = await db.businessLine.findUniqueOrThrow({ where: { id: lineId }, select: { config: true } })
+  const cfg = JSON.parse(JSON.stringify(line.config ?? {})) as { entityTypes?: { id: string; customFields?: FieldDef[] }[] }
+  const type = cfg.entityTypes?.find((t) => t.id === 'parteneri')
+  if (!type) return 0
+  const have = new Set((type.customFields ?? []).map((f) => f.key))
+  const add = PILOT_FIELDS.filter((f) => !have.has(f.key))
+  if (!add.length) return 0
+  type.customFields = [...(type.customFields ?? []), ...add]
+  await db.businessLine.update({ where: { id: lineId }, data: { config: cfg as unknown as Prisma.InputJsonValue } })
+  return add.length
 }
 
 export async function applyPilot(lineId: string, plan: Awaited<ReturnType<typeof planPilot>>) {

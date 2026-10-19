@@ -22,7 +22,7 @@ test('the sheet has the columns the caller fills in (consent and outcome) and a 
   assert.ok(csv.startsWith('﻿firma,telefon,')); assert.match(csv, /acord_sms,acord_email,rezultat_apel,data_apel\n/); assert.ok(csv.includes('"FIRMA, SRL",0730111111'))
 })
 test('pilot fields and segment filters line up (the segment reads the same keys the CRM fields write)', () => {
-  assert.deepEqual(PILOT_FIELDS.map((f) => f.key), ['acord_sms', 'acord_email', 'rezultat_apel', 'data_apel'])
+  assert.deepEqual(PILOT_FIELDS.map((f) => f.key), ['acord_sms', 'acord_email', 'rezultat_apel', 'data_apel', 'alte_portaluri', 'alte_portaluri_nume', 'alte_portaluri_motiv'])
   for (const f of SEGMENT_FILTERS) { assert.ok(f.field.startsWith('cf.')); assert.equal(f.operator, 'equals') }
   assert.deepEqual(SEGMENT_FILTERS.map((f) => f.field), ['cf.pilot', 'cf.acord_sms'])
   assert.deepEqual(PILOT_FIELDS.find((f) => f.key === 'acord_sms')!.options, ['da', 'nu'])   // the segment value 'da' is one of the choices
