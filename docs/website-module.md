@@ -33,6 +33,18 @@ Pagini naționale de preț pe serviciu (`intraconstruct.ro/preturi/<slug>`), ale
 - `body` conține la început marcajul `[DE COMPLETAT]`; frontend-ul nu afișează (404) o pagină care îl mai conține, deci o pagină neterminată nu poate ajunge publică din greșeală. Înlocuiește scheletul, completează listele și publică.
 - Lista paginilor: `lib/website/prices/pages.ts`.
 
+### Aranjarea paginilor pe blocuri (servicii și prețuri)
+
+Intrările colecțiilor `preturi` și `servicii` se aranjează din **Intrări → deschide intrarea → „Editează aranjarea”** (editor pe blocuri, ecran complet): adaugi, muți, duplici și ștergi blocuri; câmpurile se generează din catalog. Catalogul și validarea: `lib/website/content/blocks.ts` (același format v2 ca paginile firmelor, alt catalog).
+
+- Blocuri: banner (hero, H1), titlu, text, imagine, galerie foto, carduri, imagine + text, **tabel de prețuri** (citește lista „Prețuri” a intrării), **FAQ** (citește „Întrebări frecvente”; generează schema FAQPage), **zone deservite** (intră în schema Service/areaServed), cerere de ofertă, coloane, secțiune cu fundal. Prețurile și întrebările rămân date, nu text în bloc.
+- Imaginile sunt cele încărcate în galeria intrării (secțiunea Imagini); o referință la altă imagine e refuzată.
+- Fără niciun bloc, site-ul folosește aranjarea implicită. O pagină cu blocuri nu mai folosește `body`, deci marcajul `[DE COMPLETAT]` din schelet nu o blochează.
+- **Salvarea pe o pagină publicată o actualizează pe site** (cache 5 minute); ultimele 20 de versiuni se pot restaura din „Istoric”.
+- **Previzualizare:** pentru o ciornă se emite un link privat (`/previzualizare-pagina/<cod>`; intrarea trece în starea „preview”, care nu apare niciodată în API-ul public); un link nou îl invalidează pe cel vechi. Pentru o pagină publicată se dă adresa publică.
+- API admin: `GET/PUT /api/website/entries/<id>/content`, `GET/POST …/content/versions`, `POST …/content/preview`. Public (server-la-server): detaliul intrării are `pageLayout` (și lista are `hasBlocks`), plus `GET /api/storefront/website/content-preview/<cod>`.
+- Editorul de intrări ascunde acum câmpurile de firmă (plan, verificat, acces „Profilul meu”, recomandat, locație, contact) pentru colecțiile de tip `article`.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.

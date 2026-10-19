@@ -6,6 +6,7 @@
 
 import { categoryTitles } from '../glossary/taxonomy'
 import { effectiveLayout } from '../layout/blocks'
+import { effectiveContentLayout, isContentCollection } from '../content/blocks'
 
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
@@ -34,6 +35,8 @@ export function serializeListItem(e: EntryRow, collectionKey: string, cats?: { s
     coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured, founder: (e._count?.foundingSlots ?? 0) > 0,
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
+    // services and prices: whether the team arranged the page with blocks (a page with only the seeded skeleton is not finished)
+    ...(isContentCollection(collectionKey) ? { hasBlocks: effectiveContentLayout(e.layout).blocks.length > 0 } : {}),
     // a firm's own page for its projects; the service categories chosen by a firm come with their titles
     parent: e.parent ? { slug: e.parent.slug, title: e.parent.title, city: e.parent.city, county: e.parent.county, logoUrl: e.parent.logoUrl, verified: e.parent.verified } : null,
     services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii, cats),
@@ -47,6 +50,8 @@ export function serializeDetail(e: EntryRow, collectionKey: string, media: Media
     ...serializeListItem(e, collectionKey, cats),
     // the firm's chosen home blocks (always valid: damaged storage falls back to the default)
     ...(collectionKey === 'companii' ? { layout: effectiveLayout(e.layout) } : {}),
+    // services and prices: the blocks the team arranged (empty = the site draws its default layout)
+    ...(isContentCollection(collectionKey) ? { pageLayout: effectiveContentLayout(e.layout) } : {}),
     body: e.body, phone: e.phone, websiteUrl: e.websiteUrl,
     seo: { title: e.seoTitle, description: e.seoDescription },
     media: media.map((m) => ({ id: m.id, url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),
