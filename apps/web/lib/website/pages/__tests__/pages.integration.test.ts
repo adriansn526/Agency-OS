@@ -69,3 +69,15 @@ test('a firm cannot reach another firm\'s pages; deleting removes the page; ever
   assert.deepEqual(await S.deletePage(mine, id), { ok: true }); assert.equal((await S.listPages(mine, NOW)).items.some((p) => p.id === id), false)
   const acts = await db.activity.findMany({ where: { entityId: 'f1', action: { startsWith: 'partner_page_' } } }); assert.ok(acts.length >= 5)
 })
+
+test('menu placement: pages default to "Pagini", can be moved under "Servicii" or hidden, and the public menu list reflects it', { skip }, async () => {
+  const f = await firm('f1')
+  const a = await S.createPage(f, { title: 'Pagină pentru meniu' }, NOW); assert.equal(a.menu, 'pagini')
+  assert.equal((await S.updatePage(f, a.id, { menu: 'servicii' })).menu, 'servicii'); assert.equal((await S.getPage(f, a.id)).menu, 'servicii')
+  assert.equal((await db.websiteEntry.findUnique({ where: { id: a.id } })).data.pagina, a.slug)          // the address is untouched
+  await assert.rejects(S.updatePage(f, a.id, { menu: 'footer' }), /Date invalide/)
+  await S.updatePage(f, a.id, { layout: { version: 2, blocks: [node('h', 'heading', { text: 'x' })] }, status: 'published' })
+  const { listPublicPages } = await import('../public'); const ctx = { businessLineId: 'bl', channelId: 'ch' }
+  assert.deepEqual((await listPublicPages(ctx, 'alfa')).items.find((i: any) => i.slug === a.slug)?.menu, 'servicii')
+  await S.updatePage(f, a.id, { menu: 'ascuns' }); assert.equal((await listPublicPages(ctx, 'alfa')).items.some((i: any) => i.slug === a.slug), false)
+})

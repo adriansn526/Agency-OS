@@ -16,6 +16,10 @@ export const PAGES_KEY = 'pagini'
 export const MAX_PAGES = 5
 export const MAX_VERSIONS = 20
 const PAGE_FIELDS: CollectionField[] = [{ key: 'pagina', label: 'Adresa paginii', type: 'text' }]
+/** Where a page appears in the firm's menu: under "Servicii", under "Pagini", or not at all (still reachable by its address). */
+export const MENU_PLACES = ['pagini', 'servicii', 'ascuns'] as const
+export type MenuPlace = (typeof MENU_PLACES)[number]
+export const menuOf = (data: unknown): MenuPlace => { const v = (data as { meniu?: unknown } | null)?.meniu; return (MENU_PLACES as readonly string[]).includes(v as string) ? (v as MenuPlace) : 'pagini' }
 
 type Parent = { id: string; slug: string; businessLineId: string; title: string; leadId: string | null; plan: string; planUntil: Date | null }
 
@@ -32,7 +36,7 @@ const ensureCollection = (lineId: string) => db.websiteCollection.upsert({
 
 type Row = Prisma.WebsiteEntryGetPayload<object>
 const pageSlug = (r: Row) => String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? '')
-const brief = (r: Row) => ({ id: r.id, title: r.title, slug: pageSlug(r), status: r.status, updatedAt: r.updatedAt.toISOString(), publishedAt: r.publishedAt?.toISOString() ?? null })
+const brief = (r: Row) => ({ id: r.id, title: r.title, slug: pageSlug(r), menu: menuOf(r.data), status: r.status, updatedAt: r.updatedAt.toISOString(), publishedAt: r.publishedAt?.toISOString() ?? null })
 
 async function owned(parent: Parent, id: string): Promise<Row> {
   const r = await db.websiteEntry.findFirst({ where: { id, parentId: parent.id, businessLineId: parent.businessLineId, collection: { key: PAGES_KEY } } })
@@ -89,6 +93,7 @@ const patchInput = z.object({
   seoDescription: z.string().trim().max(320).nullish().transform((v) => (v ? v : null)).optional(),
   layout: z.unknown().optional(),
   status: z.enum(['draft', 'published']).optional(),
+  menu: z.enum(MENU_PLACES).optional(),
 }).strict()
 
 async function saveVersion(tx: Prisma.TransactionClient, entryId: string, layout: PageLayout, source: 'partner' | 'restore') {
@@ -117,6 +122,7 @@ export async function updatePage(parent: Parent, id: string, raw: unknown, o: { 
     const e = await tx.websiteEntry.update({
       where: { id },
       data: {
+        ...(d.menu !== undefined ? { data: { ...((cur.data ?? {}) as Record<string, unknown>), meniu: d.menu } as Prisma.InputJsonValue } : {}),
         ...(d.title !== undefined ? { title: d.title } : {}), ...(d.seoTitle !== undefined ? { seoTitle: d.seoTitle } : {}), ...(d.seoDescription !== undefined ? { seoDescription: d.seoDescription } : {}),
         ...(layoutChanged ? { layout: layout as unknown as Prisma.InputJsonValue } : {}),
         ...(d.status !== undefined ? { status: d.status, ...(d.status === 'published' && !cur.publishedAt ? { publishedAt: now } : {}) } : {}),
