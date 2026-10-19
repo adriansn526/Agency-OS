@@ -29,16 +29,17 @@ after(async () => { if (db) await db.$disconnect() })
 test('plan: who can be called, in calling order, without anyone who opted out, answered or has no phone', { skip }, async () => {
   const p = await S.planPilot('bl')
   assert.deepEqual(p.rows.map((r) => r.firma), ['A', 'B'])                         // Cluj before Mureș; no phone, opt-out, accepted and published are out
-  assert.equal(p.withoutPhone, 1); assert.deepEqual(p.fieldsToAdd, ['acord_sms', 'acord_email', 'rezultat_apel', 'data_apel']); assert.equal(p.leadsToMark, 2); assert.equal(p.segmentExists, false)
+  assert.equal(p.withoutPhone, 1); assert.deepEqual(p.fieldsToAdd, ['acord_sms', 'acord_email', 'rezultat_apel', 'data_apel', 'alte_portaluri', 'alte_portaluri_nume', 'alte_portaluri_motiv']); assert.equal(p.leadsToMark, 2); assert.equal(p.segmentExists, false)
   const b = p.rows[1]!; assert.deepEqual([b.telefon, b.telefon_2, b.persoana_contact, b.email, b.judet, b.localitate, b.cui], ['0730222222', '0740222222', 'Ion Pop', 'b@b.ro', 'Mureș', 'Târgu Mureș', '2'])
   assert.equal(b.servicii, 'Demolări; Foraj și sondaj'); assert.equal(p.rows[0]!.persoana_contact, '')   // 'N/A' placeholders do not reach the caller's sheet
 })
 
+const PILOT_KEYS = ['acord_sms', 'acord_email', 'rezultat_apel', 'data_apel', 'alte_portaluri', 'alte_portaluri_nume', 'alte_portaluri_motiv']
 test('apply: fields added once, firms marked, segment created; a second run changes nothing', { skip }, async () => {
   const p = await S.planPilot('bl'); const r = await S.applyPilot('bl', p)
-  assert.deepEqual([r.fieldsAdded, r.marked], [4, 2]); assert.ok(r.segmentId)
+  assert.deepEqual([r.fieldsAdded, r.marked], [7, 2]); assert.ok(r.segmentId)
   const cfg = (await db.businessLine.findUnique({ where: { id: 'bl' } })).config.entityTypes[0]
-  assert.deepEqual(cfg.customFields.map((f: any) => f.key), ['cui', 'acord_sms', 'acord_email', 'rezultat_apel', 'data_apel'])    // existing field kept, new ones appended
+  assert.deepEqual(cfg.customFields.map((f: any) => f.key), ['cui', ...PILOT_KEYS])    // existing field kept, new ones appended
   assert.equal((await db.lead.findUnique({ where: { id: 'la' } })).customFields.pilot, 'da'); assert.equal((await db.lead.findUnique({ where: { id: 'la' } })).customFields.regiune, 'X')   // other keys untouched
   assert.equal((await db.lead.findUnique({ where: { id: 'lpublished' } })).customFields.pilot, undefined)
   const again = await S.planPilot('bl'); assert.deepEqual([again.fieldsToAdd.length, again.leadsToMark, again.segmentExists], [0, 0, true])
@@ -55,4 +56,13 @@ test('the segment matches exactly the pilot firms that agreed to an SMS', { skip
   await db.$executeRaw`UPDATE "Lead" SET "customFields" = "customFields" || '{"acord_sms":"da"}'::jsonb WHERE "id" = 'lpublished'`   // agreed but not part of the pilot
   assert.equal(await count(), 1)
   await db.lead.update({ where: { id: 'la' }, data: { optOut: true } }); assert.equal(await count(), 0)                                  // opting out always wins
+})
+
+test('ensurePilotFields adds only the missing fields and is idempotent (used to extend a line that already ran the pilot)', { skip }, async () => {
+  const keys = async () => (await db.businessLine.findUnique({ where: { id: 'bl' } })).config.entityTypes[0].customFields.map((f: any) => f.key)
+  const cfg = (await db.businessLine.findUnique({ where: { id: 'bl' } })).config
+  cfg.entityTypes[0].customFields = cfg.entityTypes[0].customFields.filter((f: any) => !f.key.startsWith('alte_portaluri'))
+  await db.businessLine.update({ where: { id: 'bl' }, data: { config: cfg } })
+  assert.equal(await S.ensurePilotFields('bl'), 3); assert.deepEqual(await keys(), ['cui', ...PILOT_KEYS])
+  assert.equal(await S.ensurePilotFields('bl'), 0)
 })

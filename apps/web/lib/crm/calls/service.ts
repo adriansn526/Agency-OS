@@ -18,7 +18,7 @@ export async function recordCall(leadId: string, input: CallInput, user: { id?: 
       data: {
         ...(plan.status ? { status: plan.status } : {}), ...(plan.optOut !== undefined ? { optOut: plan.optOut } : {}),
         nextAction: plan.nextAction, nextActionDate: plan.nextActionDate,
-        customFields: { ...((lead.customFields ?? {}) as Record<string, unknown>), ...plan.customFields } as Prisma.InputJsonValue,
+        customFields: (() => { const cf = { ...((lead.customFields ?? {}) as Record<string, unknown>), ...plan.customFields }; for (const k of plan.clearFields) if (!(k in plan.customFields)) delete cf[k]; return cf })() as Prisma.InputJsonValue,
       },
     })
     if (plan.statusChange) {
@@ -28,7 +28,7 @@ export async function recordCall(leadId: string, input: CallInput, user: { id?: 
   await logCommunication({
     leadId, businessLineId: lead.businessLineId, channel: 'call', direction: 'outbound', subject: plan.call.subject, body: plan.call.body, phone: lead.phone, callResult: plan.call.callResult,
     duration: plan.call.durationMin, userName: user.name ?? 'System',
-    metadata: { outcome: input.outcome, callbackAt: input.callbackAt?.toISOString() ?? null, consentSms: input.consentSms ?? null, consentEmail: input.consentEmail ?? null },
+    metadata: { outcome: input.outcome, callbackAt: input.callbackAt?.toISOString() ?? null, consentSms: input.consentSms ?? null, consentEmail: input.consentEmail ?? null, otherPortals: input.otherPortals ?? null },
   })
   return { status: plan.status ?? lead.status, statusChanged: !!plan.statusChange, optOut: plan.optOut ?? lead.optOut, nextAction: plan.nextAction, nextActionDate: plan.nextActionDate?.toISOString() ?? null }
 }

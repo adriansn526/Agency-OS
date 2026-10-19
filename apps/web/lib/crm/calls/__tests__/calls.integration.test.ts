@@ -117,3 +117,16 @@ test('the sending window is editable per line: Saturday is blocked by default an
   assert.match((await M.smsPreview('h', 't-plain', SAT)).blockers.join(' '), /doar marți, între 9:00 și 10:00/)
   await db.websiteChannel.update({ where: { businessLineId: 'bl' }, data: { config: {} } })
 })
+
+test('other portals: saved with the call, cleared when the answer changes, untouched when not sent; other custom fields survive', { skip }, async () => {
+  await S.recordCall('a', { outcome: 'interesat', otherPortals: { use: 'unul', names: 'Portalul X', reason: 'Cereri false sau fără buget' } }, { name: 'Adrian' })
+  let l = await lead('a'); assert.deepEqual([l.customFields.alte_portaluri, l.customFields.alte_portaluri_nume, l.customFields.alte_portaluri_motiv, l.customFields.pilot], ['Folosește unul', 'Portalul X', 'Cereri false sau fără buget', 'da'])
+  const c = await db.communication.findFirst({ where: { leadId: 'a' }, orderBy: { createdAt: 'desc' } }); assert.equal(c.metadata.otherPortals.use, 'unul')
+  await S.recordCall('a', { outcome: 'revin', callbackAt: new Date(Date.now() + 3 * 86_400_000) }, { name: 'Adrian' })            // nothing sent → unchanged
+  l = await lead('a'); assert.equal(l.customFields.alte_portaluri, 'Folosește unul'); assert.equal(l.customFields.alte_portaluri_nume, 'Portalul X')
+  await S.recordCall('a', { outcome: 'interesat', otherPortals: { use: 'nu', names: 'x' } }, { name: 'Adrian' })                     // "does not use": names and complaint removed
+  l = await lead('a'); assert.deepEqual([l.customFields.alte_portaluri, l.customFields.alte_portaluri_nume, l.customFields.alte_portaluri_motiv], ['Nu folosește', undefined, undefined])
+  await S.recordCall('a', { outcome: 'interesat', otherPortals: { use: null } }, { name: 'Adrian' }); l = await lead('a'); assert.equal(l.customFields.alte_portaluri, undefined)
+  assert.equal(l.customFields.rezultat_apel, 'Interesat'); assert.equal(l.customFields.pilot, 'da')
+  await assert.rejects(S.recordCall('a', { outcome: 'interesat', otherPortals: { use: 'unul', reason: 'x' as never } }, {}), /Motiv necunoscut/)
+})

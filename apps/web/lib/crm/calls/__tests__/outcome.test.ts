@@ -54,3 +54,20 @@ test('callback dates must be valid and in the future; duration is rounded up to 
 test('the date of the call is the Bucharest date, even late in the evening UTC', () => {
   assert.equal(planCall(lead(), { outcome: 'interesat' }, PIPE, new Date('2026-11-03T22:30:00Z')).customFields.data_apel, '2026-11-04')
 })
+
+import { PORTAL_REASONS } from '../outcome'
+test('other portals: stored as readable labels; "does not use" clears names and complaint; undefined changes nothing; bad values are refused', () => {
+  const lead = { status: 'prospect', optOut: false, customFields: {}, nextAction: null, nextActionDate: null }
+  const pipeline = ['prospect', 'contactat', 'in_discutii', 'onboarding', 'activ', 'refuzat']
+  const now = new Date('2026-11-02T10:00:00Z')
+  const one = planCall(lead, { outcome: 'interesat', otherPortals: { use: 'mai_multe', names: '  Portal  A,   portal B ', reason: 'Abonament fără lucrări' } }, pipeline, now)
+  assert.deepEqual([one.customFields.alte_portaluri, one.customFields.alte_portaluri_nume, one.customFields.alte_portaluri_motiv, one.clearFields], ['Folosește mai multe', 'Portal A, portal B', 'Abonament fără lucrări', []])
+  const none = planCall(lead, { outcome: 'interesat', otherPortals: { use: 'nu', names: 'x', reason: 'Prea scump' } }, pipeline, now)
+  assert.deepEqual([none.customFields.alte_portaluri, 'alte_portaluri_nume' in none.customFields, 'alte_portaluri_motiv' in none.customFields, none.clearFields], ['Nu folosește', false, false, ['alte_portaluri_nume', 'alte_portaluri_motiv']])
+  const unset = planCall(lead, { outcome: 'interesat', otherPortals: { use: null } }, pipeline, now); assert.deepEqual(unset.clearFields, ['alte_portaluri', 'alte_portaluri_nume', 'alte_portaluri_motiv'])
+  const untouched = planCall(lead, { outcome: 'interesat' }, pipeline, now); assert.deepEqual([untouched.clearFields, 'alte_portaluri' in untouched.customFields], [[], false])
+  assert.throws(() => planCall(lead, { outcome: 'interesat', otherPortals: { use: 'toate' as never } }, pipeline, now), /Alte portaluri/)
+  assert.throws(() => planCall(lead, { outcome: 'interesat', otherPortals: { use: 'unul', reason: 'ceva' as never } }, pipeline, now), /Motiv necunoscut/)
+  assert.throws(() => planCall(lead, { outcome: 'interesat', otherPortals: { use: 'unul', names: 'x'.repeat(121) } }, pipeline, now), /prea lungi/)
+  assert.equal(PORTAL_REASONS.length, 6)
+})
