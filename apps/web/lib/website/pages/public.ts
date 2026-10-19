@@ -4,6 +4,7 @@ import type { WebsiteContext } from '../storefront/auth'
 import { WebsiteInputError } from '../storefront/auth'
 import { isSlug } from '../storefront/query'
 import { mediaRefs, parsePageLayout, emptyPageLayout, type PageLayout } from './blocks'
+import { lookupPreview } from '../preview/service'
 import { menuOf, PAGES_KEY } from './service'
 
 export interface PublicPage {
@@ -22,7 +23,12 @@ export async function getPublicPage(ctx: WebsiteContext, firmSlug: string, pageS
   const firm = await db.websiteEntry.findFirst({ where: { businessLineId: ctx.businessLineId, slug: firmSlug, status: 'published', collection: { key: 'companii', isActive: true } }, select: { id: true, slug: true, title: true } })
   if (!firm) return null
   const row = await db.websiteEntry.findFirst({ where: { parentId: firm.id, businessLineId: ctx.businessLineId, status: 'published', collection: { key: PAGES_KEY }, data: { path: ['pagina'], equals: pageSlug } } })
-  if (!row) return null
+  return row ? buildPublicPage(firm, row, pageSlug) : null
+}
+
+type PageRow = NonNullable<Awaited<ReturnType<typeof db.websiteEntry.findFirst>>>
+
+async function buildPublicPage(firm: { id: string; slug: string; title: string }, row: PageRow, pageSlug: string): Promise<PublicPage> {
   // stored layouts were validated on save; to read one back its own references count as known, then only the firm's real images are served
   const parsed = parsePageLayout(row.layout, { mediaIds: idsOf(row.layout) })
   const layout = parsed.ok ? parsed.layout : emptyPageLayout()
@@ -43,4 +49,30 @@ export async function listPublicPages(ctx: WebsiteContext, firmSlug: string) {
     select: { title: true, data: true, publishedAt: true }, orderBy: [{ publishedAt: 'asc' }, { title: 'asc' }], take: 20,
   })
   return { items: rows.map((r) => ({ title: r.title, slug: String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? ''), menu: menuOf(r.data) })).filter((r) => r.slug && r.menu !== 'ascuns') }
+}
+
+/** The firm behind a valid, unexpired private preview link (the pages are shown to whoever holds the link, drafts included). */
+async function previewFirm(ctx: WebsiteContext, token: string) {
+  const r = await lookupPreview(ctx.businessLineId, token)
+  return r.state === 'ok' ? { ok: true as const, firm: { id: r.entry.id, slug: r.entry.slug, title: r.entry.title } } : { ok: false as const, state: r.state }
+}
+
+/** Pages of the previewed firm that belong in its menu, drafts included (each says whether it is already published). */
+export async function listPreviewPages(ctx: WebsiteContext, token: string) {
+  const f = await previewFirm(ctx, token)
+  if (!f.ok) return f
+  const rows = await db.websiteEntry.findMany({
+    where: { parentId: f.firm.id, businessLineId: ctx.businessLineId, status: { in: ['draft', 'published'] }, collection: { key: PAGES_KEY } },
+    select: { title: true, data: true, status: true, createdAt: true }, orderBy: [{ createdAt: 'asc' }, { title: 'asc' }], take: 20,
+  })
+  return { ok: true as const, items: rows.map((r) => ({ title: r.title, slug: String(((r.data ?? {}) as { pagina?: unknown }).pagina ?? ''), menu: menuOf(r.data), published: r.status === 'published' })).filter((r) => r.slug && r.menu !== 'ascuns') }
+}
+
+/** One page (draft or published) of the previewed firm. */
+export async function getPreviewPage(ctx: WebsiteContext, token: string, pageSlug: string) {
+  if (!isSlug(pageSlug)) throw new WebsiteInputError('Adresă invalidă')
+  const f = await previewFirm(ctx, token)
+  if (!f.ok) return f
+  const row = await db.websiteEntry.findFirst({ where: { parentId: f.firm.id, businessLineId: ctx.businessLineId, status: { in: ['draft', 'published'] }, collection: { key: PAGES_KEY }, data: { path: ['pagina'], equals: pageSlug } } })
+  return row ? { ok: true as const, page: await buildPublicPage(f.firm, row, pageSlug) } : { ok: false as const, state: 'invalid' as const }
 }

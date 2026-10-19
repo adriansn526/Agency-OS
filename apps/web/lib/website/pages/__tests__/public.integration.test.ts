@@ -60,3 +60,18 @@ test('the firm menu and the sitemap list only published pages of published firms
   assert.deepEqual(sm.map((i: any) => [i.firm, i.slug]), [['alfa', 'despre-noi']])
   assert.ok(!sm.some((i: any) => i.slug.includes('-') && /[0-9a-f]{6}$/.test(i.slug)))        // never the internal slug with its random suffix
 })
+test('the private preview of a firm shows its pages, drafts included, hidden ones left out; nothing of other firms; invalid and expired links get nothing', { skip }, async () => {
+  const PS = await import('../../preview/service')
+  const g = await firm('f2')
+  const d = await S.createPage(g, { title: 'Gaze la bloc' }, NOW); await S.updatePage(g, d.id, { layout: { version: 2, blocks: [node('h', 'heading', { text: 'Gaze' }), node('i', 'image', { image: 'cmvmedia0009zzz' })] }, menu: 'servicii' })
+  const h = await S.createPage(g, { title: 'Ascunsă' }, NOW); await S.updatePage(g, h.id, { menu: 'ascuns' })
+  const { token } = await PS.issuePreview('bl', 'f2', { now: new Date() })
+  const l = await P.listPreviewPages(ctx, token); assert.ok(l.ok)
+  assert.deepEqual((l as any).items.map((i: any) => [i.slug, i.menu, i.published]).sort(), [['gaze-la-bloc', 'servicii', false], ['pagina-beta', 'pagini', true]])
+  const p = await P.getPreviewPage(ctx, token, 'gaze-la-bloc'); assert.ok(p.ok); assert.deepEqual((p as any).page.firm, { slug: 'beta', title: 'BETA' }); assert.deepEqual(Object.keys((p as any).page.media), ['cmvmedia0009zzz'])
+  assert.equal((await P.getPreviewPage(ctx, token, 'despre-noi')).ok, false)                       // a page of another firm
+  assert.equal((await P.listPreviewPages(ctx, 'abcdefghjk')).ok, false)
+  const gone = await P.listPreviewPages({ businessLineId: 'other', channelId: 'x' }, token); assert.equal(gone.ok, false)
+  const old = await PS.issuePreview('bl', 'f2', { now: new Date(Date.now() - 30 * 86_400_000), days: 14 }); assert.deepEqual(await P.listPreviewPages(ctx, old.token), { ok: false, state: 'expired' })
+  await assert.rejects(P.getPreviewPage(ctx, token, '../x'), /invalid/i)
+})
