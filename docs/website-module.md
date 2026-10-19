@@ -24,6 +24,15 @@ Se întoarce doar conținut `published`, din colecții active.
 
 Erori: 401 (cheie lipsă/greșită/canal dezactivat), 400 (parametri invalizi), 404, 429 (limită `WEBSITE_RATE_LIMIT_PER_MIN`, implicit 1200).
 
+## Pagini SEO de prețuri (colecția `preturi`)
+
+Pagini naționale de preț pe serviciu (`intraconstruct.ro/preturi/<slug>`), alese din analiza de cuvinte cheie din `docs/SEO`. Sunt intrări ale colecției `preturi` (tip `article`); se editează în UI ca orice intrare, fără cod.
+
+- Încărcare primul val (31 de pagini, **draft**): `npx tsx --env-file=.env.local scripts/website/seed-prices.ts --line intraconstruct` (regim de probă) și `--apply`. Idempotent; nu suprascrie intrări existente.
+- Câmpuri: `serviciu` (slug de categorie din glosar), `cuvant_cheie`, `cuvinte_cheie`, `preturi` (listă `Lucrare | interval | observații`), `intrebari` (listă `Întrebare | Răspuns`), `preturi_verificate`.
+- `body` conține la început marcajul `[DE COMPLETAT]`; frontend-ul nu afișează (404) o pagină care îl mai conține, deci o pagină neterminată nu poate ajunge publică din greșeală. Înlocuiește scheletul, completează listele și publică.
+- Lista paginilor: `lib/website/prices/pages.ts`.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.
