@@ -7,6 +7,9 @@
  */
 import { emptyPageLayout, mediaRefs, parsePageLayout, type PageBlockDef, type PageField, type PageLayout, type PageParse } from '../pages/blocks'
 
+/** Marker of text still to be written by the team (seeded in skeletons and templates). A page that carries it is never shown on the site. */
+export const PLACEHOLDER = '[DE COMPLETAT]'
+
 /** Collections whose entries are laid out with these blocks. */
 export const CONTENT_COLLECTIONS = ['preturi', 'servicii'] as const
 export const isContentCollection = (key: string) => (CONTENT_COLLECTIONS as readonly string[]).includes(key)
@@ -41,6 +44,7 @@ export const CONTENT_CATALOG: PageBlockDef[] = [
   ] },
   { type: 'price_table', label: 'Tabel de prețuri', description: 'Afișează lista „Prețuri” a intrării (Lucrare | interval | observații). Prețurile rămân date, se schimbă din câmpul intrării.', fields: [TITLE('Prețuri orientative'), { key: 'note', label: 'Notă sub tabel', kind: 'text', max: 240, placeholder: 'Prețuri orientative, fără TVA' }] },
   { type: 'faq_list', label: 'Întrebări frecvente (FAQ)', description: 'Afișează lista „Întrebări frecvente” a intrării și generează automat schema FAQPage pentru Google.', fields: [TITLE('Întrebări frecvente')] },
+  { type: 'price_links', label: 'Linkuri către prețuri', description: 'Paginile de prețuri din aceeași categorie (se completează singure din paginile de prețuri publicate). Util pe paginile de servicii.', fields: [TITLE('Prețuri orientative')] },
   { type: 'areas', label: 'Zone deservite (locație)', description: 'Orașele sau județele în care se oferă serviciul. Se afișează și intră în schema Service (areaServed). Lasă gol pentru „toată țara”.', fields: [TITLE('Unde oferim serviciul'), { key: 'areas', label: 'Localități / județe', kind: 'list', maxItems: 40, max: 60 }] },
   { type: 'request_cta', label: 'Cerere de ofertă', description: 'Un apel la acțiune cu buton către formularul de cerere de ofertă.', fields: [TITLE('Cere oferte gratuite'), { key: 'text', label: 'Text', kind: 'textarea', max: 300 }, { key: 'buttonLabel', label: 'Text buton', kind: 'text', max: 40, placeholder: 'Trimite cererea' }] },
   { type: 'columns', label: 'Coloane', description: 'Două coloane în care pui alte blocuri.', fields: [{ key: 'ratio', label: 'Proporție', kind: 'select', options: opt(['50-50', '50 / 50'], ['33-67', '1/3 și 2/3'], ['67-33', '2/3 și 1/3']) }], slots: [{ key: 'left', label: 'Stânga' }, { key: 'right', label: 'Dreapta' }] },
@@ -57,4 +61,16 @@ export function effectiveContentLayout(raw: unknown): PageLayout {
   if (raw == null) return emptyPageLayout()
   const r = parseContentLayout(raw, idsOf(raw))
   return r.ok ? r.layout : emptyPageLayout()
+}
+
+const texts = (nodes: PageLayout['blocks']): string[] => nodes.flatMap((n) => [...Object.values(n.props).flatMap((v) => (typeof v === 'string' ? [v] : Array.isArray(v) ? v.flatMap((x) => (typeof x === 'string' ? [x] : x && typeof x === 'object' ? Object.values(x).filter((y): y is string => typeof y === 'string') : [])) : [])), ...Object.values(n.slots ?? {}).flatMap(texts)])
+export const layoutHasPlaceholder = (layout: PageLayout) => texts(layout.blocks).some((t) => t.includes(PLACEHOLDER))
+
+/**
+ * Whether a page may be shown on the site: with blocks, when none of them still carries the marker (the body is not used then);
+ * without blocks (default layout), when the body is written (not empty, no marker).
+ */
+export function contentReady(layout: PageLayout, body: string | null | undefined): boolean {
+  if (layout.blocks.length > 0) return !layoutHasPlaceholder(layout)
+  return !!body && !body.includes(PLACEHOLDER)
 }

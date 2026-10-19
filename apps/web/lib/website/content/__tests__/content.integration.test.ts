@@ -5,12 +5,12 @@ import assert from 'node:assert/strict'
 const URL_ = process.env.CONTENT_TEST_DATABASE_URL
 const skip = !URL_
 if (URL_) process.env.DATABASE_URL = URL_
-let db: any, S: typeof import('../service'), P: typeof import('../../preview/service'), Z: typeof import('../../storefront/serialize')
+let db: any, T: typeof import('../seed'), S: typeof import('../service'), P: typeof import('../../preview/service'), Z: typeof import('../../storefront/serialize')
 let entryId = '', otherId = ''
 
 before(async () => {
   if (skip) return
-  ;({ db } = await import('@repo/db')); S = await import('../service'); P = await import('../../preview/service'); Z = await import('../../storefront/serialize')
+  ;({ db } = await import('@repo/db')); S = await import('../service'); T = await import('../seed'); P = await import('../../preview/service'); Z = await import('../../storefront/serialize')
   await db.$executeRawUnsafe(`TRUNCATE "WebsiteLayoutVersion","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","Activity","Lead","BusinessLine" CASCADE`)
   await db.businessLine.create({ data: { id: 'bl', slug: 'bl', name: 'bl', icon: 'x', color: '#000', config: {} } })
   await db.websiteChannel.create({ data: { businessLineId: 'bl', siteUrl: 'https://site.test' } })
@@ -71,4 +71,31 @@ test('public detail exposes pageLayout for price pages only', { skip }, async ()
   const row = await db.websiteEntry.findUnique({ where: { id: entryId }, include: { media: true } })
   assert.equal((Z.serializeDetail(row, 'preturi', row.media, []) as any).pageLayout.blocks.length, 1)
   assert.equal('pageLayout' in Z.serializeDetail(row, 'companii', row.media, []), false)
+})
+
+test('templates: seeded onto entries without blocks; entries with blocks and edited FAQ are left alone; the page stays hidden until written', { skip }, async () => {
+  const sv = await db.websiteCollection.create({ data: { id: 'cs', businessLineId: 'bl', key: 'servicii', name: 'Serviciu', namePlural: 'Servicii', kind: 'article', fields: [] } })
+  const pr = await db.websiteCollection.findFirstOrThrow({ where: { key: 'preturi' } })
+  await db.websiteEntry.createMany({ data: [
+    { id: 't1', businessLineId: 'bl', collectionId: pr.id, slug: 'tencuiala', title: 'Tencuială', summary: 'Rezumat t', status: 'draft', data: {} },
+    { id: 't2', businessLineId: 'bl', collectionId: sv.id, slug: 'acoperisuri', title: 'Acoperișuri', status: 'draft', data: { tip: 'categorie', parinte: 'g' } },
+    { id: 't3', businessLineId: 'bl', collectionId: sv.id, slug: 'structura', title: 'Structură', status: 'draft', data: { tip: 'grup' } },
+  ] })
+  const plan = await T.planTemplates('bl')
+  assert.ok(plan.prices.some((x: any) => x.id === 't1')); assert.deepEqual(plan.services.map((x: any) => x.id), ['t2'])
+  const r = await T.applyTemplates(plan)
+  assert.ok(r.layouts >= 2 && r.faqs >= 1)
+  const t1 = await db.websiteEntry.findUnique({ where: { id: 't1' } })
+  assert.equal(t1.layout.blocks[0].props.subtitle, 'Rezumat t'); assert.equal(t1.data.intrebari.length, 2)
+  assert.equal((await db.websiteLayoutVersion.count({ where: { entryId: 't1', source: 'seed' } })), 1)
+  assert.equal((await db.websiteEntry.findUnique({ where: { id: 't3' } })).layout, null) // groups get no page layout
+  const d: any = Z.serializeDetail(await db.websiteEntry.findUnique({ where: { id: 't1' }, include: { media: true } }), 'preturi', [], [])
+  assert.equal(d.hasBlocks, true); assert.equal(d.ready, false) // the intro still carries the marker
+  // a second run changes nothing, and an edited page is never overwritten
+  await S.saveContentLayout('bl', 't1', { layout: { version: 2, blocks: [{ id: 'x1', type: 'text', props: { body: 'Scris de echipă' } }] } })
+  const again = await T.applyTemplates(await T.planTemplates('bl'))
+  assert.deepEqual(again, { layouts: 0, faqs: 0 })
+  assert.equal((await db.websiteEntry.findUnique({ where: { id: 't1' } })).layout.blocks[0].props.body, 'Scris de echipă')
+  const ready: any = Z.serializeDetail(await db.websiteEntry.findUnique({ where: { id: 't1' }, include: { media: true } }), 'preturi', [], [])
+  assert.equal(ready.ready, true)
 })
