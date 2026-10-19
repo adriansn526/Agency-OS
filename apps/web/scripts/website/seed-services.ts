@@ -1,0 +1,24 @@
+/**
+ * Seeds the new service categories and the written pilot pages of the glossary (all DRAFT). Dry run by default.
+ *
+ *   npx tsx --env-file=.env.local scripts/website/seed-services.ts --line intraconstruct [--apply] [--force]
+ *
+ * --force rewrites the layout and lists of pages that already have blocks (the previous layout stays in the history).
+ */
+import { parseArgs } from 'node:util'
+import { db } from '@repo/db'
+import { applyServices, planServices } from '../../lib/website/services/seed'
+
+async function main() {
+  const { values: v } = parseArgs({ options: { line: { type: 'string' }, apply: { type: 'boolean', default: false }, force: { type: 'boolean', default: false } } })
+  if (!v.line) throw new Error('Folosire: --line <slug> [--apply] [--force]')
+  const p = await planServices(v.line, v.force)
+  console.log(`Câmpuri de adăugat în colecție: ${p.fieldsToAdd.join(', ') || 'niciunul'}`)
+  console.log(`Categorii noi (draft): ${p.categoriesToCreate.map((c) => c.slug).join(', ') || 'niciuna'}`)
+  console.log(`Pagini de scris: ${p.pagesToWrite.map((c) => c.slug).join(', ') || 'niciuna'} | sărite (au deja blocuri): ${p.pagesSkipped.join(', ') || '-'}`)
+  if (p.problems.length) { console.log('\nPROBLEME:\n' + p.problems.join('\n')); process.exitCode = 1; return }
+  if (!v.apply) { console.log('\nREGIM DE PROBĂ: nu s-a scris nimic. Adaugă --apply.'); return }
+  const r = await applyServices(p)
+  console.log(`\nGata: ${r.created} categorii create, ${r.written} pagini scrise (toate rămân draft).`)
+}
+main().catch((e) => { console.error('EȘEC:', e.message); process.exitCode = 1 }).finally(() => db.$disconnect())
