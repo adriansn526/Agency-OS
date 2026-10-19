@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { Modal } from "@/components/modal"
 import { Button } from "@/components/ui/button"
+import { ContentBuilder } from "./content-builder"
 import { EntryImages, type MediaItem } from "./entry-images"
 import { api, ApiError, Collection, Field, inputCls, labelCls, STATUS_RO, textareaCls } from "./shared"
 
@@ -42,6 +43,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
   const [media, setMedia] = useState<MediaItem[]>([])
   const [meta, setMeta] = useState<{ publishedAt?: string | null; tenantId?: string | null; leadId?: string | null; lead?: { id: string; companyName: string; status: string } | null } | null>(null)
   const [saving, setSaving] = useState(false)
+  const [builder, setBuilder] = useState(false)
   const [issues, setIssues] = useState<string[]>([])
   const alertRef = useRef<HTMLUListElement>(null)
   // the form scrolls inside the modal: bring the validation errors into view
@@ -53,6 +55,9 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
   }, [entryId, q, onClose])
 
   const collection = collections.find((c) => c.id === draft?.collectionId)
+  // articles (services, prices, guides) have no plan, no verification, no address and no contact: those belong to firms
+  const article = collection?.kind === "article"
+  const hasBlocks = !!entryId && !!collection && ["preturi", "servicii"].includes(collection.key)
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => d && { ...d, [k]: v })
 
   async function save() {
@@ -95,15 +100,15 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <div><label className={labelCls} htmlFor="e-slug">Slug (în URL)</label><input id="e-slug" className={inputCls} placeholder={entryId ? "" : "se generează din titlu"} value={draft.slug} onChange={(e) => set("slug", e.target.value)} /></div>
             <div><label className={labelCls} htmlFor="e-status">Stare</label>
               <select id="e-status" className={inputCls} value={draft.status} onChange={(e) => set("status", e.target.value)}>{["draft", "preview", "published", "suspended"].map((s) => <option key={s} value={s}>{STATUS_RO[s]}</option>)}</select></div>
-            <div><label className={labelCls} htmlFor="e-plan">Plan</label>
-              <select id="e-plan" className={inputCls} value={draft.plan} onChange={(e) => set("plan", e.target.value)}><option value="gratuit">Gratuit (cererile directe se plătesc per cerere)</option><option value="abonament">Abonament (cereri directe incluse)</option></select></div>
-            <div><label className={labelCls} htmlFor="e-planuntil">Abonament valabil până la</label><input id="e-planuntil" type="date" className={inputCls} value={draft.planUntil} disabled={draft.plan !== "abonament"} onChange={(e) => set("planUntil", e.target.value)} /></div>
-            <div className="col-span-2 flex gap-5 text-sm">
+            {!article && <div><label className={labelCls} htmlFor="e-plan">Plan</label>
+              <select id="e-plan" className={inputCls} value={draft.plan} onChange={(e) => set("plan", e.target.value)}><option value="gratuit">Gratuit (cererile directe se plătesc per cerere)</option><option value="abonament">Abonament (cereri directe incluse)</option></select></div>}
+            {!article && <div><label className={labelCls} htmlFor="e-planuntil">Abonament valabil până la</label><input id="e-planuntil" type="date" className={inputCls} value={draft.planUntil} disabled={draft.plan !== "abonament"} onChange={(e) => set("planUntil", e.target.value)} /></div>}
+            {!article && <div className="col-span-2 flex gap-5 text-sm">
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.verified} onChange={(e) => set("verified", e.target.checked)} /> Verificat</label>
               <label className="flex items-center gap-2" title="Firma poate intra în „Profilul meu” (link pe email / cod SMS) și își poate edita profilul"><input type="checkbox" checked={draft.partnerAccess} onChange={(e) => set("partnerAccess", e.target.checked)} /> Acces „Profilul meu”</label>
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(e) => set("featured", e.target.checked)} /> Recomandat (apare primul)</label>
               {meta?.tenantId && <span className="text-xs text-muted-foreground self-center">Partener activ în ERP</span>}
-            </div>
+            </div>}
             <div className="col-span-2"><label className={labelCls} htmlFor="e-sum">Rezumat (max 500)</label><textarea id="e-sum" maxLength={500} className={textareaCls} value={draft.summary} onChange={(e) => set("summary", e.target.value)} /></div>
             <div className="col-span-2"><label className={labelCls} htmlFor="e-body">Descriere (text simplu sau markdown; nu HTML)</label><textarea id="e-body" className={textareaCls + " min-h-[140px]"} value={draft.body} onChange={(e) => set("body", e.target.value)} /></div>
           </section>
@@ -122,9 +127,18 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             </section>
           )}
 
+          {hasBlocks && (
+            <section className="rounded-md border border-primary/30 bg-primary/5 p-3">
+              <h3 className="text-sm font-semibold">Aranjarea paginii</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Compune pagina din blocuri: banner, text, imagini, galerie, tabel de prețuri, FAQ, zone deservite. Fără blocuri, site-ul folosește aranjarea implicită. Salvează mai întâi intrarea dacă ai modificat câmpurile.</p>
+              <Button type="button" size="sm" className="mt-2" onClick={() => setBuilder(true)}>Editează aranjarea</Button>
+            </section>
+          )}
+          {builder && entryId && <ContentBuilder lineId={lineId} entryId={entryId} onClose={() => setBuilder(false)} />}
+
           {entryId && collection?.key === "companii" && <AuthorizationsPanel lineId={lineId} entryId={entryId} value={draft.data.autorizatii_verificate} onChanged={(list) => set("data", { ...draft.data, autorizatii_verificate: list })} />}
 
-          <section>
+          {!article && <section>
             <h3 className="text-sm font-semibold mb-2">Locație</h3>
             <div className="grid grid-cols-2 gap-3">
               <div><label className={labelCls} htmlFor="e-city">Oraș</label><input id="e-city" className={inputCls} value={draft.city} onChange={(e) => set("city", e.target.value)} /></div>
@@ -133,9 +147,9 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <div><label className={labelCls} htmlFor="e-lat">Latitudine</label><input id="e-lat" inputMode="decimal" className={inputCls} value={draft.lat} onChange={(e) => set("lat", e.target.value)} /></div>
               <div><label className={labelCls} htmlFor="e-lng">Longitudine</label><input id="e-lng" inputMode="decimal" className={inputCls} value={draft.lng} onChange={(e) => set("lng", e.target.value)} /></div>
             </div>
-          </section>
+          </section>}
 
-          <section>
+          {!article && <section>
             <h3 className="text-sm font-semibold mb-2">Contact și imagine</h3>
             <div className="grid grid-cols-2 gap-3">
               <div><label className={labelCls} htmlFor="e-email">Email (nu apare public; la cereri)</label><input id="e-email" type="email" className={inputCls} value={draft.email} onChange={(e) => set("email", e.target.value)} /></div>
@@ -144,7 +158,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <div><label className={labelCls} htmlFor="e-logo">Logo (URL)</label><input id="e-logo" className={inputCls} placeholder="https://" value={draft.logoUrl} onChange={(e) => set("logoUrl", e.target.value)} /></div>
               <div><label className={labelCls} htmlFor="e-cover">Imagine de copertă (URL)</label><input id="e-cover" className={inputCls} placeholder="https://" value={draft.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} /></div>
             </div>
-          </section>
+          </section>}
 
           {entryId ? (
             <EntryImages lineId={lineId} entryId={entryId} logoUrl={draft.logoUrl} coverUrl={draft.coverUrl} media={media}

@@ -70,7 +70,7 @@ export type PageParse = { ok: true; layout: PageLayout } | { ok: false; issues: 
  * Validates a v2 layout coming from the editor or from storage. `mediaIds` = the ids of the firm's own images: a reference to anything else is refused.
  * Unknown types, unknown props, wrong values, duplicate ids, containers in the wrong place, too deep / too many / too big layouts are all rejected, with every problem listed.
  */
-export function parsePageLayout(raw: unknown, ctx: { mediaIds: ReadonlySet<string> }): PageParse {
+export function parsePageLayout(raw: unknown, ctx: { mediaIds: ReadonlySet<string>; /** other block catalog (the content pages of services and prices); default = the firms' custom pages */ catalog?: PageBlockDef[] }): PageParse {
   const list = Array.isArray(raw) ? raw : raw && typeof raw === 'object' ? (raw as { blocks?: unknown; version?: unknown }).blocks : undefined
   if (raw && typeof raw === 'object' && !Array.isArray(raw) && (raw as { version?: unknown }).version !== 2) return { ok: false, issues: ['Format necunoscut (se așteaptă versiunea 2)'] }
   if (!Array.isArray(list)) return { ok: false, issues: ['Lipsește lista de blocuri'] }
@@ -78,7 +78,7 @@ export function parsePageLayout(raw: unknown, ctx: { mediaIds: ReadonlySet<strin
   const issues: string[] = []
   const ids = new Set<string>()
   let count = 0
-  const byType = new Map(PAGE_CATALOG.map((d) => [d.type, d]))
+  const byType = new Map((ctx.catalog ?? PAGE_CATALOG).map((d) => [d.type, d]))
 
   const walk = (items: unknown, depth: number, where: string, parentType: string | null): PageNode[] => {
     if (!Array.isArray(items)) { issues.push(`${where}: lista de blocuri lipsește`); return [] }
@@ -120,11 +120,11 @@ export function parsePageLayout(raw: unknown, ctx: { mediaIds: ReadonlySet<strin
 }
 
 /** Every media id a layout refers to (to check ownership, or to resolve URLs when the page is served). */
-export function mediaRefs(layout: PageLayout): string[] {
+export function mediaRefs(layout: PageLayout, catalog: PageBlockDef[] = PAGE_CATALOG): string[] {
   const out = new Set<string>()
   const walk = (nodes: PageNode[]) => {
     for (const n of nodes) {
-      const def = PAGE_CATALOG.find((d) => d.type === n.type)
+      const def = catalog.find((d) => d.type === n.type)
       for (const f of def?.fields ?? []) { const v = n.props[f.key]; if (f.kind === 'media' && typeof v === 'string') out.add(v); if (f.kind === 'medias' && Array.isArray(v)) for (const x of v) out.add(String(x)) }
       for (const s of Object.values(n.slots ?? {})) walk(s)
     }
