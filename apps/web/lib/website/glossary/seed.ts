@@ -18,6 +18,8 @@ export const GLOSSARY_FIELDS: CollectionField[] = [
   { key: 'tip', label: 'Tip', type: 'select', options: ['grup', 'categorie'], filterable: true },
   { key: 'parinte', label: 'Grup (părinte)', type: 'text', filterable: true },
   { key: 'sinonime', label: 'Sinonime', type: 'list' },
+  { key: 'preturi', label: 'Prețuri (Lucrare | interval | observații)', type: 'list' },
+  { key: 'intrebari', label: 'Întrebări frecvente (Întrebare | Răspuns)', type: 'list' },
 ]
 export const COMPANY_SERVICES_FIELD: CollectionField = { key: 'servicii', label: 'Servicii (categorii)', type: 'list', filterable: true }
 
