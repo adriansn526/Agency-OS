@@ -80,7 +80,7 @@ export function serializePreview(e: NonNullable<Awaited<ReturnType<typeof findRo
   return {
     ...(offer ? { offer: offer.lines } : {}),
     title: e.title, summary: e.summary, city: e.city, county: e.county, address: e.address, email: e.email, phone: e.phone, websiteUrl: e.websiteUrl,
-    body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind })),
+    body: e.body, coverUrl: e.coverUrl, logoUrl: e.logoUrl, media: e.media.map((m) => ({ id: m.id, url: m.url, alt: m.alt, kind: m.kind })),
     layout: effectiveLayout(e.layout),
     services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii, tax?.categories),
     data: e.data ?? {}, fields: Array.isArray(e.collection.fields) ? e.collection.fields : [], collection: { key: e.collection.key, name: e.collection.name },

@@ -73,7 +73,7 @@ test('list items omit phone and body; detail adds them, with ratings as numbers'
   const list = serializeListItem(entry, 'companii') as Record<string, unknown>
   assert.equal('phone' in list || 'body' in list, false)
   assert.equal(list.ratingAvg, 4.6)
-  const d = serializeDetail(entry, 'companii', [{ url: 'u', alt: null, kind: 'image', width: null, height: null }], [
+  const d = serializeDetail(entry, 'companii', [{ id: 'm1', url: 'u', alt: null, kind: 'image', width: null, height: null }], [
     { authorName: 'Ion', rating: 5, title: null, body: 'ok', createdAt: new Date('2026-03-01') },
   ])
   assert.equal(d.phone, '0740')

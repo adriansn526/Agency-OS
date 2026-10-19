@@ -45,3 +45,9 @@ test('every problem is listed at once', () => {
   const r = parse([n('a', 'script'), n('b', 'heading', { level: 'h9' }), n('c', 'image', { image: 'cmvother0000abc' })])
   assert.ok(!r.ok); if (!r.ok) assert.ok(r.issues.length >= 3)
 })
+
+test('media_text on a custom page: repeatable, the image must be the firm\'s own', () => {
+  assert.ok(parse([n('a', 'media_text', { image: M1, title: 'Unu', side: 'left' }), n('b', 'media_text', { image: M2, title: 'Doi', side: 'right' }), n('c', 'section', {}, { content: [n('d', 'media_text', { title: 'în secțiune' })] })]).ok)
+  assert.equal(parse([n('a', 'media_text', { image: 'cmvother0000abc' })]).ok, false)
+  assert.deepEqual(mediaRefs((parse([n('a', 'media_text', { image: M1 })]) as { ok: true; layout: never }).layout), [M1])
+})

@@ -5,7 +5,7 @@
  */
 import { z } from 'zod'
 
-export type FieldKind = 'text' | 'textarea' | 'number' | 'bool' | 'list' | 'pairs' | 'select'
+export type FieldKind = 'text' | 'textarea' | 'number' | 'bool' | 'list' | 'pairs' | 'select' | 'media'
 export interface Field {
   key: string; label: string; kind: FieldKind; max?: number; min?: number; maxItems?: number; placeholder?: string
   /** select: the allowed values (the first is what "automatic" means when the field is left empty) */
@@ -14,6 +14,21 @@ export interface Field {
   pair?: { a: string; b: string; aLabel: string; bLabel: string; aMax: number; bMax: number }
 }
 export interface BlockDef { type: string; label: string; description: string; locked?: boolean; fields: Field[] }
+
+const opt = (...o: [string, string][]) => o.map(([value, label]) => ({ value, label }))
+/** "Image next to text" (also used by the custom pages): the image is one of the firm's own gallery images, picked by id. */
+export const MEDIA_TEXT_FIELDS: Field[] = [
+  { key: 'image', label: 'Imagine (din galeria firmei)', kind: 'media' },
+  { key: 'imageAlt', label: 'Descrierea imaginii (pentru cei care nu o văd)', kind: 'text', max: 200 },
+  { key: 'eyebrow', label: 'Etichetă mică deasupra titlului', kind: 'text', max: 40, placeholder: 'ex: Despre noi' },
+  { key: 'title', label: 'Titlu', kind: 'text', max: 100 },
+  { key: 'text', label: 'Text', kind: 'textarea', max: 800 },
+  { key: 'buttonLabel', label: 'Buton (text)', kind: 'text', max: 40, placeholder: 'ex: Vezi serviciile' },
+  { key: 'buttonTarget', label: 'Butonul duce la', kind: 'select', options: opt(['servicii', 'Servicii'], ['oferta', 'Cerere de ofertă'], ['contact', 'Contact'], ['proiecte', 'Proiecte'], ['telefon', 'Sună']) },
+  { key: 'side', label: 'Imaginea este în', kind: 'select', options: opt(['left', 'Stânga'], ['right', 'Dreapta']) },
+  { key: 'decor', label: 'Decor în jurul imaginii', kind: 'select', options: opt(['frame', 'Cadru decorativ'], ['none', 'Fără']) },
+  { key: 'bg', label: 'Fundalul secțiunii', kind: 'select', options: opt(['none', 'Alb'], ['light', 'Gri deschis']) },
+]
 
 const title = (placeholder: string): Field => ({ key: 'title', label: 'Titlu', kind: 'text', max: 100, placeholder })
 
@@ -32,6 +47,8 @@ export const CATALOG: BlockDef[] = [
     { key: 'secondaryLabel', label: 'Al doilea buton (text)', kind: 'text', max: 40, placeholder: 'ex: Vezi lucrările noastre' },
     { key: 'secondaryTarget', label: 'Al doilea buton duce la', kind: 'select', options: [{ value: 'proiecte', label: 'Proiecte' }, { value: 'servicii', label: 'Servicii' }, { value: 'contact', label: 'Contact' }] },
   ] },
+  { type: 'media_text', label: 'Imagine + text', description: 'O imagine din galerie lângă un text, cu buton. Poți pune imaginea în stânga sau în dreapta.', fields: MEDIA_TEXT_FIELDS },
+  { type: 'media_text_alt', label: 'Imagine + text (al doilea)', description: 'Încă un bloc imagine + text, de obicei cu imaginea în partea opusă.', fields: MEDIA_TEXT_FIELDS },
   { type: 'trust', label: 'Pe scurt (cifre)', description: 'Ani de activitate, angajați, domenii și zona de lucru, din datele firmei.', fields: [] },
   { type: 'services', label: 'Servicii', description: 'Serviciile alese în profil, cu buton de cerere de ofertă.', fields: [title('Ce putem face pentru dumneavoastră'), { key: 'max', label: 'Câte servicii se afișează', kind: 'number', min: 3, max: 12 }] },
   { type: 'why', label: 'De ce noi', description: 'Până la 3 argumente. Lasă gol pentru textele automate.', fields: [title('De ce firma ta'), { key: 'reasons', label: 'Argumente', kind: 'pairs', maxItems: 3, pair: { a: 'title', b: 'text', aLabel: 'Titlu', bLabel: 'Text', aMax: 60, bMax: 200 } }] },
@@ -55,11 +72,13 @@ const DEFAULT_ORDER = ['hero', 'trust', 'services', 'why', 'projects', 'reviews'
 export const defaultLayout = (): Layout => ({ version: 1, blocks: DEFAULT_ORDER.map((type) => ({ type, enabled: true, props: {} })) })
 
 const text = (max: number) => z.string().trim().max(max)
+const MEDIA_ID_RE = /^[A-Za-z0-9_-]{10,40}$/
 
 function fieldSchema(f: Field): z.ZodTypeAny {
   switch (f.kind) {
     case 'text': case 'textarea': return text(f.max ?? 200)
     case 'bool': return z.boolean()
+    case 'media': return z.union([z.literal(''), z.string().regex(MEDIA_ID_RE)])
     case 'select': return z.union([z.literal(''), z.enum(f.options!.map((o) => o.value) as [string, ...string[]])])   // '' = automatic
     case 'number': return z.number().int().min(f.min ?? 0).max(f.max ?? 100)
     case 'list': return z.array(text(f.max ?? 100).min(1)).max(f.maxItems ?? 20)
@@ -82,7 +101,7 @@ function clean(props: Record<string, unknown>): Record<string, unknown> {
 export type ParseResult = { ok: true; layout: Layout } | { ok: false; issues: string[] }
 
 /** Validates a layout from the editor or from storage and returns the canonical form (hero first and enabled, one block per type, empty props removed). */
-export function parseLayout(raw: unknown): ParseResult {
+export function parseLayout(raw: unknown, ctx?: { mediaIds: ReadonlySet<string> }): ParseResult {
   const list = Array.isArray(raw) ? raw : raw && typeof raw === 'object' ? (raw as { blocks?: unknown }).blocks : undefined
   if (!Array.isArray(list)) return { ok: false, issues: ['Lipsește lista de blocuri'] }
   if (list.length > MAX_BLOCKS) return { ok: false, issues: [`Maxim ${MAX_BLOCKS} blocuri`] }
@@ -98,7 +117,10 @@ export function parseLayout(raw: unknown): ParseResult {
     if (item.enabled !== undefined && typeof item.enabled !== 'boolean') { issues.push(`„${def.label}”: starea trebuie să fie da/nu`); continue }
     const parsed = propsSchema(def).safeParse(item.props ?? {})
     if (!parsed.success) { issues.push(...parsed.error.issues.map((x) => `„${def.label}” — ${x.path.join('.') || 'conținut'}: ${x.message}`)); continue }
-    blocks.push({ type: def.type, enabled: def.locked ? true : item.enabled !== false, props: clean(parsed.data as Record<string, unknown>) })
+    const props = clean(parsed.data as Record<string, unknown>)
+    // images must be the firm's own (checked when saving; stored layouts are read back without this check)
+    if (ctx) for (const f of def.fields) if (f.kind === 'media' && typeof props[f.key] === 'string' && !ctx.mediaIds.has(props[f.key] as string)) issues.push(`„${def.label}” — ${f.label}: imaginea nu există în galeria firmei`)
+    blocks.push({ type: def.type, enabled: def.locked ? true : item.enabled !== false, props })
   }
   if (issues.length) return { ok: false, issues }
   const hero = blocks.find((b) => b.type === 'hero') ?? { type: 'hero', enabled: true, props: {} }
