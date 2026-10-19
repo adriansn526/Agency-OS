@@ -8,6 +8,7 @@
  */
 import { db, Prisma } from '@repo/db'
 import type { CollectionField } from '../admin/entry-data'
+import { EXTRA_CATEGORY_SLUGS } from '../services/categories'
 import { CATEGORIES } from '../glossary/taxonomy'
 import { PRICE_PAGES, type PricePageSeed } from './pages'
 
@@ -43,7 +44,7 @@ const summary = (p: PricePageSeed) => `${p.title}: intervale orientative și fac
 /** Pure checks on the seed list (also used by the test). */
 export function priceSeedProblems(pages: PricePageSeed[] = PRICE_PAGES): string[] {
   const out: string[] = []
-  const cats = new Set(CATEGORIES.map((c) => c.slug))
+  const cats = new Set([...CATEGORIES.map((c) => c.slug), ...EXTRA_CATEGORY_SLUGS])
   const seen = new Set<string>()
   for (const p of pages) {
     if (!/^[a-z0-9-]{2,80}$/.test(p.slug)) out.push(`slug invalid: ${p.slug}`)

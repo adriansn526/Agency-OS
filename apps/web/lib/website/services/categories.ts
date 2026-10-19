@@ -12,3 +12,7 @@ export const NEW_CATEGORIES: NewCategory[] = [
   { slug: 'case-modulare', title: 'Case modulare și structuri ușoare', group: 'structura-cladiri', summary: 'Case modulare și pe structură ușoară din lemn sau metal, livrate la cheie, cu termen de execuție scurt.', sinonime: ['casă modulară', 'casă din lemn', 'casă pe structură metalică', 'casă la cheie'] },
   { slug: 'hidroizolatii', title: 'Hidroizolații', group: 'lucrari-speciale', summary: 'Hidroizolarea băilor, fundațiilor, teraselor și acoperișurilor plate împotriva infiltrațiilor și igrasiei.', sinonime: ['hidroizolare baie', 'hidroizolație terasă', 'hidroizolație fundație', 'igrasie', 'membrană bituminoasă'] },
 ]
+
+/** Categories that exist in the live glossary (entries of "servicii") but not in the built-in taxonomy list: valid targets for price pages. */
+export const LIVE_ONLY_SLUGS = ['fotovoltaice-energie-regenerabila', 'centrale-pompe-caldura']
+export const EXTRA_CATEGORY_SLUGS = [...NEW_CATEGORIES.map((c) => c.slug), ...LIVE_ONLY_SLUGS]
