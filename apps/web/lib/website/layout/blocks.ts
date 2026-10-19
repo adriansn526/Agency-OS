@@ -68,7 +68,8 @@ export const MAX_BLOCKS = CATALOG.length
 export interface Block { type: string; enabled: boolean; props: Record<string, unknown> }
 export interface Layout { version: 1; blocks: Block[] }
 
-const DEFAULT_ORDER = ['hero', 'trust', 'services', 'why', 'projects', 'reviews', 'steps', 'cta']
+/** The statistics strip ("trust") is not part of the default: it can be added from the editor. */
+const DEFAULT_ORDER = ['hero', 'services', 'why', 'projects', 'reviews', 'steps', 'cta']
 export const defaultLayout = (): Layout => ({ version: 1, blocks: DEFAULT_ORDER.map((type) => ({ type, enabled: true, props: {} })) })
 
 const text = (max: number) => z.string().trim().max(max)

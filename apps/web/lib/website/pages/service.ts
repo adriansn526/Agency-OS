@@ -63,10 +63,11 @@ export async function listPages(parent: Parent, now = new Date()) {
 
 const createInput = z.object({ title: z.string().trim().min(2).max(120) }).strict()
 
-export async function createPage(parent: Parent, raw: unknown, now = new Date()) {
+/** `o.team`: the team creates a page for a firm that is being onboarded (the abonament check is for pages created by the firm itself; the limit still applies). */
+export async function createPage(parent: Parent, raw: unknown, now = new Date(), o: { team?: boolean } = {}) {
   const p = createInput.safeParse(raw)
   if (!p.success) throw new AdminError('Date invalide', 422, p.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
-  if (!planActive(parent, now)) throw new AdminError('Paginile personalizate sunt incluse în abonament.', 403)
+  if (!o.team && !planActive(parent, now)) throw new AdminError('Paginile personalizate sunt incluse în abonament.', 403)
   const col = await ensureCollection(parent.businessLineId)
   const existing = await db.websiteEntry.findMany({ where: { parentId: parent.id, collectionId: col.id }, select: { data: true } })
   if (existing.length >= MAX_PAGES) throw new AdminError(`Maxim ${MAX_PAGES} pagini`, 409)

@@ -55,3 +55,9 @@ test('media_text (image + text): valid choices are kept; a foreign image, a URL 
   for (const props of [{ image: 'cmvother0000abc' }, { image: 'https://evil.example/x.png' }, { buttonTarget: 'https://evil.example' }, { side: 'up' }, { decor: 'glow' }, { text: 'x'.repeat(801) }, { extra: 1 }]) assert.equal(parseLayout([{ type: 'hero' }, { type: 'media_text', props }], { mediaIds: own }).ok, false, JSON.stringify(props))
   assert.ok(parseLayout([{ type: 'hero' }, { type: 'media_text', props: { image: 'cmvother0000abc' } }]).ok)   // reading a stored layout back does not check ownership
 })
+
+test('the default layout does not include the statistics strip, but it can still be added', async () => {
+  const { defaultLayout, parseLayout } = await import('../blocks')
+  assert.deepEqual(defaultLayout().blocks.map((b) => b.type), ['hero', 'services', 'why', 'projects', 'reviews', 'steps', 'cta'])
+  assert.ok(parseLayout([{ type: 'hero' }, { type: 'trust' }, { type: 'services' }]).ok)
+})
