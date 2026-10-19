@@ -6,7 +6,7 @@
  * named slots (depth ≤ 3, ≤ 60 blocks), and images are references to the firm's own uploaded media.
  */
 import { z } from 'zod'
-import { CATALOG as HOME_CATALOG, type Field } from '../layout/blocks'
+import { CATALOG as HOME_CATALOG, MEDIA_TEXT_FIELDS, type Field } from '../layout/blocks'
 
 export type PageFieldKind = Field['kind'] | 'media' | 'medias'
 export type PageField = Omit<Field, 'kind'> & { kind: PageFieldKind }
@@ -26,6 +26,7 @@ export const PAGE_CATALOG: PageBlockDef[] = [
   { type: 'gallery', label: 'Galerie', description: 'Mai multe imagini din galeria firmei.', fields: [{ key: 'images', label: 'Imagini', kind: 'medias', maxItems: 12 }, { key: 'columns', label: 'Coloane', kind: 'select', options: opt(['3', '3 coloane'], ['2', '2 coloane'], ['4', '4 coloane']) }] },
   { type: 'cards', label: 'Carduri', description: 'Până la 6 carduri cu titlu și text.', fields: [{ key: 'items', label: 'Carduri', kind: 'pairs', maxItems: 6, pair: { a: 'title', b: 'text', aLabel: 'Titlu', bLabel: 'Text', aMax: 60, bMax: 240 } }, { key: 'columns', label: 'Coloane', kind: 'select', options: opt(['3', '3 coloane'], ['2', '2 coloane']) }] },
   { type: 'buttons', label: 'Butoane', description: 'Unul sau două butoane care duc în site (nu la adrese externe).', fields: [{ key: 'primaryLabel', label: 'Primul buton (text)', kind: 'text', max: 40 }, { key: 'primaryTarget', label: 'Primul buton duce la', kind: 'select', options: TARGETS }, { key: 'secondaryLabel', label: 'Al doilea buton (text)', kind: 'text', max: 40 }, { key: 'secondaryTarget', label: 'Al doilea buton duce la', kind: 'select', options: TARGETS }, ALIGN()] },
+  { type: 'media_text', label: 'Imagine + text', description: 'O imagine din galerie lângă un text, cu buton.', fields: MEDIA_TEXT_FIELDS },
   reuse('faq'), reuse('cta'), reuse('services'), reuse('projects'), reuse('reviews'),
   { type: 'columns', label: 'Coloane', description: 'Două coloane în care pui alte blocuri.', fields: [{ key: 'ratio', label: 'Proporție', kind: 'select', options: opt(['50-50', '50 / 50'], ['33-67', '1/3 și 2/3'], ['67-33', '2/3 și 1/3']) }], slots: [{ key: 'left', label: 'Stânga' }, { key: 'right', label: 'Dreapta' }] },
   { type: 'section', label: 'Secțiune cu fundal', description: 'Un fundal în jurul altor blocuri.', fields: [{ key: 'bg', label: 'Fundal', kind: 'select', options: opt(['light', 'Deschis'], ['none', 'Fără'], ['brand', 'Portocaliu'], ['dark', 'Închis']) }], slots: [{ key: 'content', label: 'Conținut' }] },

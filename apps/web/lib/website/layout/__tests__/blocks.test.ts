@@ -46,3 +46,12 @@ test('effective layout falls back to the default for missing or damaged storage'
   assert.equal(canonical(effectiveLayout({ blocks: [{ type: 'nope' }] })), canonical(defaultLayout()))
   assert.equal(canonical(effectiveLayout('garbage')), canonical(defaultLayout()))
 })
+
+test('media_text (image + text): valid choices are kept; a foreign image, a URL or an unknown choice is rejected', async () => {
+  const { parseLayout } = await import('../blocks')
+  const own = new Set(['cmvmedia0001abc'])
+  const ok = parseLayout([{ type: 'hero' }, { type: 'media_text', props: { image: 'cmvmedia0001abc', eyebrow: 'Despre noi', title: 'Echipa', text: 'Text', buttonLabel: 'Vezi', buttonTarget: 'servicii', side: 'right', decor: 'frame', bg: 'light' } }, { type: 'media_text_alt', props: { side: '' } }], { mediaIds: own })
+  assert.ok(ok.ok); if (ok.ok) { assert.equal(ok.layout.blocks[1]!.props.side, 'right'); assert.deepEqual(ok.layout.blocks[2]!.props, {}) }
+  for (const props of [{ image: 'cmvother0000abc' }, { image: 'https://evil.example/x.png' }, { buttonTarget: 'https://evil.example' }, { side: 'up' }, { decor: 'glow' }, { text: 'x'.repeat(801) }, { extra: 1 }]) assert.equal(parseLayout([{ type: 'hero' }, { type: 'media_text', props }], { mediaIds: own }).ok, false, JSON.stringify(props))
+  assert.ok(parseLayout([{ type: 'hero' }, { type: 'media_text', props: { image: 'cmvother0000abc' } }]).ok)   // reading a stored layout back does not check ownership
+})

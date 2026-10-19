@@ -27,7 +27,8 @@ async function write(e: Parent, layout: Layout, source: 'partner' | 'restore' | 
 }
 
 export async function saveLayout(e: Parent, raw: unknown, source: 'partner' | 'restore' = 'partner') {
-  const r = parseLayout(raw)
+  const mediaIds = new Set((await db.websiteMedia.findMany({ where: { entryId: e.id, kind: 'image' }, select: { id: true } })).map((m) => m.id))
+  const r = parseLayout(raw, { mediaIds })
   if (!r.ok) throw new AdminError('Aranjament invalid', 422, r.issues)
   if (canonical(r.layout) === canonical(effectiveLayout(e.layout))) return { changed: false, ...getLayout(e) }
   await write(e, r.layout, source, r.layout)

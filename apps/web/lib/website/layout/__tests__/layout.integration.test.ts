@@ -78,3 +78,12 @@ test('public API and preview: the effective layout is exposed; damaged storage f
   const pv = await Pv.lookupPreview('bl', token); assert.equal(pv.state, 'ok')
   assert.equal(B.canonical((Pv.serializePreview((pv as any).entry) as any).layout), B.canonical(B.defaultLayout()))
 })
+
+test('saving a layout with an image + text block: only the firm\'s own gallery images are accepted', { skip }, async () => {
+  const m = await db.websiteMedia.create({ data: { entryId: 'a', kind: 'image', storageKey: 'k', url: 'https://cdn.test/a.webp' } })
+  await db.websiteEntry.create({ data: { id: 'media-owner', businessLineId: 'bl', collectionId: 'c', slug: 'media-owner', title: 'Altă firmă', status: 'published', data: {} } })
+  const foreign = await db.websiteMedia.create({ data: { entryId: 'media-owner', kind: 'image', storageKey: 'k2', url: 'https://cdn.test/b.webp' } })
+  const ok = await L.saveLayout(await entry(), { blocks: [{ type: 'hero' }, { type: 'media_text', props: { image: m.id, title: 'Despre noi', side: 'right' } }] })
+  assert.equal(ok.changed, true); assert.equal((ok.layout as any).blocks[1].props.image, m.id)
+  await assert.rejects(L.saveLayout(await entry(), { blocks: [{ type: 'hero' }, { type: 'media_text', props: { image: foreign.id } }] }), /Aranjament invalid/)
+})

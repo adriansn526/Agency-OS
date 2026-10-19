@@ -19,7 +19,7 @@ interface EntryRow {
   parent?: { slug: string; title: string; city: string | null; county: string | null; logoUrl: string | null; verified: boolean } | null
   publishedAt: Date | null; updatedAt: Date
 }
-interface MediaRow { url: string; alt: string | null; kind: string; width: number | null; height: number | null }
+interface MediaRow { id: string; url: string; alt: string | null; kind: string; width: number | null; height: number | null }
 interface ReviewRow { authorName: string; rating: number; title: string | null; body: string | null; createdAt: Date }
 interface CollectionRow { key: string; name: string; namePlural: string; kind: string; fields: unknown }
 
@@ -49,7 +49,7 @@ export function serializeDetail(e: EntryRow, collectionKey: string, media: Media
     ...(collectionKey === 'companii' ? { layout: effectiveLayout(e.layout) } : {}),
     body: e.body, phone: e.phone, websiteUrl: e.websiteUrl,
     seo: { title: e.seoTitle, description: e.seoDescription },
-    media: media.map((m) => ({ url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),
+    media: media.map((m) => ({ id: m.id, url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),
     reviews: reviews.map((r) => ({ authorName: r.authorName, rating: r.rating, title: r.title, body: r.body, createdAt: r.createdAt.toISOString() })),
   }
 }
