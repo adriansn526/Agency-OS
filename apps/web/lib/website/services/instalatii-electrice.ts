@@ -27,7 +27,7 @@ export const instalatiiElectrice: ServiceContent = {
     'Pot face singur lucrări electrice mici? | Înlocuirea unei prize sau a unui corp de iluminat este simplă, dar numai după scoaterea siguranței și verificarea absenței tensiunii. Orice intervenție în tablou sau pe circuite noi se lasă unui electrician autorizat.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Instalații electrice', subtitle: 'Instalații noi, tablouri, reparații și verificări PRAM, executate de electricieni autorizați. Cere oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Instalații electrice', subtitle: 'Instalații noi, tablouri, reparații și verificări PRAM, executate de electricieni autorizați. Cere oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Autorizare', value: 'Electrician autorizat ANRE' },
       { label: 'Apartament 2 camere', value: '4–8 zile' },
@@ -64,6 +64,7 @@ export const instalatiiElectrice: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre instalații electrice' }),
     node('areas', 'areas', { title: 'Unde găsești electricieni' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru instalația electrică', text: 'Spune-ne ce lucrare ai nevoie și tipul locuinței. Primești oferte de la electricieni autorizați din zona ta, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

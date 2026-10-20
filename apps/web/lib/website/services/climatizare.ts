@@ -28,7 +28,7 @@ export const climatizare: ServiceContent = {
     'De ce nu răcește aparatul? | Cauzele frecvente sunt filtrele înfundate, lipsa agentului frigorific din cauza unei scurgeri, unitatea exterioară blocată de praf sau frunze și un aparat prea mic pentru încăpere. Un tehnician găsește cauza cu o diagnoză de 100–250 lei.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Climatizare și ventilație', subtitle: 'Montaj aer condiționat, igienizare, service și ventilație cu recuperare. Primești oferte de la instalatori verificați din zona ta.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Climatizare și ventilație', subtitle: 'Montaj aer condiționat, igienizare, service și ventilație cu recuperare. Primești oferte de la instalatori verificați din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Montaj split', value: '2–4 ore' },
       { label: 'Preț de la', value: '600 lei, cu montaj' },
@@ -65,6 +65,7 @@ export const climatizare: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre climatizare' }),
     node('areas', 'areas', { title: 'Unde găsești instalatori de climatizare' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru climatizare', text: 'Spune-ne câte încăperi vrei să climatizezi și în ce tip de clădire. Primești oferte de la instalatori verificați, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

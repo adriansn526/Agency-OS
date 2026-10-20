@@ -7,6 +7,9 @@
 import { PLACEHOLDER } from './blocks'
 import type { PageLayout, PageNode } from '../pages/blocks'
 
+/** Reassurances under the hero buttons. */
+export const HERO_CHECKS = ['Gratuit', 'Fără obligații', 'Firme verificate']
+
 const node = (id: string, type: string, props: Record<string, unknown> = {}): PageNode => ({ id, type, props })
 
 const PRICE_FACTORS = [
@@ -26,7 +29,7 @@ export const PRICE_FAQ = [
 
 export function priceTemplate(o: { summary?: string | null } = {}): PageLayout {
   return { version: 2, blocks: [
-    node('hero', 'hero', { ...(o.summary ? { subtitle: o.summary.slice(0, 250) } : {}), buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { ...(o.summary ? { subtitle: o.summary.slice(0, 250) } : {}), buttonLabel: 'Cere oferte gratuite', checks: HERO_CHECKS, bg: 'dark' }),
     node('intro', 'text', { body: `${PLACEHOLDER} Scrie 2–3 propoziții: intervalul de preț principal, ce include (manoperă sau materiale) și pentru ce tip de lucrare se aplică.` }),
     node('prices', 'price_table', { title: 'Prețuri orientative' }),
     node('factors-h', 'heading', { text: 'De ce depinde prețul', level: 'h2' }),
@@ -35,16 +38,18 @@ export function priceTemplate(o: { summary?: string | null } = {}): PageLayout {
     node('choose', 'text', { body: CHOOSE }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente' }),
     node('areas', 'areas', { title: 'Unde oferim serviciul' }),
-    node('cta', 'request_cta', { title: 'Cere oferte gratuite', text: 'Descrie lucrarea și primești oferte de la firme potrivite din zona ta, fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('form', 'request_form'),
   ] }
 }
 
 export function serviceTemplate(o: { summary?: string | null } = {}): PageLayout {
   return { version: 2, blocks: [
-    node('hero', 'hero', { ...(o.summary ? { subtitle: o.summary.slice(0, 250) } : {}), buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { ...(o.summary ? { subtitle: o.summary.slice(0, 250) } : {}), buttonLabel: 'Cere oferte gratuite', checks: HERO_CHECKS, bg: 'dark' }),
     node('intro', 'text', { body: `${PLACEHOLDER} Explică pe scurt ce presupune această lucrare, când e nevoie de ea și ce ar trebui să știe un client înainte să ceară oferte.` }),
     node('prices', 'price_links', { title: 'Prețuri orientative' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
     node('choose', 'text', { body: CHOOSE }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ] }
 }

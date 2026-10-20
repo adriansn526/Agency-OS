@@ -6,6 +6,7 @@ import { db, Prisma } from '@repo/db'
 import { GLOSSARY_FIELDS, GLOSSARY_KEY, GLOSSARY_SOURCE } from '../glossary/seed'
 import { parseContentLayout, layoutHasPlaceholder } from '../content/blocks'
 import { NEW_CATEGORIES } from './categories'
+import { PRICE_PAGES } from '../prices/pages'
 import { SERVICE_CONTENT, type ServiceContent } from './index'
 
 export interface ServicePlan {
@@ -15,6 +16,8 @@ export interface ServicePlan {
   categoriesToCreate: typeof NEW_CATEGORIES
   pagesToWrite: ServiceContent[]
   pagesSkipped: string[]
+  /** price pages (draft) whose category changes to a more specific one */
+  reroutes: { id: string; slug: string; from: string; to: string }[]
   missingGroups: string[]
   problems: string[]
 }
@@ -40,12 +43,21 @@ export async function planServices(lineSlug: string, force = false): Promise<Ser
   const bySlug = new Map(entries.map((e) => [e.slug, e]))
   const groups = new Set(entries.filter((e) => (e.data as { tip?: string } | null)?.tip === 'grup').map((e) => e.slug))
   const hasBlocks = (slug: string) => { const l = bySlug.get(slug)?.layout as { blocks?: unknown[] } | null | undefined; return !!l && Array.isArray(l.blocks) && l.blocks.length > 0 }
+  const priceCol = await db.websiteCollection.findUnique({ where: { businessLineId_key: { businessLineId: line.id, key: 'preturi' } }, select: { id: true } })
+  const priceRows = priceCol ? await db.websiteEntry.findMany({ where: { collectionId: priceCol.id, status: { not: 'published' } }, select: { id: true, slug: true, data: true } }) : []
+  const target = new Map(PRICE_PAGES.map((x) => [x.slug, x.serviciu]))
+  const known = new Set([...entries.map((e) => e.slug)])
+  const reroutes = priceRows.flatMap((r) => {
+    const to = target.get(r.slug), from = String((r.data as { serviciu?: unknown } | null)?.serviciu ?? '')
+    return to && to !== from && (known.has(to) || NEW_CATEGORIES.some((c) => c.slug === to)) ? [{ id: r.id, slug: r.slug, from, to }] : []
+  })
   const pagesToWrite = SERVICE_CONTENT.filter((c) => force || !hasBlocks(c.slug))
   const newCats = NEW_CATEGORIES.filter((c) => !bySlug.has(c.slug))
   return {
     line, collectionId: col.id,
     fieldsToAdd: GLOSSARY_FIELDS.map((f) => f.key).filter((k) => !have.has(k)),
     categoriesToCreate: newCats,
+    reroutes,
     pagesToWrite, pagesSkipped: SERVICE_CONTENT.filter((c) => !pagesToWrite.includes(c)).map((c) => c.slug),
     missingGroups: NEW_CATEGORIES.map((c) => c.group).filter((g) => !groups.has(g)),
     problems: [...SERVICE_CONTENT.flatMap(validateContent), ...SERVICE_CONTENT.filter((c) => !bySlug.has(c.slug)).map((c) => `${c.slug}: categoria nu există în glosar`)],
@@ -75,5 +87,12 @@ export async function applyServices(p: ServicePlan) {
     })
     written++
   }
-  return { created, written }
+  let rerouted = 0
+  for (const r of p.reroutes) {
+    const e = await db.websiteEntry.findUniqueOrThrow({ where: { id: r.id }, select: { data: true, status: true } })
+    if (e.status === 'published') continue
+    await db.websiteEntry.update({ where: { id: r.id }, data: { data: { ...((e.data ?? {}) as Record<string, unknown>), serviciu: r.to } as Prisma.InputJsonValue } })
+    rerouted++
+  }
+  return { created, written, rerouted }
 }
