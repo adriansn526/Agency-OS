@@ -27,7 +27,7 @@ export const acoperisuri: ServiceContent = {
     'Pot schimba acoperișul într-un bloc? | Acoperișul blocului este proprietate comună. Lucrările se decid de asociația de proprietari și se contractează de ea, nu de un apartament. Pe un acoperiș-terasă se fac de obicei hidroizolația și termoizolația.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Acoperișuri și învelitori', subtitle: 'Montaj șarpantă, înlocuire învelitoare și reparații. Descrie lucrarea și primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Acoperișuri și învelitori', subtitle: 'Montaj șarpantă, înlocuire învelitoare și reparații. Descrie lucrarea și primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Durată tipică', value: '3–10 zile pentru o casă' },
       { label: 'Garanție manoperă', value: '2–5 ani, în scris' },
@@ -71,6 +71,7 @@ export const acoperisuri: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre acoperișuri' }),
     node('areas', 'areas', { title: 'Unde găsești firme de acoperișuri' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru acoperișul tău', text: 'Spune-ne ce lucrare ai nevoie și suprafața aproximativă. Primești oferte de la firme verificate din zona ta, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

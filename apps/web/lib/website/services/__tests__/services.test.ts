@@ -11,7 +11,7 @@ test('pilot pages have prices, FAQ and the full section order', () => {
   for (const c of SERVICE_CONTENT) {
     assert.ok(c.preturi.length >= 8, c.slug); assert.ok(c.intrebari.length >= 6, c.slug)
     const types = c.blocks.map((b) => b.type)
-    for (const t of ['hero', 'facts', 'steps', 'price_table', 'faq_list', 'request_cta']) assert.ok(types.includes(t), `${c.slug}: ${t}`)
+    for (const t of ['hero', 'facts', 'steps', 'price_table', 'faq_list', 'firms_list', 'request_form']) assert.ok(types.includes(t), `${c.slug}: ${t}`)
     assert.equal(types[0], 'hero')
     assert.equal(new Set(c.blocks.map((b) => b.id)).size, c.blocks.length)
   }

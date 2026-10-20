@@ -29,7 +29,7 @@ export const gardurPavaje: ServiceContent = {
     'Cât durează un pavaj de 100 mp? | De obicei 3–6 zile lucrătoare, cu echipă de 2–3 oameni, în funcție de pregătirea terenului și de model. Ploaia întrerupe lucrarea.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Garduri, pavaje și amenajări exterioare', subtitle: 'Montaj gard, pavaj de curte, beton amprentat și borduri. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Garduri, pavaje și amenajări exterioare', subtitle: 'Montaj gard, pavaj de curte, beton amprentat și borduri. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Gard 30 ml', value: '2–4 zile' },
       { label: 'Pavaj 100 mp', value: '3–6 zile' },
@@ -66,6 +66,7 @@ export const gardurPavaje: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre garduri și pavaje' }),
     node('areas', 'areas', { title: 'Unde găsești firme pentru garduri și pavaje' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru gard sau pavaj', text: 'Spune-ne lungimea gardului sau suprafața de pavat. Primești oferte de la firme verificate, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

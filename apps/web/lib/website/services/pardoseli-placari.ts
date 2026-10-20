@@ -28,7 +28,7 @@ export const pardoseliPlacari: ServiceContent = {
     'De ce se desprinde gresia sau faianța? | Cele mai frecvente cauze sunt adezivul nepotrivit, suprafața nepregătită (praf, umezeală) și lipsa rosturilor de dilatare. Cere adeziv potrivit tipului de placă și suprafeței.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Pardoseli și placări', subtitle: 'Gresie, faianță, parchet, pardoseli epoxidice și microciment. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Pardoseli și placări', subtitle: 'Gresie, faianță, parchet, pardoseli epoxidice și microciment. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Baie 4–5 mp', value: '5–8 zile' },
       { label: 'Uscarea șapei', value: '21–28 zile' },
@@ -65,6 +65,7 @@ export const pardoseliPlacari: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre pardoseli și placări' }),
     node('areas', 'areas', { title: 'Unde găsești firme pentru pardoseli' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru pardoseli și placări', text: 'Spune-ne tipul lucrării și suprafața. Primești oferte de la firme verificate, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

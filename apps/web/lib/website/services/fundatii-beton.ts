@@ -29,7 +29,7 @@ export const fundatiiBeton: ServiceContent = {
     'Ce verific la recepția fundației? | Armătura înainte de turnare (diametre, distanțe, acoperire), calitatea betonului (bon de livrare și probe), nivelurile și dimensiunile. Cere dirigintele de șantier să semneze procesul-verbal de lucrări ascunse.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Fundații și lucrări din beton', subtitle: 'Fundații de casă, plăci, stâlpi și grinzi din beton armat. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Fundații și lucrări din beton', subtitle: 'Fundații de casă, plăci, stâlpi și grinzi din beton armat. Primești oferte de la firme verificate, gratuit.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Fundație casă', value: '2–4 săptămâni' },
       { label: 'Rezistență de calcul', value: 'După 28 de zile' },
@@ -66,6 +66,7 @@ export const fundatiiBeton: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre fundații și beton' }),
     node('areas', 'areas', { title: 'Unde găsești firme pentru fundații și beton' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru fundație sau beton', text: 'Spune-ne ce construiești și suprafața aproximativă. Primești oferte de la firme verificate, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

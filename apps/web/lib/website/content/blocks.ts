@@ -25,6 +25,7 @@ export const CONTENT_CATALOG: PageBlockDef[] = [
     { key: 'image', label: 'Imagine de fundal', kind: 'media' },
     { key: 'imageAlt', label: 'Descrierea imaginii (pentru cei care nu o văd)', kind: 'text', max: 200 },
     { key: 'buttonLabel', label: 'Text buton (duce la cererea de ofertă)', kind: 'text', max: 40, placeholder: 'Cere oferte gratuite' },
+    { key: 'checks', label: 'Bife sub butoane (ex.: Gratuit, Fără obligații)', kind: 'list', maxItems: 4, max: 40 },
     { key: 'bg', label: 'Fundal fără imagine', kind: 'select', options: opt(['dark', 'Închis'], ['brand', 'Portocaliu'], ['light', 'Deschis']) },
     ALIGN(),
   ] },
@@ -49,6 +50,8 @@ export const CONTENT_CATALOG: PageBlockDef[] = [
   { type: 'price_links', label: 'Linkuri către prețuri', description: 'Paginile de prețuri din aceeași categorie (se completează singure din paginile de prețuri publicate). Util pe paginile de servicii.', fields: [TITLE('Prețuri orientative')] },
   { type: 'areas', label: 'Zone deservite (locație)', description: 'Orașele sau județele în care se oferă serviciul. Se afișează și intră în schema Service (areaServed). Lasă gol pentru „toată țara”.', fields: [TITLE('Unde oferim serviciul'), { key: 'areas', label: 'Localități / județe', kind: 'list', maxItems: 40, max: 60 }] },
   { type: 'request_cta', label: 'Cerere de ofertă', description: 'Un apel la acțiune cu buton către formularul de cerere de ofertă.', fields: [TITLE('Cere oferte gratuite'), { key: 'text', label: 'Text', kind: 'textarea', max: 300 }, { key: 'buttonLabel', label: 'Text buton', kind: 'text', max: 40, placeholder: 'Trimite cererea' }] },
+  { type: 'firms_list', label: 'Lista de firme', description: 'Firmele publicate pentru serviciul paginii (cu link spre profil). Fără firme, arată invitația „Alătură-te ca Pro”. Pe o pagină de prețuri nu are ce afișa.', fields: [TITLE('Firme pentru acest serviciu'), { key: 'limit', label: 'Câte firme', kind: 'select', options: opt(['6', '6 firme'], ['12', '12 firme']) }] },
+  { type: 'request_form', label: 'Formular de cerere de ofertă', description: 'Formularul complet de cerere de ofertă pentru serviciul paginii. Butoanele din pagină (banner, „Cere oferte”) duc la el. Pune-l o singură dată pe pagină.', fields: [TITLE('Titlu deasupra formularului (opțional)')] },
   { type: 'columns', label: 'Coloane', description: 'Două coloane în care pui alte blocuri.', fields: [{ key: 'ratio', label: 'Proporție', kind: 'select', options: opt(['50-50', '50 / 50'], ['33-67', '1/3 și 2/3'], ['67-33', '2/3 și 1/3']) }], slots: [{ key: 'left', label: 'Stânga' }, { key: 'right', label: 'Dreapta' }] },
   { type: 'section', label: 'Secțiune cu fundal', description: 'Un fundal în jurul altor blocuri.', fields: [{ key: 'bg', label: 'Fundal', kind: 'select', options: opt(['light', 'Deschis'], ['none', 'Fără'], ['brand', 'Portocaliu'], ['dark', 'Închis']) }], slots: [{ key: 'content', label: 'Conținut' }] },
 ]

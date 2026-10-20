@@ -28,7 +28,7 @@ export const instalatiiSanitare: ServiceContent = {
     'Ce garanție primesc? | Cere garanție scrisă pentru manoperă, de regulă 1–2 ani, și garanția producătorului pentru obiecte și baterii. Păstrează factura și fotografiile traseelor înainte de acoperire.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Instalații sanitare', subtitle: 'Montaj, reparații, desfundare și înlocuire de conducte. Primești oferte de la instalatori verificați din zona ta.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Instalații sanitare', subtitle: 'Montaj, reparații, desfundare și înlocuire de conducte. Primești oferte de la instalatori verificați din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Intervenție simplă', value: 'Din 150 lei' },
       { label: 'Baie + bucătărie', value: '3–6 zile' },
@@ -65,6 +65,7 @@ export const instalatiiSanitare: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre instalații sanitare' }),
     node('areas', 'areas', { title: 'Unde găsești instalatori' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru instalații sanitare', text: 'Spune-ne ce lucrare ai nevoie și tipul locuinței. Primești oferte de la instalatori verificați, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }

@@ -28,7 +28,7 @@ export const geamuri: ServiceContent = {
     'Ce înseamnă când geamul face condens între foi? | Sticla termopan are un spațiu închis între foi. Dacă apare apă acolo, etanșarea s-a stricat și pachetul trebuie înlocuit; este acoperit de garanție dacă încă există.',
   ],
   blocks: [
-    node('hero', 'hero', { title: 'Geamuri și ferestre termopan', subtitle: 'Ferestre și uși PVC, înlocuire de geamuri și reglaje. Primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite', bg: 'dark' }),
+    node('hero', 'hero', { title: 'Geamuri și ferestre termopan', subtitle: 'Ferestre și uși PVC, înlocuire de geamuri și reglaje. Primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații', 'Firme verificate'], bg: 'dark' }),
     node('facts', 'facts', { items: [
       { label: 'Comandă și producție', value: '2–4 săptămâni' },
       { label: 'Montaj fereastră', value: '1–2 ore' },
@@ -65,6 +65,7 @@ export const geamuri: ServiceContent = {
     ) }),
     node('faq', 'faq_list', { title: 'Întrebări frecvente despre geamuri termopan' }),
     node('areas', 'areas', { title: 'Unde găsești firme de termopane' }),
-    node('cta', 'request_cta', { title: 'Cere oferte pentru ferestre și uși', text: 'Spune-ne câte ferestre sau uși ai și dimensiunile aproximative. Primești oferte de la firme verificate, gratuit și fără obligații.', buttonLabel: 'Trimite cererea' }),
+    node('firms', 'firms_list', { limit: '6' }),
+    node('form', 'request_form'),
   ],
 }
