@@ -7,6 +7,7 @@
 import { categoryTitles } from '../glossary/taxonomy'
 import { effectiveLayout } from '../layout/blocks'
 import { contentReady, effectiveContentLayout, isContentCollection } from '../content/blocks'
+import { isWip } from '../content/wip'
 
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
@@ -36,8 +37,8 @@ export function serializeListItem(e: EntryRow, collectionKey: string, cats?: { s
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
     data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
     // services and prices: whether the team arranged the page with blocks (a page with only the seeded skeleton is not finished)
-    // `ready`: the page may be shown (blocks without the marker, or a written body); the site never shows a page that is not ready
-    ...(isContentCollection(collectionKey) ? (() => { const l = effectiveContentLayout(e.layout); return { hasBlocks: l.blocks.length > 0, ready: contentReady(l, e.body) } })() : {}),
+    // `ready`: the page may be shown in full (blocks without the marker, or a written body, and not ticked "în construcție"); a page that is not ready is shown as "în construcție"
+    ...(isContentCollection(collectionKey) ? (() => { const l = effectiveContentLayout(e.layout); return { hasBlocks: l.blocks.length > 0, ready: !isWip(e.data) && contentReady(l, e.body), wip: isWip(e.data) } })() : {}),
     // a firm's own page for its projects; the service categories chosen by a firm come with their titles
     parent: e.parent ? { slug: e.parent.slug, title: e.parent.title, city: e.parent.city, county: e.parent.county, logoUrl: e.parent.logoUrl, verified: e.parent.verified } : null,
     services: categoryTitles((e.data as Record<string, unknown> | null)?.servicii, cats),

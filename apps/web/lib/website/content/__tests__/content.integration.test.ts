@@ -5,12 +5,12 @@ import assert from 'node:assert/strict'
 const URL_ = process.env.CONTENT_TEST_DATABASE_URL
 const skip = !URL_
 if (URL_) process.env.DATABASE_URL = URL_
-let db: any, T: typeof import('../seed'), S: typeof import('../service'), P: typeof import('../../preview/service'), Z: typeof import('../../storefront/serialize')
+let db: any, A: typeof import('../../admin/service'), T: typeof import('../seed'), S: typeof import('../service'), P: typeof import('../../preview/service'), Z: typeof import('../../storefront/serialize')
 let entryId = '', otherId = ''
 
 before(async () => {
   if (skip) return
-  ;({ db } = await import('@repo/db')); S = await import('../service'); T = await import('../seed'); P = await import('../../preview/service'); Z = await import('../../storefront/serialize')
+  ;({ db } = await import('@repo/db')); S = await import('../service'); T = await import('../seed'); A = await import('../../admin/service'); P = await import('../../preview/service'); Z = await import('../../storefront/serialize')
   await db.$executeRawUnsafe(`TRUNCATE "WebsiteLayoutVersion","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","Activity","Lead","BusinessLine" CASCADE`)
   await db.businessLine.create({ data: { id: 'bl', slug: 'bl', name: 'bl', icon: 'x', color: '#000', config: {} } })
   await db.websiteChannel.create({ data: { businessLineId: 'bl', siteUrl: 'https://site.test' } })
@@ -98,4 +98,18 @@ test('templates: seeded onto entries without blocks; entries with blocks and edi
   assert.equal((await db.websiteEntry.findUnique({ where: { id: 't1' } })).layout.blocks[0].props.body, 'Scris de echipă')
   const ready: any = Z.serializeDetail(await db.websiteEntry.findUnique({ where: { id: 't1' }, include: { media: true } }), 'preturi', [], [])
   assert.equal(ready.ready, true)
+})
+
+test('the "în construcție" tick: saved by the admin service, makes the page not ready, cleared on request, bad values rejected', { skip }, async () => {
+  const before = (await db.websiteEntry.findUnique({ where: { id: 't1' }, include: { media: true } }))
+  await S.saveContentLayout('bl', 't1', { layout: { version: 2, blocks: [{ id: 'x1', type: 'text', props: { body: 'Text terminat' } }] } })
+  const ready = async () => { const row = await db.websiteEntry.findUnique({ where: { id: 't1' }, include: { media: true } }); return Z.serializeDetail(row, 'preturi', row.media, []) as any }
+  assert.equal((await ready()).ready, true); assert.equal((await ready()).wip, false)
+  await A.updateEntry('bl', 't1', { data: { serviciu: 'x', in_constructie: 'da' } })
+  const on = await ready(); assert.equal(on.ready, false); assert.equal(on.wip, true); assert.equal(on.data.in_constructie, 'da')
+  assert.equal(on.hasBlocks, true) // the content is kept, only the page is shown as "în construcție"
+  await A.updateEntry('bl', 't1', { data: { serviciu: 'x', in_constructie: 'nu' } })
+  const off = await ready(); assert.equal(off.ready, true); assert.equal(off.wip, false)
+  await assert.rejects(() => A.updateEntry('bl', 't1', { data: { in_constructie: 'poate' } }))
+  assert.ok(before)
 })

@@ -58,6 +58,8 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
   // articles (services, prices, guides) have no plan, no verification, no address and no contact: those belong to firms
   const article = collection?.kind === "article"
   const hasBlocks = !!entryId && !!collection && ["preturi", "servicii", "ghiduri"].includes(collection.key)
+  const isContent = !!collection && ["preturi", "servicii", "ghiduri"].includes(collection.key)
+  const wip = draft?.data?.in_constructie === "da"
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => d && { ...d, [k]: v })
 
   async function save() {
@@ -109,6 +111,12 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
               <label className="flex items-center gap-2"><input type="checkbox" checked={draft.featured} onChange={(e) => set("featured", e.target.checked)} /> Recomandat (apare primul)</label>
               {meta?.tenantId && <span className="text-xs text-muted-foreground self-center">Partener activ în ERP</span>}
             </div>}
+            {isContent && (
+              <label className="col-span-2 flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm" htmlFor="e-wip">
+                <input id="e-wip" type="checkbox" className="mt-0.5" checked={wip} onChange={(e) => set("data", { ...(draft.data ?? {}), in_constructie: e.target.checked ? "da" : "nu" })} />
+                <span><b>În construcție</b><br /><span className="text-xs text-muted-foreground">Pagina rămâne publicată, dar pe site apare ca „în construcție”: fără conținut, fără indexare în Google și fără intrare în sitemap. Debifează când pagina e verificată.</span></span>
+              </label>
+            )}
             <div className="col-span-2"><label className={labelCls} htmlFor="e-sum">Rezumat (max 500)</label><textarea id="e-sum" maxLength={500} className={textareaCls} value={draft.summary} onChange={(e) => set("summary", e.target.value)} /></div>
             <div className="col-span-2"><label className={labelCls} htmlFor="e-body">Descriere (text simplu sau markdown; nu HTML)</label><textarea id="e-body" className={textareaCls + " min-h-[140px]"} value={draft.body} onChange={(e) => set("body", e.target.value)} /></div>
           </section>
@@ -117,7 +125,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <section>
               <h3 className="text-sm font-semibold mb-2">Câmpuri {collection.name.toLowerCase()}</h3>
               <div className="grid grid-cols-2 gap-3">
-                {collection.fields.filter((f) => f.key !== "autorizatii_verificate").map((f) => (
+                {collection.fields.filter((f) => f.key !== "autorizatii_verificate" && f.key !== "in_constructie").map((f) => (
                   <div key={f.key} className={f.type === "list" ? "col-span-2" : ""}>
                     <label className={labelCls} htmlFor={`cf-${f.key}`}>{f.label}{f.required && draft.status === "published" && <span className="text-destructive"> *</span>}</label>
                     <FieldInput f={f} value={draft.data[f.key]} onChange={(v) => set("data", { ...draft.data, [f.key]: v })} />

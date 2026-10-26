@@ -7,6 +7,7 @@ import { db, Prisma } from '@repo/db'
 import type { CollectionField } from '../admin/entry-data'
 import { GLOSSARY_KEY } from '../glossary/seed'
 import { layoutHasPlaceholder, parseContentLayout } from '../content/blocks'
+import { WIP_KEY, WIP_VALUE } from '../content/wip'
 import { GUIDES, type GuideContent } from './index'
 
 export const GUIDES_KEY = 'ghiduri'
@@ -78,8 +79,11 @@ export async function applyGuides(p: GuidesPlan) {
   for (const g of [...p.toCreate, ...p.toRewrite]) {
     const layout = { version: 2, blocks: g.blocks } as unknown as Prisma.InputJsonValue
     await db.$transaction(async (tx) => {
-      const cur = await tx.websiteEntry.findUnique({ where: { businessLineId_collectionId_slug: { businessLineId: p.line.id, collectionId: col.id, slug: g.slug } }, select: { id: true } })
-      const fields = { title: g.title, summary: g.summary, seoTitle: g.seoTitle, seoDescription: g.seoDescription, data: dataOf(g), layout }
+      const cur = await tx.websiteEntry.findUnique({ where: { businessLineId_collectionId_slug: { businessLineId: p.line.id, collectionId: col.id, slug: g.slug } }, select: { id: true, data: true } })
+      // new guides start ticked "în construcție" (their text must be checked by a specialist); a rewrite keeps whatever the team decided since
+      const prev = ((cur?.data ?? {}) as Record<string, unknown>)[WIP_KEY]
+      const wip = !cur ? { [WIP_KEY]: WIP_VALUE } : prev !== undefined ? { [WIP_KEY]: prev } : {}
+      const fields = { title: g.title, summary: g.summary, seoTitle: g.seoTitle, seoDescription: g.seoDescription, data: { ...(dataOf(g) as object), ...wip } as Prisma.InputJsonValue, layout }
       const e = cur
         ? await tx.websiteEntry.update({ where: { id: cur.id }, data: fields })
         : await tx.websiteEntry.create({ data: { businessLineId: p.line.id, collectionId: col.id, slug: g.slug, status: 'draft', ...fields } })
