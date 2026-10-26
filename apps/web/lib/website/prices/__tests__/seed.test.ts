@@ -4,7 +4,7 @@ import { PRICE_PAGES } from '../pages'
 import { PLACEHOLDER, priceSeedProblems, skeleton } from '../seed'
 
 test('price page list is consistent', () => assert.deepEqual(priceSeedProblems(), []))
-test('first wave has 31 pages', () => assert.equal(PRICE_PAGES.length, 31))
+test('first wave (31) plus the pages for the services of the owned sites (6)', () => assert.equal(PRICE_PAGES.length, 37))
 test('problems are reported: duplicate slug, bad slug, unknown category', () => {
   const p = PRICE_PAGES[0]!
   const probs = priceSeedProblems([p, p, { ...p, slug: 'Bad Slug' }, { ...p, slug: 'ok-slug', serviciu: 'nu-exista' }])
