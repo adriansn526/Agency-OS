@@ -53,6 +53,11 @@ export function RequestsTab({ lineId }: { lineId: string }) {
                 {r.deliveries.length > 0 && <div className="flex flex-wrap gap-2 text-xs">
                   {r.deliveries.map((d: any) => <span key={d.entryId} className="rounded-md border px-2 py-1">{d.title} · {STATUS[d.status] ?? d.status}{d.chargedRon != null && d.status === "accepted" ? ` · ${ron(d.chargedRon)}${d.chargeReason ? ` (${REASON[d.chargeReason] ?? d.chargeReason})` : ""}` : ""}</span>)}
                 </div>}
+                <p className="text-xs text-muted-foreground" title={r.sourcePage ?? undefined}>
+                  Sursă: <b className="text-foreground">{r.source?.label ?? "direct sau necunoscută"}</b>
+                  {[r.source?.medium, r.source?.campaign, r.source?.content].filter(Boolean).length > 0 && <> ({[r.source?.medium, r.source?.campaign, r.source?.content].filter(Boolean).join(" · ")})</>}
+                  {r.source?.page && <> · pagina {r.source.page}</>}
+                </p>
                 {r.routing?.mode === "general" && <p className="text-xs text-muted-foreground">Regulă: {r.routing.rule?.name ?? "implicită"} · {r.routing.candidates} firme potrivite, {r.routing.selected} alese</p>}
               </CardContent></Card>
             ))}

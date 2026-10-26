@@ -100,3 +100,14 @@ test('validation: unknown category, firm not offering the service, contact flood
   for (let i = 0; i < 5; i++) await S.createRequest('bl', { ...fixed })
   await assert.rejects(S.createRequest('bl', { ...fixed }), /mai multe cereri/)
 })
+
+test('admin overview: the source of a request (page + attribution) is returned and parsed', { skip }, async () => {
+  const withSrc = await S.createRequest('bl', body({ email: 'sursa1@x.ro', phone: '0745 000 111', sourcePage: '/preturi/zugravit?utm_source=hidropro&utm_medium=referral&utm_campaign=pas-urmator&ref=hidropro.ro' }))
+  const plain = await S.createRequest('bl', body({ email: 'sursa2@x.ro', phone: '0745 000 222', sourcePage: '/lucrari/instalatii-sanitare' }))
+  const none = await S.createRequest('bl', body({ email: 'sursa3@x.ro', phone: '0745 000 333' }))
+  const items = (await S.adminOverview('bl', {})).items as any[]
+  const find = (id: string) => items.find((i) => i.id === id)
+  assert.equal(find(withSrc.id).source.label, 'hidropro'); assert.equal(find(withSrc.id).source.campaign, 'pas-urmator'); assert.equal(find(withSrc.id).source.page, '/preturi/zugravit')
+  assert.equal(find(plain.id).source.label, null); assert.equal(find(plain.id).source.page, '/lucrari/instalatii-sanitare')
+  assert.equal(find(none.id).source, null); assert.equal(find(none.id).sourcePage, null)
+})
