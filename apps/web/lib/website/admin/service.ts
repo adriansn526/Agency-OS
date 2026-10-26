@@ -5,6 +5,7 @@ import { db, Prisma } from '@repo/db'
 import { z } from 'zod'
 import { AdminError } from './errors'
 import { validateEntryData, validateFieldDefs, type CollectionField } from './entry-data'
+import { withWipField } from '../content/wip'
 import { collectionCreate, collectionPatch, channelPatch, entryCreate, entryFromLead, entryPatch } from './schemas'
 import { slugify, uniqueSlug } from './slug'
 import { normalizeWebsite } from './url'
@@ -193,7 +194,7 @@ export async function createEntry(lineId: string, raw: unknown) {
   await assertLine(lineId)
   const input = entryCreate.parse(raw)
   const collection = await collectionFor(lineId, input.collectionId)
-  const data = cleanData(collection.fields as unknown as CollectionField[], input.status, input.data)
+  const data = cleanData(withWipField(collection.key, collection.fields as unknown as CollectionField[]), input.status, input.data)
   if (collection.key === 'servicii') await assertServiceEntry(lineId, data as Record<string, unknown>, input.slug ?? slugify(input.title))
   const slug = input.slug
     ? input.slug
@@ -217,7 +218,7 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
   if (!existing) throw new AdminError('Intrarea nu există', 404)
 
   const status = input.status ?? existing.status
-  const fields = existing.collection.fields as unknown as CollectionField[]
+  const fields = withWipField(existing.collection.key, existing.collection.fields as unknown as CollectionField[])
   // data is re-validated whenever it, or the status that decides which fields are required, changes
   const data = input.data !== undefined || input.status !== undefined ? cleanData(fields, status, input.data ?? existing.data) : undefined
   const { data: _d, ...rest } = input

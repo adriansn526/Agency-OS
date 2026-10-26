@@ -74,7 +74,7 @@ export function EntriesTab({ lineId, onChanged, initialEntryId = null }: { lineI
                     </td>
                     <td className="px-4 py-2.5 hidden md:table-cell">{colName(e.collectionId)}</td>
                     <td className="px-4 py-2.5 hidden md:table-cell text-muted-foreground">{[e.city, e.county].filter(Boolean).join(", ") || "—"}</td>
-                    <td className="px-4 py-2.5"><Badge variant={e.status === "published" ? "default" : e.status === "suspended" ? "destructive" : "secondary"}>{STATUS_RO[e.status]}</Badge></td>
+                    <td className="px-4 py-2.5"><Badge variant={e.status === "published" ? "default" : e.status === "suspended" ? "destructive" : "secondary"}>{STATUS_RO[e.status]}</Badge>{e.data?.in_constructie === "da" && <Badge variant="outline" className="ml-1.5">În construcție</Badge>}</td>
                     <td className="px-4 py-2.5 hidden lg:table-cell text-muted-foreground">{fmtDate(e.updatedAt)}</td>
                     <td className="px-2 py-2.5 text-right"><Button size="icon" variant="ghost" aria-label={`Șterge ${e.title}`} onClick={(ev) => { ev.stopPropagation(); remove(e) }}><Trash2 className="h-4 w-4 text-destructive" /></Button></td>
                   </tr>

@@ -64,6 +64,10 @@ Paginile unui hub de serviciu, câte una pe grup de termeni de căutare (vezi `d
 
 O pagină publicată al cărei conținut nu e terminat (`ready: false`, adică încă are marcajul `[DE COMPLETAT]` sau n-are text) **nu mai dă 404** pe site: se afișează ca „în construcție” (anunț, titlu, rezumat, formularul de cerere), cu `noindex` și fără intrare în sitemap. Hub-urile `/preturi` și `/ghiduri` și meniul le listează cu insigna „În lucru”. O pagină terminată se indexează normal. Ordinea recomandată: seed-urile (prețuri, șabloane, ghiduri), apoi publicarea în bloc; echipa termină paginile pe rând, iar fiecare devine indexabilă singură când dispare marcajul.
 
+**Bifa „În construcție”** (în formularul fiecărei intrări din Prețuri, Servicii și Ghiduri; insigna apare și în lista de intrări): pagina rămâne publicată, dar pe site apare ca „în construcție”, indiferent cât de complet e textul. Se activează și se dezactivează oricând, fără republicare. Se păstrează în `data.in_constructie` (`da` = bifat, `nu` = debifat, lipsă = nimeni nu s-a uitat încă), ca câmp de sistem al colecțiilor, deci fără DDL și fără modificarea definițiilor colecțiilor. API-ul expune `ready` (fals când e bifat) și `wip`.
+- `publish-content.ts` bifează automat „În construcție” pe toate intrările pe care le publică și care n-au încă o decizie (`--no-wip` dezactivează); o bifă deja pusă sau scoasă de echipă se păstrează. Astfel nimic nu se indexează înainte să fie verificat; echipa debifează pagină cu pagină.
+- Ghidurile noi create de `seed-guides.ts` pornesc bifate; un `--force` păstrează decizia echipei.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.
