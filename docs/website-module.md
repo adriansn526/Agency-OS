@@ -58,6 +58,12 @@ Paginile unui hub de serviciu, câte una pe grup de termeni de căutare (vezi `d
 - Seed: `npx tsx --env-file=.env.local scripts/website/seed-guides.ts --line intraconstruct [--apply] [--force]`. Creează colecția și trei ghiduri **draft** pentru hub-ul hidroizolații (`igrasie`, `hidroizolatie-fundatie-subsol-beci`, `hidroizolatie-baie`). Cere categoria `hidroizolatii` din glosar (`seed-services`). Textele sunt informative, fără sume în lei, **și trebuie citite și confirmate de un specialist înainte de publicare**.
 - Frontend: `/ghiduri` (lista, pe categorii) și `/ghiduri/<slug>` (cu BreadcrumbList, Article și FAQPage); intră în sitemap când sunt publicate.
 
+### Publicare în bloc și pagini „în construcție”
+
+`scripts/website/publish-content.ts --line intraconstruct [--apply]` publică dintr-o dată grupurile și categoriile din glosar, paginile de prețuri și ghidurile (din „ciornă” sau „previzualizare”; cele suspendate, firmele, proiectele și paginile personalizate nu se ating). Simulare implicită, cu numărul de intrări pe colecție; `--to draft` le readuce pe toate în ciornă.
+
+O pagină publicată al cărei conținut nu e terminat (`ready: false`, adică încă are marcajul `[DE COMPLETAT]` sau n-are text) **nu mai dă 404** pe site: se afișează ca „în construcție” (anunț, titlu, rezumat, formularul de cerere), cu `noindex` și fără intrare în sitemap. Hub-urile `/preturi` și `/ghiduri` și meniul le listează cu insigna „În lucru”. O pagină terminată se indexează normal. Ordinea recomandată: seed-urile (prețuri, șabloane, ghiduri), apoi publicarea în bloc; echipa termină paginile pe rând, iar fiecare devine indexabilă singură când dispare marcajul.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.
