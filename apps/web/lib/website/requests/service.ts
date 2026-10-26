@@ -7,6 +7,7 @@
  *   A firm on the "abonament" plan receives direct requests with full data and no per-request fee.
  * - Acceptances are capped per request (maxAcceptances, atomically); the fee owed is stored on the delivery (invoiced by the team, no online payment yet).
  */
+import { describeSource } from './source'
 import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
@@ -239,6 +240,7 @@ export async function adminOverview(lineId: string, q: { month?: string; page?: 
     owed: owed.map((o) => ({ entryId: o.entryId, title: titles.get(o.entryId) ?? o.entryId, accepted: o._count, totalRon: Number(o._sum.chargedRon ?? 0) })).sort((a, b) => b.totalRon - a.totalRon),
     items: requests.map((r) => ({
       id: r.id, type: r.type, status: r.status, category: r.category, county: r.county, city: r.city, createdAt: r.createdAt.toISOString(), customerName: r.customerName, routing: r.routing,
+      sourcePage: r.sourcePage, source: describeSource(r.sourcePage),
       deliveries: r.deliveries.map((d) => ({ entryId: d.entryId, title: d.entry.title, status: d.status, chargedRon: d.chargedRon === null ? null : Number(d.chargedRon), chargeReason: d.chargeReason })),
     })),
   }

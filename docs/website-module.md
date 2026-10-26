@@ -47,6 +47,10 @@ Intrările colecțiilor `preturi` și `servicii` se aranjează din **Intrări �
 - **Pagina nu apare pe site cât timp un text conține `[DE COMPLETAT]`** (introducerea din șablon); API-ul expune `ready` (fără marcaj în blocuri, sau corp scris când nu sunt blocuri). O categorie de servicii publicată cu blocuri neterminate rămâne pe aranjarea implicită.
 - Editorul de intrări ascunde acum câmpurile de firmă (plan, verificat, acces „Profilul meu”, recomandat, locație, contact) pentru colecțiile de tip `article`.
 
+### Sursa cererilor de ofertă
+
+`WebsiteRequest.sourcePage` păstrează pagina de pe care a plecat cererea, cu atribuirea vizitatorului adăugată ca parametri: `/preturi/zugravit?utm_source=hidropro&utm_medium=referral&utm_campaign=pas-urmator&ref=hidropro.ro` (max 300 de caractere; `ref` este doar domeniul site-ului de unde a venit, fără cale). Frontend-ul îi citește din adresa paginii și din `document.referrer` în momentul trimiterii, **fără cookie sau stocare** și fără legătură cu consimțământul pentru analitice. Fără coloane noi și fără DDL. Tab-ul **Cereri** din Website arată pe fiecare cerere „Sursă: …” (UTM source sau site-ul de proveniență, medium, campanie, pagină), cu textul brut în tooltip. Parsarea: `lib/website/requests/source.ts`.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.
