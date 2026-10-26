@@ -11,7 +11,7 @@ import { emptyPageLayout, mediaRefs, parsePageLayout, type PageBlockDef, type Pa
 export const PLACEHOLDER = '[DE COMPLETAT]'
 
 /** Collections whose entries are laid out with these blocks. */
-export const CONTENT_COLLECTIONS = ['preturi', 'servicii'] as const
+export const CONTENT_COLLECTIONS = ['preturi', 'servicii', 'ghiduri'] as const
 export const isContentCollection = (key: string) => (CONTENT_COLLECTIONS as readonly string[]).includes(key)
 
 const opt = (...o: [string, string][]) => o.map(([value, label]) => ({ value, label }))
@@ -48,6 +48,7 @@ export const CONTENT_CATALOG: PageBlockDef[] = [
   { type: 'price_table', label: 'Tabel de prețuri', description: 'Afișează lista „Prețuri” a intrării (Lucrare | interval | observații). Prețurile rămân date, se schimbă din câmpul intrării.', fields: [TITLE('Prețuri orientative'), { key: 'note', label: 'Notă sub tabel', kind: 'text', max: 240, placeholder: 'Prețuri orientative, fără TVA' }] },
   { type: 'faq_list', label: 'Întrebări frecvente (FAQ)', description: 'Afișează lista „Întrebări frecvente” a intrării și generează automat schema FAQPage pentru Google.', fields: [TITLE('Întrebări frecvente')] },
   { type: 'price_links', label: 'Linkuri către prețuri', description: 'Paginile de prețuri din aceeași categorie (se completează singure din paginile de prețuri publicate). Util pe paginile de servicii.', fields: [TITLE('Prețuri orientative')] },
+  { type: 'guide_links', label: 'Linkuri către ghiduri', description: 'Ghidurile publicate din aceeași categorie (se completează singure). Pune-l pe pagina categoriei și la finalul fiecărui ghid, ca să lege hub-ul.', fields: [TITLE('Ghiduri')] },
   { type: 'areas', label: 'Zone deservite (locație)', description: 'Pe pagina unui serviciu afișează automat județele cu cel puțin 3 firme publicate (cu link spre firmele din județ); fără astfel de județe, secțiunea nu apare. Localitățile scrise aici se afișează doar când nu există județe cu firme și intră în schema Service (areaServed).', fields: [TITLE('Unde oferim serviciul'), { key: 'areas', label: 'Localități / județe', kind: 'list', maxItems: 40, max: 60 }] },
   { type: 'request_cta', label: 'Cerere de ofertă', description: 'Un apel la acțiune cu buton către formularul de cerere de ofertă.', fields: [TITLE('Cere oferte gratuite'), { key: 'text', label: 'Text', kind: 'textarea', max: 300 }, { key: 'buttonLabel', label: 'Text buton', kind: 'text', max: 40, placeholder: 'Trimite cererea' }] },
   { type: 'firms_list', label: 'Lista de firme', description: 'Firmele publicate pentru serviciul paginii (cu link spre profil). Fără firme, arată invitația „Alătură-te ca Pro”. Pe o pagină de prețuri nu are ce afișa.', fields: [TITLE('Firme pentru acest serviciu'), { key: 'limit', label: 'Câte firme', kind: 'select', options: opt(['6', '6 firme'], ['12', '12 firme']) }] },
