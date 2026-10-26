@@ -205,7 +205,7 @@ export function ContentBuilder({ lineId, entryId, onClose }: { lineId: string; e
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-base font-semibold">Aranjarea paginii{data ? `: ${data.entry.title}` : ""}</h2>
-          <p className="text-xs text-muted-foreground">{data ? `/${data.entry.collection === "preturi" ? "preturi" : "lucrari"}/${data.entry.slug}` : ""}{dirty && " · modificări nesalvate"}</p>
+          <p className="text-xs text-muted-foreground">{data ? `/${({ preturi: "preturi", servicii: "lucrari", ghiduri: "ghiduri" } as Record<string, string>)[data.entry.collection] ?? "lucrari"}/${data.entry.slug}` : ""}{dirty && " · modificări nesalvate"}</p>
         </div>
         <Button type="button" size="sm" variant="outline" onClick={openHistory}><History className="h-4 w-4 mr-1" /> Istoric</Button>
         <Button type="button" size="sm" variant="outline" disabled={dirty} title={dirty ? "Salvează întâi" : undefined} onClick={makePreview}><ExternalLink className="h-4 w-4 mr-1" /> Previzualizare</Button>

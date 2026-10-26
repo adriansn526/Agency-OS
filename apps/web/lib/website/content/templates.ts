@@ -47,6 +47,7 @@ export function serviceTemplate(o: { summary?: string | null } = {}): PageLayout
     node('hero', 'hero', { ...(o.summary ? { subtitle: o.summary.slice(0, 250) } : {}), buttonLabel: 'Cere oferte gratuite', checks: HERO_CHECKS, bg: 'dark' }),
     node('intro', 'text', { body: `${PLACEHOLDER} Explică pe scurt ce presupune această lucrare, când e nevoie de ea și ce ar trebui să știe un client înainte să ceară oferte.` }),
     node('prices', 'price_links', { title: 'Prețuri orientative' }),
+    node('guides', 'guide_links', { title: 'Ghiduri' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
     node('choose', 'text', { body: CHOOSE }),
     node('firms', 'firms_list', { limit: '6' }),

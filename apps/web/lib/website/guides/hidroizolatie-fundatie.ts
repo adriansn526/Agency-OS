@@ -1,0 +1,73 @@
+import { node, para, type GuideContent } from './types'
+
+export const hidroizolatieFundatie: GuideContent = {
+  slug: 'hidroizolatie-fundatie-subsol-beci',
+  serviciu: 'hidroizolatii',
+  title: 'Hidroizolația fundației, subsolului și beciului: ghid complet',
+  seoTitle: 'Hidroizolație fundație și beci: cum se face corect',
+  seoDescription: 'Hidroizolație fundație, subsol și beci: exterior sau interior, ce materiale se folosesc, pașii lucrării, drenajul și greșelile frecvente. Cere oferte de la firme.',
+  summary: 'Cum se hidroizolează fundația, subsolul și beciul: pe exterior sau pe interior, cu ce materiale, în ce ordine și ce greșeli trebuie evitate.',
+  keyword: 'hidroizolatie fundatie',
+  keywords: ['hidroizolatie fundatie', 'hidroizolatii fundatii', 'hidroizolatie exterior', 'hidroizolatie lichida exterior', 'membrana hidroizolatie fundatie', 'hidroizolatie fundatie casa veche', 'hidroizolatie beci interior', 'hidroizolatie subsol', 'hidroizolatie pivnita'],
+  intrebari: [
+    'Hidroizolația se face pe exterior sau pe interior? | Soluția recomandată este pe exterior, pe partea de unde vine apa, cu protecție și drenaj. Pe interior se lucrează când nu se poate săpa lângă fundație, de pildă la un beci existent cu infiltrații; este o soluție de remediere, mai puțin sigură dacă nu se tratează și apa din exterior.',
+    'Când se face hidroizolația fundației? | La construcția casei, înainte de umplerea șanțului, este cel mai simplu și cel mai ieftin moment. La o casă existentă se poate face oricând, dar presupune săpătură perimetrală și scoaterea temporară din uz a trotuarului sau a terasei din jurul casei.',
+    'Ce materiale se folosesc? | Membrane bituminoase aplicate pe suport pregătit, hidroizolație lichidă pe bază de bitum, cauciuc sau polimeri, iar la interior mortare cimentoase hidroizolante. Peste hidroizolația de pe exterior se pune o protecție, de exemplu polistiren extrudat, geotextil sau folie cu crampoane, și un drenaj perimetral.',
+    'Cât durează lucrarea? | De la câteva zile la 1–2 săptămâni pentru o casă obișnuită, în funcție de adâncime, de acces și de timpul de uscare al produselor. Săpătura și umplutura sunt o parte importantă din durată.',
+    'Am apă în beci. Ce fac? | Mai întâi se identifică sursa: apă pluvială care ajunge la fundație, apă freatică sau o conductă spartă. Se oprește apa din exterior (jgheaburi, trotuar, drenaj), apoi se hidroizolează. Pomparea apei sau o tencuială nouă pe interior tratează doar efectul.',
+    'Merită hidroizolația lichidă sau membrana? | Depinde de suport și de situație. Membranele sunt potrivite pe suprafețe mari și drepte, iar produsele lichide sunt bune la forme complicate și la reparații. Alege împreună cu firma, pe baza fișei tehnice și a suportului, nu după preț.',
+    'Ce garanție ar trebui să primesc? | Cere garanția pentru manoperă în scris și produsele cu fișe tehnice. Hidroizolația nu se mai poate vedea după umplere, deci fotografiile din fiecare etapă sunt o dovadă utilă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Hidroizolația fundației, subsolului și beciului', subtitle: 'Exterior sau interior, ce materiale se folosesc, pașii lucrării și greșelile frecvente. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Soluția recomandată', value: 'Hidroizolație pe exterior' },
+      { label: 'Cel mai bun moment', value: 'La construcția casei' },
+      { label: 'Nu uita', value: 'Protecție și drenaj' },
+      { label: 'Garanție', value: 'Cere-o în scris' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Fundația și subsolul sunt în contact permanent cu pământul și cu apa din el: apă de ploaie care se infiltrează, umezeală din sol și, în unele zone, apă freatică. Fără hidroizolație, apa pătrunde în beton și în zidărie, apare igrasia, mucegaiul și, în timp, degradarea structurii.',
+      'Hidroizolația corectă se plănuiește împreună cu protecția și drenajul, nu ca un strat izolat. Un strat bun, lăsat fără protecție sau fără scurgerea apei din jurul casei, se strică în câțiva ani.',
+    ) }),
+    node('type-h', 'heading', { text: 'Pe exterior sau pe interior', level: 'h2' }),
+    node('type', 'cards', { columns: '2', items: [
+      { title: 'Pe exterior, recomandat', text: 'Se aplică pe partea de unde vine apa. Protejează structura și rezolvă cauza. Cere săpătură în jurul fundației.' },
+      { title: 'Pe interior, ca remediere', text: 'Se folosește când nu poți săpa, la beciuri existente. Oprește apa de la perete, dar presiunea apei rămâne în zid.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materialele folosite', level: 'h2' }),
+    node('mat', 'cards', { columns: '3', items: [
+      { title: 'Membrane bituminoase', text: 'Foi aplicate pe suport pregătit, potrivite pe suprafețe mari și drepte. Îmbinările și colțurile cer atenție.' },
+      { title: 'Hidroizolație lichidă', text: 'Produse cu bitum, cauciuc sau polimeri aplicate cu pensula, rola sau pulverizare, bune pe forme complicate.' },
+      { title: 'Mortare hidroizolante', text: 'Cimentoase, pentru interior, aplicate pe zidărie sau beton curat și umed conform fișei produsului.' },
+      { title: 'Protecție', text: 'Polistiren extrudat, geotextil sau folie cu crampoane peste hidroizolația de pe exterior, ca să nu se spargă la umplutură.' },
+      { title: 'Drenaj perimetral', text: 'Țeavă perforată în pietriș, învelită în geotextil, care duce apa departe de fundație.' },
+    ] }),
+    node('steps', 'steps', { title: 'Cum decurge lucrarea pe exterior', items: [
+      { title: 'Acces și curățare', text: 'Se sapă în jurul fundației până la talpă (la o casă veche) și se curăță suprafața de pământ, vopsele și părți desprinse.' },
+      { title: 'Reparații și racorduri', text: 'Se repară fisurile și golurile, se rotunjesc colțurile și se face racordul cu soclul și cu talpa fundației.' },
+      { title: 'Amorsă', text: 'Dacă o cere produsul, suprafața se amorsează pentru aderență, în condițiile din fișa tehnică.' },
+      { title: 'Hidroizolația', text: 'Se aplică membrana sau straturile lichide, în grosimea și numărul de straturi cerute de producător, fără goluri.' },
+      { title: 'Protecția și drenajul', text: 'Se fixează protecția peste hidroizolație și se montează drenajul perimetral cu pantă.' },
+      { title: 'Umplutura', text: 'Șanțul se umple în straturi compactate, cu material fără pietre ascuțite lângă protecție.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Suport murdar sau nepregătit', text: 'Hidroizolația nu aderă pe pământ, praf sau betoane desprinse.' },
+      { title: 'Strat prea subțire', text: 'Grosimea și numărul de straturi se respectă din fișa tehnică, nu după „cât se vede”.' },
+      { title: 'Fără protecție la umplutură', text: 'Pietrele din umplutură rup hidroizolația nepusă la adăpost.' },
+      { title: 'Fără drenaj și pantă', text: 'Apa rămasă lângă fundație pune presiune pe tot sistemul.' },
+      { title: 'Racord slab la soclu', text: 'Joncțiunea dintre fundație și perete este locul unde intră cel mai des apa.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de perimetrul și adâncimea fundației, de cât de ușor poți săpa și umple, de materialul ales, de dacă se adaugă protecție, termoizolație și drenaj, și de refacerea trotuarului sau a terasei din jur. La interior, costul depinde de suprafața tratată și de starea zidăriei.',
+      'Cere oferte cu același conținut: materialele, grosimile, drenajul și garanția. Compară ce este inclus înainte de a compara prețul.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre hidroizolația fundației' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru hidroizolații' }),
+    node('guides', 'guide_links', { title: 'Alte ghiduri despre hidroizolații' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o firmă pentru hidroizolație?', text: 'Descrie lucrarea și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

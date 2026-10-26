@@ -13,7 +13,7 @@ test('catalog: unique types, every select has options, containers have slots', (
   for (const b of CONTENT_CATALOG) for (const f of b.fields) if (f.kind === 'select') assert.ok(f.options?.length, `${b.type}.${f.key}`)
   for (const t of ['hero', 'image', 'gallery', 'faq_list', 'price_table', 'areas']) assert.ok(types.includes(t), t)
 })
-test('content collections', () => { assert.equal(isContentCollection('preturi'), true); assert.equal(isContentCollection('servicii'), true); assert.equal(isContentCollection('companii'), false); assert.equal(isContentCollection('pagini'), false) })
+test('content collections', () => { assert.equal(isContentCollection('preturi'), true); assert.equal(isContentCollection('servicii'), true); assert.equal(isContentCollection('ghiduri'), true); assert.equal(isContentCollection('companii'), false); assert.equal(isContentCollection('pagini'), false) })
 
 test('a valid page parses; empty values are dropped', () => {
   const r = parse([node('a1', 'hero', { title: 'Preț rigips', subtitle: '', bg: 'dark' }), node('a2', 'price_table', { title: 'Prețuri' }), node('a3', 'faq_list', {}), node('a4', 'areas', { areas: ['București', 'Cluj'] })])

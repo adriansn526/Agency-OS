@@ -17,7 +17,7 @@ async function ownedEntry(lineId: string, entryId: string) {
   await assertLine(lineId)
   const e = await db.websiteEntry.findFirst({ where: { id: entryId, businessLineId: lineId }, include: { collection: { select: { key: true, kind: true } } } })
   if (!e) throw new AdminError('Intrarea nu există', 404)
-  if (!isContentCollection(e.collection.key)) throw new AdminError('Aranjarea pe blocuri este disponibilă doar pentru serviciile și prețurile din glosar', 409)
+  if (!isContentCollection(e.collection.key)) throw new AdminError('Aranjarea pe blocuri este disponibilă doar pentru serviciile, prețurile și ghidurile din glosar', 409)
   return e
 }
 
@@ -71,7 +71,7 @@ export async function restoreContentVersion(lineId: string, entryId: string, ver
 }
 
 const siteOf = async (lineId: string) => ((await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { siteUrl: true } }))?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro').replace(/\/$/, '')
-const PUBLIC_PATH: Record<string, string> = { preturi: '/preturi', servicii: '/lucrari' }
+const PUBLIC_PATH: Record<string, string> = { preturi: '/preturi', servicii: '/lucrari', ghiduri: '/ghiduri' }
 
 /**
  * The link to check a page: the public address when it is published; otherwise a private link (a draft is moved to the private "preview" state,

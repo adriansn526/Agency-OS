@@ -57,7 +57,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
   const collection = collections.find((c) => c.id === draft?.collectionId)
   // articles (services, prices, guides) have no plan, no verification, no address and no contact: those belong to firms
   const article = collection?.kind === "article"
-  const hasBlocks = !!entryId && !!collection && ["preturi", "servicii"].includes(collection.key)
+  const hasBlocks = !!entryId && !!collection && ["preturi", "servicii", "ghiduri"].includes(collection.key)
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => d && { ...d, [k]: v })
 
   async function save() {

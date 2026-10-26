@@ -51,6 +51,13 @@ Intrările colecțiilor `preturi` și `servicii` se aranjează din **Intrări �
 
 `WebsiteRequest.sourcePage` păstrează pagina de pe care a plecat cererea, cu atribuirea vizitatorului adăugată ca parametri: `/preturi/zugravit?utm_source=hidropro&utm_medium=referral&utm_campaign=pas-urmator&ref=hidropro.ro` (max 300 de caractere; `ref` este doar domeniul site-ului de unde a venit, fără cale). Frontend-ul îi citește din adresa paginii și din `document.referrer` în momentul trimiterii, **fără cookie sau stocare** și fără legătură cu consimțământul pentru analitice. Fără coloane noi și fără DDL. Tab-ul **Cereri** din Website arată pe fiecare cerere „Sursă: …” (UTM source sau site-ul de proveniență, medium, campanie, pagină), cu textul brut în tooltip. Parsarea: `lib/website/requests/source.ts`.
 
+### Ghiduri (colecția `ghiduri`, `/ghiduri/<slug>`)
+
+Paginile unui hub de serviciu, câte una pe grup de termeni de căutare (vezi `docs/SEO/HUB_HIDROIZOLATII.md`). Sunt intrări de tip articol, cu același editor pe blocuri ca prețurile și serviciile; câmpurile sunt `serviciu` (categoria din glosar, legătura cu hub-ul), `cuvant_cheie`, `cuvinte_cheie` și `intrebari` (FAQ, intră în schema FAQPage).
+- Blocul **„Linkuri către ghiduri”** (`guide_links`) listează ghidurile publicate din aceeași categorie; se pune pe pagina categoriei (șablonul de categorie îl are, iar pagina `/lucrari/<categorie>` îl adaugă singură dacă există ghiduri) și la finalul fiecărui ghid.
+- Seed: `npx tsx --env-file=.env.local scripts/website/seed-guides.ts --line intraconstruct [--apply] [--force]`. Creează colecția și trei ghiduri **draft** pentru hub-ul hidroizolații (`igrasie`, `hidroizolatie-fundatie-subsol-beci`, `hidroizolatie-baie`). Cere categoria `hidroizolatii` din glosar (`seed-services`). Textele sunt informative, fără sume în lei, **și trebuie citite și confirmate de un specialist înainte de publicare**.
+- Frontend: `/ghiduri` (lista, pe categorii) și `/ghiduri/<slug>` (cu BreadcrumbList, Article și FAQPage); intră în sitemap când sunt publicate.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.
