@@ -1,0 +1,72 @@
+import { node, para, type GuideContent } from './types'
+
+export const hidroizolatieTerasa: GuideContent = {
+  slug: 'hidroizolatie-terasa-acoperis-plat',
+  serviciu: 'hidroizolatii',
+  title: 'Hidroizolația terasei și a acoperișului plat: cum alegi soluția',
+  seoTitle: 'Hidroizolație terasă și acoperiș plat: cum se face',
+  seoDescription: 'Terasă circulabilă sau necirculabilă, bloc sau casă: straturile unui acoperiș plat, materialele de hidroizolație, pașii lucrării și greșelile care dau infiltrații.',
+  summary: 'Cum se hidroizolează o terasă sau un acoperiș plat: straturile, soluțiile (membrane sau produse lichide), pașii lucrării și greșelile frecvente.',
+  keyword: 'hidroizolatie terasa',
+  keywords: ['hidroizolatie terasa', 'hidroizolare terasa', 'hidroizolatie terasa exterioara', 'hidroizolatie acoperis', 'hidroizolatie acoperis bloc', 'cea mai buna hidroizolatie acoperis bloc', 'hidroizolatie acoperis tabla'],
+  intrebari: [
+    'Care este diferența dintre o terasă circulabilă și una necirculabilă? | Terasa circulabilă este folosită: se calcă pe ea zilnic și are un strat de uzură deasupra hidroizolației, de exemplu dale sau gresie pentru exterior. Cea necirculabilă este accesată doar pentru întreținere și poate avea o protecție mai simplă. Alegerea schimbă materialul, straturile și costul.',
+    'Ce material este mai bun: membrană sau hidroizolație lichidă? | Depinde de forma terasei și de ce se pune deasupra. Membranele se potrivesc pe suprafețe mari și drepte; produsele lichide sunt bune pe forme complicate, la ieșiri de țevi și la reparații. Alege împreună cu firma, după suport, climă și finisaj, nu după preț.',
+    'Pot hidroizola peste hidroizolația veche? | Uneori, dacă stratul vechi este aderent, curat și fără zone umflate sau umede. Firma verifică întâi starea lui; dacă apa a intrat sub el, se demontează zonele afectate. Un strat nou peste un suport umed ține puțin.',
+    'Când este nevoie să refac hidroizolația? | Când apar pete de umezeală la tavan, bășici sau fisuri în strat, apă care stă pe terasă sau scurgeri înfundate. O inspecție după fiecare iarnă și curățarea gurilor de scurgere prelungesc durata de viață a lucrării.',
+    'Pot face lucrarea iarna? | De regulă nu: majoritatea produselor cer suport uscat și temperaturi în limitele din fișa tehnică, fără ploaie sau îngheț. Reparațiile de urgență se pot face, dar lucrarea completă se programează în sezonul cald.',
+    'Cine decide la o terasă de bloc? | Acoperișul și terasa comună sunt proprietate comună: lucrarea se decide și se contractează de asociația de proprietari, nu de un apartament. Pentru terase private, de exemplu la ultimul etaj, verifică ce spune regulamentul asociației.',
+    'Ce garanție este normal să primesc? | Cere garanția pentru manoperă în scris și fișele tehnice ale produselor. Garanția producătorului pentru materiale este condiționată de un montaj corect, deci păstrează devizul și fotografiile din fiecare etapă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Hidroizolația terasei și a acoperișului plat', subtitle: 'Straturile unei terase, soluțiile de hidroizolație, pașii lucrării și greșelile frecvente. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cea mai frecventă cauză', value: 'Pante și racorduri greșite' },
+      { label: 'Suport', value: 'Curat și uscat' },
+      { label: 'Zone critice', value: 'Parapete și scurgeri' },
+      { label: 'Garanție', value: 'Cere-o în scris' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Terasa și acoperișul plat sunt expuse direct la ploaie, soare, îngheț și dezgheț. Dacă hidroizolația cedează, apa intră în planșeu și apare la tavan, adesea departe de locul unde s-a infiltrat. De aceea o lucrare bună nu înseamnă doar un strat de produs: contează panta, racordurile, scurgerile și protecția stratului.',
+      'Soluția potrivită depinde de ce este terasa: pe o terasă circulabilă, hidroizolația se acoperă cu un strat de uzură și trebuie să reziste mișcării; pe una necirculabilă, protecția poate fi mai simplă. Mai jos găsești straturile, soluțiile și ordinea lucrărilor.',
+    ) }),
+    node('layers-h', 'heading', { text: 'Din ce straturi este făcută o terasă', level: 'h2' }),
+    node('layers', 'cards', { columns: '2', items: [
+      { title: 'Șapa de pantă', text: 'Dă înclinația spre gurile de scurgere. Fără pantă, apa stă pe terasă și solicită hidroizolația.' },
+      { title: 'Bariera de vapori și termoizolația', text: 'Prezente când terasa acoperă un spațiu încălzit. Poziția lor față de hidroizolație schimbă tipul terasei.' },
+      { title: 'Hidroizolația', text: 'Stratul care oprește apa: membrană sau produs lichid, cu racorduri etanșe la parapete, scurgeri și ieșiri de țevi.' },
+      { title: 'Protecția sau stratul de uzură', text: 'Pietriș, dale, gresie pentru exterior sau pardoseală tehnică; ține loc de scut pentru hidroizolație și pentru circulație.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții de hidroizolație', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Membranele bituminoase sunt cele mai răspândite: se montează în unul sau două straturi, termosudate sau autoadezive, și se pot repara punctual. Membranele sintetice (PVC, TPO sau EPDM) vin în foi mari, cu mai puține îmbinări, și se montează adeziv, fixate mecanic sau cu balast.',
+      'Produsele lichide, pe bază de poliuretan, poliuree sau alte rășini, se aplică pe suprafață și formează un strat continuu fără îmbinări, util pe terase cu multe ieșiri, colțuri sau forme neregulate. Unele au nevoie de armare cu țesătură la îmbinări. Pentru comparația dintre membrane vezi ghidul EPDM sau bituminoasă, iar pentru produsele lichide ghidul despre hidroizolația lichidă.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea și pregătirea suportului', text: 'Se demontează ce este desprins sau umed, se repară fisurile și se curăță. Suportul trebuie să fie solid și uscat, conform produsului.' },
+      { title: 'Pantele și scurgerile', text: 'Se verifică și, la nevoie, se refac pantele spre gurile de scurgere; scurgerile se curăță sau se înlocuiesc înainte de hidroizolație.' },
+      { title: 'Amorsa', text: 'Dacă o cere produsul, suprafața se amorsează pentru aderență.' },
+      { title: 'Hidroizolația', text: 'Se aplică membrana sau produsul lichid, în grosimea și numărul de straturi cerute de producător, fără goluri.' },
+      { title: 'Racordurile', text: 'Hidroizolația se ridică pe parapete și pereți, de regulă la înălțimea cerută de producător, și se etanșează la scurgeri și ieșiri de țevi.' },
+      { title: 'Protecția și testul', text: 'Se pune protecția sau stratul de uzură; la terasele mari se poate face o probă cu apă înainte de acoperire.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Pante greșite', text: 'Apa rămasă în bălți îmbătrânește repede hidroizolația și caută orice punct slab.' },
+      { title: 'Racorduri slabe la parapet', text: 'Locul în care hidroizolația se întâlnește cu zidul este cea mai frecventă sursă de infiltrații.' },
+      { title: 'Aplicare pe suport umed sau murdar', text: 'Aderența scade, iar bășicile apar după primele luni.' },
+      { title: 'Scurgeri blocate sau prea puține', text: 'Fără gura de preaplin sau cu scurgerea înfundată, apa urcă deasupra stratului hidroizolant.' },
+      { title: 'Fără protecție deasupra', text: 'Trafic, pietriș sau unelte pot străpunge stratul dacă nu există protecție.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de starea suportului (șapă de refăcut, hidroizolație veche de îndepărtat), de numărul de racorduri și scurgeri, de materialul ales și de ce se pune deasupra. Accesul pentru materiale și înălțimea clădirii contează, mai ales la blocuri.',
+      'Compară ofertele pe conținut: ce produs, în câte straturi, ce racorduri sunt incluse, dacă se refac pantele și ce garanție se oferă. Vezi și pagina de prețuri pentru terase.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre hidroizolația terasei' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru hidroizolații' }),
+    node('guides', 'guide_links', { title: 'Alte ghiduri despre hidroizolații' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o firmă pentru terasă?', text: 'Descrie terasa și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
