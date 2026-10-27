@@ -68,6 +68,13 @@ O pagină publicată al cărei conținut nu e terminat (`ready: false`, adică �
 - `publish-content.ts` bifează automat „În construcție” pe toate intrările pe care le publică și care n-au încă o decizie (`--no-wip` dezactivează); o bifă deja pusă sau scoasă de echipă se păstrează. Astfel nimic nu se indexează înainte să fie verificat; echipa debifează pagină cu pagină.
 - Ghidurile noi create de `seed-guides.ts` pornesc bifate; un `--force` păstrează decizia echipei.
 
+### Hub „hidroizolații”: pilon + ghiduri pe situații
+
+Structura recomandată pentru un serviciu cu mai multe situații (vezi `docs/SEO/HUB_HIDROIZOLATII.md`): **o pagină-pilon** în `/lucrari/<categorie>` care prezintă situațiile și trimite la restul, plus **câte un ghid pentru fiecare situație cu intenție de căutare proprie**, în `/ghiduri` (ca să nu intre în conflict cu paginile pe județ `/lucrari/<categorie>/<județ>`), și paginile de preț în `/preturi`. Pentru hidroizolații: pilonul `hidroizolatii` (`services/hidroizolatii.ts`, fără tabel de prețuri propriu: marcat `hub: true`) și 6 ghiduri (igrasie, fundație/subsol/beci, baie, terasă/acoperiș plat, EPDM sau bituminoasă, hidroizolație lichidă).
+- Ghidurile: `seed-guides.ts` (creează doar ce lipsește; cele existente rămân neatinse).
+- Pilonul: `npx tsx --env-file=.env.local scripts/website/seed-services.ts --line intraconstruct --only hidroizolatii --force [--apply]`. `--only slug,slug` scrie doar paginile numite (fără categorii noi și fără mutări de pagini de preț); o pagină care are deja blocuri cere și `--force` (layout-ul anterior rămâne în istoric).
+- Toate rămân cu bifa „În construcție” până le verifică un specialist.
+
 ## Date care nu ies niciodată prin API
 Emailul de contact, `leadId`, `clientId`, `tenantId`, id-urile de import, recenziile neaprobate și emailul autorilor.
 Coloanele noi rămân private până sunt adăugate explicit în `lib/website/storefront/serialize.ts`.

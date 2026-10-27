@@ -33,7 +33,8 @@ export const validateContent = (c: ServiceContent): string[] => {
   return p
 }
 
-export async function planServices(lineSlug: string, force = false): Promise<ServicePlan> {
+/** `only`: write just these pages (and nothing else: no new categories, no price page re-routing). A page that already has blocks still needs `force`. */
+export async function planServices(lineSlug: string, force = false, only?: string[]): Promise<ServicePlan> {
   const line = await db.businessLine.findUnique({ where: { slug: lineSlug }, select: { id: true, slug: true } })
   if (!line) throw new Error(`Linia „${lineSlug}” nu există`)
   const col = await db.websiteCollection.findUnique({ where: { businessLineId_key: { businessLineId: line.id, key: GLOSSARY_KEY } }, select: { id: true, fields: true } })
@@ -51,16 +52,18 @@ export async function planServices(lineSlug: string, force = false): Promise<Ser
     const to = target.get(r.slug), from = String((r.data as { serviciu?: unknown } | null)?.serviciu ?? '')
     return to && to !== from && (known.has(to) || NEW_CATEGORIES.some((c) => c.slug === to)) ? [{ id: r.id, slug: r.slug, from, to }] : []
   })
-  const pagesToWrite = SERVICE_CONTENT.filter((c) => force || !hasBlocks(c.slug))
-  const newCats = NEW_CATEGORIES.filter((c) => !bySlug.has(c.slug))
+  const inScope = (c: ServiceContent) => !only || only.includes(c.slug)
+  const pagesToWrite = SERVICE_CONTENT.filter((c) => inScope(c) && (force || !hasBlocks(c.slug)))
+  const newCats = only ? [] : NEW_CATEGORIES.filter((c) => !bySlug.has(c.slug))
+  const unknownOnly = (only ?? []).filter((s) => !SERVICE_CONTENT.some((c) => c.slug === s))
   return {
     line, collectionId: col.id,
     fieldsToAdd: GLOSSARY_FIELDS.map((f) => f.key).filter((k) => !have.has(k)),
     categoriesToCreate: newCats,
-    reroutes,
-    pagesToWrite, pagesSkipped: SERVICE_CONTENT.filter((c) => !pagesToWrite.includes(c)).map((c) => c.slug),
-    missingGroups: NEW_CATEGORIES.map((c) => c.group).filter((g) => !groups.has(g)),
-    problems: [...SERVICE_CONTENT.flatMap(validateContent), ...SERVICE_CONTENT.filter((c) => !bySlug.has(c.slug)).map((c) => `${c.slug}: categoria nu există în glosar`)],
+    reroutes: only ? [] : reroutes,
+    pagesToWrite, pagesSkipped: SERVICE_CONTENT.filter((c) => inScope(c) && !pagesToWrite.includes(c)).map((c) => c.slug),
+    missingGroups: only ? [] : NEW_CATEGORIES.map((c) => c.group).filter((g) => !groups.has(g)),
+    problems: [...unknownOnly.map((s) => `--only: „${s}” nu este o pagină scrisă`), ...SERVICE_CONTENT.filter(inScope).flatMap(validateContent), ...SERVICE_CONTENT.filter((c) => inScope(c) && !bySlug.has(c.slug)).map((c) => `${c.slug}: categoria nu există în glosar`)],
   }
 }
 

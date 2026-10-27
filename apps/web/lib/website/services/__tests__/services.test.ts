@@ -9,9 +9,12 @@ test('pilot pages are valid blocks, have no unfinished marker and keep SEO field
 })
 test('pilot pages have prices, FAQ and the full section order', () => {
   for (const c of SERVICE_CONTENT) {
-    assert.ok(c.preturi.length >= 8, c.slug); assert.ok(c.intrebari.length >= 6, c.slug)
+    if (!c.hub) assert.ok(c.preturi.length >= 8, c.slug)
+    assert.ok(c.intrebari.length >= 6, c.slug)
     const types = c.blocks.map((b) => b.type)
-    for (const t of ['hero', 'facts', 'steps', 'price_table', 'faq_list', 'firms_list', 'request_form']) assert.ok(types.includes(t), `${c.slug}: ${t}`)
+    // a hub pillar has no price table of its own: it leads to the guides and to the dedicated price pages
+    for (const t of c.hub ? ['hero', 'facts', 'steps', 'faq_list', 'firms_list', 'request_form', 'guide_links', 'price_links'] : ['hero', 'facts', 'steps', 'price_table', 'faq_list', 'firms_list', 'request_form']) assert.ok(types.includes(t), `${c.slug}: ${t}`)
+    if (c.hub) assert.ok(!types.includes('price_table'), `${c.slug}: a hub pillar does not repeat the prices`)
     assert.equal(types[0], 'hero')
     assert.equal(new Set(c.blocks.map((b) => b.id)).size, c.blocks.length)
   }

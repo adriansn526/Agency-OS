@@ -1,0 +1,71 @@
+import { node, para, type GuideContent } from './types'
+
+export const hidroizolatieLichida: GuideContent = {
+  slug: 'hidroizolatie-lichida',
+  serviciu: 'hidroizolatii',
+  title: 'Hidroizolația lichidă: tipuri, unde se folosește și cum se aplică',
+  seoTitle: 'Hidroizolație lichidă: tipuri, utilizare, aplicare',
+  seoDescription: 'Smoală lichidă, poliuretan, poliuree sau cimentoase: ce fel de hidroizolație lichidă alegi, unde se potrivește, cum se aplică și greșelile care duc la infiltrații.',
+  summary: 'Tipurile de hidroizolație lichidă (bituminoasă, poliuretanică, cimentoasă), unde se potrivește fiecare, cum se aplică și ce greșeli trebuie evitate.',
+  keyword: 'hidroizolatie lichida',
+  keywords: ['hidroizolatie lichida', 'smoala lichida', 'hidroizolatie pensulabila', 'poliuretan lichid', 'hidroizolatie poliuretanica', 'cauciuc lichid hidroizolatie', 'bitum lichid', 'solutie hidroizolatie'],
+  intrebari: [
+    'Ce înseamnă hidroizolație lichidă? | Un produs care se aplică lichid sau pastos, cu pensula, rola, șpaclul sau prin pulverizare, și formează după uscare un strat continuu, fără îmbinări. Poate fi pe bază de bitum, poliuretan, poliuree, ciment polimeric sau alte rășini.',
+    'Smoala lichidă este același lucru cu hidroizolația lichidă? | Smoala lichidă (bitum lichid sau emulsii bituminoase) este un tip de hidroizolație lichidă, folosit adesea pe fundații și pe suprafețe nevăzute. Hidroizolațiile moderne de tip poliuretan sau cimentoase flexibile se folosesc și acolo unde stratul trebuie să reziste la mișcări sau la circulație.',
+    'Care tip se folosește la baie? | De regulă un produs cimentos flexibil sau pe bază de rășini, pensulabil, aplicat în două straturi, cu bandă de etanșare la colțuri. Urmează fișa tehnică a produsului și compatibilitatea cu adezivul gresiei. Vezi ghidul despre hidroizolația băii.',
+    'Care tip se potrivește pe o terasă? | Pe terasă se folosesc de obicei produse poliuretanice sau alte sisteme flexibile, care rezistă la mișcări și la variații de temperatură. Alegerea se face după suport, după finisajul de deasupra și după garanția oferită.',
+    'Se poate aplica produsul lichid peste polistiren? | Nu orice produs. Unele produse bituminoase conțin solvenți care atacă polistirenul. Verifică în fișa tehnică dacă produsul este compatibil cu polistirenul sau cere recomandarea firmei înainte să îl aplici lângă izolație.',
+    'Câte straturi trebuie date? | De obicei două sau mai multe, în grosimea cerută de producător, cu uscare între ele. Un strat prea subțire este cea mai frecventă greșeală; grosimea se verifică, nu se apreciază din ochi.',
+    'Pot aplica singur hidroizolația lichidă? | Pe suprafețe mici și accesibile, urmând fișa tehnică, da. Pe fundații, terase mari sau spații unde apa este sub presiune, lucrarea cere firmă, pentru că o greșeală se vede abia când apa pătrunde.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Hidroizolația lichidă: tipuri și aplicare', subtitle: 'Ce fel de produs lichid alegi, unde se potrivește, cum se aplică și ce greșeli se evită. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Avantaj', value: 'Strat continuu, fără îmbinări' },
+      { label: 'Straturi', value: 'Conform fișei tehnice' },
+      { label: 'Atenție', value: 'Compatibilitate cu polistirenul' },
+      { label: 'Suport', value: 'Curat și pregătit' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Hidroizolația lichidă se aplică direct pe suprafață și, după uscare, formează un strat continuu. Avantajul major este că nu are îmbinări ca membranele: se potrivește forme complicate, colțuri, ieșiri de țevi și reparații punctuale.',
+      'Nu există un singur tip. Produsele diferă prin compoziție, flexibilitate, rezistența la apă sub presiune, la soare și la circulație. Alegerea corectă ține de loc (baie, terasă, fundație, piscină) și de ce se pune deasupra.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de hidroizolație lichidă', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Bituminoase (smoală, emulsii)', text: 'Frecvente la fundații și suprafețe îngropate. Verifică compatibilitatea cu polistirenul și timpul de uscare înainte de umplutură.' },
+      { title: 'Poliuretanice și poliuree', text: 'Flexibile, folosite pe terase și balcoane, unde stratul trebuie să reziste la mișcări și la variații de temperatură.' },
+      { title: 'Cimentoase flexibile', text: 'Bicomponente pe bază de ciment și polimeri, des folosite în băi, bucătării, subsoluri și piscine, sub gresie.' },
+      { title: 'Alte sisteme cu rășini', text: 'Produse speciale pentru suprafețe cu cerințe aparte; se aleg după fișa tehnică și recomandarea firmei.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se folosește', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'La băi și spații umede, produsele lichide se aplică în straturi sub gresie, împreună cu bandă de etanșare în colțuri. La terase și balcoane, sistemele flexibile acoperă suprafața și se ridică pe parapete. La fundații și subsoluri, produsele bituminoase sau cimentoase se aplică pe suprafața curățată, apoi se protejează.',
+      'Pentru fiecare situație, ghidurile din hub explică detaliile: baie, fundație, subsol și beci, terasă. Aici contează principiul: produsul se alege pentru loc, nu invers.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum se aplică', items: [
+      { title: 'Pregătirea suportului', text: 'Suprafața trebuie să fie solidă, curată, fără praf, grăsimi sau părți desprinse; fisurile se repară înainte.' },
+      { title: 'Amorsa', text: 'Dacă o cere produsul, se aplică amorsa pentru aderență, apoi se așteaptă uscarea.' },
+      { title: 'Armarea îmbinărilor', text: 'La colțuri, îmbinări și treceri de țevi se folosește bandă sau țesătură de armare, înglobată în produs.' },
+      { title: 'Straturile', text: 'Se aplică în grosimea cerută, cu uscare între straturi, de preferat în direcții încrucișate.' },
+      { title: 'Uscarea și verificarea', text: 'Se respectă timpul de uscare; la băi și terase se poate face o probă cu apă înainte de finisaj.' },
+      { title: 'Protecția', text: 'Stratul se acoperă cu gresie, protecție sau umplutură, conform sistemului ales.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Strat prea subțire', text: 'Grosimea și numărul de straturi vin din fișa tehnică, nu din aspectul suprafeței.' },
+      { title: 'Suport nepregătit', text: 'Praful, umezeala și părțile desprinse reduc aderența, iar stratul se desprinde.' },
+      { title: 'Produs nepotrivit locului', text: 'Un produs pentru suprafețe îngropate nu ține pe o terasă expusă la soare și circulație.' },
+      { title: 'Fără armare la îmbinări', text: 'Colțurile și îmbinările se mișcă; fără armare, apar fisuri exact acolo.' },
+      { title: 'Incompatibilitate cu alte materiale', text: 'Solvenții din unele produse atacă polistirenul; verifică înainte de aplicare.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul depinde de tipul de produs, de suprafață, de pregătirea suportului, de numărul de straturi și de armare, precum și de protecția de deasupra. Compară ofertele pe conținut: produsul exact, grosimea, straturile și garanția.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre hidroizolația lichidă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru hidroizolații' }),
+    node('guides', 'guide_links', { title: 'Alte ghiduri despre hidroizolații' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o firmă pentru hidroizolație?', text: 'Descrie lucrarea și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

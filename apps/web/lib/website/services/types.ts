@@ -3,6 +3,8 @@ import type { PageNode } from '../pages/blocks'
 
 export interface ServiceContent {
   slug: string
+  /** hub pillar: it has no price table of its own (prices live in dedicated price pages) */
+  hub?: boolean
   /** search title (≤60 chars) and meta description (≤160) */
   seoTitle: string
   seoDescription: string
