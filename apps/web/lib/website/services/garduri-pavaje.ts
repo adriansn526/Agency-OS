@@ -10,7 +10,7 @@ export const gardurPavaje: ServiceContent = {
   seoTitle: 'Garduri și pavaje: situații, soluții și firme verificate',
   seoDescription: 'Garduri, porți, pavaj de curte și beton amprentat: ce soluții există, cum alegi și cum compari ofertele. Ghiduri, prețuri și firme verificate.',
   summary: 'Garduri, porți, pavaj de curte și beton amprentat: ce soluții există, cum le alegi și cum compari ofertele firmelor.',
-  sinonime: ['gard', 'garduri', 'amenajare curte', 'amenajări exterioare', 'împrejmuire', 'borduri'],
+  sinonime: ['gard', 'garduri', 'amenajări exterioare', 'împrejmuire', 'borduri'],
   preturi: [],
   intrebari: [
     'De ce depinde prețul unui gard? | De material, înălțime, lungime, tipul fundației, solul, accesul pentru utilaje și de poartă. Cere oferta cu materialul, fundația și poarta separate, ca să vezi unde diferă ofertele. Paginile de prețuri de mai jos explică factorii.',
