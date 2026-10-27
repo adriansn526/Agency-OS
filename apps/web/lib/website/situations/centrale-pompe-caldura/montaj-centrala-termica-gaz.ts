@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const montajCentralaTermicaGaz: SituationContent = {
+  slug: 'centrale-pompe-caldura--montaj-centrala-termica-gaz',
+  categorie: 'centrale-pompe-caldura',
+  title: 'Montaj centrală termică pe gaz: cine o montează și de ce depinde costul',
+  seoTitle: 'Montaj centrală termică pe gaz: cine o face, cost',
+  seoDescription: 'Cine montează o centrală termică pe gaz, ce înseamnă montaj și schimbare, ce rol are condensația, ce se verifică la distribuitor și de ce depinde costul.',
+  summary: 'Cine montează sau schimbă o centrală termică pe gaz, ce întrebi înainte, rolul personalului autorizat și al distribuitorului și ce să compari în oferte.',
+  sinonime: ['centrala termica pe gaz', 'centrala pe gaz', 'centrale termice pe gaz', 'centrala gaz', 'centrale gaz', 'montaj centrala termica', 'montat centrala termica', 'pret montaj centrala termica pe gaz', 'schimbare centrala termica', 'centrala termica condensatie', 'centrală termică pe gaz', 'centrală pe gaz', 'centrale termice pe gaz', 'centrală gaz', 'centrale gaz', 'montaj centrală termică', 'montat centrală termică', 'preț montaj centrală termică pe gaz', 'schimbare centrală termică', 'centrală termică condensație'],
+  intrebari: [
+    'Cine are voie să monteze o centrală termică pe gaz? | Montajul și racordarea la gaz le face personal autorizat, iar condițiile concrete (autorizări, verificări, avize) se confirmă la distribuitorul de gaze și la firma care execută. Nu se montează „din proprie inițiativă”, nici de către cineva fără autorizare.',
+    'Ce diferență este între montaj și schimbarea unei centrale? | La montaj prima oară se pregătesc și instalația, și locul aparatului. La schimbare, centrala nouă înlocuiește una existentă și se folosesc, în măsura în care sunt potrivite, conductele, coșul și racordurile deja făcute. Instalatorul verifică ce se poate refolosi.',
+    'Ce este o centrală în condensație? | Un tip de centrală care recuperează o parte din căldura gazelor arse. Funcționează în condiții bune cu o instalație dimensionată pentru ea și cere evacuarea condensului și un sistem de evacuare potrivit. Randamentele și condițiile se citesc în fișa tehnică, nu din promisiuni.',
+    'Pot monta singur centrala pentru a economisi? | Nu. Gazul este o instalație de risc, iar montajul, racordarea și punerea în funcțiune se fac de personal autorizat. O instalare greșită poate pune în pericol viața, iar garanția aparatului poate fi pierdută.',
+    'Ce verifică instalatorul înainte de ofertă? | Locul aparatului, coșul sau evacuarea gazelor, ventilarea încăperii, instalația de încălzire existentă (radiatoare, pardoseală, boiler) și cerințele distribuitorului. Oferta corectă pornește de la o vizită, nu de la telefon.',
+    'Ce documente primesc la final? | Documentele aparatului, garanția scrisă, procesul-verbal de punere în funcțiune și, după caz, actele cerute de distribuitor. Întreabă din ofertă ce primești și cine se ocupă de formalități.',
+    'De ce depinde costul? | De tipul de centrală, de dacă este montaj nou sau schimbare, de starea coșului și a conductelor, de lucrările la instalația de încălzire și la gaz, de accesorii (termostat, filtre) și de acces. Compară ofertele pe conținut și vezi pagina de prețuri pentru factori.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Montaj centrală termică pe gaz: cine o montează și ce întrebi', subtitle: 'Rolul personalului autorizat, diferența dintre montaj și schimbare și de ce depinde costul. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine montează', value: 'Personal autorizat' },
+      { label: 'Gazul', value: 'Se verifică la distribuitor' },
+      { label: 'Primești', value: 'Documente și garanție scrisă' },
+      { label: 'Oferta', value: 'Aparat și manoperă separat' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Centrala termică pe gaz este un aparat care se montează și se racordează numai de personal autorizat. De aceea pagina nu explică cum se face montajul, ci cine îl face, ce întrebi înainte de ofertă, ce verifică un instalator serios și de ce depinde costul.',
+      'Revizia, verificarea și reparațiile au pagina lor, iar pompa de căldură aer-apă la fel. Pentru centralele pe lemne și peleți vezi pagina din instalații termice.',
+    ) }),
+    node('what-h', 'heading', { text: 'Montaj nou sau schimbare', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Montaj nou', text: 'Casă sau apartament unde centrala se montează prima oară. Se pregătesc locul, evacuarea gazelor, instalația de încălzire și racordurile.' },
+      { title: 'Schimbarea unei centrale', text: 'Aparatul nou înlocuiește unul vechi. Instalatorul verifică ce se poate refolosi: conducte, coș, robinete.' },
+      { title: 'Centrală în condensație', text: 'Variantă care recuperează o parte din căldura gazelor arse. Cere evacuarea condensului și o instalație potrivită, conform fișei tehnice.' },
+      { title: 'Cu sau fără boiler', text: 'Apa caldă menajeră poate fi produsă direct de centrală sau printr-un boiler. Se alege după consum și locul disponibil.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Ce se pregătește și cine răspunde', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Pentru centrala pe gaz, partea de gaz, evacuarea gazelor arse și ventilarea încăperii sunt probleme de siguranță, inclusiv riscul de monoxid de carbon. Le execută și le verifică personal autorizat; noi nu dăm aici instrucțiuni pentru ele. Cerințele concrete și actele necesare se verifică la distribuitorul de gaze și la firma de instalații.',
+      'Alegerea aparatului ține de locuință: spațiul disponibil, instalația de încălzire existentă, nevoia de apă caldă și locul de evacuare. Un instalator bun îți explică de ce recomandă un anumit tip, nu doar îți dă un nume de aparat.',
+      'Dacă alegi radiatoare noi sau încălzire în pardoseală, pregătește-le odată cu centrala, ca instalația să fie potrivită. Boilerul și instalațiile de apă au pagina de instalații sanitare.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge lucrarea cu o firmă', items: [
+      { title: 'Vizită și verificare', text: 'Firma vede locul, evacuarea, instalația și cerințele distribuitorului și propune soluția.' },
+      { title: 'Ofertă scrisă', text: 'Cere aparatul exact, accesoriile, lucrările incluse și formalitățile pe care le face firma.' },
+      { title: 'Pregătirea instalației', text: 'Se fac eventualele modificări la conducte, evacuare și racorduri, de personal autorizat.' },
+      { title: 'Montaj și racordare', text: 'Aparatul este montat și racordat de personal autorizat, la gaz și la instalația de încălzire.' },
+      { title: 'Punere în funcțiune', text: 'Se verifică funcționarea, se reglează aparatul și ți se explică folosirea.' },
+      { title: 'Documente și garanție', text: 'Primești documentele aparatului, garanția scrisă și cele cerute de distribuitor.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Montaj de către neautorizați', text: 'Pune în pericol siguranța și poate duce la pierderea garanției.' },
+      { title: 'Cumpărarea înainte de vizită', text: 'Aparatul se alege după locuință și instalație, nu invers.' },
+      { title: 'Ignorarea evacuării și ventilării', text: 'Sunt probleme de siguranță; le tratează doar personal autorizat.' },
+      { title: 'Lipsa documentelor', text: 'Fără acte și garanție scrisă, o problemă ulterioară devine greu de rezolvat.' },
+      { title: 'Ignorarea distribuitorului', text: 'Condițiile de racordare și de punere în funcțiune se confirmă acolo.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț fără aparat exact, accesorii și lucrări incluse nu se poate compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul de centrală, de dacă este montaj nou sau schimbare, de starea coșului, a conductelor și a instalației de încălzire, de lucrările la partea de gaz și la evacuare, de accesorii (termostat, filtre) și de acces. Aparatul și manopera variază separat.',
+      'Cere oferte care despart aparatul de manoperă și care spun ce formalități preia firma. Pentru ordin de mărime, vezi pagina de preț a montajului de centrală termică.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă dacă firma are personal autorizat pentru gaz, cere lucrări similare și referințe și cere oferta și garanția în scris. Întreabă cine se ocupă de formalitățile cu distribuitorul și cine face punerea în funcțiune.',
+      'Compară cel puțin două sau trei oferte pe aceleași criterii: aparat, accesorii, lucrări incluse, documente și garanție. O ofertă mult mai mică omite de regulă ceva important.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre montajul centralei pe gaz' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru centrale termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la centrale și pompe de căldură' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie locuința și instalația și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

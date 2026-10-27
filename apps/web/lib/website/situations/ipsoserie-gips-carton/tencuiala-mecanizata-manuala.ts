@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const tencuialaMecanizataManuala: SituationContent = {
+  slug: 'ipsoserie-gips-carton--tencuiala-mecanizata-manuala',
+  categorie: 'ipsoserie-gips-carton',
+  title: 'Tencuială interioară și exterioară (mecanizată sau manuală)',
+  seoTitle: 'Tencuială mecanizată sau manuală: cum alegi',
+  seoDescription: 'Tencuială interioară și exterioară: aplicare mecanizată sau manuală, tipuri de mortar, ordinea lucrării, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce este tencuiala, când alegi aplicarea mecanizată și când pe cea manuală, ce mortar se folosește și ce să compari în ofertele firmelor.',
+  sinonime: ['tencuiala', 'tencuială', 'tencuiala mecanizata', 'tencuială mecanizată', 'tencuiala mecanizata pret', 'tencuială mecanizată preț', 'pret tencuiala manuala', 'preț tencuială manuală', 'tencuiala interioara', 'tencuială interioară', 'tencuiala exterioara', 'tencuială exterioară', 'mortar tencuiala', 'mortar tencuială'],
+  intrebari: [
+    'Ce este tencuiala? | Stratul aplicat peste zidărie, pe interior sau exterior, care îndreaptă suprafața, o protejează și o pregătește pentru finisaj. Poate fi pe bază de ciment, var, ghips sau amestecuri; alegerea depinde de zidărie și de locul de aplicare.',
+    'Care este diferența dintre tencuiala mecanizată și cea manuală? | La tencuiala mecanizată, mortarul este amestecat și proiectat cu o mașină, apoi nivelat manual. La cea manuală, mortarul se prepară și se aplică cu mistria. Mecanizarea ajută pe suprafețe mari, dar cere acces pentru utilaj și pregătire.',
+    'Când merită mecanizată? | De obicei pe suprafețe mari și relativ ușor de acoperit cu utilajul, unde rapiditatea contează. Pe suprafețe mici, cu multe goluri sau cu acces dificil, aplicarea manuală poate fi mai potrivită. Cere recomandarea firmei pentru cazul tău.',
+    'Ce mortar se folosește? | Pentru interior, de multe ori mortare pe bază de ghips sau de ciment, în funcție de spațiu. Pentru exterior și zone umede, mortare pe bază de ciment sau var-ciment, rezistente la intemperii. Produsul exact se alege după fișa tehnică.',
+    'Se poate tencui direct pe orice zidărie? | Zidăria trebuie să fie curată, stabilă și compatibilă cu mortarul ales; unele suporturi cer grund sau strat de aderență. Zidăria proaspătă sau umedă se verifică înainte.',
+    'Ce se întâmplă după tencuială? | Tencuiala se lasă să se usuce conform produsului, apoi urmează, la nevoie, glet, grund și vopsit, sau un finisaj decorativ. Ordinea și timpii îi indică producătorul mortarului.',
+    'Ce autorizații sau verificări contează? | Tencuiala în sine nu cere autorizație separată, dar la exterior face parte din fațada clădirii. Dacă lucrezi pe o fațadă izolată, finisajul se alege odată cu sistemul de izolare.',
+    'De ce depinde costul? | De suprafață, de metoda aplicării, de tipul de mortar, de grosimea necesară, de starea zidăriei și de accesul pentru utilaje sau schele. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Tencuială mecanizată sau manuală: cum alegi', subtitle: 'Interior și exterior, tipuri de mortar, ordinea lucrării și de ce depinde costul. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Metode', value: 'Mecanizată sau manuală' },
+      { label: 'Loc', value: 'Interior sau exterior' },
+      { label: 'Depinde de', value: 'Suprafață, acces, zidărie' },
+      { label: 'Oferta', value: 'Manoperă separată de materiale' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Tencuiala este primul strat de finisaj peste zidărie. Ea îndreaptă pereții, îi protejează și îi pregătește pentru glet, vopsea sau un finisaj decorativ. Calitatea ei decide cât de drepți sunt pereții și cât de mult glet este nevoie după.',
+      'Pagina te ajută să alegi între aplicarea mecanizată și cea manuală, să înțelegi ce mortar se potrivește și să compari ofertele. Gletul și finisajele decorative au pagini separate în categoria de zugrăveli.',
+    ) }),
+    node('methods-h', 'heading', { text: 'Mecanizată sau manuală', level: 'h2' }),
+    node('methods', 'cards', { columns: '2', items: [
+      { title: 'Tencuială mecanizată', text: 'Mortarul este proiectat cu o mașină și nivelat manual. Potrivită pe suprafețe mari, cu acces pentru utilaj, apă și curent.' },
+      { title: 'Tencuială manuală', text: 'Mortarul se prepară și se aplică cu mistria. Potrivită pe suprafețe mici, spații înguste sau acces dificil.' },
+      { title: 'Interior', text: 'Se folosesc mortare potrivite zidăriei și spațiului; la zone umede se aleg produse corespunzătoare.' },
+      { title: 'Exterior', text: 'Mortar rezistent la intemperii, ca parte din fațadă; dacă fațada se izolează, finisajul face parte din sistem.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Mortarele de tencuială se găsesc pe bază de ciment, var, ghips sau amestecuri, în variante gata preparate sau care se amestecă pe șantier. Alegerea depinde de zidărie (cărămidă, BCA, beton), de locul aplicării și de finisajul de după. Fișa tehnică arată domeniul de utilizare și condițiile de aplicare.',
+      'Pentru zidării diferite sau zone cu risc de crăpare (colțuri, treceri între materiale) se folosesc, uneori, plase de armare sau profile de colț. Întreabă firma ce prevede pentru lucrarea ta.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea zidăriei', text: 'Peretele trebuie să fie curat, stabil și fără zone friabile sau pătate de umezeală.' },
+      { title: 'Protejarea și trasarea', text: 'Se protejează tâmplăria și pardoseala și se stabilesc nivelele și reperele de planeitate.' },
+      { title: 'Pregătirea suportului', text: 'Se aplică grundul sau stratul de aderență, dacă sistemul îl cere, și se montează profilele de colț și reperele.' },
+      { title: 'Aplicarea mortarului', text: 'Mecanizat sau manual, într-unul sau mai multe straturi, conform produsului.' },
+      { title: 'Nivelarea și finisarea', text: 'Se nivelează cu dreptarul și se finisează suprafața conform finisajului următor.' },
+      { title: 'Uscarea și protejarea', text: 'Tencuiala se lasă să se usuce conform fișei tehnice, ferită de înghețuri, vânt sau soare puternic la exterior.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Zidărie nepregătită', text: 'Praful, umezeala sau suprafețele friabile reduc aderența.' },
+      { title: 'Mortar nepotrivit locului', text: 'Un mortar de interior la exterior se degradează. Verifică destinația produsului.' },
+      { title: 'Lipsa reperelor', text: 'Fără repere și dreptar, pereții ies neplani, iar gletul devine mai gros și mai scump.' },
+      { title: 'Uscare prea rapidă sau prea lentă', text: 'Soarele, vântul sau înghețul strică tencuiala proaspătă; respectă condițiile din fișa tehnică.' },
+      { title: 'Treceri între materiale neprotejate', text: 'La îmbinarea a două materiale, fără plasă, apar fisuri.' },
+      { title: 'Ofertă care nu spune metoda', text: 'Mecanizat și manual nu se compară direct; oferta trebuie să spună metoda și produsul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de metoda de aplicare, de tipul de mortar, de grosimea și numărul de straturi, de starea zidăriei, de înălțime și de accesul pentru utilaj sau schelă. La lucrarea mecanizată contează și dacă utilajul și materialul sunt asigurate de firmă.',
+      'Cere oferte care spun metoda, produsul, grosimea prevăzută și dacă manopera include protecția și curățenia. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară metoda, produsul, suprafața măsurată, ce pregătire este inclusă și cine asigură apa, curentul și accesul utilajului. Verifică dacă oferta include plasele și profilele de colț și dacă se face curățenia.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă ce recomandă pentru suprafața ta și de ce. Stabilește în scris termenul, produsul și condițiile de plată, fără plată integrală în avans.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre tencuială' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru tencuială' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la ipsoserie și gips-carton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie suprafața și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

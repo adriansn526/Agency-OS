@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const pergolaLemnAluminiu: SituationContent = {
+  slug: 'terase-pergole-foisoare--pergola-lemn-aluminiu',
+  categorie: 'terase-pergole-foisoare',
+  title: 'Pergolă din lemn sau aluminiu',
+  seoTitle: 'Pergolă din lemn sau aluminiu: cum alegi și compari',
+  seoDescription: 'Pergolă din lemn sau aluminiu pentru terasă: ce este, cum alegi materialul, ordinea lucrării, greșeli frecvente, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce este o pergolă, ce diferă între lemn și aluminiu, cine o execută, de ce depinde costul și ce să compari în ofertele firmelor.',
+  sinonime: ['pergola', 'pergole', 'pergola pret', 'pergola aluminiu', 'pergole terase', 'pergole terasa', 'pergola s', 'pergolă', 'pergolă preț', 'pergolă aluminiu'],
+  intrebari: [
+    'Ce este o pergolă? | O structură deschisă, din stâlpi și grinzi, montată peste o terasă sau o curte, care oferă umbră și un spațiu amenajat. Poate rămâne deschisă sau poate primi un acoperiș, jaluzele ori pânză, în funcție de ce îți dorești.',
+    'Lemn sau aluminiu: ce aleg? | Lemnul are aspect cald și se poate adapta ușor, dar cere tratare și întreținere periodică. Aluminiul cere de regulă mai puțină întreținere și permite sisteme gata de montat. Alegerea depinde de buget, de stilul casei, de expunere și de cât timp vrei să dedici întreținerii.',
+    'Cine execută o pergolă? | Depinde de material: dulgheri sau firme de construcții din lemn pentru pergolele din lemn, firme de tâmplărie sau de sisteme metalice pentru cele din aluminiu. Întreabă ce lucrări similare a făcut echipa și cine răspunde de montaj.',
+    'Ce autorizații cer pergolele? | Depinde de dimensiune, de tipul structurii, de zona în care locuiești și de dacă este vorba de casă sau de bloc. Reglementările locale diferă, deci întreabă la primărie înainte să comanzi. La bloc, ține cont și de regulile asociației.',
+    'Pergola se ancorează în casă sau stă pe cont propriu? | Poate fi lipită de casă, prinsă de perete, sau independentă, pe stâlpi proprii. Fiecare variantă cere altă fundare și alte detalii de etanșare. Soluția o stabilește firma după ce vede locul, nu se alege la întâmplare.',
+    'Pot acoperi pergola împotriva ploii? | Da, cu panouri, cu un acoperiș sau cu sisteme mobile. Dacă te interesează o pergolă cu lamele sau cu acoperire mobilă, vezi pagina despre pergole retractabile și bioclimatice. Pentru un acoperiș fix peste o terasă, vezi pagina despre acoperirea terasei.',
+    'De ce depinde costul unei pergole? | De materialul ales, de dimensiune, de complexitatea formei, de fundare și de montaj, de tratamentele sau finisajele cerute și de eventualele elemente adăugate (acoperire, iluminat, jaluzele). Cere o ofertă care separă materialele de manoperă și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pergolă din lemn sau aluminiu: cum alegi și ce să ceri în ofertă', subtitle: 'Ce diferă între lemn și aluminiu, în ce ordine se lucrează și de ce depinde costul. Dacă preferi să o execute o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Materiale', value: 'Lemn sau aluminiu' },
+      { label: 'Cine execută', value: 'Dulgheri sau firme de sisteme metalice' },
+      { label: 'Autorizare', value: 'Depinde, întreabă la primărie' },
+      { label: 'Oferta', value: 'Materiale separate de manoperă' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Pergola este structura care transformă o terasă simplă într-un loc folosit toată vara: oferă umbră, delimitează spațiul și se potrivește cu aspectul casei. Se poate face din lemn, din aluminiu sau din combinații, iar diferențele dintre ele se văd în aspect, în întreținere și în felul în care se montează.',
+      'Pagina aceasta pornește de la partea practică: cine o execută, cum alegi materialul, ce întrebi și de ce diferă ofertele. Pentru sisteme cu lamele sau acoperire mobilă există o pagină separată, iar pentru acoperiș fix peste terasă, încă una; le găsești mai jos.',
+    ) }),
+    node('what-h2-h', 'heading', { text: 'Din ce se compune o pergolă', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Stâlpi și fundare', text: 'Stâlpii preiau încărcările și le transmit solului sau structurii casei. Fundarea se stabilește după teren și după felul pergolei.' },
+      { title: 'Grinzi și căpriori', text: 'Elementele orizontale care formează „acoperișul” deschis al pergolei. Pot rămâne deschise sau pot susține o acoperire.' },
+      { title: 'Îmbinări și prinderi', text: 'Elementele metalice sau mecanice care leagă piesele între ele și structura de bază. Calitatea lor se vede în timp.' },
+      { title: 'Finisaje', text: 'Tratamentele lemnului sau vopsirea aluminiului, care decid cât rezistă structura la ploaie și soare.' },
+    ] }),
+    node('mat-h-h', 'heading', { text: 'Lemn sau aluminiu: ce compari', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Lemnul dă un aspect cald, se taie și se adaptează pe loc și se poate retușa ușor. În schimb cere tratare împotriva umezelii, a insectelor și a soarelui, iar tratamentul se reînnoiește periodic. Tipul de lemn și modul de uscare contează mult pentru felul în care se comportă structura în timp.',
+      'Aluminiul este adesea ales pentru aspectul modern și pentru întreținerea redusă. Se livrează de obicei ca sistem cu piese standardizate, deci culorile și formele sunt mai limitate decât la lemn, dar montajul este mai predictibil. Detaliile (profile, vopsire, prinderi) diferă de la un producător la altul, deci cere specificațiile în scris.',
+      'Există și variante combinate, cu stâlpi dintr-un material și grinzi din altul. Întreabă ce se montează concret și cum sunt protejate zonele de contact dintre materiale.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea locului și a formei', text: 'Stabilești unde stă pergola, ce funcție are (umbră, masă, grătar) și dacă se leagă de casă sau stă separat.' },
+      { title: 'Verificări și acte', text: 'Întrebi la primărie dacă lucrarea cere acte și, la bloc, la asociație. Orice schimbare a ceea ce s-a stabilit pe ofertă se notează în scris.' },
+      { title: 'Fundare', text: 'Se pregătesc punctele de sprijin ale stâlpilor, potrivit terenului și structurii alese.' },
+      { title: 'Montaj', text: 'Se ridică stâlpii, apoi grinzile și restul elementelor, cu verificarea verticalității și a prinderilor.' },
+      { title: 'Finisaje', text: 'Se aplică tratamentele sau vopseaua și se montează eventualele elemente adăugate.' },
+      { title: 'Recepție', text: 'Verifici stabilitatea, prinderile și finisajele și primești în scris garanția și instrucțiunile de întreținere.' },
+    ] }),
+    node('mist-h-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea după poză', text: 'Un model văzut online poate fi greu de realizat în condițiile tale de teren, de expunere sau de casă.' },
+      { title: 'Fundare improvizată', text: 'Stâlpii prinși superficial se mișcă sau se înclină în timp, mai ales sub vânt.' },
+      { title: 'Lemn netratat sau umed', text: 'Se deformează și se degradează repede, mai ales în contact cu apa.' },
+      { title: 'Ignorarea vântului și a zăpezii', text: 'O pergolă cu acoperire primește încărcări suplimentare; cere explicații despre cum a fost gândită structura.' },
+      { title: 'Lipsa actelor', text: 'Dacă lucrarea cere acte și nu le ai, pot apărea probleme ulterior.' },
+      { title: 'Ofertă vagă', text: 'Fără material, finisaje și prinderi scrise, nu poți compara două oferte.' },
+    ] }),
+    node('cost-h-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de material (lemn sau aluminiu, calitatea lemnului, tipul de profile), de dimensiune și de forma pergolei, de felul fundării, de finisaje și de eventualele elemente adăugate, cum ar fi acoperirea, iluminatul sau jaluzelele laterale. Contează și accesul pe șantier și dacă se demontează ceva existent.',
+      'Cere oferta împărțită pe materiale, manoperă și transport. Pentru ordine de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele doar dacă descriu aceeași pergolă: același material și aceleași dimensiuni, același tip de fundare, aceleași finisaje și aceleași elemente incluse sau excluse. O ofertă fără aceste detalii nu se poate compara cu alta.',
+      'Întreabă ce este inclus în preț: transport, montaj, tratamente, curățenie după lucrare. Cere termenul și garanția în scris.',
+    ) }),
+    node('choose-h-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și vorbește, dacă se poate, cu clienți anteriori. Întreabă cine face proiectul, cine face montajul și cine răspunde dacă apar probleme.',
+      'Alege oferta care explică materialul, fundarea și finisajele, nu doar pe cea mai scurtă. Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pergole' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru terase, pergole și foișoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la terase, pergole și foișoare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie terasa și ce pergolă ai în minte și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

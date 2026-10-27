@@ -1,0 +1,90 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const zugravitInterior: SituationContent = {
+  slug: 'zugraveli-vopsitorie--zugravit-interior',
+  categorie: 'zugraveli-vopsitorie',
+  title: 'Zugrăvit interior: pregătire, glet și vopsire',
+  seoTitle: 'Zugrăvit interior: pregătire, vopsire și ofertă',
+  seoDescription: 'Cum se zugrăvește un apartament sau o casă: pregătirea pereților, vopseaua lavabilă, ordinea lucrării, de ce depinde costul și cum compari ofertele zugravilor.',
+  summary: 'Ce include zugrăvitul interior, în ce ordine se lucrează, ce întrebi zugravul și ce trebuie să conțină o ofertă ca să o poți compara.',
+  sinonime: ['zugravit interior pret', 'zugrăvit interior pret', 'pret zugravit cu vopsea lavabila', 'preț zugrăvit cu vopsea lavabilă', 'vopsire lavabila', 'vopsire lavabilă', 'zugravit interior', 'zugrăvit interior', 'vopsit pereti', 'vopsit pereți', 'zugravit apartament', 'zugrăvit apartament'],
+  intrebari: [
+    'Ce include de obicei zugrăvitul interior? | Protejarea mobilei și a pardoselii, repararea fisurilor și a găurilor, grunduirea, uneori glet, apoi vopsirea în mai multe straturi. Ce intră exact diferă de la firmă la firmă, de aceea oferta trebuie să enumere etapele.',
+    'Ce este vopseaua lavabilă? | O vopsea pentru pereți și tavane interioare, pe bază de apă, care se poate curăța la un anumit nivel, în funcție de clasa produsului. Clasa de rezistență la spălare și gradul de acoperire sunt trecute în fișa tehnică.',
+    'Se poate zugrăvi direct peste vopseaua veche? | Uneori da, dacă vopseaua veche ține bine, este curată și mată. Dacă se scorojește, are pete de umezeală sau mucegai, se curăță și se tratează cauza înainte. Zugravul poate verifica aderența pe loc.',
+    'Trebuie dat glet înainte de vopsit? | Depinde de starea peretelui și de rezultatul dorit. Pe pereți denivelați sau cu multe reparații, gletul dă o suprafață netedă; pe pereți în stare bună poate fi suficient un strat de pregătire. Gletul are pagina lui, la care trimitem mai jos.',
+    'Câte straturi de vopsea se dau? | Numărul îl indică fișa tehnică a produsului și îl influențează culoarea, starea suportului și acoperirea vopselei. Cere în ofertă numărul de straturi și produsul folosit.',
+    'Cine cumpără vopseaua, eu sau zugravul? | Se poate în ambele feluri. Dacă o cumperi tu, stabilește din timp cu zugravul tipul și cantitatea; dacă o cumpără el, oferta trebuie să spună produsul și să separe materialele de manoperă.',
+    'Cât durează un zugrăvit și când pot reveni în cameră? | Durata depinde de suprafață, de pregătire și de numărul de straturi, iar timpii de uscare între straturi sunt cei din fișa tehnică. Întreabă zugravul un termen realist, pe etape.',
+    'De ce depinde costul zugrăvitului? | De suprafața de pereți și tavane, de starea suportului, de dacă se dă glet sau se fac reparații, de înălțimea camerelor, de numărul de straturi și de dacă mobila trebuie mutată. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Zugrăvit interior: ce înseamnă o lucrare bine făcută', subtitle: 'Pregătirea pereților, vopseaua lavabilă, ordinea lucrării și ce să verifici în ofertă. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce decide rezultatul', value: 'Pregătirea suportului' },
+      { label: 'Etape', value: 'Protejare, reparații, grund, vopsire' },
+      { label: 'Compari', value: 'Straturi, produs, ce e inclus' },
+      { label: 'Oferta', value: 'Manoperă separată de materiale' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un zugrăvit reușit se vede în detalii: pereți fără pete și fără urme de rolă, colțuri drepte, linii curate la tavan și la tocuri. Cea mai mare parte din rezultat vine din pregătirea pereților, nu din vopseaua pusă la final.',
+      'Pagina te ajută să înțelegi ce include zugrăvitul unui apartament sau al unei case, în ce ordine se lucrează și cum compari ofertele zugravilor. Gletul și finisajele decorative au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce include zugrăvitul interior', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Protejarea', text: 'Mobila, pardoseala, ușile și geamurile se acoperă înainte de a începe. O lucrare curată începe cu protecția.' },
+      { title: 'Pregătirea pereților', text: 'Se curăță, se repară fisurile și găurile, se îndepărtează vopseaua care nu ține și se tratează petele de umezeală sau mucegai.' },
+      { title: 'Grunduirea', text: 'Grundul uniformizează absorbția peretelui și ajută vopseaua să se prindă. Produsul se alege după suport și după vopseaua folosită.' },
+      { title: 'Vopsirea', text: 'Se aplică, de regulă, mai multe straturi de vopsea lavabilă, cu respectarea timpilor de uscare din fișa tehnică.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Vopseaua lavabilă se folosește pe pereți și tavane interioare din apartamente, case, birouri și spații comerciale. În băi, bucătării și alte spații cu umezeală mare se aleg produse potrivite acestor condiții, conform fișei tehnice.',
+      'Dacă peretele are igrasie sau infiltrații, vopseaua nu rezolvă cauza: mai întâi se află de unde vine apa. Hidroizolațiile au categoria lor, la care trimitem din paginile de mai jos.',
+    ) }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Pentru pereții obișnuiți din interior se folosesc vopsele lavabile pe bază de apă, în variante mate, satinate sau lucioase. Finisajul mat ascunde mai bine micile neregularități, cel lucios le scoate în evidență. Produsele diferă prin acoperire, rezistență la curățare și compoziție; datele sunt în fișa tehnică, pe care o poți cere înainte de comandă.',
+      'Pentru tavane se folosesc, de obicei, produse special făcute pentru ele. Pentru efecte decorative sau texturate, vezi pagina despre tencuiala și vopseaua decorativă.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Golirea și protejarea camerei', text: 'Mobila se mută sau se acoperă, pardoseala și tocurile se protejează.' },
+      { title: 'Verificarea pereților', text: 'Se caută fisuri, goluri, zone umede și vopsea care se desprinde.' },
+      { title: 'Reparații și, la nevoie, glet', text: 'Se umplu fisurile și neregularitățile; dacă peretele cere, se aplică glet și se șlefuiește.' },
+      { title: 'Grunduirea', text: 'Se aplică grundul potrivit suportului, cu respectarea timpului de uscare din fișa tehnică.' },
+      { title: 'Vopsirea în straturi', text: 'Mai întâi tavanul, apoi pereții, cu număr de straturi și timp între straturi conform produsului.' },
+      { title: 'Retușuri și curățenie', text: 'Se verifică lumina rasantă pentru urme sau goluri, se retușează și se curăță camera.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Vopsit peste perete umed', text: 'Vopseaua se desprinde, iar petele reapar. Cauza umezelii se rezolvă întâi.' },
+      { title: 'Pregătire sărită', text: 'Fisurile și petele se văd prin vopsea, indiferent de calitatea ei.' },
+      { title: 'Straturi puse prea repede', text: 'Fără respectarea timpului de uscare apar urme și aderență slabă.' },
+      { title: 'Vopsea nepotrivită spațiului', text: 'Un produs fără rezistență la curățare într-un hol sau o bucătărie se murdărește repede.' },
+      { title: 'Culoare aleasă doar după probă mică', text: 'Culoarea se vede altfel pe suprafață mare și la altă lumină; ia o probă și privește-o în cameră.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț „la cheie” fără număr de straturi, produs și pregătire nu se poate compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața pereților și a tavanelor, de înălțimea camerelor, de starea suportului, de dacă sunt necesare reparații sau glet, de numărul de straturi și de câtă mobilă trebuie mutată. Culorile închise sau schimbarea radicală de culoare cer, de obicei, mai multe straturi.',
+      'Cere oferte care despart manopera de materiale și care spun produsul, numărul de straturi și pregătirea inclusă. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele pe același conținut: ce suprafață măsoară fiecare (pereți, tavane, ferestre), ce pregătire include, dacă gletul e inclus sau separat, câte straturi și ce produs, cine cumpără materialele și cine face curățenia. Diferențele mari de preț vin, de obicei, din pregătirea și straturile omise.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea sau fotografii din locuințe finalizate și întreabă cine execută efectiv lucrarea. Stabilește în scris termenul, suprafețele, produsele și condițiile de plată.',
+      'Evită plata integrală în avans. Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre zugrăvit interior' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru zugrăveli' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la zugrăveli și vopsitorie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie camerele și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

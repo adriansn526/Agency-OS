@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const peretiDespartitoriRigips: SituationContent = {
+  slug: 'ipsoserie-gips-carton--pereti-despartitori-rigips',
+  categorie: 'ipsoserie-gips-carton',
+  title: 'Pereți despărțitori și placări din rigips',
+  seoTitle: 'Pereți despărțitori și placări din rigips: montaj',
+  seoDescription: 'Pereți despărțitori și placări din gips-carton: tipuri de plăci, structura peretelui, ordinea lucrării, de ce depinde costul și cum alegi firma.',
+  summary: 'Cum se montează un perete despărțitor sau o placare din gips-carton, ce tipuri de plăci există, ce întrebi montatorul și ce compari în oferte.',
+  sinonime: ['rigips', 'placa rigips', 'placă rigips', 'placi rigips', 'plăci rigips', 'placa gips carton', 'placă gips carton', 'placi gips carton', 'plăci gips carton', 'placa de rigips', 'placă de rigips', 'pereti rigips', 'pereți rigips', 'perete despartitor rigips', 'perete despărțitor rigips', 'rigips fonic', 'rigips antifoc', 'rigips cu polistiren'],
+  intrebari: [
+    'Ce este rigipsul? | Un sistem de construcții ușoare uscate: plăci de gips-carton fixate pe o structură metalică sau direct pe perete. Se folosește pentru pereți despărțitori, placări, tavane și mansardări. „Rigips” este și un nume de brand, folosit de multe ori pentru toate plăcile de gips-carton.',
+    'Ce tipuri de plăci există? | Plăci obișnuite pentru spații uscate, plăci pentru zone umede, plăci cu protecție la foc și plăci pentru performanțe acustice mai bune. Tipul se alege după spațiu și cerințe; fișa tehnică arată domeniul de utilizare.',
+    'Ce este rigipsul fonic? | O soluție prin care un perete din gips-carton izolează mai bine zgomotul, de obicei prin plăci speciale, prin izolație în cavitate sau prin structuri duble. Performanța depinde de sistemul complet, nu doar de placă.',
+    'Ce este rigipsul antifoc? | Plăci și sisteme proiectate pentru a întârzia propagarea focului și a proteja structura. Se folosesc acolo unde normele cer o anumită rezistență la foc; sistemul se alege și se montează conform documentației producătorului.',
+    'Ce este rigipsul cu polistiren? | Plăci laminate cu un strat de polistiren, folosite pentru a îmbunătăți izolarea termică a unui perete interior. Se montează conform indicațiilor producătorului; nu înlocuiesc, în orice caz, un sistem complet de izolare a fațadei.',
+    'Cum se compară un perete din gips-carton cu unul din zidărie? | Peretele din gips-carton este mai ușor și se montează mai repede, fără lucrări umede. Zidăria rezistă mai bine la sarcini și lovituri. Alegerea depinde de rol: despărțire ușoară sau perete portant.',
+    'Pot agăța obiecte grele pe un perete din rigips? | Da, cu ancore și fixări potrivite greutății, iar la sarcini mari trebuie întărit peretele în zona respectivă. Spune montatorului din timp ce vei agăța (dulapuri, boiler, televizor).',
+    'De ce depinde costul? | De suprafață, de tipul plăcilor (obișnuite, pentru umezeală, fonice, antifoc), de numărul de straturi, de izolația din cavitate, de înălțimea peretelui și de finisaj. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pereți despărțitori și placări din rigips: ce să verifici', subtitle: 'Tipuri de plăci, structura peretelui, ordinea lucrării și de ce depinde costul. Dacă preferi să o facă o echipă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Sistem', value: 'Structură metalică și plăci' },
+      { label: 'Tip de placă', value: 'După spațiu și cerințe' },
+      { label: 'Ce aduce', value: 'Montaj rapid, lucrare uscată' },
+      { label: 'Oferta', value: 'Manoperă separată de materiale' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Gips-cartonul se folosește pentru pereți despărțitori, placări de pereți, ziduri ascunse și compartimentări în apartamente, case și spații comerciale. Se montează relativ repede și fără lucrări umede, dar performanța depinde de sistemul ales: tipul plăcii, structura și izolația din interior.',
+      'Mulți caută „rigips” ca produs. Pagina aceasta se concentrează pe lucrare: cine montează, cum alegi sistemul, ce întrebi și de ce depinde costul. Tavanele false au pagina lor, la care trimitem mai jos.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de plăci și rolul lor', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Plăci pentru spații uscate', text: 'Pentru camere obișnuite, fără umezeală mare. Sunt cele mai frecvente.' },
+      { title: 'Plăci pentru zone umede', text: 'Pentru băi și bucătării, cu tratament împotriva absorbției de apă. Se folosesc împreună cu hidroizolație acolo unde este cazul.' },
+      { title: 'Plăci antifoc', text: 'Sisteme care întârzie propagarea focului, folosite acolo unde normele o cer.' },
+      { title: 'Soluții fonice', text: 'Plăci speciale, structuri duble sau izolație în cavitate pentru un perete care atenuează mai bine zgomotul.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Pereții despărțitori împart o încăpere sau creează camere noi. Placările acoperă un perete existent, pentru a-l îndrepta sau a ascunde instalații. Mansardările și închiderile de nișe sunt alte aplicații frecvente.',
+      'Un perete despărțitor nu este, de regulă, portant. Dacă lucrarea atinge un element structural, se cere un inginer constructor înainte de orice intervenție.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Proiect și trasare', text: 'Se stabilește poziția peretelui, golurile pentru uși, înălțimea și sarcinile ce se vor agăța; apoi se trasează pe pardoseală și pe tavan.' },
+      { title: 'Structura metalică', text: 'Se montează profilele de ghidaj și montanții, la distanțele din schema producătorului.' },
+      { title: 'Instalațiile din perete', text: 'Cablurile și țevile se trec prin structură, iar în zonele cu sarcini se prevăd întăriri.' },
+      { title: 'Izolația din cavitate', text: 'Dacă sistemul o cere, se montează izolația termică sau fonică.' },
+      { title: 'Prima față de plăci', text: 'Se fixează plăcile cu șuruburi, cu rosturile decalate; apoi se face a doua față, dacă sistemul o cere.' },
+      { title: 'Rosturi, glet și finisaj', text: 'Se tratează rosturile cu bandă și material adecvat, apoi se aplică glet, se șlefuiește și se vopsește.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Placă nepotrivită spațiului', text: 'Placa pentru spații uscate în zone umede se degradează.' },
+      { title: 'Lipsa întăririlor', text: 'Dulapurile, boilerele și televizoarele grele cer reazem în structură, nu doar dibluri în placă.' },
+      { title: 'Rosturi nedecalate', text: 'Rosturile aliniate se fisurează mai ușor.' },
+      { title: 'Izolație fonică incompletă', text: 'Un perete performant fonic cere etanșare la margini, la prize și la ușă; un singur punct slab strică rezultatul.' },
+      { title: 'Intervenții într-un perete portant', text: 'Orice atingere a structurii se discută cu un inginer, înainte de lucrare.' },
+      { title: 'Ofertă fără specificarea sistemului', text: 'Fără tipul de plăci, structura și izolația, nu poți compara ofertele.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul manoperei depinde de suprafață, de înălțimea peretelui, de numărul de fețe și straturi, de goluri (uși, ferestre, nișe), de izolația din cavitate și de finisaj (glet, vopsit). Plăcile speciale (pentru umezeală, fonice, antifoc) cresc costul materialelor.',
+      'Cere oferte care despart manopera de materiale și spun sistemul exact. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară tipul de plăci, structura, izolația din cavitate, numărul de fețe, finisajul inclus și cine asigură transportul și curățenia. O ofertă mai mică poate folosi un sistem mai simplu decât cel de care ai nevoie pentru zgomot sau foc.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă ce sistem recomandă pentru spațiul tău și de ce. Stabilește în scris termenul, materialele, finisajul și condițiile de plată.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pereți din rigips' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru rigips și ipsoserie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la ipsoserie și gips-carton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie încăperea și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

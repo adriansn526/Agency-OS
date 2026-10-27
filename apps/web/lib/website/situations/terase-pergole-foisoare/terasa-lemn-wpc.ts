@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const terasaLemnWpc: SituationContent = {
+  slug: 'terase-pergole-foisoare--terasa-lemn-wpc',
+  categorie: 'terase-pergole-foisoare',
+  title: 'Terasă din lemn sau WPC (deck)',
+  seoTitle: 'Terasă din lemn sau WPC: deck, alegere și ofertă',
+  seoDescription: 'Terasă din lemn sau WPC: ce este deck-ul, cum alegi materialul, ordinea lucrării, greșeli frecvente, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Ce este o terasă de tip deck, ce diferă între lemn și WPC, cum se montează, de ce depinde costul și ce să compari în oferte.',
+  sinonime: ['terasa wpc', 'terase din lemn', 'terasa lemn', 'terasa din lemn', 'terasa lemn exterior', 'terase lemn exterior', 'deck terasa', 'pardoseala terase', 'modele de terase din lemn moderne', 'terasă wpc', 'terasă lemn', 'terasă din lemn', 'terasă lemn exterior', 'deck terasă', 'pardoseală terase'],
+  intrebari: [
+    'Ce este o terasă de tip deck? | O pardoseală exterioară din dulapi montați pe o structură, cu rosturi între ei, ridicată față de teren sau față de o placă existentă. Dulapii pot fi din lemn sau din WPC.',
+    'Ce este WPC? | Un material compozit din fibre de lemn și polimeri, folosit pentru dulapi de terasă. Se vinde în mai multe culori și texturi, cere de obicei mai puțină întreținere decât lemnul și are aspect uniform. Detaliile diferă de la un producător la altul.',
+    'Lemn sau WPC: ce aleg? | Lemnul are aspect natural și se poate refinisa, dar cere tratare și întreținere periodică. WPC-ul cere de obicei mai puțină întreținere, dar are limite proprii și un aspect mai uniform. Alegerea depinde de buget, de expunere, de gust și de cât efort vrei să depui în timp.',
+    'Pe ce se montează terasa? | Pe o structură portantă, de obicei grinzi sau suporți reglabili, așezată pe o placă, pe pământ stabilizat sau pe o structură existentă. Alegerea depinde de teren, de apa din zonă și de înălțimea dorită. O firmă o stabilește după ce vede locul.',
+    'Cum se scurge apa? | Pardoseala se montează cu rosturi și cu pante potrivite, iar sub ea trebuie să existe aerisire și scurgere. Un deck fără aerisire reține umezeala și se degradează. Întreabă firma cum rezolvă această problemă.',
+    'Pot monta singur terasa? | Pe suprafețe mici și plane, urmând instrucțiunile producătorului, uneori da. Pentru terase mari, pe structură ridicată sau pe teren dificil, e mai sigur să apelezi la o firmă, pentru că erorile de nivel și de fundare se văd greu de reparat.',
+    'De ce depinde costul? | De material (esența lemnului sau tipul de WPC), de suprafață, de structura de dedesubt, de pregătirea terenului, de forma terasei, de finisaje și de elemente adăugate, precum scări, balustrade sau iluminat. Cere ofertă detaliată și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Terasă din lemn sau WPC: cum alegi și ce să ceri în ofertă', subtitle: 'Ce diferă între lemn și WPC, cum se montează un deck și de ce depinde costul. Dacă vrei să-l execute o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Materiale', value: 'Lemn sau WPC' },
+      { label: 'Se montează pe', value: 'Structură portantă aerisită' },
+      { label: 'Atenție la', value: 'Scurgerea apei și aerisire' },
+      { label: 'Oferta', value: 'Material, structură și manoperă separat' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Terasa de tip deck este o pardoseală exterioară din dulapi, folosită la case, la curți și la grădini. Se montează pe o structură, are rosturi între elemente și poate fi din lemn sau din WPC, un compozit din fibre de lemn și polimeri.',
+      'Pagina nu te ajută să alegi un model estetic, ci partea practică: ce diferă între materiale, ce structură trebuie să existe dedesubt, ce greșeli se fac și cum compari ofertele. Dacă terasa este pe un acoperiș plat sau peste o încăpere, hidroizolația se tratează separat; vezi pagina despre hidroizolația terasei și a acoperișului plat.',
+    ) }),
+    node('what-h-h', 'heading', { text: 'Din ce se compune o terasă de tip deck', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Suport', text: 'Placa, terenul stabilizat sau structura existentă pe care se sprijină terasa. De el depind nivelul și scurgerea apei.' },
+      { title: 'Structura portantă', text: 'Grinzile sau suporții reglabili care susțin dulapii. Se aleg după material și după distanța dintre sprijiniri.' },
+      { title: 'Dulapii', text: 'Elementele vizibile, din lemn sau din WPC, montați cu rosturi pentru scurgere și dilatare.' },
+      { title: 'Finisaje', text: 'Tratamente, profile de capăt, scări, balustrade, iluminat.' },
+    ] }),
+    node('mat-h-h', 'heading', { text: 'Lemn sau WPC: ce compari', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Lemnul are aspect natural, miros plăcut și se poate refinisa. Cere tratare periodică, iar esența contează: unele se comportă mai bine în exterior decât altele. Calitatea uscării și a finisajului se întreabă în ofertă.',
+      'WPC-ul are aspect uniform, în culori și texturi diverse, și cere de obicei mai puțină întreținere. Și el are limite: se poate încălzi la soare, își poate schimba culoarea în timp și se montează după regulile producătorului, cu rosturi pentru dilatare. Calitatea diferă mult între producători, deci cere specificațiile în scris.',
+      'Indiferent de material, structura de dedesubt contează la fel de mult: un material bun pe o structură greșită se degradează la fel de repede.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Relevee și alegerea materialului', text: 'Se măsoară zona, se verifică nivelul și scurgerea și se alege materialul.' },
+      { title: 'Pregătirea suportului', text: 'Se nivelează, se asigură scurgerea apei și, unde este cazul, se protejează suportul.' },
+      { title: 'Structura portantă', text: 'Se montează grinzile sau suporții reglabili, cu distanțe potrivite materialului ales.' },
+      { title: 'Montajul dulapilor', text: 'Se montează dulapii cu rosturile cerute, folosind elementele de prindere recomandate de producător.' },
+      { title: 'Capete, scări și finisaje', text: 'Se montează profilele de capăt, scările, balustradele și se aplică tratamentele.' },
+      { title: 'Recepție', text: 'Verifici planeitatea, rosturile, prinderile și scurgerea apei și primești instrucțiunile de întreținere.' },
+    ] }),
+    node('mist-h-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Fără aerisire dedesubt', text: 'Umezeala rămâne sub dulapi și degradează lemnul sau structura.' },
+      { title: 'Suport neîngrijit', text: 'Dacă apa stă pe suport, problemele apar repede, indiferent de dulapi.' },
+      { title: 'Distanțe mari între sprijiniri', text: 'Dulapii se îndoaie sau scârțâie; respectă indicațiile producătorului.' },
+      { title: 'Rosturi lipsă', text: 'Materialele se dilată; fără rosturi apar deformări.' },
+      { title: 'Elemente de prindere nepotrivite', text: 'Șuruburile sau clipsurile greșite ruginesc sau cedează.' },
+      { title: 'Ofertă fără structura de dedesubt', text: 'O ofertă care vorbește doar de dulapi nu spune nimic despre partea care contează cel mai mult.' },
+    ] }),
+    node('cost-h-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de material (esența lemnului sau tipul de WPC), de suprafață, de forma terasei, de structura portantă și de pregătirea suportului, de scări, balustrade și iluminat, precum și de accesul la locul de lucru. Un teren denivelat sau o terasă ridicată față de sol cer mai multă muncă decât una plană.',
+      'Cere o ofertă care separă materialele de structură și de manoperă. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele doar dacă descriu aceeași terasă: același material, aceeași structură de dedesubt, aceleași profile și finisaje, aceeași suprafață. Verifică dacă prețul include pregătirea suportului, scările, balustrada și transportul.',
+      'Cere în scris garanția și instrucțiunile de întreținere a materialului ales.',
+    ) }),
+    node('choose-h-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare, cu timp scurs de la montaj, ca să vezi cum au rezistat. Întreabă ce structură se montează dedesubt și cum se rezolvă scurgerea apei.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre terase din lemn sau WPC' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru terase, pergole și foișoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la terase, pergole și foișoare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie terasa și ce material ai în vedere și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

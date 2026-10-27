@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const inchidereTerasaBalcon: SituationContent = {
+  slug: 'terase-pergole-foisoare--inchidere-terasa-balcon',
+  categorie: 'terase-pergole-foisoare',
+  title: 'Închidere terasă și balcon: sticlă, folie, rulouri',
+  seoTitle: 'Închidere terasă și balcon: sticlă, folie, rulouri',
+  seoDescription: 'Închiderea terasei sau a balconului cu sticlă, folie sau rulouri: soluții, diferențe, autorizații, ordinea lucrării, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce soluții există pentru închiderea terasei, a balconului sau a foișorului, cum le alegi, ce acte pot fi necesare și ce să compari în oferte.',
+  sinonime: ['inchidere terasa', 'inchiderea terasei', 'inchidere terasa cu sticla', 'inchidere terasa cu folie', 'inchideri terase cu folie', 'inchidere terasa cu sticla glisanta', 'inchideri terase cu sticla glisanta', 'prelate transparente terase', 'folie inchidere terasa', 'inchidere terasa pret', 'inchidere balcon', 'inchidere balcon sticla', 'inchidere balcon termopan', 'inchidere foisor', 'închidere terasă', 'închiderea terasei', 'închidere terasă cu sticlă', 'închidere terasă cu folie', 'închideri terase cu folie', 'închidere terasă cu sticlă glisantă', 'închideri terase cu sticlă glisantă', 'folie închidere terasă', 'închidere terasă preț', 'închidere balcon', 'închidere balcon sticlă', 'închidere balcon termopan', 'închidere foișor'],
+  intrebari: [
+    'Ce soluții există pentru închiderea unei terase? | Sisteme cu sticlă glisantă sau pliantă, folii transparente sau prelate, rulouri și jaluzele exterioare, sau închideri cu tâmplărie termoizolantă. Fiecare protejează altfel de vânt, ploaie și frig și se potrivește altor scopuri.',
+    'Care e diferența dintre închiderea cu sticlă și cea cu folie? | Sticla (sistemele glisante sau pliante) este mai durabilă și mai ușor de curățat, dar mai costisitoare. Folia sau prelata transparentă este o soluție mai ușoară, de multe ori sezonieră, cu limite la durabilitate și la protecția termică. Alegi după cât timp folosești spațiul și ce nivel de protecție vrei.',
+    'Se poate transforma terasa în spațiu locuibil? | Un sistem de închidere simplu nu face un spațiu locuibil: pentru asta ar trebui izolație, încălzire și, în general, alt tip de lucrare, cu acte potrivite. Întreabă la primărie și la un proiectant înainte de a plănui o schimbare de destinație.',
+    'Cere acte închiderea terasei sau a balconului? | Depinde de tipul închiderii, de faptul că locuiești la casă sau la bloc și de reglementările locale. La bloc există de obicei reguli și acordul asociației. Întreabă la primărie și la asociație înainte de comandă, nu după montaj.',
+    'Pot folosi ușile culisante pentru terasă? | Da, sunt una dintre soluțiile folosite. Detaliile despre sistemele glisante sunt pe pagina despre uși culisante. Pentru protecție solară sau la intimitate, vezi și pagina despre rulouri și jaluzele exterioare.',
+    'Ce se întâmplă cu ventilarea și condensul? | Un spațiu închis și neîncălzit poate avea condens. Întreabă firma cum rezolvă aerisirea și scurgerea apei, mai ales dacă închiderea e etanșă.',
+    'De ce depinde costul? | De soluția aleasă (sticlă, folie, rulouri, tâmplărie), de dimensiune și de forma spațiului, de tipul profilelor și al sticlei, de ușile sau ferestrele care se deschid, de pregătirea suportului și de montaj. Cere ofertă detaliată și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Închidere terasă și balcon: ce soluții există și cum compari ofertele', subtitle: 'Sticlă, folie sau rulouri: ce diferă, ce acte pot fi necesare și de ce depinde costul. Dacă vrei să o execute o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Soluții', value: 'Sticlă, folie, rulouri, tâmplărie' },
+      { label: 'Autorizare', value: 'Depinde, întreabă la primărie și asociație' },
+      { label: 'Atenție la', value: 'Aerisire, condens, scurgere' },
+      { label: 'Oferta', value: 'Sistem, dimensiuni și montaj în scris' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Închiderea unei terase, a unui balcon sau a unui foișor înseamnă protecție la vânt și la ploaie și, uneori, un spațiu folosit mai mult din an. Soluțiile merg de la o prelată transparentă până la sisteme din sticlă sau tâmplărie, iar diferențele de preț, de durabilitate și de confort sunt mari.',
+      'Pagina te ajută să compari soluțiile, să știi ce întrebi și să înțelegi ce rol au actele. Pentru sistemele cu uși culisante și pentru rulouri sau jaluzele există pagini separate, la care trimitem în text. Dacă ai nevoie de un acoperiș fix peste terasă, vezi pagina despre acoperirea terasei.',
+    ) }),
+    node('what-h-h', 'heading', { text: 'Soluții folosite', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Sticlă glisantă sau pliantă', text: 'Panouri din sticlă pe șine, care se deschid lateral sau se strâng. Dau aspect curat și se curăță ușor; protecția termică și la zgomot depinde de sistem.' },
+      { title: 'Folie sau prelată transparentă', text: 'Soluție ușoară, de multe ori sezonieră, care protejează de vânt și ploaie. Are limite la durabilitate și la protecția termică.' },
+      { title: 'Rulouri și jaluzele exterioare', text: 'Protejează de soare și oferă intimitate, uneori și un plus de protecție. Se pot combina cu alte soluții de închidere.' },
+      { title: 'Tâmplărie cu geam termoizolant', text: 'Variantă tip termopan, folosită mai ales la balcoane. Cere atenție la acte și la cerințele clădirii sau ale asociației.' },
+    ] }),
+    node('mat-h-h', 'heading', { text: 'Cum alegi soluția', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Pornește de la ce vrei să obții: protecție doar în sezonul cald, un spațiu folosit și toamna, sau un plus de intimitate. O folie sau o prelată rezolvă adesea nevoia sezonieră, în timp ce sticla și tâmplăria sunt alegeri pentru folosire mai îndelungată și un aspect mai îngrijit.',
+      'Detaliile contează: tipul profilelor, grosimea și tipul sticlei, etanșările, mecanismul de închidere și scurgerea apei. Cere specificațiile produsului în scris și întreabă ce limită de vânt acceptă sistemul.',
+      'Pentru balcoane de bloc, reglementările și regulile asociației cer de multe ori un aspect unitar al fațadei. Verifică-le înainte de comandă.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea soluției', text: 'Stabilești ce vrei de la închidere și alegi tipul de sistem.' },
+      { title: 'Verificări și acte', text: 'Întrebi la primărie și, la bloc, la asociație dacă lucrarea cere acte sau acord. Faci asta înainte de comandă.' },
+      { title: 'Relevee', text: 'Firma măsoară locul, verifică suportul și stabilește modul de fixare, scurgerea apei și zonele de acces.' },
+      { title: 'Execuție și montaj', text: 'Se produc elementele și se montează, cu atenție la nivel, etanșare și funcționare.' },
+      { title: 'Finisaje și reglaje', text: 'Se închid rosturile, se reglează mecanismele și se curăță locul.' },
+      { title: 'Recepție', text: 'Verifici funcționarea, etanșarea și scurgerea apei și primești garanția și instrucțiunile de întreținere în scris.' },
+    ] }),
+    node('mist-h-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Montaj fără verificarea actelor', text: 'Poți fi obligat să demontezi lucrarea sau să rezolvi situația ulterior.' },
+      { title: 'Alegerea după preț', text: 'Soluțiile ieftine sezoniere nu fac aceeași treabă ca un sistem permanent.' },
+      { title: 'Fără aerisire', text: 'Un spațiu închis fără aerisire dezvoltă condens și umezeală.' },
+      { title: 'Scurgere neplanificată', text: 'Apa de pe sticlă sau folie trebuie dusă controlat.' },
+      { title: 'Măsurători făcute în grabă', text: 'Erorile se plătesc mai târziu, la montaj sau în etanșeitate.' },
+      { title: 'Oferte necomparabile', text: 'Un sistem cu sticlă și unul cu folie nu se compară doar după preț.' },
+    ] }),
+    node('cost-h-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de soluția aleasă (sticlă, folie, rulouri, tâmplărie), de dimensiune și de forma spațiului, de tipul profilelor și al sticlei, de mecanismele de deschidere, de ușile incluse, de pregătirea suportului și de montaj. Contează și dacă sistemul se produce la comandă sau se adaptează dintr-un model standard.',
+      'Cere oferte cu aceleași specificații. Pentru ordine de mărime, vezi paginile de preț de mai jos, în special cea despre închiderea terasei.',
+    ) }),
+    node('compare-h-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Cere în scris: tipul sistemului, dimensiunile, materialul și culoarea profilelor, tipul sticlei sau al foliei, mecanismele de închidere, elementele de scurgere și etanșare și ce este inclus în preț. Compară doar oferte care descriu același sistem.',
+      'Întreabă ce garanție se dă pentru montaj și pentru produse și cine intervine în caz de probleme.',
+    ) }),
+    node('choose-h-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care vine să măsoare, nu una care dă preț doar telefonic. Cere lucrări similare pe care le poți vedea și întreabă cine se ocupă de eventualele acte și de coordonarea cu asociația.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre închiderea terasei și a balconului' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru terase, pergole și foișoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la terase, pergole și foișoare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie terasa sau balconul și ce soluție ai în vedere și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

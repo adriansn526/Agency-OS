@@ -42,6 +42,29 @@ import { microcimentPoliuretan } from './pardoseli-placari/microciment-poliureta
 import { montajGresieFaianta } from './pardoseli-placari/montaj-gresie-faianta'
 import { montajParchet } from './pardoseli-placari/montaj-parchet'
 import { pardosealaEpoxidica } from './pardoseli-placari/pardoseala-epoxidica'
+import { izolatieFatadaTermosistem } from './izolatii-termice/izolatie-fatada-termosistem'
+import { izolatiePeretiInterior } from './izolatii-termice/izolatie-pereti-interior'
+import { izolatiePodSpumaPoliuretanica } from './izolatii-termice/izolatie-pod-spuma-poliuretanica'
+import { gletGletuire } from './zugraveli-vopsitorie/glet-gletuire'
+import { tencuialaDecorativa } from './zugraveli-vopsitorie/tencuiala-decorativa'
+import { zugravitInterior } from './zugraveli-vopsitorie/zugravit-interior'
+import { peretiDespartitoriRigips } from './ipsoserie-gips-carton/pereti-despartitori-rigips'
+import { tavanFalsRigips } from './ipsoserie-gips-carton/tavan-fals-rigips'
+import { tencuialaMecanizataManuala } from './ipsoserie-gips-carton/tencuiala-mecanizata-manuala'
+import { calorifereRadiatoare } from './instalatii-termice/calorifere-radiatoare'
+import { centralaLemnePeleti } from './instalatii-termice/centrala-lemne-peleti'
+import { incalzireInPardoseala } from './instalatii-termice/incalzire-in-pardoseala'
+import { montajCentralaTermicaGaz } from './centrale-pompe-caldura/montaj-centrala-termica-gaz'
+import { pompaCalduraAerApa } from './centrale-pompe-caldura/pompa-caldura-aer-apa'
+import { revizieServiceCentralaTermica } from './centrale-pompe-caldura/revizie-service-centrala-termica'
+import { bateriiStocareInvertor } from './fotovoltaice-energie-regenerabila/baterii-stocare-invertor'
+import { panouriFotovoltaiceCasa } from './fotovoltaice-energie-regenerabila/panouri-fotovoltaice-casa'
+import { panouriSolareApaCalda } from './fotovoltaice-energie-regenerabila/panouri-solare-apa-calda'
+import { foisorLemnGradina } from './terase-pergole-foisoare/foisor-lemn-gradina'
+import { inchidereTerasaBalcon } from './terase-pergole-foisoare/inchidere-terasa-balcon'
+import { pergolaLemnAluminiu } from './terase-pergole-foisoare/pergola-lemn-aluminiu'
+import { pergolaRetractabilaBioclimatica } from './terase-pergole-foisoare/pergola-retractabila-bioclimatica'
+import { terasaLemnWpc } from './terase-pergole-foisoare/terasa-lemn-wpc'
 
 export interface SituationContent {
   /** `<categorie>--<situație>` */
@@ -111,5 +134,28 @@ export const SITUATIONS: SituationContent[] = [
   microcimentPoliuretan,
   montajGresieFaianta,
   montajParchet,
-  pardosealaEpoxidica,
+  pardosealaEpoxidica,  // wave 2 (docs/SEO/PLAN_SITUATII_VAL2.md)
+  izolatieFatadaTermosistem,
+  izolatiePeretiInterior,
+  izolatiePodSpumaPoliuretanica,
+  gletGletuire,
+  tencuialaDecorativa,
+  zugravitInterior,
+  peretiDespartitoriRigips,
+  tavanFalsRigips,
+  tencuialaMecanizataManuala,
+  calorifereRadiatoare,
+  centralaLemnePeleti,
+  incalzireInPardoseala,
+  montajCentralaTermicaGaz,
+  pompaCalduraAerApa,
+  revizieServiceCentralaTermica,
+  bateriiStocareInvertor,
+  panouriFotovoltaiceCasa,
+  panouriSolareApaCalda,
+  foisorLemnGradina,
+  inchidereTerasaBalcon,
+  pergolaLemnAluminiu,
+  pergolaRetractabilaBioclimatica,
+  terasaLemnWpc,
 ]

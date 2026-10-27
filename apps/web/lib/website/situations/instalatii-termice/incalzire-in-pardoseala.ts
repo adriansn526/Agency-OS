@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const incalzireInPardoseala: SituationContent = {
+  slug: 'instalatii-termice--incalzire-in-pardoseala',
+  categorie: 'instalatii-termice',
+  title: 'Încălzire în pardoseală: alegere, montaj, cost',
+  seoTitle: 'Încălzire în pardoseală: alegere, montaj și cost',
+  seoDescription: 'Încălzire în pardoseală electrică sau cu apă caldă: cum alegi, în ce ordine se montează, greșeli frecvente, de ce depinde costul și cum compari ofertele.',
+  summary: 'Încălzirea în pardoseală cu apă caldă sau electrică: cum alegi sistemul, cum se montează, ce rol are șapa și ce să compari în ofertele instalatorilor.',
+  sinonime: ['incalzire in pardoseala', 'incalzirea in pardoseala', 'incalzire electrica in pardoseala', 'incalzirea electrica in pardoseala', 'incalzire in pardoseala electrica', 'incalzire in pardoseala fara sapa', 'distribuitor incalzire pardoseala', 'teava incalzire pardoseala', 'sapa incalzire pardoseala', 'încălzire în pardoseală', 'încălzirea în pardoseală', 'încălzire electrică în pardoseală', 'încălzirea electrică în pardoseală', 'încălzire în pardoseală electrică', 'încălzire în pardoseală fără șapă', 'distribuitor încălzire pardoseală', 'țeavă încălzire pardoseală', 'șapă încălzire pardoseală'],
+  intrebari: [
+    'Ce este încălzirea în pardoseală? | Un sistem care încălzește camera prin suprafața pardoselii, nu prin radiatoare. Poate funcționa cu apă caldă, prin țevi legate la un distribuitor, sau electric, prin cabluri ori folii încălzitoare așezate sub finisaj.',
+    'Care este diferența dintre sistemul cu apă și cel electric? | Sistemul cu apă se leagă la o sursă de căldură (centrală, pompă de căldură) și se montează de obicei în șapă. Cel electric se alimentează de la tablou și poate fi o soluție pentru o singură cameră, de pildă baia. Alegerea depinde de sursa de căldură, de tipul clădirii și de cum o folosești.',
+    'Se poate face încălzire în pardoseală fără șapă? | Există sisteme uscate, cu plăci profilate și țevi, sau cu elemente subțiri sub finisaj, gândite pentru renovări unde înălțimea este limitată. Ele au condiții proprii de montaj și de finisaj, deci urmează fișa tehnică a producătorului sistemului.',
+    'Merge sub orice fel de pardoseală? | Nu orice finisaj se potrivește. Gresia și piatra transmit bine căldura; la parchet, lemn sau covor, producătorul finisajului trebuie să confirme că se poate folosi peste încălzire în pardoseală. Verifică înainte să comanzi.',
+    'Cine montează încălzirea în pardoseală? | O echipă de instalatori termici pentru partea de țevi, distribuitor și racordare la sursa de căldură, și un electrician autorizat pentru partea electrică. Șapa și finisajul pot fi făcute de alte echipe, deci coordonarea dintre ele trebuie stabilită de la început.',
+    'Pot călca pe pardoseală sau pune finisajul imediat după montaj? | Nu imediat. Sistemul se verifică înainte de turnarea șapei, iar șapa are nevoie de timp să se întărească și să se usuce înainte de finisaj, după fișa produsului. Pornirea încălzirii se face treptat, conform indicațiilor furnizorului șapei și ale instalatorului.',
+    'De ce depinde costul? | De suprafață, de tipul sistemului (cu apă sau electric), de sursa de căldură la care se leagă, de izolația de sub țevi, de câte circuite și ce reglaj are și de dacă lucrarea include șapa și finisajul. Compară ofertele pe conținut și vezi pagina de prețuri pentru factori.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Încălzire în pardoseală: cum alegi și ce verifici în ofertă', subtitle: 'Sistem cu apă sau electric, rolul șapei, ordinea lucrării și de ce depinde costul. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Variante', value: 'Cu apă caldă sau electrică' },
+      { label: 'Cine montează', value: 'Instalator termic, electrician autorizat' },
+      { label: 'Întâi', value: 'Alegi sursa de căldură și finisajul' },
+      { label: 'Oferta', value: 'Compară pe conținut, nu pe sumă' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Încălzirea în pardoseală cedează căldura pe toată suprafața podelei, ceea ce dă o temperatură uniformă în cameră. Sistemul se planifică odată cu pardoseala: odată acoperit de șapă și finisaj, nu mai poate fi corectat fără să spargi.',
+      'Pagina te ajută să înțelegi diferența dintre sistemul cu apă și cel electric, ce se montează și în ce ordine, și cum compari ofertele instalatorilor. Radiatoarele și sursele de căldură au paginile lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce variante există', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Cu apă caldă', text: 'Țevi așezate în buclă peste izolație, legate la un distribuitor care împarte apa pe circuite. Se leagă la centrală sau la pompa de căldură.' },
+      { title: 'Electrică, cu cablu sau folie', text: 'Elemente încălzitoare alimentate de la tablou și comandate de un termostat. Se folosește adesea pentru o cameră sau pentru confort suplimentar.' },
+      { title: 'În șapă', text: 'Țevile sau cablurile se acoperă cu șapă, care preia și distribuie căldura. Șapa se alege și se pune conform recomandărilor producătorului sistemului.' },
+      { title: 'Fără șapă (sistem uscat)', text: 'Plăci profilate sau elemente subțiri, utile la renovări cu înălțime limitată. Au reguli proprii de montaj și de finisaj.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Componente și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Un sistem cu apă cuprinde izolația de sub țevi, țevile, distribuitorul cu reglaj pe circuite, banda perimetrală care lasă șapei loc să se dilate, șapa și comanda prin termostat. La cel electric există cablul sau folia, sonda de temperatură și termostatul. Toate componentele se aleg din aceeași gamă, după fișa tehnică a producătorului.',
+      'Sistemul cu apă funcționează bine cu surse care lucrează la temperaturi joase, cum este pompa de căldură; la o centrală pe gaz sau pe combustibil solid se prevede un mod de reglare potrivit. Racordarea la sursa de căldură o decide instalatorul, în funcție de aparatul existent. Pentru pompa de căldură aer-apă vezi pagina dedicată.',
+      'Dacă pardoseala va fi din parchet, lemn sau covor, confirmă cu producătorul finisajului că se poate folosi peste încălzire în pardoseală. Racordarea electrică, tabloul și protecțiile le face un electrician autorizat.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Plan și alegerea sistemului', text: 'Se stabilesc sursa de căldură, tipul de sistem, finisajul și circuitele pe camere. Planul precizează unde stă distribuitorul.' },
+      { title: 'Pregătirea suportului', text: 'Pardoseala brută se curăță și se nivelează, iar izolația și banda perimetrală se așază conform sistemului ales.' },
+      { title: 'Montarea țevilor sau a cablurilor', text: 'Se așază elementele după planul de circuite, evitând zonele unde vor fi fixate ulterior mobile grele sau sanitare.' },
+      { title: 'Verificare înainte de acoperire', text: 'Se verifică etanșeitatea sistemului cu apă sau continuitatea la cel electric, înainte de turnarea șapei, și se păstrează fotografii cu traseele.' },
+      { title: 'Șapă și uscare', text: 'Șapa se toarnă și se lasă să se întărească și să se usuce după fișa produsului.' },
+      { title: 'Pornire treptată și finisaj', text: 'Încălzirea se pornește treptat, după indicațiile furnizorului șapei și ale instalatorului, apoi se montează finisajul.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea finisajului după montaj', text: 'Unele finisaje nu se potrivesc peste încălzire; verifică-l înainte, nu după ce șapa este turnată.' },
+      { title: 'Lipsa izolației de sub țevi', text: 'Căldura se pierde în jos în loc să urce în cameră.' },
+      { title: 'Fără probă înainte de șapă', text: 'O scurgere sau un cablu defect descoperite după acoperire se remediază doar spargând.' },
+      { title: 'Pornire bruscă', text: 'Încălzirea pornită prea repede peste șapa nouă poate produce crăpături.' },
+      { title: 'Sursă de căldură nepotrivită', text: 'Sistemul trebuie legat la o sursă care îi poate asigura regimul de funcționare.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț fără izolație, circuite, reglaj și șapă nu se poate compara cu altul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața încălzită, de tipul sistemului (cu apă sau electric), de numărul de circuite și de reglaj, de izolația și de șapa necesare, de sursa de căldură la care se leagă și de dacă lucrarea include finisajul. Într-o casă existentă contează și cât de mult trebuie spart sau refăcut.',
+      'Cere oferte care despart materialele de manoperă și care precizează ce sistem, ce izolație și ce reglaj se montează. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Verifică dacă ofertele acoperă aceleași elemente: izolația, tipul de țeavă sau cablu, distribuitorul și circuitele, termostatele, racordarea la sursa de căldură, proba înainte de șapă, șapa și pornirea. Ofertele care par mult mai mici omit de obicei unul dintre ele.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine face fiecare etapă: instalatorul, electricianul, echipa de șapă. Cere ofertă scrisă, cu termene, garanție pentru manoperă și documentele produselor folosite.',
+      'Stabilește din oferta scrisă cine răspunde dacă sistemul are o problemă după acoperire și cum se face pornirea inițială.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre încălzirea în pardoseală' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie camerele și sursa de căldură și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

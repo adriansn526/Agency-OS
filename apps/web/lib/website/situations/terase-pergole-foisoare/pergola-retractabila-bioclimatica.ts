@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const pergolaRetractabilaBioclimatica: SituationContent = {
+  slug: 'terase-pergole-foisoare--pergola-retractabila-bioclimatica',
+  categorie: 'terase-pergole-foisoare',
+  title: 'Pergolă retractabilă și bioclimatică',
+  seoTitle: 'Pergolă retractabilă și bioclimatică: cum alegi',
+  seoDescription: 'Pergolă retractabilă sau bioclimatică: ce este, cum funcționează, ce întrebi înainte de montaj, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Ce sunt pergolele retractabile și cele bioclimatice, cum se montează, ce să întrebi înainte să comanzi și ce să compari în oferte.',
+  sinonime: ['pergola retractabila', 'pergole retractabile', 'pergola bioclimatica', 'copertine terasa', 'copertina retractabila', 'copertină retractabilă', 'pergolă retractabilă', 'pergolă bioclimatică', 'copertine terasă'],
+  intrebari: [
+    'Ce este o pergolă retractabilă? | Un sistem de acoperire cu pânză sau cu elemente mobile care se desfășoară deasupra terasei când ai nevoie de umbră sau de protecție și se strâng când nu mai sunt necesare. Poate fi fixat de casă sau montat pe stâlpi proprii.',
+    'Ce este o pergolă bioclimatică? | O pergolă cu lamele reglabile, care se pot deschide sau închide pentru a controla cât lumină, aer și apă trece. De obicei are structură metalică și un mecanism de acționare, uneori comandat de la distanță.',
+    'Care e diferența dintre retractabilă și bioclimatică? | Cea retractabilă se strânge sau se desfășoară ca un tot, de regulă cu pânză. Cea bioclimatică are lamele care se rotesc și permit reglaje mai fine. Diferă la aspect, la modul de funcționare, la protecția împotriva ploii și la mentenanță, deci cere explicații de la firmă.',
+    'Rezistă la ploaie, vânt sau zăpadă? | Depinde de produs și de montaj. Fiecare sistem are limite precizate de producător pentru vânt, ploaie și zăpadă, iar acestea se respectă. Cere aceste informații în scris și întreabă ce faci cu sistemul în condiții meteo extreme.',
+    'Cere acte montajul? | Poate, în funcție de dimensiune, de zonă, de tipul de ancorare și de dacă locuiești la casă sau la bloc. Reglementările diferă local, deci întreabă la primărie înainte de comandă. La bloc, întreabă și asociația.',
+    'Ce mentenanță cer aceste sisteme? | De obicei curățarea periodică, verificarea mecanismelor, a motoarelor și a etanșărilor și, la pânză, îngrijirea materialului. Cere instrucțiunile producătorului și întreabă cine face service-ul după montaj.',
+    'De ce depinde costul? | De tipul sistemului (pânză sau lamele), de dimensiune, de acționare (manuală sau motorizată), de accesorii (iluminat, laterale, senzori), de ancorare și de montaj. Cere oferte cu aceleași specificații și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pergolă retractabilă și bioclimatică: ce întrebi înainte să comanzi', subtitle: 'Cum funcționează, ce diferă între sisteme, ce limite are fiecare și de ce depinde costul. Dacă vrei ca firma să se ocupe de montaj, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Pânză retractabilă sau lamele reglabile' },
+      { label: 'Acționare', value: 'Manuală sau motorizată' },
+      { label: 'Limite', value: 'Cere-le de la producător, în scris' },
+      { label: 'Service', value: 'Stabilește de la început cine îl face' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Pergolele retractabile și cele bioclimatice sunt sisteme care permit să controlezi cât soare, cât aer și cât ploaie intră pe terasă. Sunt mai complexe decât o pergolă simplă, pentru că au mecanisme, motoare și etanșări care trebuie montate și întreținute corect.',
+      'Pagina te ajută să înțelegi diferențele, să știi ce să întrebi și să compari ofertele pe același conținut. Pergola fixă din lemn sau aluminiu și acoperișul fix peste terasă au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('what-h-h', 'heading', { text: 'Două familii de sisteme', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Pergola retractabilă (cu pânză)', text: 'Materialul se desface pe o structură și se strânge la nevoie. Protejează de soare și, în funcție de material și de sistem, de ploaia ușoară.' },
+      { title: 'Pergola bioclimatică (cu lamele)', text: 'Lamele rotitoare se pot închide pentru protecție sau deschide pentru aerisire și lumină. Au de obicei sisteme de scurgere a apei integrate în structură.' },
+      { title: 'Copertina retractabilă', text: 'Variantă mai simplă, prinsă de perete, care se desfășoară deasupra unei zone mai mici, de exemplu o ușă de terasă.' },
+      { title: 'Elemente adăugate', text: 'Iluminat, laterale din pânză sau sticlă, senzori de vânt sau de ploaie. Fiecare adaugă comoditate, dar și puncte de verificat.' },
+    ] }),
+    node('mat-h-h', 'heading', { text: 'Ce contează la un astfel de sistem', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Structura este de regulă metalică, vopsită pentru exterior. Calitatea profilelor, a șuruburilor și a vopselei decide cât rezistă în timp. Mecanismele de rotire sau de desfășurare sunt cele mai solicitate piese, deci cere informații despre service și piese de schimb.',
+      'Acționarea poate fi manuală sau motorizată, uneori cu telecomandă sau cu aplicație. Motorizarea cere alimentare electrică, deci planifică de la început traseul cablului și cine îl execută. Lucrarea electrică se face de personal autorizat.',
+      'Scurgerea apei, etanșarea la perete și modul de prindere sunt detaliile care decid dacă sistemul funcționează bine la prima ploaie sau dacă apar scurgeri. Cere explicații concrete despre ele, nu doar poze cu produsul finit.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea sistemului', text: 'Stabilești ce vrei de la el: umbră, protecție la ploaie, aerisire, utilizare în sezon rece.' },
+      { title: 'Verificări și acte', text: 'Întrebi la primărie, iar la bloc la asociație, dacă lucrarea cere acte sau acord.' },
+      { title: 'Relevee și proiect', text: 'Firma măsoară locul, verifică suportul (perete, placă, stâlpi) și stabilește ancorarea și scurgerea apei.' },
+      { title: 'Pregătirea suportului', text: 'Se pregătesc punctele de fixare și, dacă e cazul, alimentarea electrică.' },
+      { title: 'Montaj și reglaj', text: 'Se montează structura, mecanismele și acoperirea și se reglează sistemul.' },
+      { title: 'Recepție și instruire', text: 'Verifici funcționarea în toate pozițiile, primești instrucțiuni de utilizare și garanția scrisă.' },
+    ] }),
+    node('mist-h-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Cumpărat după produs, nu după loc', text: 'Un sistem frumos poate să nu se potrivească unui perete sau unei plăci care nu poate prelua prinderile.' },
+      { title: 'Ignorarea limitelor la vânt', text: 'Fiecare sistem are condiții în care trebuie strâns sau închis; nu le ignora.' },
+      { title: 'Scurgere neplanificată', text: 'Apa trebuie dusă controlat; altfel ajunge pe pereți sau pe pardoseală.' },
+      { title: 'Electrice improvizate', text: 'Alimentarea motoarelor se face de personal autorizat, cu protecții potrivite exteriorului.' },
+      { title: 'Fără service stabilit', text: 'Dacă nu știi cine intervine la o defecțiune, o problemă mică devine una mare.' },
+      { title: 'Oferte necomparabile', text: 'Sisteme cu componente diferite nu se compară doar după preț.' },
+    ] }),
+    node('cost-h-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul sistemului, de dimensiune, de materialul acoperirii, de acționare (manuală sau motorizată), de accesoriile adăugate, de ancorare și de montaj, precum și de lucrările pregătitoare, de exemplu alimentarea electrică sau întărirea suportului.',
+      'Cere oferte cu aceleași specificații și vezi paginile de preț pentru ordine de mărime. Nu compara un sistem cu pânză cu unul cu lamele doar după preț.',
+    ) }),
+    node('compare-h-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Cere în scris: tipul sistemului, dimensiunile, materialul structurii și al acoperirii, modul de acționare, accesoriile, ancorarea și scurgerea apei. Compară cum sunt tratate limitele la vânt și ploaie.',
+      'Întreabă ce garanție se dă separat pentru structură, mecanism și motor și cine face service-ul, cu ce termen de intervenție.',
+    ) }),
+    node('choose-h-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care vine să vadă locul, nu una care dă preț doar pe baza unui telefon. Cere montaje similare, pe care le poți vedea, și întreabă cine execută lucrările electrice.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților. Dacă ai nevoie de acoperiș fix, vezi pagina despre acoperirea terasei.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pergole retractabile și bioclimatice' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru terase, pergole și foișoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la terase, pergole și foișoare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie terasa și ce sistem ai în vedere și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

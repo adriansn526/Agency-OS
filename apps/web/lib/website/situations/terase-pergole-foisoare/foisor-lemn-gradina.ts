@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const foisorLemnGradina: SituationContent = {
+  slug: 'terase-pergole-foisoare--foisor-lemn-gradina',
+  categorie: 'terase-pergole-foisoare',
+  title: 'Foișor din lemn pentru grădină',
+  seoTitle: 'Foișor din lemn pentru grădină: alegere și ofertă',
+  seoDescription: 'Foișor din lemn pentru grădină: ce este, cine îl execută, cum alegi modelul, ordinea lucrării, greșeli frecvente, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce este un foișor, cine îl execută, cum alegi tipul și materialul, ce întrebi și de ce diferă ofertele pentru un foișor de grădină.',
+  sinonime: ['foisor', 'foisoare', 'foisor lemn', 'foisoare lemn', 'foisoare din lemn', 'foisor gradina', 'foisoare gradina', 'foisor gradina lemn', 'foisoare de gradina', 'foisor din lemn', 'foisor de lemn', 'modele de foisoare din lemn', 'foisoare moderne', 'foisor modern', 'foisor cu gratar', 'foișor', 'foișoare', 'foișor lemn', 'foișoare lemn', 'foișoare din lemn', 'foișor grădină', 'foișoare grădină', 'foișor grădină lemn', 'foișoare de grădină', 'foișor din lemn', 'foișor de lemn', 'modele de foișoare din lemn', 'foișoare moderne', 'foișor modern', 'foișor cu grătar'],
+  intrebari: [
+    'Ce este un foișor? | O construcție ușoară, deschisă sau parțial închisă, cu acoperiș, amplasată în grădină sau în curte, folosită ca loc de odihnă, de masă sau de grătar. Spre deosebire de o pergolă, are de obicei acoperiș propriu și o formă mai închegată.',
+    'Se poate face foișorul din lemn pentru grădină cu grătar? | Da, dar zona grătarului cere atenție la siguranță: distanță față de lemn, protecție la foc și evacuarea fumului. Întreabă firma cum rezolvă aceste lucruri și nu improviza grătarul sub acoperișul din lemn.',
+    'Cine execută un foișor? | Dulgheri sau firme de construcții din lemn. Unele firme oferă modele standard, altele execută la comandă. Ceea ce contează este cine face fundarea, ancorarea și acoperișul și ce lucrări similare poate arăta.',
+    'Cere autorizație un foișor? | Depinde de dimensiune, de modul de fixare, de zona în care locuiești și de reglementările locale. Întreabă la primărie înainte de comandă. La bloc sau în locuri cu regulament, ține cont și de asociație sau de administrator.',
+    'Pe ce se așază foișorul? | Pe o fundație sau pe puncte de sprijin potrivite terenului și greutății structurii. Alegerea o face firma după ce vede locul. Un foișor pus direct pe pământ se degradează repede și poate să se miște.',
+    'Cum îl protejez împotriva umezelii? | Lemnul se tratează cu produse potrivite exteriorului, iar picioarele stâlpilor se ridică față de sol. Tratamentul se reînnoiește periodic, conform indicațiilor produsului. Întreabă ce tratament aplică firma și de câte ori este nevoie să îl refaci.',
+    'De ce depinde costul unui foișor? | De dimensiune, de forma și complexitatea acoperișului, de tipul de lemn și tratament, de fundare, de finisaje și de elementele adăugate (balustrade, bănci, iluminat, închideri). Cere ofertă detaliată și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Foișor din lemn pentru grădină: cum alegi și ce să ceri în ofertă', subtitle: 'Cine îl execută, cum alegi modelul, ce întrebi despre lemn și fundare și de ce diferă ofertele. Dacă vrei să-l facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Material', value: 'Lemn tratat pentru exterior' },
+      { label: 'Cine execută', value: 'Dulgheri sau firme de construcții din lemn' },
+      { label: 'Autorizare', value: 'Depinde, întreabă la primărie' },
+      { label: 'Oferta', value: 'Lemn, tratament și fundare scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Foișorul este una dintre cele mai căutate construcții de grădină: loc de umbră, de masă în familie sau de grătar. Se găsește în multe modele, de la forme tradiționale la linii moderne, iar alegerea de pe site-uri sau din poze trebuie confruntată cu realitatea terenului și a bugetului.',
+      'Pagina se concentrează pe partea practică, nu pe modelul estetic: cine execută, ce lemn și ce tratament cere, cum se fundează, ce acte pot fi necesare și cum compari ofertele. Dacă vrei o structură deschisă, fără acoperiș propriu, vezi pagina despre pergole; pentru închiderea cu sticlă sau folie, vezi pagina despre închiderea terasei.',
+    ) }),
+    node('what-h-h', 'heading', { text: 'Din ce se compune un foișor', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Fundare și bază', text: 'Elementele care ridică structura față de sol și o stabilizează. De ele depinde cât rezistă lemnul.' },
+      { title: 'Stâlpi și structură', text: 'Scheletul din lemn, cu îmbinări și contravântuiri care dau rigiditate.' },
+      { title: 'Acoperiș', text: 'Poate avea una, două sau mai multe ape, cu învelitoare din materiale diverse. Se alege împreună cu forma foișorului.' },
+      { title: 'Pardoseală și finisaje', text: 'Pardoseala din lemn sau din alt material, balustrade, bănci, iluminat, eventuale închideri laterale.' },
+    ] }),
+    node('mat-h-h', 'heading', { text: 'Lemn și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Foișoarele se fac de regulă din lemn de rășinoase sau din esențe mai rezistente la exterior. Calitatea uscării și tratamentul contează la fel de mult ca esența: lemnul umed se deformează, iar cel netratat își pierde repede aspectul.',
+      'Tratamentul se aplică înainte și după montaj, conform indicațiilor produsului, și se reînnoiește periodic. Cere în scris ce produs se folosește și cum se întreține.',
+      'Foișoarele livrate ca kit sau prefabricate se montează mai repede, dar fundarea și ancorarea rămân tot responsabilitatea ta și a firmei. Întreabă cine garantează stabilitatea după montaj.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea locului și a modelului', text: 'Ții cont de teren, de distanțele față de gard și de casă, de soare și de vânt și stabilești forma acoperișului și ce vrei în plus: grătar, bancă, pardoseală.' },
+      { title: 'Verificări și acte', text: 'Întrebi la primărie dacă lucrarea cere acte și respecți regulamentele locale.' },
+      { title: 'Fundare', text: 'Se pregătesc punctele de sprijin sau fundația potrivită terenului.' },
+      { title: 'Montaj structură și acoperiș', text: 'Se ridică stâlpii, grinzile și acoperișul, cu verificarea verticalității și a ancorării.' },
+      { title: 'Tratare și finisaje', text: 'Se aplică tratamentele, se montează pardoseala și celelalte elemente.' },
+      { title: 'Recepție', text: 'Verifici stabilitatea, îmbinările și acoperișul și primești garanția și instrucțiunile de întreținere în scris.' },
+    ] }),
+    node('mist-h-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Comandat doar după poză', text: 'Un model frumos poate fi nepotrivit terenului sau regulamentelor locale.' },
+      { title: 'Montat direct pe sol', text: 'Lemnul în contact cu pământul putrezește repede și structura se mișcă.' },
+      { title: 'Lemn umed sau netratat', text: 'Se deformează, apar crăpături, iar durata de viață scade.' },
+      { title: 'Grătar fără protecție', text: 'Focul lângă lemn cere distanțe și protecții; nu se improvizează.' },
+      { title: 'Acoperiș subdimensionat', text: 'Un acoperiș ușor prost ancorat poate fi smuls de vânt.' },
+      { title: 'Ofertă fără specificații', text: 'Fără tipul de lemn, tratament și fundare, nu poți compara.' },
+    ] }),
+    node('cost-h-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiune, de forma și complexitatea acoperișului, de esența și calitatea lemnului, de tratament, de fundare, de pardoseală și de elementele adăugate, cum sunt balustradele, băncile, iluminatul sau închiderile laterale. Contează și dacă foișorul este produs la comandă sau se montează ca model standard.',
+      'Cere ofertă care separă materialele de manoperă și de transport. Pentru ordine de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele doar dacă descriu același foișor: aceleași dimensiuni, același lemn și tratament, aceeași fundare și aceleași elemente incluse. Verifică dacă prețul include transportul, montajul și tratamentul.',
+      'Cere termenul și garanția în scris și întreabă cine intervine dacă apar probleme după câteva sezoane.',
+    ) }),
+    node('choose-h-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea, pentru a judeca îmbinările, finisajele și felul în care a îmbătrânit lemnul. Întreabă cine proiectează, cine fundează și cine face acoperișul.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre foișoare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru terase, pergole și foișoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la terase, pergole și foișoare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie grădina și ce foișor ai în minte și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
