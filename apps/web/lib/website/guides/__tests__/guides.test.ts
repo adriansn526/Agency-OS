@@ -6,8 +6,8 @@ import { CATEGORIES } from '../../glossary/taxonomy'
 import { EXTRA_CATEGORY_SLUGS } from '../../services/categories'
 
 test('every guide is valid (blocks, SEO lengths, FAQ format, no unwritten marker)', () => { for (const g of GUIDES) assert.deepEqual(validateGuide(g), [], g.slug) })
-test('six guides for the hub, unique slugs, all in hidroizolatii', () => {
-  assert.equal(GUIDES.length, 6); assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 6)
+test('three informative guides for the hub, unique slugs, all in hidroizolatii', () => {
+  assert.equal(GUIDES.length, 3); assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 3)
   for (const g of GUIDES) assert.equal(g.serviciu, 'hidroizolatii')
 })
 test('the guides belong to categories that exist', () => { const ok = new Set([...CATEGORIES.map((c) => c.slug), ...EXTRA_CATEGORY_SLUGS]); for (const g of GUIDES) assert.ok(ok.has(g.serviciu), g.slug) })
