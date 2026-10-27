@@ -55,6 +55,7 @@ export const geamuri: ServiceContent = {
       { title: 'Producție și montaj', text: 'Demontarea tâmplăriei vechi, montaj cu spumă și benzi de etanșare, apoi reglajul ferestrelor.' },
       { title: 'Finisaje și recepție', text: 'Glafuri, șpalet și tencuială de închidere. Verifici închiderea, etanșarea și zgârieturile înainte de a semna.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Geamuri și tâmplărie pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru geamuri' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA, cu montaj dacă nu se spune altfel. Variază după profil, sticlă, dimensiuni și zonă.' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),

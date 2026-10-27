@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const ruloriJaluzeleExterioare: SituationContent = {
+  slug: 'geamuri--rulouri-jaluzele-exterioare',
+  categorie: 'geamuri',
+  title: 'Rulouri și jaluzele exterioare: alegere, montaj, cost',
+  seoTitle: 'Rulouri și jaluzele exterioare: alegere, montaj, cost',
+  seoDescription: 'Rulouri și jaluzele exterioare pentru ferestre: tipuri, unde se montează, ce întrebi firma, ordinea lucrării și de ce depinde costul. Ceri oferte gratuite.',
+  summary: 'Cum alegi rulouri sau jaluzele exterioare, cum se montează, ce întrebi firma și de ce depinde costul.',
+  sinonime: ['rulouri exterioare', 'jaluzele exterioare', 'rulou geamuri', 'rulouri geam exterior', 'rulouri'],
+  intrebari: [
+    'Care este diferența între rulou exterior și jaluzea exterioară? | Rulourile sunt formate din lamele legate care se înfășoară într-o casetă; jaluzelele exterioare au lamele orientabile care lasă lumina să intre sau o blochează. Firma explică ce se potrivește situației tale.',
+    'Se montează și pe ferestre existente? | De obicei da, dar montajul depinde de fereastră, de zid și de spațiul pentru casetă. Firma verifică la fața locului ce variantă este posibilă.',
+    'Cum se acționează? | Manual, cu cordon sau manivelă, sau electric, cu motor și telecomandă sau întrerupător. Alegerea ține de comoditate și de bugetul pentru instalația electrică.',
+    'Ce rol au la izolare și la confort? | Pot reduce pătrunderea soarelui în cameră și pot ajuta la intimitate. Efectul exact depinde de produs și de montaj: cere explicații de la firmă, fără a te baza pe promisiuni generale.',
+    'Ce întreținere cer? | Verificarea periodică a mecanismului, a ghidajelor și a motorului, plus curățarea lamelelor. Firma îți spune ce este recomandat pentru sistemul ales.',
+    'Ce trebuie să știu la un bloc cu asociație? | Montajul pe fațadă poate cere acordul asociației sau al administrației clădirii. Întreabă din timp și respectă regulile locale.',
+    'Cât costă rulourile exterioare? | Depinde de dimensiuni, material, tipul de casetă, acționare, număr de ferestre și montaj. Nu există un preț unic: compară ofertele pe conținut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Rulouri și jaluzele exterioare', subtitle: 'Cum alegi rulouri sau jaluzele exterioare, ce întrebi înainte de comandă și cum compari ofertele. Ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Rulouri și jaluzele' },
+      { label: 'Acționare', value: 'Manuală sau electrică' },
+      { label: 'Se montează', value: 'La ferestre și uși' },
+      { label: 'Compari', value: 'Material, casetă, acționare, montaj' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Rulourile și jaluzelele exterioare se montează în exteriorul ferestrei sau al ușii și protejează de soare, de privirile din afară și, în funcție de produs, de alte inconveniente. Se pot monta la construcții noi sau pe tâmplărie existentă.',
+      'Produsele diferă mult prin material, casetă și acționare, iar montajul este la fel de important ca produsul. De aceea pagina se concentrează pe ce trebuie să întrebi și să verifici, nu pe un catalog de modele.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Ferestre', text: 'La orice fereastră expusă la soare sau la priviri, din locuințe sau birouri.' },
+      { title: 'Uși de balcon și de terasă', text: 'La uși cu suprafețe vitrate mari, unde protecția la soare și intimitatea contează.' },
+      { title: 'Case și vile', text: 'Se pot monta în construcții noi, cu caseta integrată, sau pe tâmplărie existentă.' },
+      { title: 'Spații comerciale', text: 'La vitrine și birouri, unde se cere protecție și control al luminii.' },
+    ] }),
+    node('sol-h', 'heading', { text: 'Ce soluții există', level: 'h2' }),
+    node('sol', 'text', { body: para(
+      'Rulourile exterioare se înfășoară într-o casetă montată deasupra ferestrei, fie aplicată pe fațadă, fie integrată în zid sau în tâmplărie. Lamelele pot fi din materiale diferite, iar ghidajele laterale conduc lamelele la deschidere și închidere.',
+      'Jaluzelele exterioare au lamele orientabile, care permit reglarea luminii fără a le ridica complet. Atât rulourile cât și jaluzelele se pot acționa manual sau electric. Cere firmei să explice diferențele de întreținere, de zgomot și de rezistență pentru fiecare variantă.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Vizita și măsurarea', text: 'Firma măsoară fereastra, verifică zidul și spațiul pentru casetă și ghidaje.' },
+      { title: 'Oferta', text: 'Alegi tipul, materialul, culoarea și acționarea și primești oferta scrisă.' },
+      { title: 'Comanda', text: 'Produsul se face pe măsură; cere termenul în scris.' },
+      { title: 'Pregătirea și instalația electrică', text: 'La acționarea electrică se pregătește alimentarea înainte de montaj.' },
+      { title: 'Montajul', text: 'Se fixează caseta și ghidajele, apoi lamelele și mecanismul, și se reglează.' },
+      { title: 'Recepția', text: 'Verifici deschiderea, închiderea, zgomotul și funcționarea acționării.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Casetă neluată în calcul', text: 'Caseta ocupă loc și se vede pe fațadă. Discută varianta înainte de comandă.' },
+      { title: 'Măsurare improvizată', text: 'Dimensiunile le ia firma, ca ghidajele și lamelele să se potrivească.' },
+      { title: 'Acționare aleasă în grabă', text: 'Dacă vrei motor, pregătește alimentarea. Adăugarea ulterioară costă mai mult efort.' },
+      { title: 'Fixare nepotrivită', text: 'Fixarea trebuie făcută potrivit zidului sau tâmplăriei, altfel apar vibrații sau jocuri.' },
+      { title: 'Acordul asociației ignorat', text: 'Într-un bloc, intervenția pe fațadă poate cere aprobare.' },
+      { title: 'Alegerea doar după preț', text: 'Compară materialele, caseta, acționarea și garanția.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiunile ferestrei, de tipul de produs (rulou sau jaluzea), de material, de tipul de casetă, de acționare (manuală sau electrică), de numărul de ferestre, de instalația electrică și de accesul la fațadă.',
+      'Compară ofertele pe conținut: produsul, caseta, ghidajele, acționarea, instalația, montajul, termenul și garanția. Ceri ofertele pe aceleași cerințe, ca să poți compara. Pentru ferestrele noi, vezi paginile de preț pentru termopane.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care măsoară la fața locului, îți explică variantele și dă o ofertă scrisă detaliată. Întreabă cine montează, ce garanție oferă pentru produs și pentru montaj și cine face service dacă apare o problemă.',
+      'Cere lucrări anterioare similare și ia cel puțin două oferte pe aceleași cerințe.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre rulouri și jaluzele' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru geamuri și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la geamuri și tâmplărie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei rulouri sau jaluzele montate de o firmă?', text: 'Descrie ce ai nevoie și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const gardBeton: SituationContent = {
+  slug: 'garduri-pavaje--gard-beton',
+  categorie: 'garduri-pavaje',
+  title: 'Gard din beton: plăci și stâlpi',
+  seoTitle: 'Gard din beton: plăci și stâlpi, montaj și ofertă',
+  seoDescription: 'Gard din plăci de beton și stâlpi: cum se montează, ce întrebi firma, unde se potrivește și de ce depinde costul. Compară ofertele pe conținut.',
+  summary: 'Ce presupune un gard din plăci de beton prefabricate și stâlpi, cum se montează și ce verifici înainte să alegi firma și oferta.',
+  sinonime: ['gard beton', 'gard placi beton', 'gard plăci beton', 'stalpi gard beton', 'stâlpi gard beton', 'stalpi gard', 'stâlpi gard'],
+  intrebari: [
+    'Din ce este alcătuit un gard din beton? | De regulă din stâlpi prefabricați, fundați în pământ, cu canale în care se introduc plăci de beton prefabricate, suprapuse până la înălțimea dorită. Poate avea și un soclu turnat sau prefabricat la bază.',
+    'Se poate monta singur sau e nevoie de firmă? | Plăcile sunt grele și stâlpii trebuie fundați și aliniați corect, deci montajul cere de obicei echipă și, uneori, macara sau utilaj. Pentru gard mare sau înalt e mai sigur să apelezi la o firmă.',
+    'Cât durează montajul? | Depinde de lungime, de teren, de timpul de priză al fundațiilor și de accesul utilajelor. Cere firmei un calendar realist, nu o promisiune generală.',
+    'Ce este mai important la un gard din beton: plăcile sau stâlpii? | Stâlpii și fundațiile lor. Gardul are mare greutate, iar un stâlp prost fundat se înclină și deplasează toate plăcile. Întreabă cum se fundează stâlpii pe terenul tău.',
+    'Se poate monta pe teren în pantă? | Da, în trepte sau cu soclu adaptat, dar trebuie planificat de la început. Cere firmei să explice cum rezolvă diferențele de nivel.',
+    'Am nevoie de autorizație pentru un gard din beton? | Depinde de localitate, de înălțime și de amplasare (spre stradă sau între vecini). Verifică regulamentul local și întreabă la primărie înainte de a începe.',
+    'Ce diferențe de aspect pot exista? | Plăcile pot fi netede sau cu model, iar gardul se poate vopsi sau lăsa natural. Aspectul se alege după preferință; ce contează tehnic este calitatea betonului și a montajului.',
+    'De ce diferă ofertele? | Pentru că unele includ transportul, descărcarea cu utilaj, fundațiile și soclul, iar altele doar livrarea materialelor. Compară exact ce conține fiecare ofertă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Gard din beton: plăci, stâlpi și montaj', subtitle: 'Cum este alcătuit, unde se potrivește, ce întrebi înainte de montaj și de ce diferă ofertele. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Alcătuire', value: 'Stâlpi și plăci prefabricate' },
+      { label: 'Punct critic', value: 'Fundația stâlpilor' },
+      { label: 'Montaj', value: 'De obicei cu echipă și utilaj' },
+      { label: 'Verifică', value: 'Ce include oferta' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Gardul din beton prefabricat este o soluție robustă, cu aspect plin, folosită des pentru intimitate și pentru protecție. Se montează din stâlpi și plăci care se așază una peste alta, deci lucrarea depinde în primul rând de cum sunt fundați și aliniați stâlpii.',
+      'Pagina te ajută să înțelegi ce presupune lucrarea, ce întrebi firma și cum compari ofertele. Prețul și modelele variază, așa că accentul este pe execuție, nu pe un catalog.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și cum arată un gard din beton', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Este un gard alcătuit din stâlpi prefabricați, cu canale laterale, și plăci prefabricate care se introduc între ei. Se poate completa cu un soclu la bază, care ține plăcile departe de sol și de umiditate.',
+      'Față de gardul metalic, are masă mare și front plin. Asta înseamnă intimitate și rezistență, dar și o greutate care cere fundații corecte.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se potrivește', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Spre vecini sau stradă', text: 'Pentru intimitate și barieră fonică parțială; verifică regulile locale și limita proprietății.' },
+      { title: 'Curți și platforme', text: 'Unde vrei un perimetru închis și rezistent, cu mentenanță redusă.' },
+      { title: 'Teren plat sau ușor în pantă', text: 'Pe teren în pantă se lucrează în trepte; planifică asta din proiectare.' },
+      { title: 'Combinat cu alte materiale', text: 'Se poate combina cu secțiuni metalice sau cu porți; discută asta cu firma de la început.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și detalii de execuție', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Stâlpii se fundează în beton turnat, iar dimensiunea fundației depinde de înălțimea gardului, de teren și de produs. Nu există o regulă universală; firma ar trebui să explice soluția pentru terenul tău, iar la garduri înalte merită avizul unui specialist.',
+      'Plăcile se montează de jos în sus, cu atenție la verticalitate. Soclul, dacă există, se așază sau se toarnă înainte de plăci. Pentru manevrare se folosește de regulă un utilaj, deci verifică accesul către traseul gardului.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Trasarea', text: 'Se marchează traseul și pozițiile stâlpilor, după limita proprietății.' },
+      { title: 'Săpătura și fundațiile', text: 'Se sapă și se toarnă fundațiile stâlpilor, respectând soluția stabilită.' },
+      { title: 'Montarea stâlpilor', text: 'Stâlpii se așază pe aliniament și pe nivel și se lasă să se fixeze.' },
+      { title: 'Soclul', text: 'Dacă este prevăzut, se montează sau se toarnă la baza gardului.' },
+      { title: 'Montarea plăcilor', text: 'Plăcile se introduc în canale, una peste alta, până la înălțimea dorită.' },
+      { title: 'Finisaje și curățenie', text: 'Rosturi, vopsire (dacă se dorește) și curățarea traseului.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Fundații subdimensionate', text: 'Gardul este greu; un stâlp care cedează deplasează tot șirul de plăci.' },
+      { title: 'Acces pentru utilaj neluat în calcul', text: 'Lipsa accesului complică montajul și poate crește costul.' },
+      { title: 'Limita proprietății neverificată', text: 'Un gard greu e dificil de mutat; verifică limita înainte de turnare.' },
+      { title: 'Pantă tratată ca teren plat', text: 'Treptele și soclul trebuie gândite de la început.' },
+      { title: 'Ofertă care nu include transport și montaj', text: 'Compară ce conține fiecare ofertă.' },
+      { title: 'Fără verificarea regulilor locale', text: 'Înălțimea și amplasarea pot fi reglementate; întreabă la primărie.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de lungimea și înălțimea gardului, de tipul de plăci și de stâlpi, de fundații, de soclu, de transport și de utilajul pentru descărcare și montaj, de condițiile terenului și de porți.',
+      'Compară ofertele pe conținut: cine livrează, cine montează, ce fundații sunt incluse, dacă există soclu și cum se face plata. Pentru repere vezi pagina de prețuri pentru gard.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere o vizită la fața locului și o ofertă în scris, cu materialele și lucrările enumerate. Întreabă cine montează efectiv, cu ce utilaj și cum se fundează stâlpii.',
+      'Cere să vezi lucrări similare și compară cel puțin două-trei oferte. Evită ofertele care nu explică fundarea sau nu spun dacă transportul și montajul sunt incluse.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre gardul din beton' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru garduri și pavaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la garduri și pavaje' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie gardul dorit și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

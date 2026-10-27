@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const paratrasnetPrizaDePamant: SituationContent = {
+  slug: 'instalatii-electrice--paratrasnet-priza-de-pamant',
+  categorie: 'instalatii-electrice',
+  title: 'Paratrăsnet și priză de pământ: protecție la trăsnet',
+  seoTitle: 'Paratrăsnet și priză de pământ: cum se montează',
+  seoDescription: 'Paratrăsnet la casă și priză de pământ: cum funcționează protecția la trăsnet, ce lucrări implică, cine le execută și ce compari în oferte.',
+  summary: 'Cum funcționează protecția la trăsnet și împământarea, ce lucrări implică un paratrăsnet la casă, cine le execută și ce compari în oferte.',
+  sinonime: ['paratrasnet', 'paratrasnet casa', 'priza de pamant'],
+  intrebari: [
+    'La ce folosește priza de pământ? | Face legătura dintre instalația electrică și pământ și permite scurgerea curenților de defect, astfel încât protecțiile din tablou să poată întrerupe curentul. Fără ea, o carcasă a unui aparat defect poate rămâne sub tensiune.',
+    'Este același lucru paratrăsnetul cu priza de pământ? | Nu. Paratrăsnetul captează și conduce descărcarea atmosferică spre pământ, iar priza de pământ a instalației electrice servește protecției la defecte. Ambele folosesc o legătură la pământ, dar sunt instalații cu scopuri diferite, iar legarea lor se stabilește de specialist.',
+    'Are nevoie orice casă de paratrăsnet? | Depinde de clădire, de amplasare și de cerințele aplicabile. Nu există un răspuns valabil pentru toate casele: întreabă un specialist în protecție la trăsnet sau un proiectant ce se aplică la tine.',
+    'Poate un paratrăsnet să fie montat de oricine? | Lucrarea cere cunoștințe de specialitate și lucru la înălțime, iar corectitudinea ei este vitală. Alege o firmă sau un electrician autorizat și cere să-ți explice soluția și verificările.',
+    'Cum știu dacă priza de pământ este bună? | Se verifică prin măsurători făcute de un specialist cu aparatura potrivită, iar rezultatul se consemnează. Nu se poate judeca din aspect. Cere măsurătorile înainte de a considera lucrarea încheiată.',
+    'Cât de des se verifică protecția la trăsnet? | Verificările periodice sunt reglementate, iar frecvența depinde de tipul instalației și de cerințele în vigoare. Întreabă firma care a executat lucrarea sau un specialist autorizat, nu te baza pe o regulă auzită.',
+    'Ce trebuie să conțină o ofertă? | Soluția propusă, materialele, traseele conductoarelor, numărul și poziția electrozilor de pământ, măsurătorile după execuție și documentele predate. Compară ofertele pe acest conținut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Paratrăsnet și priză de pământ', subtitle: 'Cum funcționează protecția la trăsnet și împământarea, ce lucrări implică și ce compari în oferte. Ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Paratrăsnet', value: 'Captează și conduce descărcarea' },
+      { label: 'Priza de pământ', value: 'Scurge curenții de defect' },
+      { label: 'Verificare', value: 'Măsurători consemnate' },
+      { label: 'Execuție', value: 'Specialist autorizat' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O descărcare atmosferică poate produce incendii, avarii la instalație și pericol pentru oameni. Protecția la trăsnet reduce aceste riscuri prin captarea descărcării și conducerea ei spre pământ pe un traseu controlat. Priza de pământ este partea din instalație care face legătura efectivă cu solul.',
+      'Termenii se amestecă adesea, dar sunt două lucruri: priza de pământ a instalației electrice, necesară pentru protecția la defecte, și instalația de paratrăsnet, care protejează clădirea. Pagina explică ce implică fiecare și cum alegi pe cine o execută. Detaliile tehnice, ca valorile și normele, le stabilește specialistul care lucrează la clădirea ta.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și din ce se compune', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Captatorul', text: 'Elementul din partea de sus a clădirii care preia descărcarea atmosferică.' },
+      { title: 'Conductoarele de coborâre', text: 'Traseele prin care descărcarea este condusă spre pământ, pe exteriorul clădirii.' },
+      { title: 'Priza de pământ', text: 'Electrozi și conductoare îngropate care fac legătura cu solul.' },
+      { title: 'Legăturile echipotențiale', text: 'Conexiuni care aduc masele metalice la același potențial, ca să se reducă diferențele periculoase.' },
+      { title: 'Protecția la supratensiuni', text: 'Aparate din tablou care limitează efectele supratensiunilor asupra echipamentelor.' },
+      { title: 'Măsurătorile și documentația', text: 'Verificările de după execuție și actele care le consemnează.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde și când se aplică', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Priza de pământ face parte din orice instalație electrică corect realizată, la casă nouă sau la o refacere a instalației. Paratrăsnetul se ia în calcul mai ales la clădiri izolate sau înalte, la case în zone deschise, la anexe cu valoare mare sau când o cer proiectul ori asigurarea.',
+      'Dacă ai o casă veche și nu știi dacă are priză de pământ sau cum este făcută, cere o verificare de la un electrician autorizat înainte să adaugi echipamente noi. Aparatele moderne pornesc de la premisa că împământarea există și funcționează.',
+    ) }),
+    node('mat-h', 'heading', { text: 'Soluții folosite', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Pentru priza de pământ se folosesc electrozi îngropați, verticali sau orizontali, legați cu conductoare de tabloul electric prin bara de legătură. Alegerea și numărul lor depind de tipul solului și de valorile cerute, pe care le stabilește specialistul.',
+      'La paratrăsnet există soluții cu captatori pe acoperiș, cu conductoare de coborâre și cu piese de legătură, iar proiectarea ține cont de forma și înălțimea clădirii. Materialele trebuie să reziste la coroziune și la solicitările unei descărcări; cere specificațiile și nu accepta alegeri „la ochi”.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Evaluarea clădirii', text: 'Specialistul analizează clădirea, amplasarea și instalația existentă și propune soluția.' },
+      { title: 'Proiectul sau schița', text: 'Se stabilesc pozițiile captatorilor, traseele conductoarelor și locul prizei de pământ.' },
+      { title: 'Priza de pământ', text: 'Se execută electrozii și legăturile, ideal înainte de finisajele exterioare.' },
+      { title: 'Captatori și coborâri', text: 'Se montează elementele de pe acoperiș și conductoarele spre pământ.' },
+      { title: 'Legături și protecții', text: 'Se fac conexiunile echipotențiale și, după caz, protecțiile din tablou.' },
+      { title: 'Măsurători și predare', text: 'Se fac măsurătorile și se predau documentele lucrării.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Confuzia dintre priză și paratrăsnet', text: 'Una nu o înlocuiește pe cealaltă; întreabă ce acoperă oferta.' },
+      { title: 'Lipsa măsurătorilor', text: 'O priză de pământ nu se poate aprecia vizual.' },
+      { title: 'Materiale nepotrivite', text: 'Piesele care corodează repede reduc eficiența în timp.' },
+      { title: 'Montaj improvizat', text: 'Lucrarea la înălțime și pe acoperiș cere echipament și competență.' },
+      { title: 'Priză îngropată sub finisaje', text: 'Se execută și se verifică înainte de acoperire, ca să rămână accesibile punctele de control.' },
+      { title: 'Fără documente', text: 'Fără acte nu poți dovedi asigurătorului sau unui viitor cumpărător ce există.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiunea și forma clădirii, de tipul solului, de numărul de coborâri și de electrozi, de materialele alese, de accesul pe acoperiș și de dacă se adaugă protecții la supratensiuni sau se corectează o instalație existentă.',
+      'Compară ofertele pe conținut: soluția propusă, materialele, măsurătorile după execuție și documentele predate. Pentru repere de preț vezi paginile de mai jos.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre paratrăsnet și priza de pământ' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații electrice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații electrice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei o ofertă pentru protecția la trăsnet?', text: 'Descrie clădirea și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

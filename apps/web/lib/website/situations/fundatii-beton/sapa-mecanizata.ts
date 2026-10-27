@@ -1,0 +1,93 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const sapaMecanizata: SituationContent = {
+  slug: 'fundatii-beton--sapa-mecanizata',
+  categorie: 'fundatii-beton',
+  title: 'Șapă mecanizată și de egalizare',
+  seoTitle: 'Șapă mecanizată și de egalizare: cine o toarnă, cost',
+  seoDescription: 'Șapa mecanizată și de egalizare: cum se toarnă, pe ce suprafețe, în ce ordine se lucrează, de ce depinde costul și ce să ceri în ofertă de la o firmă.',
+  summary: 'Ce este șapa mecanizată și de egalizare, cum se execută, cine o toarnă, de ce depinde costul și cum compari ofertele.',
+  sinonime: ['sapa mecanizata', 'șapă mecanizată', 'sape mecanizate', 'sapa mecanizata pret', 'sapa elicopterizata', 'sape de egalizare', 'sapa egalizare', 'turnare sapa egalizare', 'sapa beton', 'sapa de ciment', 'sapa grosiera'],
+  intrebari: [
+    'Ce este șapa mecanizată? | O șapă turnată cu utilaje: mortarul sau betonul se prepară și se pompează la locul lucrării, apoi se întinde, se nivelează și se finisează mecanizat (de obicei cu elicopterul, o mașină cu pale rotative). Se folosește pe suprafețe mari, unde lucrul manual ar dura mult și ar ieși neuniform.',
+    'Ce înseamnă șapă elicopterizată? | Este șapa a cărei suprafață este finisată cu mașina cu pale rotative, numită uzual „elicopter”, după ce mortarul a început să se întărească. Rezultatul este o suprafață plană, netedă și închisă la pori.',
+    'Ce este șapa de egalizare? | Stratul care aduce pardoseala la nivel și planeitate înainte de finisaj (gresie, parchet, covor). Poate fi și un strat grosier, mai gros, care corectează diferențe mari de nivel; finisajul fin se face apoi cu alte soluții.',
+    'Când nu mai ajunge o șapă mecanizată? | Dacă ai diferențe foarte mici de nivel și o suprafață mică, o soluție autonivelantă poate fi mai potrivită; ea are însă pagina ei. Pe suprafețe mari, cu grosimi variabile, șapa mecanizată este de regulă mai practică.',
+    'În cât timp pot monta parchetul sau gresia? | După ce șapa s-a întărit și s-a uscat suficient. Timpul diferă în funcție de grosime, de rețeta folosită și de condițiile din încăpere. Firma sau furnizorul mortarului trebuie să spună când se poate continua; pentru parchet se verifică umiditatea cu aparat.',
+    'Se poate turna șapă peste încălzire în pardoseală? | Da, dacă șapa este prevăzută pentru acest caz în proiect și se respectă condițiile de punere în funcțiune a instalației. Cere firmei să explice cum procedează și cine răspunde de coordonarea cu instalatorul.',
+    'Ce informații îi dau firmei ca să-mi facă o ofertă corectă? | Suprafața, încăperile, grosimea dorită sau nivelurile de atins, tipul de finisaj de deasupra, dacă există încălzire în pardoseală, accesul pentru utilaje și etajul. Cu planul sau fotografii oferta e mai exactă.',
+    'Cum compar două oferte de șapă? | Pe ce includ: materiale, pompare, finisare, protecția fâșiilor de dilatare, curățenie și evacuare, plus modul în care se măsoară suprafața. Un preț pe metru pătrat fără aceste precizări nu spune nimic.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Șapă mecanizată și de egalizare', subtitle: 'Cine o toarnă, pe ce suprafețe se potrivește, în ce ordine se lucrează și de ce depinde costul. Cere oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Execuție', value: 'Cu utilaje, pe suprafețe mari' },
+      { label: 'Rol', value: 'Nivel și planeitate înainte de finisaj' },
+      { label: 'Atenție', value: 'Uscarea înainte de parchet sau gresie' },
+      { label: 'Compari ofertele', value: 'Pe ce include, nu doar pe total' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Șapa este stratul care aduce pardoseala la nivelul și planeitatea cerute de finisaj. Pe case și apartamente cu suprafețe mari, turnarea mecanizată înlocuiește lucrul manual: mortarul este pompat, întins și finisat cu utilaje, într-o singură zi de lucru pentru o suprafață întinsă.',
+      'Pagina explică ce este șapa mecanizată și de egalizare, în ce situații se alege, cum se lucrează, ce întrebi o firmă și de ce depinde costul. Nu conține grosimi sau rețete: acestea depind de proiect, de finisaj și de produsul folosit.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este șapa mecanizată', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Șapa mecanizată este o șapă de mortar sau beton fin preparată și pompată cu echipament dedicat, apoi nivelată la reperi și finisată cu mașina cu pale rotative. În limbaj uzual i se spune și șapă elicopterizată. Se întâlnește sub numele de șapă de ciment când liantul este cimentul.',
+      'Șapa de egalizare are un scop mai larg: corectează denivelările planșeului sau ale stratului de formă înainte de finisaj. Poate fi mecanizată sau manuală. O variantă grosieră se folosește când diferențele de nivel sunt mari, iar finisajul fin se aplică apoi separat.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Case și apartamente noi', text: 'Pe planșeu, peste stratul de izolație fonică sau termică, înainte de gresie, parchet sau alt finisaj.' },
+      { title: 'Suprafețe mari', text: 'Hale, spații comerciale, garaje: acolo unde nivelarea manuală ar fi lentă și neuniformă.' },
+      { title: 'Pardoseli cu încălzire', text: 'Peste serpentine, când proiectul prevede șapa ca strat de acoperire și de transfer al căldurii.' },
+      { title: 'Renovări cu denivelări', text: 'Când pardoseala veche a ajuns la nivel diferit între încăperi și se face o egalizare înainte de finisaj nou.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și materiale', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Mortarul poate fi preparat pe loc, cu nisip, ciment și apă, sau adus gata făcut. Pentru unele lucrări se adaugă fibre sau aditivi care limitează fisurarea ori ajută la întărire. Alegerea o face proiectantul sau meșterul, în funcție de grosime, de încălzirea în pardoseală și de finisaj.',
+      'Pentru șape plutitoare se pune sub șapă un strat de separare și de izolare, iar la pereți fâșii de dilatare. Acestea nu sunt opționale: permit mișcarea șapei și evită fisurile și transmiterea zgomotului.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Pregătirea suportului', text: 'Planșeul se curăță, se verifică nivelul și se montează izolațiile și foliile de separare din proiect.' },
+      { title: 'Fâșii de dilatare și reperi', text: 'Se fixează fâșiile perimetrale și reperii de nivel, inclusiv pe traseele de încălzire.' },
+      { title: 'Pomparea mortarului', text: 'Mortarul se pompează în încăpere și se întinde în fâșii, la reperii de nivel.' },
+      { title: 'Nivelarea', text: 'Se trage șapa cu dreptarul până la planeitatea cerută.' },
+      { title: 'Finisarea mecanizată', text: 'După ce mortarul își ia consistența potrivită, suprafața se finisează cu mașina cu pale.' },
+      { title: 'Întărirea și protecția', text: 'Șapa se protejează de uscare prea rapidă și de curenți, apoi se lasă să se întărească înainte de finisaj.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Fără fâșii de dilatare', text: 'Șapa se fisurează și transmite zgomot în pereți.' },
+      { title: 'Montaj de finisaj prea devreme', text: 'Parchetul pe șapă umedă se deformează; verifică umiditatea cu aparat.' },
+      { title: 'Uscare prea rapidă', text: 'Soarele direct sau curenții de aer pot fisura suprafața.' },
+      { title: 'Nivel nemăsurat', text: 'Nu se stabilesc reperii pentru toate încăperile, iar la uși apar praguri neașteptate.' },
+      { title: 'Încălzire pornită prea repede', text: 'Instalația se pornește conform indicațiilor, nu imediat după turnare.' },
+      { title: 'Ofertă fără măsurare comună', text: 'Suprafața se contestă la final; stabilește din start cum se măsoară.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața totală, de grosimea șapei, de tipul de mortar, de accesul utilajelor (etaj, lift, distanța de pompare), de numărul de încăperi și de lucrările auxiliare: izolații, fâșii de dilatare, armare, protecție. Suprafețele mici au de regulă un cost proporțional mai mare, pentru că deplasarea și instalarea utilajului se împart pe mai puțin.',
+      'Pentru repere de preț pe lucrări apropiate vezi pagina de prețuri pentru betonul de fundație; pentru șapă cere ofertă pe baza suprafeței și a grosimii.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'cards', { columns: '2', items: [
+      { title: 'Ce este inclus', text: 'Materialul, pomparea, finisarea, fâșiile de dilatare, curățenia și evacuarea resturilor.' },
+      { title: 'Grosime și nivel', text: 'Ce grosime sau ce nivel final se garantează și cum se măsoară.' },
+      { title: 'Termene de lucru', text: 'Când poți intra cu următoarele lucrări și ce timp de întărire recomandă firma.' },
+      { title: 'Acces și condiții', text: 'Cine asigură apă, curent și acces pentru utilaj, și ce se întâmplă dacă accesul e dificil.' },
+    ] }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări recente pe care le poți vedea sau pe care le poți verifica prin recomandări, întreabă ce tip de mortar folosește și cum protejează șapa în prima perioadă. O firmă care explică clar întărirea și uscarea înainte de finisaj te ajută mai mult decât una care doar anunță o dată de predare.',
+      'Compară cel puțin două oferte pe aceeași suprafață și același nivel, ca să poți vedea unde diferă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre șapa mecanizată' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru fundații și beton' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la fundații și beton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca șapa să o toarne o firmă?', text: 'Descrie suprafața și finisajul și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -55,6 +55,7 @@ export const instalatiiSanitare: ServiceContent = {
       { title: 'Proba de presiune', text: 'Instalația se testează sub presiune înainte de acoperirea țevilor. Fără ea nu închide pereții.' },
       { title: 'Montaj obiecte și recepție', text: 'După finisaje se montează obiectele și bateriile; verifici scurgerea, presiunea și etanșeitatea.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Instalații sanitare pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru instalații sanitare' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă dacă nu se spune altfel. Materialele și obiectele se plătesc separat.' }),
     node('choose-h', 'heading', { text: 'Cum alegi instalatorul', level: 'h2' }),

@@ -1,0 +1,93 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const placaBetonArmat: SituationContent = {
+  slug: 'fundatii-beton--placa-beton-armat',
+  categorie: 'fundatii-beton',
+  title: 'Placă de beton și beton armat',
+  seoTitle: 'Placă de beton și beton armat: execuție și cost',
+  seoDescription: 'Placa de beton și betonul armat: unde se folosesc, cum se toarnă pe pământ, cum previi fisurile, de ce depinde costul și cum compari ofertele.',
+  summary: 'Cum se execută o placă de beton pe pământ, ce rol are armarea, cum previi fisurile și cum compari ofertele firmelor.',
+  sinonime: ['placa beton', 'placă beton', 'turnare placa beton pe pamant', 'beton armat', 'fisuri in placa de beton proaspat turnata', 'turnare beton'],
+  intrebari: [
+    'Ce este o placă de beton turnată pe pământ? | Un strat de beton (de multe ori armat) turnat direct pe un teren pregătit și compactat, folosit pentru garaje, terase, platforme, hale ușoare sau pardoseli la parter. Dimensionarea depinde de încărcări și de teren, deci de proiect sau de recomandarea unui specialist.',
+    'Ce rol are armătura? | Armătura preia eforturile de întindere pe care betonul simplu le suportă slab și limitează deschiderea fisurilor. Nu le elimină. Tipul, poziția și acoperirea armăturii se stabilesc de un specialist, nu se aleg la întâmplare pe șantier.',
+    'De ce apar fisuri într-o placă proaspăt turnată? | Cauzele uzuale sunt uscarea prea rapidă a suprafeței, contracția betonului, lipsa rosturilor, terenul slab sau neuniform și îngrijirea insuficientă în primele zile. Unele fisuri fine sunt normale; cele late sau în creștere cer verificarea unui specialist.',
+    'Cum previi fisurile? | Cu teren bine pregătit și compactat, cu rosturi de contracție la distanțe stabilite de specialist, cu armare corespunzătoare și cu protecția betonului la întărire (udare sau acoperire, ferit de soare și vânt). Firma trebuie să-ți explice cum procedează.',
+    'Ce sunt rosturile și de ce se fac? | Tăieturi sau separări în placă care ghidează fisurarea în locuri controlate și lasă betonul să se miște. Un rost lipsă nu înseamnă că placa nu se fisurează, ci că se fisurează unde apucă.',
+    'Se poate turna beton pe vreme rece sau caldă? | Se poate, cu măsuri speciale, dar riscul crește: înghețul în primele zile afectează grav betonul, iar căldura și vântul usucă suprafața prea repede. Cere firmei să explice ce măsuri ia și acceptă o amânare dacă prognoza e nefavorabilă.',
+    'Pot comanda singur betonul și să plătesc doar manopera? | Da, dar atunci răspunzi tu de comandă și de bonul de livrare. Stabilește în scris cine comandă, cine verifică betonul la sosire și cine răspunde dacă ceva nu corespunde.',
+    'Cum compar ofertele de turnare a unei plăci? | Pe ce includ: pregătirea terenului, cofrajul, armarea, betonul, turnarea, finisarea, rosturile și îngrijirea. Vezi și pagina de prețuri pentru turnarea betonului de fundație ca reper de structură, apoi cere ofertă pe lucrarea ta.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Placă de beton și beton armat', subtitle: 'Unde se folosește, cum se toarnă pe pământ, cum previi fisurile și de ce depinde costul. Cere oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Dimensionare', value: 'Specialist, după încărcări și teren' },
+      { label: 'Fisuri', value: 'Previn: teren, rosturi, îngrijire' },
+      { label: 'Armătura', value: 'Preia eforturile, limitează fisurile' },
+      { label: 'Compari ofertele', value: 'Pe lucrările incluse' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Placa de beton este un strat de beton turnat pe un teren pregătit, folosit pentru garaje, platforme, terase, pardoseli la parter sau hale ușoare. Betonul armat adaugă oțel în masa betonului, pentru ca elementul să reziste și la întindere.',
+      'Majoritatea problemelor apar din teren pregătit prost, rosturi lipsă și îngrijire insuficientă a betonului, nu din betonul în sine. Pagina te ajută să înțelegi lucrarea, să pui întrebările potrivite și să compari ofertele. Nu conține grosimi, clase de beton sau armături: acestea depind de încărcările și de terenul tău.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este o placă de beton și ce înseamnă beton armat', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Betonul rezistă bine la compresiune și slab la întindere. Armătura de oțel preia întinderea și leagă betonul când acesta se fisurează. Placa turnată pe pământ lucrează împreună cu terenul de dedesubt, deci pregătirea acestuia face parte din lucrare.',
+      'O placă pentru o platformă de grădină nu se dimensionează ca una pentru un garaj cu mașini sau pentru un atelier. Fundațiile caselor sunt un subiect separat, cu proiectant și studiu geotehnic.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se folosește', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Garaje și platforme', text: 'Suprafețe pentru autoturisme sau utilaje, cu încărcări mai mari și rosturi planificate.' },
+      { title: 'Terase și alei', text: 'Suprafețe exterioare unde contează panta pentru scurgerea apei și protecția la îngheț.' },
+      { title: 'Pardoseli la parter', text: 'Plăci pe teren sub case, anexe sau hale ușoare, cu straturi de balast și, după caz, izolații.' },
+      { title: 'Elemente de beton armat', text: 'Stâlpi, grinzi, planșee și alte elemente turnate după proiect, cu armare stabilită de proiectant.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Betonul se comandă de la stație cu clasa și consistența indicate de specialist, sau se prepară pe loc pentru cantități mici. Armarea poate fi cu plase sudate sau cu bare legate, cu distanțieri care țin armătura la poziția corectă în placă. Fibrele sunt o soluție pe care o propune uneori specialistul, ca adaos sau în loc de armarea clasică.',
+      'Sub placă se pune de obicei un strat compactat de pietriș sau balast și, după caz, o folie de separare. Rosturile se fac prin tăiere sau prin cofraje de separare, în locurile stabilite.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Stabilirea încărcărilor', text: 'Se clarifică ce va susține placa: oameni, mașini, utilaje, rafturi grele.' },
+      { title: 'Pregătirea terenului', text: 'Se decapează solul vegetal, se aduce terenul la cotă și se compactează stratul de balast.' },
+      { title: 'Cofraj și armare', text: 'Se montează cofrajul și armătura la poziția corectă, cu distanțieri.' },
+      { title: 'Verificarea', text: 'Cotele, panta, armătura și cofrajul se verifică înainte de comandă.' },
+      { title: 'Turnarea și finisarea', text: 'Betonul se toarnă, se compactează și se nivelează; suprafața se finisează în funcție de utilizare.' },
+      { title: 'Rosturi și îngrijire', text: 'Rosturile se execută la timp, iar betonul se protejează la întărire de uscare, vânt, soare și îngheț.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Teren necompactat', text: 'Tasările neuniforme duc la fisuri și la plăci care se rup sub sarcină.' },
+      { title: 'Lipsa rosturilor', text: 'Fisurile apar oriunde, nu în locurile alese.' },
+      { title: 'Armătura culcată pe teren', text: 'Fără distanțieri, armătura nu lucrează cum a fost gândită.' },
+      { title: 'Apă adăugată în beton pe șantier', text: 'Ușurează turnarea, dar slăbește betonul și mărește riscul de fisuri.' },
+      { title: 'Fără îngrijire la întărire', text: 'Suprafața uscată prea repede se fisurează fin și se prăfuiește.' },
+      { title: 'Turnare pe vreme nepotrivită', text: 'Îngheț, caniculă sau vânt puternic fără măsuri de protecție.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață și grosime, de pregătirea terenului (săpătură, balast, compactare), de armare, de tipul de beton, de accesul autobetonierei sau al pompei, de finisarea suprafeței și de rosturi. Lucrările mici au un cost proporțional mai mare, pentru că transportul și utilajele se împart pe un volum redus.',
+      'Vezi pagina de prețuri pentru turnarea betonului de fundație, ca reper de structură a unei oferte. Pentru lucrarea ta cere ofertă pe baza dimensiunilor și a utilizării.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'cards', { columns: '2', items: [
+      { title: 'Pregătirea terenului', text: 'Dacă oferta include decapare, balast și compactare, sau doar turnarea.' },
+      { title: 'Armare și rosturi', text: 'Ce armare se prevede, cine a stabilit-o și cum se execută rosturile.' },
+      { title: 'Beton și livrare', text: 'Cine comandă betonul, ce clasă are și cine verifică bonul de livrare.' },
+      { title: 'Finisare și îngrijire', text: 'Ce finisaj are suprafața și cum se protejează betonul după turnare.' },
+    ] }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea, întreabă cum previne fisurile și ce face la vreme nefavorabilă. Pentru plăci cu sarcini mari sau pentru elemente de structură, cere ca dimensionarea să vină de la un specialist, nu doar de la executant.',
+      'Compară cel puțin două oferte pe aceleași dimensiuni și aceeași utilizare, ca să vezi ce lipsește din cele mai mici.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre placa de beton' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru fundații și beton' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la fundații și beton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca placa să o toarne o firmă?', text: 'Descrie lucrarea și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

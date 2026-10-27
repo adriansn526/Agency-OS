@@ -1,0 +1,87 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const pavajCurte: SituationContent = {
+  slug: 'garduri-pavaje--pavaj-curte',
+  categorie: 'garduri-pavaje',
+  title: 'Pavaj curte: pavele și borduri',
+  seoTitle: 'Pavaj curte: montaj pavele și borduri, cum alegi',
+  seoDescription: 'Pavaj pentru curte din pavele și borduri: ordinea lucrării, pregătirea bazei, greșeli frecvente, ce întrebi firma și de ce depinde costul.',
+  summary: 'Cum se execută un pavaj de curte din pavele și borduri, ce contează la bază și la pante și ce verifici înainte să alegi firma.',
+  sinonime: ['pavaj curte', 'pavaje curti', 'pavaje curți', 'pavaje curte', 'pavele curte', 'pavaj', 'pavele', 'pavaje', 'montaj pavele', 'bordura pavaj', 'bordură pavaj', 'borduri beton', 'modele pavaj curte'],
+  intrebari: [
+    'Ce conține un pavaj de curte? | Terenul compactat, un strat de fundație, un strat de așternere, pavelele propriu-zise, bordurile de margine și rostuirea. Fiecare strat are rol: pavajul se tasează în timp dacă baza e slabă.',
+    'De ce sunt importante bordurile? | Bordurile țin marginile pavajului și împiedică deplasarea pavelelor. Fără ele, marginile se desfac. Se montează de obicei înainte de așternerea pavelelor.',
+    'Se montează pavele direct pe pământ? | Nu. Baza trebuie compactată și realizată cu straturi potrivite. Soluția exactă depinde de teren și de sarcini (pietoni sau mașini); cere firmei să o descrie sau cere sfatul unui specialist.',
+    'Cum aleg modelul pavelelor? | După aspect și utilizare: zone pietonale, parcări sau accese auto cer produse și baze diferite. Discută cu firma ce se potrivește pentru fiecare zonă a curții.',
+    'Ce pantă trebuie să aibă pavajul? | Trebuie să existe pantă spre zonele de scurgere, ca apa să nu stea. Valoarea o stabilește firma în funcție de curte; nu o lăsa nedefinită.',
+    'Cât durează montajul? | Depinde de suprafață, de pregătirea terenului și de vreme. Cere un calendar realist și întreabă ce se întâmplă dacă ploile întârzie lucrarea.',
+    'Pot circula cu mașina imediat? | Cere indicația firmei, mai ales dacă s-au folosit materiale care au nevoie de timp (de exemplu rostuire sau mortar). Nu încărca suprafața înainte de termenele recomandate.',
+    'De ce diferă ofertele? | Diferă tipul de pavele, borduri, pregătirea bazei, transportul pământului în exces, rostuirea și scurgerile. Compară ce include fiecare ofertă, nu doar totalul.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pavaj de curte: pavele, borduri și montaj', subtitle: 'Ce straturi are un pavaj, în ce ordine se lucrează, ce întrebi echipa de montaj și de ce diferă ofertele. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Straturi', value: 'Teren, fundație, așternere, pavele' },
+      { label: 'Margini', value: 'Borduri montate înainte' },
+      { label: 'Punct critic', value: 'Baza și panta de scurgere' },
+      { label: 'Compară', value: 'Ce include oferta' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un pavaj bine făcut arată la fel ani la rând; unul făcut pe o bază slabă se tasează și se deformează în câteva sezoane. Diferența nu o face modelul pavelei, ci pregătirea de dedesubt, bordurile și scurgerea apei.',
+      'Pagina se concentrează pe execuție: cum este alcătuit un pavaj, în ce ordine se lucrează, ce întrebi echipa de montaj și cum compari ofertele. Nu este un catalog de modele.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este un pavaj de curte', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Este o suprafață din pavele (de beton sau alt material) așezate pe un strat de așternere, deasupra unei fundații compactate. Marginile sunt fixate cu borduri, iar rosturile dintre pavele se umplu pentru stabilitate.',
+      'Spre deosebire de betonul amprentat, pavajul este format din elemente separate: se poate repara punctual, dar cere o bază bine făcută.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Alei și cărări', text: 'Sarcini mici; baza este mai simplă, dar tot trebuie compactată.' },
+      { title: 'Parcări și accese auto', text: 'Cer o bază mai puternică și produse potrivite pentru circulația auto; consultă un specialist.' },
+      { title: 'Terase și zone de relaxare', text: 'Contează planeitatea și panta de scurgere, mai ales lângă casă.' },
+      { title: 'Împrejurul casei (trotuar)', text: 'Aici apa trebuie îndepărtată de fundație; panta se gândește de la început.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și detalii care contează', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Baza se alcătuiește din teren compactat și un strat de fundație potrivit sarcinilor; deasupra vine stratul de așternere, pe care se așază pavelele. Grosimile și materialele depind de teren și de utilizare, deci cere firmei să le precizeze în ofertă.',
+      'Bordurile se montează pe un pat de beton sau pe altă soluție stabilă, apoi se așază pavelele între ele. Rosturile se umplu și suprafața se compactează pentru fixare.',
+      'Scurgerea apei: pantele, rigolele și gurile de scurgere trebuie planificate înainte de montaj. Un pavaj fără pantă corectă păstrează apa și se degradează.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Trasare și nivelare', text: 'Se stabilesc limitele, nivelurile și pantele de scurgere.' },
+      { title: 'Decopertare și compactare', text: 'Se îndepărtează stratul vegetal și se compactează terenul.' },
+      { title: 'Stratul de fundație', text: 'Se aplică și se compactează straturile bazei.' },
+      { title: 'Bordurile', text: 'Se montează bordurile de margine, pe aliniament și pe nivel.' },
+      { title: 'Stratul de așternere și pavelele', text: 'Se nivelează așternerea și se așază pavelele după desenul ales.' },
+      { title: 'Rostuire și compactare finală', text: 'Se umplu rosturile și se compactează suprafața; se curăță excesul.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Bază insuficient pregătită', text: 'Cea mai frecventă cauză a tasărilor și a denivelărilor.' },
+      { title: 'Fără borduri sau borduri prost fixate', text: 'Marginile se desfac și pavelele se deplasează.' },
+      { title: 'Pantă greșită sau lipsă', text: 'Apa stă pe suprafață sau merge spre casă.' },
+      { title: 'Pavele nepotrivite pentru circulația auto', text: 'Folosește produse și baze potrivite zonelor cu mașini.' },
+      { title: 'Rosturi nefinalizate', text: 'Rosturile goale permit mișcarea pavelelor și creșterea buruienilor.' },
+      { title: 'Pământ în exces uitat', text: 'Decopertarea produce pământ; stabilește din ofertă cine îl transportă.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de adâncimea decopertării și transportul pământului, de baza necesară, de tipul de pavele și de borduri, de forma suprafeței (curbe, trepte), de scurgerile pluviale și de accesul utilajelor.',
+      'Compară ofertele pe conținut: ce straturi de bază sunt incluse, ce borduri, cine transportă pământul, dacă rostuirea și scurgerile sunt în preț. Pentru repere vezi pagina de prețuri pentru pavaj.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere o vizită la fața locului: firma trebuie să vadă terenul, panta și accesul. Întreabă cum pregătește baza, ce utilaje folosește pentru compactare și cine execută efectiv.',
+      'Cere oferta în scris, cu straturile și materialele enumerate, și compară cel puțin două-trei variante. O ofertă care nu spune nimic despre bază sau scurgere merită clarificată înainte de semnare.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pavajul de curte' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru garduri și pavaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la garduri și pavaje' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie curtea și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

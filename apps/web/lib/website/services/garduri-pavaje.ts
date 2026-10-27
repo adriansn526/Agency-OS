@@ -56,6 +56,7 @@ export const gardurPavaje: ServiceContent = {
       { title: 'Montaj', text: 'Stâlpi și panouri după priza fundației; pavele așezate cu rosturi uniforme sau beton turnat și amprentat.' },
       { title: 'Finisaje și recepție', text: 'Rostuire, borduri, vopsire sau sigilare. Verifici nivelul, pantele pentru scurgerea apei și alinierea.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Garduri și pavaje pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru garduri și pavaje' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA. Variază după material, înălțime, sol, acces și zonă.' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),

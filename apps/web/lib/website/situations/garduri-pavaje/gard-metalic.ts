@@ -1,0 +1,88 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const gardMetalic: SituationContent = {
+  slug: 'garduri-pavaje--gard-metalic',
+  categorie: 'garduri-pavaje',
+  title: 'Gard metalic: plasă bordurată, șipcă, tablă',
+  seoTitle: 'Gard metalic: plasă bordurată, șipcă, tablă',
+  seoDescription: 'Gard metalic pentru curte: panou bordurat, șipcă metalică sau tablă. Cum alegi tipul, ce întrebi firma care îl montează și de ce depinde costul.',
+  summary: 'Cum alegi între plasă bordurată, șipcă metalică și tablă, ce presupune montajul și ce întrebi o firmă înainte să accepți oferta.',
+  sinonime: ['gard metalic', 'garduri metalice', 'panouri gard metalic', 'plasa gard', 'plasa bordurata', 'plasă bordurată', 'panou bordurat', 'panou gard bordurat', 'gard bordurat', 'sipca metalica gard', 'sipca metalica', 'șipcă metalică', 'tabla gard', 'tablă gard', 'plasa de gard', 'plasă de gard'],
+  intrebari: [
+    'Care este diferența dintre gardul din plasă bordurată, șipcă metalică și tablă? | Plasa bordurată (panoul bordurat) este deschisă, lasă să se vadă prin ea și e cea mai ușoară. Șipca metalică formează un gard cu goluri mici între șipci, deci intimitate parțială. Tabla formează un front plin, cu intimitate completă, dar ia mai mult vânt și cere stâlpi și fundații dimensionate corespunzător.',
+    'Ce alegi dacă vrei intimitate? | Șipca metalică sau tabla. Plasa bordurată nu oferă intimitate decât dacă se completează cu un strat de umplutură sau cu vegetație. Alegerea depinde de cât de plin vrei gardul și de expunerea terenului la vânt.',
+    'Cine montează un gard metalic? | Firme de construcții sau de garduri, ateliere de feronerie și echipe de montaj. Cere o firmă care poate spune clar cum fundează stâlpii, cum fixează panourile și cum protejează metalul împotriva ruginii, nu doar prețul pe metru liniar.',
+    'Am nevoie de autorizație pentru un gard? | Depinde de localitate și de felul gardului (spre stradă sau între vecini). Regulile privind înălțimea, retragerea față de limită și avizele diferă, deci întreabă la primăria locală sau la un specialist înainte de a comanda lucrarea.',
+    'Ce înseamnă un gard bine protejat anticoroziv? | Metalul trebuie zincat și/sau vopsit, iar zonele de sudură și tăieturile se retușează. Cere să afli ce tratament are produsul și cum se fac retușurile la montaj, pentru că ruginea apare de obicei la capete, la suduri și la baza stâlpilor.',
+    'Cum se fixează stâlpii? | De regulă în fundații de beton turnate în pământ, cu dimensiuni stabilite după tipul gardului, înălțime și teren. Nu există o regulă unică: firma ar trebui să explice soluția pentru terenul tău, iar la garduri înalte sau pline merită sfatul unui specialist.',
+    'Poate fi gardul montat pe un soclu de beton? | Da, este o soluție des întâlnită: soclul ține metalul departe de umiditatea solului și rezolvă diferențele de nivel. Dacă vrei și soclu, cere să fie inclus și detaliat în ofertă.',
+    'De ce diferă atât de mult ofertele pentru același gard? | Pentru că diferă tipul de panou, calitatea metalului și a protecției anticorozive, numărul de stâlpi, fundațiile, porțile și accesoriile. Compară ofertele pe conținut, nu doar pe total.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Gard metalic: cum alegi și cine îl montează', subtitle: 'Plasă bordurată, șipcă metalică sau tablă: diferențe, ce întrebi înainte de montaj și de ce diferă ofertele. Dacă preferi să execute o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Plasă, șipcă, tablă' },
+      { label: 'Intimitate', value: 'Crește de la plasă la tablă' },
+      { label: 'Punct critic', value: 'Fundația stâlpilor' },
+      { label: 'Atenție la', value: 'Protecția anticorozivă' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Gardul metalic este alegerea frecventă pentru case și terenuri pentru că se montează relativ repede, cere puțină întreținere și există în mai multe variante. Alegerea se face între trei familii: plasa bordurată (panoul bordurat), șipca metalică și tabla.',
+      'Pagina de față te ajută să decizi ce tip se potrivește curții tale, ce întrebi firma care îl montează și cum compari ofertele. Nu este un catalog de produse: partea importantă este cum se execută lucrarea, pentru că un gard bun pe hârtie poate sta prost dacă stâlpii sunt fundați greșit sau metalul nu e protejat.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce tipuri de gard metalic există', level: 'h2' }),
+    node('what', 'cards', { columns: '3', items: [
+      { title: 'Plasă bordurată (panou bordurat)', text: 'Panouri din sârmă sudată, cu margini îndoite (bordurate) pentru rigiditate. Ușoare, deschise, lasă lumina și privirea să treacă; nu oferă intimitate.' },
+      { title: 'Șipcă metalică', text: 'Șipci dispuse vertical sau orizontal pe o structură de rame. Intimitate parțială, aspect asemănător gardului din lemn, fără întreținerea lui.' },
+      { title: 'Tablă', text: 'Front plin, cu intimitate completă. Ia mai mult vânt, deci structura și fundațiile trebuie dimensionate cu mai multă grijă.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se potrivește fiecare', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Spre stradă', text: 'Se alege de obicei după aspect și intimitate dorită; verifică la primărie ce cerințe există pentru gardurile spre domeniul public.' },
+      { title: 'Între vecini', text: 'Aici contează înțelegerea cu vecinul și limita de proprietate. Pentru garduri înalte sau pline cere sfatul unui specialist.' },
+      { title: 'Teren în pantă', text: 'Panourile se montează în trepte sau se adaptează stâlpii; cere firmei să explice cum rezolvă diferența de nivel.' },
+      { title: 'Zone cu vânt', text: 'Un gard plin se comportă ca o velă: stâlpii și fundațiile contează mai mult decât tipul de panou.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și detalii care contează', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Stâlpii sunt fundați de obicei în beton, iar panourile sau șipcile se fixează pe ei cu elemente de prindere. Soluția exactă (adâncime, dimensiunea fundației, distanțele dintre stâlpi) depinde de tipul gardului, înălțime și teren, de aceea nu se poate da o regulă valabilă pentru toți.',
+      'Protecția metalului este al doilea detaliu esențial: zincare, vopsea în câmp electrostatic sau vopsire ulterioară. Întreabă ce tratament are produsul și ce se întâmplă cu zonele tăiate sau sudate la montaj; acolo apare de obicei rugina.',
+      'Mulți clienți completează gardul cu un soclu de beton, cu porți și portițe. Cere ca aceste elemente să fie incluse explicit în ofertă, nu lăsate pentru după.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Stabilirea limitei și a traseului', text: 'Se verifică limita proprietății și se trasează gardul, inclusiv pozițiile porților.' },
+      { title: 'Pregătirea terenului', text: 'Se curăță traseul și se stabilesc nivelurile, mai ales dacă terenul este în pantă.' },
+      { title: 'Fundațiile stâlpilor', text: 'Se sapă și se toarnă fundațiile; betonul trebuie lăsat să se întărească înainte de a încărca stâlpii.' },
+      { title: 'Montarea stâlpilor', text: 'Stâlpii se așază pe aliniament și pe nivel, apoi se fixează.' },
+      { title: 'Montarea panourilor sau a șipcilor', text: 'Elementele se prind pe stâlpi, cu respectarea distanțelor și a verticalității.' },
+      { title: 'Porți, retușuri, curățenie', text: 'Se montează porțile, se retușează zonele afectate și se curăță șantierul.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Tip ales doar după aspect', text: 'Un gard plin pe un loc expus la vânt cere o structură mai robustă decât unul din plasă.' },
+      { title: 'Fundații subdimensionate', text: 'Stâlpii care se înclină sau cedează în timp sunt cel mai des legați de fundare.' },
+      { title: 'Protecție anticorozivă ignorată', text: 'Fără zincare sau vopsire corectă și fără retușarea tăieturilor, rugina apare repede.' },
+      { title: 'Limita proprietății neverificată', text: 'Un gard pus puțin peste limită duce la conflict cu vecinii și poate cere refacerea.' },
+      { title: 'Porțile lăsate pe la urmă', text: 'Poarta influențează stâlpii și traseul; alege-o de la început, nu după ce gardul e gata.' },
+      { title: 'Fără acte sau avize unde se cer', text: 'Unele localități cer aviz; verifică înainte de a comanda.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul unui gard metalic depinde de lungimea lui, de înălțime, de tipul de panou sau de șipcă, de calitatea metalului și a protecției anticorozive, de numărul și dimensiunea stâlpilor, de fundații, de soclul de beton și de porți. Se adaugă condițiile terenului (pantă, acces pentru utilaje) și dacă firma livrează și montează sau doar montează.',
+      'Compară ofertele pe conținut: ce tip de panou, câți stâlpi, ce fundații, ce tratament anticoroziv, dacă porțile și soclul sunt incluse și cum se face plata. Pentru repere de preț vezi pagina cu prețuri pentru gard.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere o vizită la fața locului, nu doar o ofertă prin telefon: terenul, panta și accesul contează. Întreabă cine execută efectiv lucrarea, cum se fundează stâlpii, ce protecție are metalul și ce se întâmplă dacă apar defecte după montaj.',
+      'Cere oferta în scris, cu lucrările și materialele enumerate, și compară cel puțin două-trei variante. Dacă o firmă nu explică soluția de fundare sau evită detaliile, e un semnal de luat în seamă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre gardul metalic' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru garduri și pavaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la garduri și pavaje' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie gardul dorit și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

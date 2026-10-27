@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const instalatieElectricaCasa: SituationContent = {
+  slug: 'instalatii-electrice--instalatie-electrica-casa',
+  categorie: 'instalatii-electrice',
+  title: 'Instalație electrică la casă și apartament: cine o face, de ce depinde costul',
+  seoTitle: 'Instalație electrică casă și apartament: cost, etape',
+  seoDescription: 'Instalația electrică la casă sau apartament: etapele lucrării, ce include, branșamentul, de ce depinde costul și cum compari ofertele electricienilor.',
+  summary: 'Cum se face o instalație electrică nouă la casă sau apartament, ce include, ce rol are branșamentul și cum compari ofertele.',
+  sinonime: ['instalatie electrica casa', 'instalatie electrica apartament', 'pret manopera instalatie electrica casa noua', 'pret instalatie electrica casa 100 mp', 'bransament electric'],
+  intrebari: [
+    'Ce include o instalație electrică nouă? | De regulă traseele pentru prize, iluminat și consumatori mari, tabloul electric, aparatajul, priza de pământ și verificările finale. Ce intră exact în ofertă depinde de firmă; cere lista scrisă.',
+    'Cine poate face instalația electrică? | Un electrician sau o firmă autorizată pentru acest tip de lucrare. Verifică autorizarea la ANRE înainte de a semna.',
+    'Ce este branșamentul electric? | Legătura dintre rețeaua operatorului de distribuție și instalația casei, împreună cu contorul. Pașii pentru branșament sau pentru modificarea lui se stabilesc cu operatorul de distribuție; informează-te la el din timp, pentru că lucrarea are propria procedură.',
+    'Cât costă o instalație electrică la o casă? | Depinde de suprafață, de numărul de circuite și puncte de consum, de materialele alese, de tipul pereților și de dacă include tablou și branșament. Nu există o sumă care să se potrivească oricărei case; cere oferte detaliate și vezi paginile de prețuri.',
+    'Cum se calculează manopera? | Poate fi pe punct de consum, pe suprafață sau pe lucrare întreagă. Important este să afli ce înseamnă „punct” în ofertă și ce nu intră în preț, ca să poți compara.',
+    'Când se face instalația față de tencuieli? | Traseele ascunse se execută înainte de tencuieli sau finisaje, iar aparatajul se montează la final. Planifică lucrarea împreună cu ceilalți meseriași.',
+    'Cum diferă un apartament de o casă? | La apartament, lucrarea este adesea o refacere în spații închise, cu reguli ale asociației și traseele limitate de structură. La casă nouă, lucrarea include de obicei și branșamentul, priza de pământ și, după caz, alte circuite exterioare.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Instalație electrică la casă și apartament', subtitle: 'Cine o face, ce include, cum se lucrează și de ce depinde costul. Ceri oferte gratuite de la electricieni din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine execută', value: 'Electrician autorizat' },
+      { label: 'Ordine', value: 'Trasee înainte de finisaje' },
+      { label: 'Branșament', value: 'Procedura operatorului' },
+      { label: 'Ofertă', value: 'Cu lista de lucrări' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Instalația electrică se face o dată pentru mulți ani, iar corecțiile ulterioare costă mult mai mult decât o lucrare bine gândită de la început. Ea cuprinde traseele ascunse în pereți și plafoane, tabloul electric, aparatajul și legătura cu rețeaua prin branșament.',
+      'Casa nouă și apartamentul renovat au nevoi diferite, dar logica este aceeași: stabilești consumatorii, alegi o firmă autorizată, aprobi o schemă și verifici lucrarea la final. Tabloul, electricienii autorizați și protecția la trăsnet au propriile pagini, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce include o instalație electrică', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Circuite de prize și iluminat', text: 'Trasee separate pentru prize, lumini și consumatori cu putere mare, pe baza listei de echipamente.' },
+      { title: 'Tabloul electric', text: 'Protecții și aparate care alimentează și apără circuitele; are pagină proprie.' },
+      { title: 'Aparataj', text: 'Prize, întrerupătoare și doze, alese după stilul și funcțiile dorite.' },
+      { title: 'Priza de pământ', text: 'Obligatorie în logica unei instalații sigure; vezi pagina dedicată.' },
+      { title: 'Curenți slabi', text: 'Internet, TV, interfon, supraveghere: se prevăd traseele odată cu restul.' },
+      { title: 'Verificări și documente', text: 'Probe înainte de punerea sub tensiune și actele lucrării.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Branșamentul electric', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Branșamentul este legătura dintre rețeaua operatorului de distribuție și locuința ta, la care se adaugă contorul. La o casă nouă sau la o creștere a consumului, branșamentul sau puterea contractată trebuie discutate cu operatorul, care stabilește pașii, documentele și cine execută ce parte.',
+      'Nu lucra la branșament sau la contor pe cont propriu. Partea din rețeaua operatorului este a lui, iar partea din casă o face un electrician autorizat. Începe demersurile din timp, pentru că durata o stabilește operatorul și poate afecta termenul de mutare.',
+    ) }),
+    node('mat-h', 'heading', { text: 'Soluții și materiale', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Alegerile principale sunt traseele ascunse sau aparente, tipurile de cabluri și de tuburi, aparatajul și structura tabloului. Secțiunile cablurilor și protecțiile se stabilesc de electrician pe baza consumatorilor; nu le alege după un număr auzit de la altcineva.',
+      'La casă nouă merită gândite din start prize în exterior, încărcare pentru autovehicule electrice, panouri solare sau automatizări, chiar dacă le montezi mai târziu. Prevederea traseelor la început costă mult mai puțin decât spargerea pereților.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Lista de consumatori și plan', text: 'Stabilești unde ai nevoie de prize, lumini și consumatori mari, pe planul încăperilor.' },
+      { title: 'Alegerea firmei și oferta', text: 'Electrician autorizat, ofertă scrisă cu lucrări și materiale.' },
+      { title: 'Branșament și putere', text: 'Demersurile la operator, pornite din timp.' },
+      { title: 'Traseele ascunse', text: 'Se execută înainte de tencuieli, șape sau gips-carton.' },
+      { title: 'Tabloul și priza de pământ', text: 'Se montează tabloul, se execută împământarea, se leagă circuitele.' },
+      { title: 'Aparataj și probe', text: 'După finisaje se montează prizele și întrerupătoarele, apoi se verifică totul înainte de folosire.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Prea puține prize', text: 'Un regret des întâlnit; prevede puncte în plus în zonele cu multe aparate.' },
+      { title: 'Lucrare fără plan', text: 'Fără planul punctelor, ajungi să tragi prelungitoare.' },
+      { title: 'Trasee închise înainte de verificare', text: 'Cablurile se probează înainte de tencuire sau acoperire.' },
+      { title: 'Branșament amânat', text: 'Poate bloca mutarea, deși casa este gata.' },
+      { title: 'Lucrare pe cont propriu', text: 'Circuitele și tabloul se lasă electricianului autorizat.' },
+      { title: 'Comparare pe preț unitar', text: 'Același „preț pe punct” poate înseamnă lucruri diferite în oferte.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul instalației depinde de suprafață și de numărul de camere, de numărul de circuite și de puncte de consum, de materialele și aparatajul ales, de tipul pereților (beton, zidărie, gips-carton) și de dacă lucrarea include tablou, priză de pământ și branșament. Manopera și materialele pot fi ofertate separat sau împreună.',
+      'La compararea ofertelor verifică: ce înseamnă un „punct” în fiecare ofertă, dacă materialele sunt incluse, ce aparataj este prevăzut, dacă se fac probe și ce documente primești. Pentru repere vezi paginile de prețuri.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre instalația electrică' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații electrice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații electrice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Pregătești o instalație electrică nouă?', text: 'Descrie casa sau apartamentul și primești oferte de la electricieni din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

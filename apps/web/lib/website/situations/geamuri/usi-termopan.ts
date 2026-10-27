@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiTermopan: SituationContent = {
+  slug: 'geamuri--usi-termopan',
+  categorie: 'geamuri',
+  title: 'Uși termopan exterioare și de balcon: alegere, montaj, cost',
+  seoTitle: 'Uși termopan exterioare și de balcon: alegere și montaj',
+  seoDescription: 'Uși PVC de intrare și de balcon: unde se montează, cum alegi, ce întrebi firma, ordinea lucrării și de ce depinde costul. Ceri oferte de la firme din zona ta.',
+  summary: 'Cum alegi o ușă termopan exterioară sau de balcon, ce întrebi înainte de comandă, cum se montează și de ce depinde costul.',
+  sinonime: ['usa termopan exterior', 'usi termopan exterior', 'usa termopan', 'usi termopan', 'usi pvc exterior', 'usa intrare pvc', 'usa balcon termopan'],
+  intrebari: [
+    'Ce diferență este între o ușă de intrare și o ușă de balcon din PVC? | Ușa de intrare are cerințe mai mari de rezistență, de securitate și de închidere; ușa de balcon este pusă mai ales pentru lumină și acces. Cere firmei variantele potrivite pentru folosința ta.',
+    'Se poate face o ușă PVC cu geam și cu panou plin? | Da, ușile se fac cu geam, cu panou plin sau combinat. Alegerea ține de intimitate, de lumină și de aspect. Firma îți prezintă variantele pentru sistemul ales.',
+    'Care sunt tipurile de deschidere? | Ușile se pot deschide spre interior sau spre exterior, pe o parte sau pe alta, uneori cu oscilo-batantă. Decide în funcție de spațiul din fața ușii și de utilizare.',
+    'Cât durează comanda și montajul? | Ușile se fac pe comandă, deci există un termen de fabricație, apoi montajul. Termenele diferă între firme: cere-l în scris în ofertă.',
+    'Ce trebuie pregătit înainte de montaj? | Golul trebuie să fie liber și măsurat. Se stabilesc pragul, finisajele din jur și accesul. Firma te ghidează la măsurare.',
+    'Cum compar două oferte pentru uși? | Compară sistemul de profil, tipul de geam, feroneria și broasca, pragul, finisajele din jur, termenul și garanția, nu doar prețul final.',
+    'Cât costă o ușă termopan? | Depinde de dimensiuni, profil, geam, feronerie, culoare, număr de uși și de montaj. Nu există un preț unic. Vezi și paginile de preț pentru termopane.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși termopan exterioare și de balcon', subtitle: 'Cum alegi o ușă PVC de intrare sau de balcon, ce întrebi înainte de comandă și cum compari ofertele. Ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Intrare și balcon' },
+      { label: 'Variante', value: 'Cu geam, cu panou, combinate' },
+      { label: 'Se fac', value: 'Pe comandă, pe măsură' },
+      { label: 'Compari', value: 'Profil, geam, feronerie, montaj' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușa termopan este o ușă cu cadru din PVC și, de regulă, cu geam termoizolant sau panou plin, montată la intrarea în casă sau la ieșirea pe balcon sau terasă. Spre deosebire de o fereastră, se folosește zilnic și suportă mai multe solicitări, de aceea contează feroneria, pragul și montajul.',
+      'Pagina te ajută să alegi varianta potrivită, să știi ce să întrebi și să compari corect ofertele de la firmele de tâmplărie.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se montează', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Intrare în casă', text: 'Ușa exterioară de intrare, unde contează rezistența, închiderea și securitatea.' },
+      { title: 'Acces pe balcon sau terasă', text: 'Ușa de balcon, pentru lumină și ieșire, folosită frecvent și expusă la intemperii.' },
+      { title: 'Acces în curte sau grădină', text: 'Ușă exterioară spre spații deschise, cu cerințe similare ușii de intrare.' },
+      { title: 'Spații comerciale și anexe', text: 'Ușa PVC este folosită și la anexe sau spații mici, cu cerințe diferite de securitate.' },
+    ] }),
+    node('sol-h', 'heading', { text: 'Ce soluții există', level: 'h2' }),
+    node('sol', 'text', { body: para(
+      'Ușile se pot face cu geam termoizolant, cu panou plin sau combinat. Se pot deschide spre interior sau spre exterior, pe stânga sau pe dreapta, iar cele de balcon pot avea și deschidere oscilo-batantă. Culoarea și decorul profilului se aleg din gama oferită de firmă.',
+      'Elementele care influențează comportamentul în timp sunt profilul, geamul, feroneria, broasca și pragul. Cere fișele tehnice sau explicațiile firmei pentru fiecare, în loc să te bazezi doar pe denumirea comercială. Pentru ușile culisante, vezi pagina dedicată.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Vizita și măsurarea', text: 'Firma măsoară golul și discută deschiderea, pragul și finisajele.' },
+      { title: 'Oferta și alegerea variantei', text: 'Stabilești profilul, geamul, culoarea, feroneria și broasca și primești oferta scrisă.' },
+      { title: 'Comanda și fabricația', text: 'Ușa se produce pe măsură; cere termenul în scris.' },
+      { title: 'Demontarea ușii vechi', text: 'Dacă există o ușă veche, se demontează și se pregătește golul.' },
+      { title: 'Montajul', text: 'Ușa se montează în gol, se fixează, se etanșează și se reglează.' },
+      { title: 'Finisajele și recepția', text: 'Se tratează îmbinarea cu zidul, se verifică închiderea și se predau cheile și garanția.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Măsurare făcută de tine', text: 'Un gol măsurat greșit duce la o ușă nepotrivită. Lasă măsurarea firmei.' },
+      { title: 'Prag neglijat', text: 'Pragul influențează accesul, scurgerea apei și izolarea. Discută-l înainte de comandă.' },
+      { title: 'Feronerie și broască ieftine', text: 'La o ușă folosită zilnic, feroneria slabă dă probleme repede.' },
+      { title: 'Sens de deschidere ales în grabă', text: 'Deschiderea greșită încurcă trecerea sau mobilierul. Verifică-o pe loc.' },
+      { title: 'Etanșare slabă la zid', text: 'Îmbinarea cu zidul trebuie etanșată corect, altfel pot apărea pierderi de căldură sau infiltrații.' },
+      { title: 'Alegerea doar după preț', text: 'Compară ce include oferta, nu doar totalul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiunile ușii, de profilul ales, de tipul de geam sau panou, de feronerie și broască, de culoare și decor, de numărul de uși, de demontarea celei vechi și de finisajele din jur. Accesul (etaj, scară) și deplasarea pot adăuga la total.',
+      'Compară ofertele pe conținut: sistemul de profil, geamul, feroneria, pragul, montajul, finisajele, termenul și garanția. Ceri ofertele pe aceleași cerințe, ca să poți compara. Pentru prețuri orientative, vezi paginile de preț pentru termopane.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care măsoară la fața locului, îți explică variantele și dă o ofertă scrisă detaliată. Întreabă cine face montajul (echipa proprie sau subcontractată), ce garanție oferă pentru produs și pentru montaj și cât durează livrarea.',
+      'Verifică lucrări anterioare similare și cere referințe. Compară cel puțin două oferte pe aceleași cerințe.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși termopan' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru geamuri și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la geamuri și tâmplărie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei o ușă montată de o firmă?', text: 'Descrie ce ai nevoie și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
