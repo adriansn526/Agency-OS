@@ -9,6 +9,7 @@ import { AdminError } from '../admin/errors'
 import { assertLine } from '../admin/service'
 import { countBlocks, emptyPageLayout, type PageLayout } from '../pages/blocks'
 import { issuePreview } from '../preview/service'
+import { publicPathOf } from './paths'
 import { CONTENT_CATALOG, contentMediaRefs, effectiveContentLayout, isContentCollection, parseContentLayout } from './blocks'
 
 export const MAX_VERSIONS = 20
@@ -71,7 +72,6 @@ export async function restoreContentVersion(lineId: string, entryId: string, ver
 }
 
 const siteOf = async (lineId: string) => ((await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { siteUrl: true } }))?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro').replace(/\/$/, '')
-const PUBLIC_PATH: Record<string, string> = { preturi: '/preturi', servicii: '/lucrari', ghiduri: '/ghiduri' }
 
 /**
  * The link to check a page: the public address when it is published; otherwise a private link (a draft is moved to the private "preview" state,
@@ -80,7 +80,7 @@ const PUBLIC_PATH: Record<string, string> = { preturi: '/preturi', servicii: '/l
 export async function contentPreviewLink(lineId: string, entryId: string) {
   const e = await ownedEntry(lineId, entryId)
   const site = await siteOf(lineId)
-  const path = `${PUBLIC_PATH[e.collection.key]}/${e.slug}`
+  const path = publicPathOf(e.collection.key, e.slug, e.data)
   if (e.status === 'published') return { kind: 'public' as const, link: `${site}${path}`, expiresAt: null }
   if (e.status === 'suspended') throw new AdminError('Intrarea este suspendată', 409)
   if (e.status === 'draft') await db.websiteEntry.update({ where: { id: e.id }, data: { status: 'preview' } })

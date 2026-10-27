@@ -15,7 +15,7 @@ export const GLOSSARY_SOURCE = 'glossary:v1'
 const COMPANY_KEY = 'companii'
 
 export const GLOSSARY_FIELDS: CollectionField[] = [
-  { key: 'tip', label: 'Tip', type: 'select', options: ['grup', 'categorie'], filterable: true },
+  { key: 'tip', label: 'Tip', type: 'select', options: ['grup', 'categorie', 'situatie'], filterable: true },
   { key: 'parinte', label: 'Grup (părinte)', type: 'text', filterable: true },
   { key: 'sinonime', label: 'Sinonime', type: 'list' },
   { key: 'preturi', label: 'Prețuri (Lucrare | interval | observații)', type: 'list' },

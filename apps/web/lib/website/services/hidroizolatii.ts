@@ -41,7 +41,8 @@ export const hidroizolatii: ServiceContent = {
       { title: 'Membrane: EPDM sau bituminoase', text: 'Două soluții frecvente pentru suprafețe mari, cu avantaje și limite diferite; compară-le înainte să alegi.' },
       { title: 'Hidroizolație lichidă', text: 'Strat continuu, fără îmbinări, util pe forme complicate, la băi, terase și fundații; alegi tipul după loc.' },
     ] }),
-    node('guides', 'guide_links', { title: 'Ghiduri pe situații' }),
+    node('situation-links', 'situation_links', { title: 'Hidroizolații pe situații' }),
+    node('guides', 'guide_links', { title: 'Ghiduri despre hidroizolații' }),
     node('prices', 'price_links', { title: 'Prețuri pentru hidroizolații' }),
     node('steps', 'steps', { title: 'Cum decurge lucrarea cu o firmă', items: [
       { title: 'Diagnostic și vizită', text: 'Firma vede locul, stabilește de unde vine apa și ce soluție se potrivește. Oferta trebuie să pornească de aici.' },

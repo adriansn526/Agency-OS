@@ -7,6 +7,7 @@ import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Copy, ExternalLink, Hist
 import { Button } from "@/components/ui/button"
 import type { PageBlockDef, PageField, PageNode } from "@/lib/website/pages/blocks"
 import { api, ApiError, inputCls, labelCls, textareaCls } from "./shared"
+import { publicPathOf } from "@/lib/website/content/paths"
 
 interface Media { id: string; url: string; alt: string | null }
 interface Loaded { entry: { id: string; title: string; slug: string; status: string; collection: string }; layout: { version: 2; blocks: PageNode[] }; catalog: PageBlockDef[]; media: Media[] }
@@ -205,7 +206,7 @@ export function ContentBuilder({ lineId, entryId, onClose }: { lineId: string; e
       <header className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-base font-semibold">Aranjarea paginii{data ? `: ${data.entry.title}` : ""}</h2>
-          <p className="text-xs text-muted-foreground">{data ? `/${({ preturi: "preturi", servicii: "lucrari", ghiduri: "ghiduri" } as Record<string, string>)[data.entry.collection] ?? "lucrari"}/${data.entry.slug}` : ""}{dirty && " · modificări nesalvate"}</p>
+          <p className="text-xs text-muted-foreground">{data ? `${publicPathOf(data.entry.collection, data.entry.slug, data.entry.data)}` : ""}{dirty && " · modificări nesalvate"}</p>
         </div>
         <Button type="button" size="sm" variant="outline" onClick={openHistory}><History className="h-4 w-4 mr-1" /> Istoric</Button>
         <Button type="button" size="sm" variant="outline" disabled={dirty} title={dirty ? "Salvează întâi" : undefined} onClick={makePreview}><ExternalLink className="h-4 w-4 mr-1" /> Previzualizare</Button>
