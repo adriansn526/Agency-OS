@@ -56,6 +56,7 @@ export const fundatiiBeton: ServiceContent = {
       { title: 'Turnare și vibrare', text: 'Betonul se toarnă în straturi și se vibrează pentru eliminarea golurilor. Se notează clasa betonului din bonul de livrare.' },
       { title: 'Întreținere și decofrare', text: 'Betonul se menține umed pe vreme caldă și se protejează la îngheț. Se decofrează după timpul recomandat, apoi se hidroizolează.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Fundații și beton pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru fundații și beton' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă și materiale unde se specifică. Variază după sol, adâncime, acces și zonă.' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),

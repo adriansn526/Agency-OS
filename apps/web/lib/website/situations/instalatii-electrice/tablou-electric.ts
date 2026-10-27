@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const tablouElectric: SituationContent = {
+  slug: 'instalatii-electrice--tablou-electric',
+  categorie: 'instalatii-electrice',
+  title: 'Tablou electric: montaj, înlocuire și siguranțe',
+  seoTitle: 'Tablou electric: montaj, schimbare, siguranțe',
+  seoDescription: 'Tabloul electric și siguranțele: ce conține, când îl schimbi, cine îl montează, în ce ordine se lucrează și ce compari în ofertele electricienilor.',
+  summary: 'Ce conține un tablou electric, când trebuie schimbat, cine îl poate monta și cum compari ofertele pentru montaj sau înlocuire.',
+  sinonime: ['tablou electric', 'tablouri electrice', 'tablou sigurante', 'tablou de sigurante', 'sigurante tablou electric', 'schimbare tablou electric', 'montaj tablou electric'],
+  intrebari: [
+    'Ce conține un tablou electric? | Aparate de protecție și de comandă pentru circuitele casei, grupate într-o carcasă: aparate care întrerup curentul la suprasarcină sau scurtcircuit, protecție la curenți de fugă și, după caz, protecții suplimentare. Componența exactă depinde de casă și se stabilește de electrician.',
+    'Când trebuie schimbat tabloul? | Când sunt semne de uzură sau încălzire, siguranțe care sar des, aparate vechi, lipsa protecțiilor actuale sau când adaugi consumatori noi, de exemplu o instalație nouă sau o renovare. Un electrician autorizat verifică starea și recomandă.',
+    'Pot monta singur tabloul sau siguranțele? | Nu este recomandat. Greșelile de montaj sau de dimensionare pot duce la electrocutare sau incendiu, iar lucrarea trebuie să respecte cerințele pentru instalații. Lasă montajul și schimbarea unui electrician autorizat.',
+    'Cine decide ce protecții intră în tablou? | Electricianul, pe baza proiectului sau a necesarului casei: numărul de circuite, consumatorii mari și cerințele pentru siguranță. Cere o schemă a tabloului și etichetarea circuitelor.',
+    'Cât durează schimbarea unui tablou? | Depinde de dimensiunea și starea instalației. Lucrarea presupune scoaterea curentului pe durata intervenției, așa că stabilește din timp programul cu electricianul. Pentru intervenții care implică contorul sau branșamentul se aplică procedurile operatorului.',
+    'Se poate muta tabloul în alt loc? | Da, dar mutarea implică prelungirea sau refacerea unor circuite și se face de un electrician autorizat. Locul trebuie să fie accesibil și ferit de umezeală.',
+    'Cum compar ofertele pentru un tablou? | Uită-te la ce aparate sunt incluse, la câte circuite sunt prevăzute, la dacă se face etichetarea și schema, la verificările după montaj și la documentele pe care le primești. Prețul singur nu spune ce primești.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Tablou electric: montaj și înlocuire', subtitle: 'Ce conține tabloul, când îl schimbi și ce compari în oferte. Montajul îl face un electrician autorizat; ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine montează', value: 'Electrician autorizat' },
+      { label: 'Include', value: 'Protecții, circuite, etichete' },
+      { label: 'Schemă', value: 'Cere-o la predare' },
+      { label: 'Curent oprit', value: 'Pe durata intervenției' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Tabloul electric este punctul din care pornesc toate circuitele casei. Aici se află aparatele care protejează instalația și pe cei care o folosesc: dacă un circuit se supraîncarcă sau apare un defect, aparatul potrivit întrerupe curentul înainte să se producă o problemă.',
+      'Un tablou vechi, subdimensionat sau făcut fără schemă este o sursă de probleme: siguranțe care sar fără motiv, circuite greu de identificat, risc de încălzire. De aceea schimbarea lui apare des la renovări și la instalații noi. Pe această pagină vezi ce se schimbă, cum se lucrează și ce compari între oferte.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și ce conține tabloul electric', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Carcasa', text: 'Cutia în care se montează aparatele, îngropată sau aparentă, aleasă după spațiu și după numărul de aparate.' },
+      { title: 'Protecția generală', text: 'Aparatul care poate întrerupe toată instalația casei, sub rezerva cerințelor operatorului.' },
+      { title: 'Siguranțe pe circuite', text: 'Aparate separate pentru prize, iluminat și consumatori mari, ca un defect să afecteze doar circuitul respectiv.' },
+      { title: 'Protecția la curenți de fugă', text: 'Aparate care întrerup curentul când acesta ia o cale nedorită, de exemplu prin corpul unei persoane.' },
+      { title: 'Borne și legături', text: 'Barele și bornele prin care se leagă conductoarele; strângerea corectă contează pentru siguranță.' },
+      { title: 'Schema și etichetele', text: 'Fiecare circuit marcat și o schemă a tabloului, utile la orice intervenție ulterioară.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Când schimbi sau montezi un tablou', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Montezi un tablou nou la o casă în construcție, la o extindere sau când refaci instalația electrică a unui apartament. Îl schimbi când cel existent este vechi, are aparate degradate, nu mai are loc pentru circuite noi sau când vrei să adaugi protecții pe care nu le are.',
+      'Semne care cer verificarea tabloului: siguranțe care sar frecvent, aparate calde la atingere, miros de ars, scântei, circuite pe care nu le poți identifica. În aceste situații oprește consumatorii implicați și cheamă un electrician, nu deschide singur tabloul.',
+    ) }),
+    node('mat-h', 'heading', { text: 'Soluții și alegeri', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Alegerile principale sunt tipul carcasei (îngropat sau aparent), numărul de circuite, protecțiile incluse și spațiul rămas pentru extinderi viitoare. Un tablou prevăzut cu loc liber pentru circuite noi evită schimbarea lui la fiecare modificare a casei.',
+      'Dimensionarea aparatelor și a circuitelor o stabilește electricianul în funcție de consumatori. Nu alege singur valori după forumuri sau după tabloul vechi; potrivirea cu cablurile și cu consumul real este exact ce justifică un specialist.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Verificarea instalației existente', text: 'Electricianul analizează starea circuitelor și a tabloului actual și stabilește ce se păstrează.' },
+      { title: 'Schema nouă', text: 'Se stabilește lista de circuite și protecțiile fiecăruia.' },
+      { title: 'Programarea întreruperii', text: 'Se stabilește când se oprește curentul; dacă e nevoie de operator, se anunță din timp.' },
+      { title: 'Demontarea și montajul', text: 'Se scoate tabloul vechi, se montează carcasa și aparatele, se refac legăturile.' },
+      { title: 'Etichetarea și verificările', text: 'Circuitele se marchează, iar instalația se verifică înainte de repunerea sub tensiune.' },
+      { title: 'Predarea', text: 'Primești schema, explicații despre utilizare și documentele aferente lucrării.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Montaj pe cont propriu', text: 'Intervenția la tablou nu este pentru amatori și poate pune viața în pericol.' },
+      { title: 'Aparate alese după preț', text: 'Piesele de calitate îndoielnică sau nepotrivite cu circuitul slăbesc protecția.' },
+      { title: 'Tablou fără loc de rezervă', text: 'La prima extindere ajungi să-l schimbi din nou.' },
+      { title: 'Circuite neetichetate', text: 'La o avarie, nimeni nu știe ce comandă fiecare aparat.' },
+      { title: 'Fără verificare la final', text: 'Instalația se verifică înainte de folosire, nu după primul incident.' },
+      { title: 'Bornă slab strânsă', text: 'Legăturile slabe se încălzesc în timp; verificarea o face electricianul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de numărul de circuite și de aparatele din tablou, de tipul carcasei, de starea instalației existente, de dificultatea accesului și de dacă lucrarea include modificări la circuite. Montajul într-un apartament cu instalație refăcută diferă de înlocuirea într-o casă veche.',
+      'Compară ofertele pe conținut: lista de aparate, numărul de circuite, etichetarea și schema, verificările după montaj și documentele primite. Pentru repere vezi paginile de prețuri de mai jos.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre tabloul electric' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații electrice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații electrice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un tablou nou sau de o verificare?', text: 'Descrie casa sau apartamentul și primești oferte de la electricieni din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

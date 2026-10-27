@@ -54,6 +54,7 @@ export const instalatiiElectrice: ServiceContent = {
       { title: 'Aparataj și iluminat', text: 'După tencuieli și zugrăveli se montează prizele, întrerupătoarele și corpurile de iluminat.' },
       { title: 'Verificări, PRAM și predare', text: 'Se măsoară pământarea și izolația, se testează protecțiile și primești buletinul și schema tabloului.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Instalații electrice pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru instalații electrice' }),
     node('prices', 'price_table', { title: 'Prețuri orientative pentru manoperă', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă dacă nu se spune altfel. Materialele se plătesc separat. Variază după zonă și complexitate.' }),
     node('choose-h', 'heading', { text: 'Cum alegi electricianul', level: 'h2' }),

@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const pardosealaEpoxidica: SituationContent = {
+  slug: 'pardoseli-placari--pardoseala-epoxidica',
+  categorie: 'pardoseli-placari',
+  title: 'Pardoseală epoxidică: aplicare, suport și cost',
+  seoTitle: 'Pardoseală epoxidică: aplicare, suport și cost',
+  seoDescription: 'Pardoseala epoxidică în garaj, atelier sau locuință: cum se pregătește betonul, în ce ordine se aplică, greșeli frecvente și de ce depinde costul.',
+  summary: 'Ce este o pardoseală epoxidică, unde se folosește în interior și în exterior, cum se pregătește suportul, în ce ordine se aplică și ce intră în ofertă.',
+  sinonime: ['pardoseala epoxidica', 'pardoseli epoxidice', 'pardoseli epoxi', 'podea epoxidica', 'rasina epoxidica pardoseala', 'pardoseala epoxi', 'pardoseala rasina epoxidica', 'pardoseala epoxidica interior', 'pardoseala epoxidica exterior', 'pardoseala epoxidica pret m2', 'pardoseala epoxidica pret'],
+  intrebari: [
+    'Ce este o pardoseală epoxidică? | Este un strat continuu, fără rosturi, făcut din rășină epoxidică aplicată pe un suport de beton sau de șapă. Rezultatul este o suprafață dură, ușor de curățat, folosită în garaje, ateliere, depozite, spații comerciale și, tot mai des, în locuințe.',
+    'Se poate aplica pardoseala epoxidică în exterior? | Depinde de produs. Sistemele epoxidice obișnuite se degradează sub radiația solară și își schimbă culoarea, iar o suprafață exterioară are nevoie de un strat de protecție potrivit și de pante pentru apă. Cere firmei un sistem declarat de producător pentru exterior.',
+    'Pe ce suport se aplică? | Pe beton sau șapă solidă, curată, uscată și fără praf. Suportul trebuie să aibă rezistența cerută de fișa tehnică; betonul prea proaspăt sau cu umiditate ridicată este o cauză frecventă de desprindere.',
+    'Poate fi pusă peste gresie veche? | De regulă nu este recomandat fără o evaluare. Aderența depinde de starea gresiei și de pregătirea suprafeței. Cere părerea firmei care execută lucrarea și o probă de aderență.',
+    'Cât costă o pardoseală epoxidică? | Depinde de suprafață, de starea suportului, de sistemul ales și de finisaj. Prețul pe metru pătrat din oferte nu se poate compara dacă nu știi ce straturi include. Vezi și pagina de preț dedicată și cere oferte pe lucrări.',
+    'Ce diferență este între pardoseala epoxidică și cea din poliuretan? | Epoxidica este de obicei mai dură și mai rezistentă la uzură mecanică, iar poliuretanul este mai elastic și suportă mai bine variațiile și lumina. Alegerea depinde de utilizare; discută cu firma pe baza fișelor tehnice.',
+    'Cât de repede pot circula pe pardoseală după aplicare? | După timpii indicați în fișa tehnică a produsului, care diferă între sisteme și în funcție de temperatură. Nu grăbi redarea în folosință: o pardoseală încărcată prea devreme rămâne cu urme.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pardoseală epoxidică: aplicare, suport și cost', subtitle: 'Ce presupune lucrarea, cum se pregătește betonul și ce să verifici într-o ofertă. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tip de strat', value: 'Continuu, fără rosturi' },
+      { label: 'Suport', value: 'Beton sau șapă solidă' },
+      { label: 'Etapa decisivă', value: 'Pregătirea suprafeței' },
+      { label: 'Utilizare', value: 'Garaj, atelier, depozit, locuință' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Pardoseala epoxidică este un sistem de straturi de rășină aplicate pe beton, care formează o suprafață continuă, fără rosturi, ușor de spălat și rezistentă la uzură. Se vede des în garaje și ateliere, dar este aleasă și în bucătării, holuri sau spații comerciale.',
+      'Reușita lucrării nu stă în rășină, ci în suport: un beton curat, solid și uscat, pregătit mecanic, ține. Unul prăfuit sau umed duce la bășici și desprinderi. De aceea o ofertă bună descrie pregătirea suprafeței la fel de atent ca produsul.',
+    ) }),
+    node('what-h', 'heading', { text: 'Unde se aplică: interior și exterior', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Garaje și parcări interioare', text: 'Rezistență la uzura roților și la pete de ulei; suprafața se spală ușor.' },
+      { title: 'Ateliere și depozite', text: 'Trafic de utilaje și paleți; sistemul se alege după încărcarea reală.' },
+      { title: 'Locuințe și spații comerciale', text: 'Pardoseală continuă, cu finisaj lucios sau mat, fără rosturi unde se adună murdăria.' },
+      { title: 'Exterior (terase, rampe)', text: 'Cere un sistem declarat pentru exterior, protecție la radiația solară și pante corecte pentru scurgerea apei.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Sisteme și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Un sistem epoxidic se compune de obicei din amorsă, unul sau mai multe straturi de rășină și, la nevoie, un strat de protecție. Poate fi autonivelant, cu mai multe straturi pentru solicitări mari, sau mai subțire, ca strat de finisaj pe un beton în stare bună. La suprafețe unde contează aderența se poate adăuga un strat de nisip de cuarț.',
+      'Rășinile sunt în două componente care se amestecă în proporția dată de producător, în intervalul de timp dat de fișa tehnică. Respectarea proporției și a condițiilor de temperatură și umiditate contează mai mult decât denumirea produsului.',
+      'În locuințe, unde se dorește un aspect mai discret, apar sisteme decorative, cu pigmenți sau fulgi. Pentru pardoseli mai flexibile sau expuse la lumină discută și soluția cu poliuretan, tratată în pagina de microciment și poliuretan.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Evaluarea suportului', text: 'Se verifică rezistența betonului, umiditatea, fisurile, petele de ulei și existența unei bariere contra umidității de sub placă.' },
+      { title: 'Pregătirea mecanică', text: 'Șlefuire sau frezare, apoi aspirare industrială, astfel încât suprafața să fie curată și cu porozitate deschisă.' },
+      { title: 'Reparații', text: 'Fisurile și golurile se repară cu produsele recomandate pentru sistem, nu cu mortar oarecare.' },
+      { title: 'Amorsa', text: 'Se aplică amorsa sistemului, care leagă rășina de beton și limitează bășicarea.' },
+      { title: 'Straturile de rășină', text: 'Se aplică în ordinea și în intervalele din fișa tehnică, cu atenție la temperatura din încăpere.' },
+      { title: 'Stratul de protecție și întărirea', text: 'Se aplică finisajul, apoi se respectă timpul de întărire înainte de circulație și de încărcare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Beton umed sau fără barieră de vapori', text: 'Umiditatea care urcă din sol formează bășici și duce la desprindere.' },
+      { title: 'Pregătire superficială', text: 'Aplicarea peste praf, ulei sau lapte de ciment, fără șlefuire.' },
+      { title: 'Proporție greșită la amestec', text: 'Rășina nu se întărește uniform și rămâne lipicioasă sau fragilă.' },
+      { title: 'Sistem nepotrivit utilizării', text: 'O pardoseală subțire în zonă cu trafic greu sau un produs de interior folosit în exterior.' },
+      { title: 'Temperatură și umiditate ignorate', text: 'Condițiile din timpul aplicării sunt trecute în fișa tehnică; nerespectarea lor strică stratul.' },
+      { title: 'Lipsa rosturilor de dilatare', text: 'Rosturile din beton trebuie urmărite, altfel pardoseala fisurează pe același traseu.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de starea betonului (cât de mult trebuie șlefuit și reparat), de sistemul ales, de numărul de straturi, de finisaj (lucios, mat, antiderapant, decorativ) și de accesul la locul lucrării. Suprafețele mici costă mai mult pe metru pătrat decât cele mari, pentru că pregătirea și deplasarea rămân.',
+      'Pentru repere consultă pagina de preț a pardoselii epoxidice, apoi cere oferte pe lucrări. Prețul pe metru pătrat fără detalii nu spune nimic.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce conține fiecare ofertă: pregătirea suprafeței (șlefuire sau frezare), reparațiile, numărul de straturi, tipul de sistem, finisajul și timpul de întărire. Cere denumirea sistemului și fișa tehnică. O ofertă mult mai mică lasă de obicei deoparte pregătirea suportului, adică exact partea care decide durata.',
+      'Verifică și cine garantează lucrarea și ce acoperă garanția scris, fără să te bazezi pe promisiuni verbale.',
+    ) }),
+    node('firm-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('firm', 'text', { body: para(
+      'Cere lucrări similare făcute, de preferat cu vizită la una dintre ele, și o descriere clară a procesului. O firmă serioasă vine să vadă betonul, verifică umiditatea și îți spune dacă suportul trebuie refăcut înainte. Diferă mult între cine face doar aplicarea și cine răspunde de întreg sistemul.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pardoseala epoxidică' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru pardoseli' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la pardoseli și placări' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie spațiul și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

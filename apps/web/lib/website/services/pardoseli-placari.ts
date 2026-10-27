@@ -55,6 +55,7 @@ export const pardoseliPlacari: ServiceContent = {
       { title: 'Montaj', text: 'Montaj cu adeziv adecvat și rosturi uniforme, sau aplicarea straturilor de rășină sau microciment.' },
       { title: 'Rostuire, finisaje și recepție', text: 'Rosturi, plinte, sigilare. Verifici nivelul, rosturile, sunetul la lovire (gresie desprinsă) și curățenia.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Pardoseli și placări pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru pardoseli și placări' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă dacă nu se spune altfel. Materialele se plătesc separat. Variază după format, tip și zonă.' }),
     node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),

@@ -1,0 +1,87 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const izolatieMansardaAcoperis: SituationContent = {
+  slug: 'acoperisuri--izolatie-mansarda-acoperis',
+  categorie: 'acoperisuri',
+  title: 'Izolație acoperiș și mansardă',
+  seoTitle: 'Izolație acoperiș și mansardă: cum se face',
+  seoDescription: 'Izolația acoperișului și a mansardei: soluții (vată, spumă, plăci), ordinea straturilor, bariera de vapori, ventilare, greșeli frecvente și cum compari ofertele.',
+  summary: 'Cum se izolează un acoperiș sau o mansardă, ce soluții există, în ce ordine se pun straturile și ce să compari în ofertele pentru amenajare.',
+  sinonime: ['izolatie acoperis', 'izolatie mansarda', 'izolatia mansardei', 'acoperis mansarda', 'mansarda din lemn', 'amenajare mansarda', 'spuma izolatie acoperis', 'izolație acoperiș', 'izolație mansardă', 'izolația mansardei', 'acoperiș mansardă', 'mansardă din lemn', 'amenajare mansardă', 'spumă izolație acoperiș'],
+  intrebari: [
+    'De ce se izolează acoperișul? | Pentru că pe acoperiș se pierde o parte importantă din căldura casei iarna și se acumulează căldură vara. Izolația reduce aceste pierderi, dar funcționează corect doar împreună cu bariera de vapori, hidroizolația și ventilarea.',
+    'Ce soluții de izolare există? | Vată minerală sau de sticlă între căpriori, plăci rigide, spumă poliuretanică aplicată prin pulverizare, uneori combinate. Fiecare are alt comportament la vapori, la foc, la zgomot și alt mod de montaj. Alegerea depinde de acoperiș, de buget și de ce recomandă un specialist.',
+    'Se poate izola cu spumă poliuretanică? | Da, se aplică prin pulverizare și umple bine neregularitățile. Cere firmei produsul exact, fișa tehnică, comportamentul la foc și cum se tratează ventilarea. Verifică și compatibilitatea cu învelitoarea și cu lemnul șarpantei.',
+    'Ce este bariera de vapori și unde se pune? | O folie pe fața caldă a izolației, dinspre interior, care împiedică vaporii din casă să ajungă în izolație și să condenseze. Se etanșează la îmbinări și la margini. Fără ea, izolația se umezește și își pierde eficiența.',
+    'Trebuie ventilat acoperișul? | De regulă da. Sub învelitoare se lasă un spațiu pentru aerul care scoate umezeala, în funcție de soluția constructivă. Cum se face depinde de tipul acoperișului și de învelitoare, deci urmează indicațiile producătorilor și ale proiectantului.',
+    'Pot amenaja mansarda într-un acoperiș existent? | Uneori. Depinde de înălțimea utilă, de panta acoperișului, de structură și de accesul scării. Un specialist verifică dacă șarpanta suportă lucrările și dacă sunt necesare acte. Întreabă la primărie înainte de începere.',
+    'Se poate lucra la izolație fără a desface învelitoarea? | Izolarea pe la interior, între căpriori, se poate face fără a desface învelitoarea, dar necesită bariera de vapori și grijă la ventilare. La refacerea acoperișului se poate izola și pe la exterior. Alegerea ține de starea acoperișului.',
+    'De ce depinde costul izolației și al amenajării? | De suprafață, de soluția aleasă, de grosimea necesară, de starea structurii, de finisajele interioare (rigips, lambriu, zugrăveli) și de lucrările de instalații. Cere oferta pe etape, ca să poți compara.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Izolația acoperișului și a mansardei: soluții și ordinea straturilor', subtitle: 'Ce soluții există, de ce contează bariera de vapori și ventilarea și ce să compari în oferte. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Soluții', value: 'Vată, plăci, spumă' },
+      { label: 'Esențial', value: 'Barieră de vapori și ventilare' },
+      { label: 'Atenție', value: 'Punți termice și îmbinări' },
+      { label: 'Mansardă', value: 'Verifică structura și actele' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Acoperișul este suprafața prin care casa pierde iarna multă căldură și o primește vara. Izolația bine făcută face mansarda locuibilă în orice anotimp, dar greșelile de execuție (o barieră de vapori ruptă, o ventilare blocată) pot ascunde probleme care apar abia după ani, sub formă de condens și mucegai.',
+      'Pagina explică soluțiile de izolare, ordinea straturilor, ce înseamnă amenajarea unei mansarde și cum compari ofertele. Pentru învelitoare și șarpantă, vezi paginile dedicate.',
+    ) }),
+    node('what-h', 'heading', { text: 'Soluții de izolare', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Vată între căpriori', text: 'Se montează în spațiul dintre căpriori, de obicei pe la interior. Cere precizie în tăiere și bariera de vapori continuă.' },
+      { title: 'Plăci rigide', text: 'Se așază între sau peste căpriori și pot reduce punțile termice. Cer atenție la îmbinări.' },
+      { title: 'Spumă poliuretanică', text: 'Se aplică prin pulverizare și umple neregularitățile. Se verifică produsul, comportamentul la foc și ventilarea.' },
+      { title: 'Izolație în două straturi', text: 'Un strat între căpriori și altul peste sau sub ei, ca să se reducă punțile termice prin lemn.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Straturile acoperișului izolat', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Ordinea straturilor contează mai mult decât materialul ales. Dinspre exterior spre interior: învelitoarea, spațiul de ventilare, hidroizolația (folia de sub învelitoare), izolația, bariera de vapori și finisajul interior. Hidroizolația oprește apa venită din exterior, bariera de vapori oprește vaporii din casă.',
+      'Bariera de vapori trebuie să fie continuă și etanșată la îmbinări și la marginile cu zidurile. O barieră ruptă sau cu goluri lasă umezeala în izolație, care își pierde eficiența și poate degrada lemnul. Spațiul de ventilare nu se astupă cu izolația.',
+      'Detaliile exacte (grosimea izolației, tipul foliilor, ventilarea) vin din proiect și din fișele tehnice ale produselor, nu dintr-o regulă generală. La acoperișurile plate sau la terase, hidroizolația are pagina ei separată.',
+    ) }),
+    node('mansarda-h', 'heading', { text: 'Amenajarea unei mansarde', level: 'h2' }),
+    node('mansarda', 'text', { body: para(
+      'Mansarda înseamnă mai mult decât izolație: trebuie să existe înălțime utilă suficientă, o scară de acces, ferestre de acoperiș, instalații și finisaje. Înainte de orice, un specialist verifică dacă șarpanta existentă poate fi modificată sau dacă este nevoie de întărire, pentru că unele lucrări (decupări pentru ferestre sau scară) slăbesc structura.',
+      'Mansardele cu structură din lemn se pretează la lucrări rapide și ușoare, dar cer atenție la protecția la foc, la ventilare și la izolarea fonică. Întreabă la primărie ce acte sunt necesare pentru transformarea podului în spațiu locuibil. Pentru prețuri orientative la mansardare, vezi pagina de preț.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Evaluarea acoperișului', text: 'Se verifică structura, învelitoarea, infiltrațiile și starea lemnului înainte de izolare.' },
+      { title: 'Hidroizolația și ventilarea', text: 'Se asigură folia de sub învelitoare și spațiul de ventilare, conform soluției alese.' },
+      { title: 'Montarea izolației', text: 'Se montează izolația fără goluri și fără comprimare, tăind materialul la măsură.' },
+      { title: 'Bariera de vapori', text: 'Se întinde folia pe față caldă și se etanșează îmbinările și marginile.' },
+      { title: 'Structura pentru finisaj', text: 'Se montează șipcile sau profilele pe care se prinde finisajul interior.' },
+      { title: 'Finisaje și verificare', text: 'Se montează rigipsul sau lambriul și se verifică etanșeitatea și lipsa punților termice.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Barieră de vapori lipsă sau ruptă', text: 'Umezeala ajunge în izolație și apare condensul.' },
+      { title: 'Ventilarea blocată', text: 'Izolația ocupă tot spațiul și lemnul nu mai respiră.' },
+      { title: 'Izolație comprimată sau cu goluri', text: 'Pierde din eficiență și lasă puncte reci.' },
+      { title: 'Punți termice neglijate', text: 'Căpriorii, colțurile și îmbinările rămân neizolate și apar pete.' },
+      { title: 'Izolare peste lemn umed', text: 'Umezeala rămâne închisă și degradează structura.' },
+      { title: 'Amenajare fără verificarea structurii', text: 'Decupări sau încărcări noi pot slăbi șarpanta.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul izolației depinde de suprafața acoperișului, de soluția aleasă și de grosimea necesară, de starea structurii și de accesul la lucru. La o mansardă se adaugă ferestrele de acoperiș, scara, finisajele interioare, instalațiile electrice și termice și eventualele întăriri ale șarpantei.',
+      'Compară ofertele pe etape: ce material, ce grosime, ce barieră de vapori, cum se face ventilarea, ce finisaje sunt incluse și ce garanție se dă. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare și întreabă firma să-ți explice ordinea straturilor și cum asigură ventilarea și continuitatea barierei de vapori. Dacă primești doar numele materialului, fără detaliile de montaj, e semn că oferta nu e suficient de clară.',
+      'Dacă amenajezi o mansardă, întreabă cine verifică structura și cine se ocupă de acte. Cere ofertă scrisă, cu termene, condiții de plată și garanție.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre izolația acoperișului' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru acoperișuri și mansardare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la acoperișuri' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie acoperișul sau mansarda și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

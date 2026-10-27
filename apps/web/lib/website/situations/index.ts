@@ -9,6 +9,39 @@ import { hidroizolatieBaie } from '../guides/hidroizolatie-baie'
 import { hidroizolatieFundatie } from '../guides/hidroizolatie-fundatie'
 import { hidroizolatieTerasa } from '../guides/hidroizolatie-terasa'
 import type { GuideContent } from '../guides/types'
+import { acoperisTerasa } from './acoperisuri/acoperis-terasa'
+import { invelitoareAcoperis } from './acoperisuri/invelitoare-acoperis'
+import { izolatieMansardaAcoperis } from './acoperisuri/izolatie-mansarda-acoperis'
+import { jgheaburiBurlane } from './acoperisuri/jgheaburi-burlane'
+import { sarpanta } from './acoperisuri/sarpanta'
+import { curatareIgienizareAerConditionat } from './climatizare/curatare-igienizare-aer-conditionat'
+import { montajAerConditionat } from './climatizare/montaj-aer-conditionat'
+import { pompaCalduraAerAer } from './climatizare/pompa-caldura-aer-aer'
+import { reparatiiServiceAerConditionat } from './climatizare/reparatii-service-aer-conditionat'
+import { ventilatieRecuperareCaldura } from './climatizare/ventilatie-recuperare-caldura'
+import { fundatieCasa } from './fundatii-beton/fundatie-casa'
+import { placaBetonArmat } from './fundatii-beton/placa-beton-armat'
+import { sapaAutonivelanta } from './fundatii-beton/sapa-autonivelanta'
+import { sapaMecanizata } from './fundatii-beton/sapa-mecanizata'
+import { betonAmprentat } from './garduri-pavaje/beton-amprentat'
+import { gardBeton } from './garduri-pavaje/gard-beton'
+import { gardMetalic } from './garduri-pavaje/gard-metalic'
+import { pavajCurte } from './garduri-pavaje/pavaj-curte'
+import { poartaCulisantaAutomatizare } from './garduri-pavaje/poarta-culisanta-automatizare'
+import { reparatiiReglajTermopane } from './geamuri/reparatii-reglaj-termopane'
+import { ruloriJaluzeleExterioare } from './geamuri/rulouri-jaluzele-exterioare'
+import { usiCulisanteGlisante } from './geamuri/usi-culisante-glisante'
+import { usiTermopan } from './geamuri/usi-termopan'
+import { electricieniAutorizatiAnre } from './instalatii-electrice/electricieni-autorizati-anre'
+import { instalatieElectricaCasa } from './instalatii-electrice/instalatie-electrica-casa'
+import { paratrasnetPrizaDePamant } from './instalatii-electrice/paratrasnet-priza-de-pamant'
+import { tablouElectric } from './instalatii-electrice/tablou-electric'
+import { desfundareCanalizare } from './instalatii-sanitare/desfundare-canalizare'
+import { fosaSepticaStatieEpurare } from './instalatii-sanitare/fosa-septica-statie-epurare'
+import { microcimentPoliuretan } from './pardoseli-placari/microciment-poliuretan'
+import { montajGresieFaianta } from './pardoseli-placari/montaj-gresie-faianta'
+import { montajParchet } from './pardoseli-placari/montaj-parchet'
+import { pardosealaEpoxidica } from './pardoseli-placari/pardoseala-epoxidica'
 
 export interface SituationContent {
   /** `<categorie>--<situație>` */
@@ -45,4 +78,38 @@ export const SITUATIONS: SituationContent[] = [
   situationFromGuide(hidroizolatieBaie, 'baie'),
   situationFromGuide(hidroizolatieFundatie, 'fundatie-subsol-beci'),
   situationFromGuide(hidroizolatieTerasa, 'terasa-acoperis-plat'),
+  // other categories: one file per situation under ./<categorie>/ (docs/SEO/PLAN_SITUATII_TOATE_CATEGORIILE.md)
+  acoperisTerasa,
+  invelitoareAcoperis,
+  izolatieMansardaAcoperis,
+  jgheaburiBurlane,
+  sarpanta,
+  curatareIgienizareAerConditionat,
+  montajAerConditionat,
+  pompaCalduraAerAer,
+  reparatiiServiceAerConditionat,
+  ventilatieRecuperareCaldura,
+  fundatieCasa,
+  placaBetonArmat,
+  sapaAutonivelanta,
+  sapaMecanizata,
+  betonAmprentat,
+  gardBeton,
+  gardMetalic,
+  pavajCurte,
+  poartaCulisantaAutomatizare,
+  reparatiiReglajTermopane,
+  ruloriJaluzeleExterioare,
+  usiCulisanteGlisante,
+  usiTermopan,
+  electricieniAutorizatiAnre,
+  instalatieElectricaCasa,
+  paratrasnetPrizaDePamant,
+  tablouElectric,
+  desfundareCanalizare,
+  fosaSepticaStatieEpurare,
+  microcimentPoliuretan,
+  montajGresieFaianta,
+  montajParchet,
+  pardosealaEpoxidica,
 ]

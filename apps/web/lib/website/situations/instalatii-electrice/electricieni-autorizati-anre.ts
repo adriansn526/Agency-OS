@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const electricieniAutorizatiAnre: SituationContent = {
+  slug: 'instalatii-electrice--electricieni-autorizati-anre',
+  categorie: 'instalatii-electrice',
+  title: 'Electrician autorizat ANRE: cum îl alegi și ce verifici',
+  seoTitle: 'Electrician autorizat ANRE: cum îl alegi și verifici',
+  seoDescription: 'Ce înseamnă un electrician autorizat ANRE, când este necesar, cum verifici autorizația și ce ceri în ofertă înainte să angajezi pe cineva.',
+  summary: 'Ce înseamnă autorizarea ANRE a unui electrician, când este necesară, cum îi verifici autorizația și ce ceri de la firmă înainte de lucrare.',
+  sinonime: ['anre electricieni', 'anre electricieni autorizati', 'electrician autorizat anre', 'lista electricieni autorizati anre', 'lista electricienilor autorizati anre', 'autorizatie anre electrician', 'anre autorizare electricieni', 'autorizare anre electricieni'],
+  intrebari: [
+    'Ce înseamnă „electrician autorizat ANRE”? | Înseamnă că persoana sau firma a obținut de la autoritatea de reglementare din energie o atestare sau autorizare pentru anumite categorii de lucrări la instalații electrice. Nu orice autorizare acoperă orice lucrare, deci întreabă ce anume acoperă documentul prezentat.',
+    'Unde verific dacă un electrician este autorizat? | Cere o copie a documentului de autorizare și verifică-l la sursă, pe site-ul ANRE sau direct la instituție, unde există registre publice ale celor atestați sau autorizați. Nu te baza doar pe o fotografie primită prin mesaj.',
+    'Când este nevoie de un electrician autorizat? | La orice intervenție pe partea fixă a instalației: tablou, circuite, branșament, priză de pământ, instalație nouă sau modificată. Pentru lucrări legate de rețeaua operatorului de distribuție, procedura este stabilită de operator. Întreabă operatorul sau un specialist ce se aplică în cazul tău.',
+    'Pot schimba singur o priză sau un întrerupător? | Chiar și intervențiile mici implică risc de electrocutare sau de incendiu dacă sunt făcute greșit. Orice lucrare la tablou sau la circuite se lasă unui electrician autorizat; pentru intervențiile minore cere părerea unui specialist, nu improviza.',
+    'Primesc vreun document după lucrare? | O firmă serioasă documentează lucrarea: ce s-a executat, ce materiale s-au folosit și, după caz, rezultatele verificărilor. Documentele necesare depind de tipul lucrării și de cerințele operatorului de distribuție sau ale asigurătorului; întreabă firma de la început.',
+    'Un electrician autorizat este și mai scump? | Prețul depinde de lucrare, de materiale și de firmă, nu doar de autorizare. Compară ofertele pe conținut. O ofertă mult sub celelalte, fără autorizare sau fără documente, poate costa mai mult după aceea.',
+    'Ce fac dacă lucrarea s-a făcut de cineva neautorizat? | Cere verificarea instalației de către un electrician autorizat înainte de a o folosi în continuare, mai ales dacă ai o asigurare sau urmează să depui documente la operator. Un specialist îți poate spune ce trebuie refăcut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Electrician autorizat ANRE: cum îl alegi', subtitle: 'Ce înseamnă autorizarea, când este necesară și cum verifici documentele înainte de lucrare. Dacă preferi, ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Verificare', value: 'Documentul, la sursă' },
+      { label: 'Necesar', value: 'La tablou, circuite, branșament' },
+      { label: 'Documente', value: 'Cere-le înainte de lucrare' },
+      { label: 'Ofertă', value: 'Comparată pe conținut' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Instalația electrică este una dintre puținele părți ale casei unde o greșeală poate pune în pericol viața și proprietatea. De aceea lucrările la instalațiile electrice sunt reglementate, iar cei care le execută au nevoie de atestări sau autorizări emise prin autoritatea de reglementare din energie, ANRE.',
+      'Pentru tine, ca beneficiar, întrebarea practică este: cum știu că persoana care vine la mine are dreptul să facă lucrarea și că o va face corect? Pagina de față te ajută să verifici documentele și să compari ofertele. Nu înlocuiește informațiile oficiale ale ANRE sau ale operatorului de distribuție.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este autorizarea ANRE a unui electrician', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Autorizarea sau atestarea este o recunoaștere oficială a competenței pentru anumite tipuri de lucrări la instalații electrice. Există mai multe grade și categorii, iar fiecare acoperă un anumit domeniu de lucrări. Detaliile exacte, inclusiv condițiile și valabilitatea, sunt stabilite de ANRE și se verifică la instituție.',
+      'Contează și diferența dintre o persoană atestată și o firmă autorizată: unele lucrări se execută printr-o firmă care are personal atestat. Întreabă cine anume execută lucrarea și în baza cărui document.',
+    ) }),
+    node('where-h', 'heading', { text: 'Când ai nevoie de un electrician autorizat', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Instalație nouă sau modificată', text: 'Casă nouă, extindere, mutare de prize sau circuite, apartament renovat complet.' },
+      { title: 'Tablou electric', text: 'Montaj, schimbare sau modificare. Aici nu se lucrează pe cont propriu.' },
+      { title: 'Branșament și contor', text: 'Legătura cu rețeaua operatorului are o procedură proprie; pașii se stabilesc cu operatorul de distribuție.' },
+      { title: 'Protecții și împământare', text: 'Priza de pământ și protecția la trăsnet cer cunoștințe de specialitate și verificări.' },
+      { title: 'Defecte repetate', text: 'Siguranțe care sar, încălzire a prizelor, miros de ars: oprești consumatorul și chemi un specialist.' },
+      { title: 'Cerințe de asigurare sau de vânzare', text: 'Unele situații cer documente despre instalație; întreabă asigurătorul sau notarul.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Cum verifici un electrician sau o firmă', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Cere documentul de autorizare sau atestare și verifică-l la ANRE, prin registrele publice ale instituției sau direct la ea. Uită-te la ce acoperă documentul și la perioada de valabilitate, nu doar la existența lui. Verifică și că numele de pe document este al celui care va executa lucrarea.',
+      'Completează verificarea cu elemente practice: o firmă cu date de identificare clare, o ofertă scrisă, referințe de la lucrări asemănătoare și disponibilitatea de a explica ce va face. Un electrician care evită să arate documentele sau cere plata integrală înainte de începerea lucrării merită tratat cu rezervă.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum alegi pas cu pas', items: [
+      { title: 'Descrie lucrarea', text: 'Scrie ce vrei făcut: instalație nouă, tablou, mutare de prize, verificare după un defect.' },
+      { title: 'Cere documentele', text: 'Autorizarea sau atestarea, date despre firmă și, dacă există, exemple de lucrări similare.' },
+      { title: 'Verifică la sursă', text: 'Confirmă documentul la ANRE, nu doar după copia primită.' },
+      { title: 'Compară ofertele', text: 'Cere oferte scrise de la mai multe firme, cu materiale și lucrări detaliate.' },
+      { title: 'Stabilește documentele finale', text: 'Înainte de start, întreabă ce acte primești după lucrare și ce verificări se fac.' },
+      { title: 'Verifică la predare', text: 'La final cere explicații despre tablou, circuite și etichetarea lor.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente la alegerea electricianului', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea doar după preț', text: 'Ofertele mult mai mici lasă de obicei deoparte materiale, verificări sau documente.' },
+      { title: 'Documente necontrolate', text: 'O fotografie a unei autorizații nu dovedește că este valabilă sau că aparține celui care lucrează.' },
+      { title: 'Lucrare fără ofertă scrisă', text: 'Fără listă de lucrări și materiale, nu poți compara și nici reclama.' },
+      { title: 'Plata integrală în avans', text: 'Împarte plata pe etape, legate de lucrarea executată.' },
+      { title: 'Lucrări „la negru” pe tablou', text: 'Ceea ce nu e documentat poate crea probleme la asigurare, vânzare sau racordare.' },
+      { title: 'Ignorarea semnelor de avertizare', text: 'Prize calde, miros de ars sau siguranțe care sar repetat cer verificare rapidă, nu amânare.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul lucrării electrice depinde de tipul și amploarea ei, de materialele alese, de accesul la trasee (pereți deschiși sau tencuiți, apartament sau casă), de deplasare și de documentele necesare. Autorizarea în sine nu se plătește separat de beneficiar, dar se reflectă în organizarea firmei.',
+      'Compară ofertele pe conținut: ce lucrări sunt incluse, ce materiale, ce verificări și ce documente primești. Pentru repere de preț vezi paginile de prețuri de mai jos.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre electricienii autorizați' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații electrice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații electrice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți un electrician pentru lucrarea ta?', text: 'Descrie lucrarea și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiCulisanteGlisante: SituationContent = {
+  slug: 'geamuri--usi-culisante-glisante',
+  categorie: 'geamuri',
+  title: 'Uși culisante și glisante: alegere, montaj, cost',
+  seoTitle: 'Uși culisante și glisante: alegere, montaj, cost',
+  seoDescription: 'Uși culisante și glisante din PVC, aluminiu sau sticlă, la exterior și interior: tipuri, unde se montează, ce întrebi firma și de ce depinde costul.',
+  summary: 'Cum alegi o ușă culisantă sau glisantă (termopan, sticlă, interior sau exterior), ce întrebi înainte de comandă și de ce depinde costul.',
+  sinonime: ['usa culisanta', 'use culisante', 'usi culisante', 'usi glisante', 'usa glisanta termopan', 'usa culisanta termopan', 'usi culisante termopan', 'usi culisabile', 'usi culisante interior'],
+  intrebari: [
+    'Care este diferența între ușă culisantă și ușă glisantă? | În uz curent termenii se folosesc pentru același tip: canatul se mișcă lateral, pe șină, în loc să se deschidă pe balamale. Firma îți prezintă sistemele disponibile.',
+    'Când este potrivită o ușă culisantă? | Când spațiul nu permite deschiderea unui canat pe balamale sau când vrei o deschidere mare spre terasă sau grădină. Se potrivește și între camere, ca să economisești spațiu.',
+    'Ce tipuri de sisteme există? | Se întâlnesc sisteme culisante simple, ridicat-culisante, cu canate care se strâng lateral sau care intră în perete. Firma explică diferențele pentru situația ta.',
+    'Se pot face din PVC, aluminiu sau sticlă? | Da, există variante din PVC, din aluminiu și din sticlă, fiecare cu avantaje și limite. Alegerea ține de utilizare, aspect și buget.',
+    'Cum se asigură etanșeitatea la o ușă culisantă? | Prin sistemul de garnituri și prin calitatea șinei și a feroneriei. Întreabă firma ce soluție are și cum se întreține.',
+    'Ce întreținere cere? | Șina se curăță periodic, iar rolele și garniturile se verifică. Cere instrucțiuni de la firma care montează.',
+    'Cât costă o ușă culisantă? | Depinde de dimensiuni, material, număr de canate, geam, feronerie și montaj. Nu există un preț unic: compară ofertele pe conținut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși culisante și glisante', subtitle: 'Cum alegi o ușă culisantă sau glisantă pentru exterior sau interior, ce întrebi înainte de comandă și cum compari ofertele. Ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Deschidere', value: 'Lateral, pe șină' },
+      { label: 'Materiale', value: 'PVC, aluminiu, sticlă' },
+      { label: 'Potrivite pentru', value: 'Terase, spații mici, compartimentări' },
+      { label: 'Compari', value: 'Sistem, șină, geam, montaj' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușa culisantă are canatul care se deplasează lateral pe o șină, în loc să se deschidă pe balamale. Este o soluție frecventă la ieșirea spre terasă sau grădină, unde se vrea o deschidere largă, și între camere, unde nu e loc pentru un canat clasic.',
+      'Sistemele diferă între ele mult prin mecanism, etanșare și mod de montaj, de aceea pagina se concentrează pe ce trebuie să întrebi și să verifici, nu pe un catalog de modele.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se montează', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Ieșire spre terasă sau grădină', text: 'Deschidere largă și lumină, cu un sistem exterior, etanș și cu geam termoizolant.' },
+      { title: 'Balcon sau loggia', text: 'Când spațiul nu permite deschiderea unui canat pe balamale.' },
+      { title: 'Compartimentarea interioară', text: 'Între camere sau la dressing, ca să economisești spațiu și să separi zone.' },
+      { title: 'Spații comerciale și birouri', text: 'Pentru acces larg și aspect modern, cu cerințe proprii de siguranță.' },
+    ] }),
+    node('sol-h', 'heading', { text: 'Ce soluții există', level: 'h2' }),
+    node('sol', 'text', { body: para(
+      'La exterior se folosesc de regulă sisteme din PVC sau aluminiu cu geam termoizolant, uneori cu mecanism care ridică și apoi deplasează canatul. Pentru interior se folosesc sisteme din sticlă, aluminiu sau alte materiale, uneori suspendate pe șină de sus.',
+      'Canatele se pot suprapune, se pot strânge lateral sau pot intra în perete. Aceasta schimbă mult necesarul de loc și lucrările de zidărie. Cere firmei să explice pentru fiecare variantă ce lucrări implică și ce întreținere cere. Pentru ușile cu balamale, vezi pagina despre uși termopan.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Vizita și măsurarea', text: 'Firma măsoară golul, vede suportul și stabilește tipul de sistem.' },
+      { title: 'Oferta', text: 'Alegi materialul, numărul de canate, geamul și feroneria și primești oferta scrisă.' },
+      { title: 'Comanda', text: 'Sistemul se produce pe măsură; cere termenul în scris.' },
+      { title: 'Pregătirea golului', text: 'La sistemele ascunse în perete sunt necesare lucrări de zidărie sau rigips.' },
+      { title: 'Montajul', text: 'Se montează șina și cadrul, apoi canatele, și se reglează mișcarea.' },
+      { title: 'Recepția', text: 'Verifici alunecarea, închiderea, etanșeitatea și predarea instrucțiunilor de întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea fără a verifica locul', text: 'Ușa culisantă cere loc lateral sau perete pregătit. Verifică-l din timp.' },
+      { title: 'Șina neglijată', text: 'Șina și rolele decid cât de ușor alunecă ușa. Întreabă ce soluție se montează.' },
+      { title: 'Etanșare ignorată la exterior', text: 'La ușa de terasă, etanșarea și scurgerea apei din șină contează.' },
+      { title: 'Sticlă fără cerințe de siguranță', text: 'La uși mari din sticlă, întreabă ce tip de geam se folosește.' },
+      { title: 'Măsurare improvizată', text: 'Golul și planeitatea pardoselii trebuie verificate de firmă.' },
+      { title: 'Alegerea doar după preț', text: 'Compară sistemele și ce include oferta, nu doar totalul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiuni, de material (PVC, aluminiu, sticlă), de tipul de sistem și de mecanism, de numărul de canate, de geam, de feronerie, de lucrările din jur (zidărie, finisaje) și de montaj. Sistemele mari sau cele ascunse în perete sunt mai complexe decât cele simple.',
+      'Compară ofertele pe conținut: sistemul, șina, geamul, feroneria, lucrările de pregătire și finisaj, termenul și garanția. Pentru prețuri la termopane în general, vezi paginile de preț.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care a montat sisteme similare, măsoară la fața locului și îți explică varianta propusă. Întreabă ce garanție oferă pentru sistem și pentru montaj și cine face lucrările din jur.',
+      'Cere lucrări anterioare, ia cel puțin două oferte pe aceleași cerințe și verifică termenul de livrare.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși culisante' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru geamuri și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la geamuri și tâmplărie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei o ușă culisantă montată de o firmă?', text: 'Descrie ce ai nevoie și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

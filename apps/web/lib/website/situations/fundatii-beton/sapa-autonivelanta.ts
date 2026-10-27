@@ -1,0 +1,93 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const sapaAutonivelanta: SituationContent = {
+  slug: 'fundatii-beton--sapa-autonivelanta',
+  categorie: 'fundatii-beton',
+  title: 'Șapă autonivelantă',
+  seoTitle: 'Șapă autonivelantă: cine o aplică, cum alegi, cost',
+  seoDescription: 'Șapa autonivelantă: pe ce suprafețe se aplică, interior sau exterior, ce întrebi o firmă, cum se lucrează și de ce depinde costul lucrării.',
+  summary: 'Cine aplică o șapă autonivelantă, în ce cazuri se potrivește, ce întrebi înainte de ofertă și de ce depinde costul.',
+  sinonime: ['sapa autonivelanta', 'șapă autonivelantă', 'sapa autonivelanta interior', 'sapa autonivelanta exterior', 'sapa autonivelanta pret', 'turnare sapa autonivelanta', 'autonivelanta', 'autonivelanta interior', 'autonivelanta exterior'],
+  intrebari: [
+    'Ce este o șapă autonivelantă? | Un strat subțire de mortar fluid care se întinde singur și își găsește nivelul, folosit pentru a obține o suprafață plană înainte de finisaj. Nu înlocuiește o șapă portantă groasă; corectează diferențe relativ mici de nivel.',
+    'Se poate folosi în interior și în exterior? | Depinde de produs: unele sunt făcute doar pentru interior, altele rezistă la umezeală și îngheț. Verifică în fișa tehnică destinația și cere firmei să confirme că produsul ales este pentru locul unde îl aplică.',
+    'Ce pregătire cere suportul? | Să fie curat, solid, fără praf, vopsea sau grăsimi, iar fisurile și golurile se repară. De obicei se aplică o amorsă, conform fișei tehnice. Pregătirea greșită este cauza frecventă a desprinderilor.',
+    'Pot aplica singur autonivelanta sau mai bine apelez la o firmă? | Poți încerca pe suprafețe mici, dacă urmezi pas cu pas instrucțiunile, dar lucrul rapid și amestecul corect sunt critice. Pe suprafețe mari sau cu diferențe de nivel, o echipă cu experiență și uneltele potrivite reduce riscul de erori.',
+    'Cât de neted iese rezultatul? | Suficient pentru finisaje subțiri, dacă suportul este corect pregătit și produsul este potrivit. Cere să vezi lucrări făcute de firmă și stabilește dinainte toleranța de planeitate așteptată.',
+    'Când pot monta parchetul sau gresia? | După timpul de întărire și uscare din fișa tehnică a produsului, care diferă între produse și în funcție de grosime și condiții. Nu grăbi acest pas; cere indicația scrisă a producătorului.',
+    'Se poate pune peste încălzire în pardoseală? | Unele produse sunt prevăzute pentru asta, altele nu. Verifică în fișa tehnică și cere acordul instalatorului sau al proiectantului înainte de aplicare.',
+    'Cum compar două oferte? | Verifică ce produs se folosește, ce pregătire a suportului este inclusă, ce grosime se atinge și cine răspunde dacă suprafața nu iese corect. O ofertă care nu menționează produsul sau pregătirea nu poate fi comparată.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Șapă autonivelantă: aplicare și cost', subtitle: 'Cine o aplică, în ce cazuri se potrivește, ce întrebi înainte de ofertă și de ce depinde costul. Cere oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Rol', value: 'Netezește o suprafață înainte de finisaj' },
+      { label: 'Potrivire', value: 'Interior sau exterior, după produs' },
+      { label: 'Critic', value: 'Pregătirea suportului' },
+      { label: 'Compari ofertele', value: 'Produs, pregătire, grosime' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Șapa autonivelantă este un mortar fluid care se întinde pe pardoseală și ajunge singur la un nivel aproape orizontal. Se folosește când vrei o suprafață foarte plană sub parchet, gresie, covor sau alt finisaj subțire, fără a turna o șapă groasă.',
+      'Căutările pentru acest subiect sunt de multe ori pentru produsul în sine. Pagina de față se concentrează pe cine o aplică, cum alegi soluția, ce întrebi înainte să primești oferta și de ce depinde costul lucrării.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și când se alege', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Autonivelanta corectează diferențe mici de nivel și asigură planeitatea. Nu repară planșee deteriorate și nu înlocuiește șapa portantă: se aplică peste un suport sănătos, curat și stabil.',
+      'Se alege când finisajul este sensibil la denivelări (parchet, vinil, covor, gresie de format mare) sau când vrei să recuperezi rapid planeitatea într-o renovare. Pentru suprafețe cu diferențe mari de nivel sau pentru șape portante se folosesc alte soluții, tratate pe pagina despre șapa mecanizată.',
+    ) }),
+    node('where-h', 'heading', { text: 'Interior și exterior', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Interior', text: 'Cea mai frecventă utilizare: apartamente, case, birouri, înainte de parchet, vinil sau gresie.' },
+      { title: 'Exterior', text: 'Posibil doar cu produse prevăzute pentru umezeală și variații de temperatură, pe suport stabil și cu pantă corectă pentru scurgerea apei.' },
+      { title: 'Spații umede', text: 'În băi și bucătării contează compatibilitatea cu hidroizolația și cu adezivul de deasupra; cere confirmarea producătorului.' },
+      { title: 'Pardoseli cu încălzire', text: 'Folosește doar un produs recomandat pentru asta și respectă condițiile de punere în funcțiune.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Cum alegi soluția', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Există produse cu priză diferită, pentru grosimi diferite și pentru destinații diferite (interior, exterior, trafic ușor sau mai intens). Alegerea corectă ține de suport, de grosimea necesară și de finisajul de deasupra, nu de popularitatea produsului.',
+      'Orice produs vine cu fișă tehnică: acolo sunt timpul de lucru, grosimea minimă și maximă, amorsa recomandată și timpul de uscare. O firmă serioasă îți poate arăta fișa produsului pe care îl va folosi.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea suportului', text: 'Se verifică soliditatea, umiditatea și nivelul; zonele slabe se repară sau se îndepărtează.' },
+      { title: 'Curățarea și amorsarea', text: 'Se îndepărtează praful și grăsimile, apoi se aplică amorsa cerută de produs.' },
+      { title: 'Etanșarea golurilor', text: 'Rosturile, golurile și trecerile se sigilează ca mortarul fluid să nu curgă prin ele.' },
+      { title: 'Amestecul și turnarea', text: 'Se amestecă strict după fișă și se toarnă repede, într-o singură etapă pe zonă.' },
+      { title: 'Întinderea și degazarea', text: 'Se ajută la întindere cu unelte specifice și se elimină aerul din strat, pentru o suprafață fără defecte.' },
+      { title: 'Întărirea', text: 'Se protejează suprafața de curenți și se așteaptă timpul din fișă înainte de finisaj.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Suport necurățat sau fără amorsă', text: 'Cea mai frecventă cauză a desprinderilor și a fisurilor.' },
+      { title: 'Amestec cu prea multă apă', text: 'Slăbește stratul și poate produce fisuri; se respectă proporția din fișă.' },
+      { title: 'Produs nepotrivit', text: 'Un produs pentru interior folosit în exterior, sau peste încălzire fără aprobare.' },
+      { title: 'Grosime în afara limitelor', text: 'Peste sau sub grosimile admise, stratul se poate fisura.' },
+      { title: 'Goluri nesigilate', text: 'Mortarul curge în rosturi și în trecerile de țevi, lăsând defecte.' },
+      { title: 'Finisaj montat prea devreme', text: 'Umezeala rămasă duce la deformări ale parchetului sau la desprinderi.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de grosimea medie necesară (adică de cât de denivelat este suportul), de produsul folosit, de pregătirea suportului (curățare, reparații, amorsă) și de condițiile de acces. Majoritatea consumului este materialul, deci o grosime mai mare înseamnă o lucrare mai scumpă.',
+      'Un preț fără produs și fără grosime nu se poate compara. Cere oferta pe suprafață și grosime estimată, cu produsul numit și cu pregătirea inclusă.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'cards', { columns: '2', items: [
+      { title: 'Produsul și destinația lui', text: 'Ce produs se folosește și dacă este pentru interior, exterior, încălzire în pardoseală.' },
+      { title: 'Pregătirea suportului', text: 'Curățare, reparații, amorsă și sigilarea golurilor: incluse sau separate.' },
+      { title: 'Grosimea și planeitatea', text: 'Ce grosime medie se estimează și ce toleranță de planeitate se acceptă.' },
+      { title: 'Răspunderea la defecte', text: 'Cine remediază dacă apar desprinderi sau fisuri și în ce condiții.' },
+    ] }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere referințe pentru lucrări similare, întreabă ce produs folosește și cere să vezi fișa tehnică. Dacă firma nu poate explica pregătirea suportului sau timpul de uscare, ia în calcul alte oferte.',
+      'Solicită vizită la fața locului: o ofertă fără să fi văzut suportul este orientativă și se poate schimba.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre șapa autonivelantă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru fundații și beton' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la fundații și beton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie suprafața și finisajul și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

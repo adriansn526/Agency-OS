@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const fosaSepticaStatieEpurare: SituationContent = {
+  slug: 'instalatii-sanitare--fosa-septica-statie-epurare',
+  categorie: 'instalatii-sanitare',
+  title: 'Fosă septică, stație de epurare și vidanjare',
+  seoTitle: 'Fosă septică, stație de epurare și vidanjare',
+  seoDescription: 'Fosă septică sau stație de epurare: cum alegi, ce implică montajul și drenajul, cum se face vidanjarea și ce compari în ofertele firmelor.',
+  summary: 'Diferențele dintre fosa septică și stația de epurare, ce implică montajul, drenajul și vidanjarea și cum compari ofertele.',
+  sinonime: ['fosa septica', 'fose septice', 'fosa septica ecologica', 'fose septice ecologice', 'statie de epurare', 'statii de epurare', 'statie de preepurare', 'drenaj fosa septica', 'vidanjare', 'fosa septica montaj'],
+  intrebari: [
+    'Care e diferența dintre fosa septică și stația de epurare? | Fosa septică reține și descompune parțial materia solidă din apele uzate, iar apa tratată parțial se infiltrează sau se evacuează conform cerințelor locale. Stația de epurare tratează mai avansat apele, de obicei cu mai multe etape. Soluția potrivită depinde de teren, de numărul de utilizatori și de cerințele locale.',
+    'Ce înseamnă „fosă septică ecologică”? | Denumirea se folosește de obicei pentru fose prefabricate etanșe sau cu tratare, în loc de bazine de beton făcute pe loc. Nu toate cele numite așa au aceeași funcție; cere fișa tehnică și întreabă ce tratare oferă.',
+    'Ce rol are drenajul? | Apa care iese din fosă se infiltrează în sol printr-un câmp de drenaj sau se evacuează într-o altă soluție aprobată. Funcționarea depinde de tipul de teren, de nivelul apei freatice și de distanțele față de clădiri și puțuri. Le stabilește specialistul.',
+    'Ce este vidanjarea și cât de des se face? | Golirea periodică a nămolului acumulat, cu autospeciale. Frecvența depinde de volumul fosei, de numărul de utilizatori și de recomandările producătorului sau ale firmei care a montat-o. Nu există o frecvență valabilă pentru toți.',
+    'Am nevoie de autorizații? | Montajul fosei sau al stației poate cere acte și aprobări locale, iar cerințele diferă după zonă și soluție. Întreabă primăria, furnizorul de utilități și un specialist înainte de a începe lucrarea.',
+    'Unde se montează fosa? | La distanțe stabilite față de casă, de puț, de limitele proprietății și de alte rețele, într-un loc accesibil autospecialei de vidanjare. Distanțele exacte le dau reglementările locale și proiectantul.',
+    'Cum compar ofertele? | Uită-te la tipul și volumul soluției, la dacă oferta include săpătura, montajul, racordurile, drenajul și punerea în funcțiune, la garanție și la documentele pe care le primești. Prețul fără aceste detalii nu spune ce primești.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Fosă septică, stație de epurare și vidanjare', subtitle: 'Cum alegi soluția, ce implică montajul și drenajul și cum compari ofertele. Ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Alegere', value: 'După teren și utilizatori' },
+      { label: 'Montaj', value: 'Săpătură, bazin, racorduri' },
+      { label: 'Drenaj', value: 'Depinde de sol și freatic' },
+      { label: 'Întreținere', value: 'Vidanjare periodică' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Acolo unde nu există canalizare publică, apele uzate ale casei trebuie colectate și tratate în siguranță. Soluțiile uzuale sunt fosa septică, în diverse variante, și stația de epurare. Alegerea ține de teren, de numărul de utilizatori, de cerințele locale și de buget.',
+      'O fosă sau o stație alese sau montate greșit produc mirosuri, poluarea solului și apei și cheltuieli de remediere. De aceea merită să știi cum se aleg, ce implică montajul și ce întreții după aceea.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce soluții există', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Fosa septică', text: 'Bazin în care materia solidă se depune și se descompune parțial; se golește periodic.' },
+      { title: 'Fosa prefabricată', text: 'Bazin livrat gata fabricat, din materiale rezistente, montat în groapă; adesea numită „ecologică”.' },
+      { title: 'Stația de preepurare', text: 'Tratare în etape înainte de evacuare; nivelul de tratare variază între modele.' },
+      { title: 'Stația de epurare', text: 'Tratare mai avansată a apelor uzate, cu componente electrice sau aerare; cere întreținere.' },
+      { title: 'Bazin vidanjabil', text: 'Rezervor etanș, golit periodic, fără evacuare în sol; se alege când terenul nu permite infiltrarea.' },
+      { title: 'Drenajul', text: 'Câmp de infiltrare sau altă soluție de evacuare a apei tratate.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Cum alegi soluția', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Pornește de la teren: tipul de sol, nivelul apei freatice, panta, spațiul disponibil și distanțele față de casă, puț și vecini. Apoi socotești numărul de persoane și consumul de apă. O soluție potrivită pentru o vilă cu mulți locatari nu este aceeași cu cea pentru o casă de vacanță.',
+      'Cere o evaluare de la un specialist și informează-te la primărie sau la furnizorul de utilități despre cerințele locale. Aprobările și documentele diferă după zonă, deci nu te baza pe ce a făcut un vecin.',
+    ) }),
+    node('mat-h', 'heading', { text: 'Montaj și drenaj', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Montajul include săpătura, pregătirea patului, așezarea bazinului, racordarea conductei de la casă, a conductei de aerisire și a evacuării, apoi umplerea și compactarea. Racordurile și etanșeitatea sunt punctele critice: o fosă care pierde sau o conductă fără pantă dau probleme repetate.',
+      'Drenajul se dimensionează după sol și debit; într-un teren cu apă freatică ridicată sau argilos infiltrarea poate fi problematică și se caută alte soluții. Rămâne obligatoriu accesul pentru autospeciala de vidanjare și capacele de vizitare accesibile.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Evaluarea terenului', text: 'Verificarea solului, a apei freatice și a distanțelor, cu un specialist.' },
+      { title: 'Alegerea soluției și aprobările', text: 'Se alege fosa sau stația și se obțin actele cerute local.' },
+      { title: 'Săpătura și patul', text: 'Se sapă groapa și se pregătește fundul pentru bazin.' },
+      { title: 'Montajul bazinului', text: 'Se așază și se fixează, apoi se fac racordurile.' },
+      { title: 'Drenajul sau evacuarea', text: 'Se execută câmpul de infiltrare sau racordul la soluția aleasă.' },
+      { title: 'Probe și punere în funcțiune', text: 'Se verifică etanșeitatea, aerisirea și funcționarea; primești instrucțiunile de întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Soluție aleasă fără evaluarea terenului', text: 'Drenajul poate să nu funcționeze în solul tău.' },
+      { title: 'Locul fără acces pentru autospecială', text: 'Vidanjarea devine dificilă sau imposibilă.' },
+      { title: 'Distanțe ignorate', text: 'Prea aproape de puț sau de limita proprietății poate crea probleme legale și de sănătate.' },
+      { title: 'Montaj fără etanșeitate', text: 'Pierderile contaminează solul și pânza freatică.' },
+      { title: 'Substanțe agresive în scurgeri', text: 'Pot afecta procesul de descompunere din fosă; respectă recomandările producătorului.' },
+      { title: 'Neglijarea vidanjării', text: 'Nămolul în exces duce la colmatare, mirosuri și reparații costisitoare.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul și volumul soluției, de teren și de săpătură, de adâncimea conductelor, de drenaj sau evacuare, de accesul utilajelor, de aprobările necesare și de punerea în funcțiune. La stațiile de epurare se adaugă componentele electrice și întreținerea.',
+      'La vidanjare, costul ține de volumul golit, de distanța și accesul autospecialei și de frecvență. Compară ofertele pe conținut și vezi paginile de prețuri de mai jos.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre fosa septică și stația de epurare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații sanitare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații sanitare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o fosă sau o stație de epurare?', text: 'Descrie terenul și casa și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const jgheaburiBurlane: SituationContent = {
+  slug: 'acoperisuri--jgheaburi-burlane',
+  categorie: 'acoperisuri',
+  title: 'Jgheaburi și burlane: montaj și înlocuire',
+  seoTitle: 'Jgheaburi și burlane: montaj, materiale, înlocuire',
+  seoDescription: 'Montajul jgheaburilor și burlanelor: materiale (PVC, metal), cum se dimensionează, în ce ordine se lucrează, greșeli frecvente și de ce depinde costul.',
+  summary: 'Cum se montează sau se înlocuiesc jgheaburile și burlanele, din ce materiale se fac, ce greșeli se evită și ce să compari în oferte.',
+  sinonime: ['jgheaburi si burlane', 'burlane si jgheaburi', 'jgheaburi burlane', 'burlane jgheaburi', 'montaj jgheaburi', 'montaj jgheaburi si burlane pret', 'jgheaburi pvc', 'jgheaburi panouri sandwich', 'jgheaburi și burlane', 'burlane și jgheaburi', 'montaj jgheaburi și burlane preț'],
+  intrebari: [
+    'La ce servesc jgheaburile și burlanele? | Colectează apa de pe acoperiș și o duc controlat la nivelul solului sau în canalizarea pluvială. Fără ele, apa cade pe fațadă, spală tencuiala, umezește soclul și fundația și afectează trotuarul de protecție.',
+    'Din ce materiale se fac? | Cel mai des din PVC sau din metal (tablă zincată, tablă vopsită, aluminiu, cupru). PVC-ul este ușor și se montează simplu; metalul rezistă diferit la temperatură și la lovituri și are alt aspect. Alegerea ține de acoperiș, de buget și de ce se potrivește cu învelitoarea.',
+    'Pot folosi jgheaburi pentru acoperiș din panouri sandwich? | Da, dar sistemul de prindere și streașina sunt diferite față de un acoperiș clasic. Cere firmei să arate cum se prind jgheaburile și cum se face scurgerea la panou. Urmează instrucțiunile producătorului panourilor.',
+    'Cum se dimensionează jgheaburile? | După suprafața de acoperiș care scurge în ele, panta acoperișului și cantitatea de apă din zona respectivă. Un sistem prea mic se revarsă la ploi mari. Firma trebuie să poată explica cum a ales mărimea, nu doar să o spună.',
+    'Ce pantă trebuie să aibă jgheabul? | O pantă mică spre burlan, ca apa să nu stea în jgheab. Valoarea exactă o dă producătorul sistemului ales, deci urmează instrucțiunile din fișa tehnică.',
+    'Cât de des se curăță jgheaburile? | Cel puțin o dată sau de două ori pe an, mai ales toamna, după căderea frunzelor, și mai des dacă ai copaci aproape de casă. Jgheaburile înfundate se revarsă și pot afecta fațada.',
+    'Când se înlocuiesc în loc să se repare? | Când sunt crăpate, deformate, corodate sau când prinderile cedează în mai multe locuri. O reparație punctuală (o îmbinare, un cârlig) are sens când restul sistemului este în stare bună.',
+    'De ce depinde costul montajului? | De lungimea totală de jgheab și de numărul de burlane, de material, de înălțimea și accesul la acoperiș, de numărul de colțuri și îmbinări și de dacă se demontează un sistem vechi. Cere oferta pe elemente, nu doar un preț total.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Jgheaburi și burlane: montaj, materiale, înlocuire', subtitle: 'Cum alegi sistemul, în ce ordine se montează și ce să compari în oferte. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Rol', value: 'Colectează și duce apa de pe acoperiș' },
+      { label: 'Materiale', value: 'PVC sau metal' },
+      { label: 'Contează', value: 'Pantă, prinderi, dimensionare' },
+      { label: 'Întreținere', value: 'Curățare periodică' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Jgheaburile și burlanele pot părea detalii mici ale casei, dar ele decid unde ajunge apa de ploaie. Un sistem corect montat păstrează fațada curată, soclul uscat și trotuarul de protecție în stare bună. Unul prost montat, sau înfundat, lasă apa să curgă pe pereți și să se infiltreze lângă fundație.',
+      'Pagina explică ce înseamnă lucrarea, ce materiale se folosesc, cum se montează și ce să urmărești într-o ofertă. Pentru prețuri orientative vezi pagina de preț dedicată.',
+    ) }),
+    node('what-h', 'heading', { text: 'Din ce este alcătuit sistemul', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Jgheabul', text: 'Colectează apa la streașină. Se prinde cu cârlige sau suporți și are o pantă mică spre burlan.' },
+      { title: 'Burlanul', text: 'Coboară apa pe verticală. Se prinde de perete cu coliere și se termină deasupra solului sau în canalizare.' },
+      { title: 'Piese de legătură', text: 'Capace, colțuri, îmbinări, pâlnii de scurgere, coturi și piese de terminare. Aici apar cele mai multe scurgeri.' },
+      { title: 'Elemente de protecție', text: 'Grătare sau site care rețin frunzele, mai ales lângă copaci.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Sistemele din PVC sunt ușoare, se montează relativ simplu și nu ruginesc. Cele din metal (tablă zincată sau vopsită, aluminiu, cupru) au alt aspect și se comportă diferit la lovituri și la variații de temperatură. Metalul se potrivește adesea cu învelitorile metalice, PVC-ul cu cele mai simple, dar alegerea ține și de buget și de gustul proprietarului.',
+      'La acoperișurile din panouri sandwich, jgheabul se prinde altfel decât la un acoperiș cu șarpantă, iar firma trebuie să arate cum rezolvă prinderea și etanșarea la capătul panoului. Mărimea sistemului (secțiunea jgheabului și a burlanului) se alege după suprafața de acoperiș care scurge în el.',
+      'Orice sistem se montează după instrucțiunile producătorului: distanțele dintre prinderi, panta, dilatarea. Nu amesteca piese de la sisteme diferite, pentru că nu se potrivesc și apar scurgeri.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea acoperișului și a streșinii', text: 'Se verifică dacă streașina este dreaptă și dacă prinderile au suport solid. Se stabilește unde coboară burlanele.' },
+      { title: 'Demontarea sistemului vechi', text: 'Dacă se înlocuiește, se scot jgheaburile și burlanele vechi și se evaluează starea suportului.' },
+      { title: 'Marcarea pantei', text: 'Se trasează linia jgheabului, cu panta spre burlane, înainte de montarea cârligelor.' },
+      { title: 'Montarea jgheaburilor', text: 'Se fixează suporții la distanțele din fișa tehnică, apoi jgheabul, colțurile și capacele.' },
+      { title: 'Montarea burlanelor', text: 'Se leagă pâlniile de scurgere de burlane, se fixează colierele și se pun coturile de la bază.' },
+      { title: 'Evacuarea apei și proba', text: 'Se verifică unde ajunge apa (la distanță de fundație sau în canalizarea pluvială) și se testează cu apă.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Pantă greșită', text: 'Apa stă în jgheab sau se duce în partea opusă. Se verifică cu apă.' },
+      { title: 'Prea puține prinderi', text: 'Sub greutatea apei, a frunzelor sau a zăpezii, jgheabul se lasă sau se desprinde.' },
+      { title: 'Sistem subdimensionat', text: 'La ploi mari se revarsă. Mărimea se alege după acoperiș, nu doar după preț.' },
+      { title: 'Apa lăsată lângă fundație', text: 'Burlanul trebuie să ducă apa la distanță de casă sau în canalizarea pluvială.' },
+      { title: 'Îmbinări fără etanșare corectă', text: 'Se folosesc piesele și garniturile sistemului, nu improvizații.' },
+      { title: 'Lipsa curățării', text: 'Un sistem montat bine se înfundă dacă nu este întreținut.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de lungimea totală de jgheab și de numărul de burlane, de material (PVC sau metal și calitatea acestuia), de numărul de colțuri și piese speciale, de înălțimea casei și accesul la streașină (schelă sau platformă), de dacă se demontează sistemul vechi și de dacă streașina necesită reparații înainte de montaj.',
+      'Compară ofertele pe elemente: material și producător, metri de jgheab și burlan, număr de piese, dacă include demontarea și evacuarea vechiului sistem, dacă se montează grătare și cine răspunde de scurgerea apei. Pentru ordine de mărime, vezi pagina de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare și o ofertă detaliată pe material și lucrare. Întreabă cum se stabilește panta, cum sunt prinse jgheaburile și unde ajunge apa din burlane. O firmă care răspunde clar la aceste lucruri a montat probabil sisteme corect.',
+      'Dacă lucrarea se face la înălțime, întreabă cum se asigură protecția muncii. Cere ofertă scrisă, cu garanție pentru montaj.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre jgheaburi și burlane' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru acoperișuri și jgheaburi' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la acoperișuri' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie casa și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

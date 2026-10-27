@@ -54,6 +54,7 @@ export const acoperisuri: ServiceContent = {
       { title: 'Execuție', text: 'Demontare, reparații la structură, montaj folie anticondens, șipci și învelitoare, apoi coamă, jgheaburi și racorduri.' },
       { title: 'Recepție', text: 'Verifici împreună cu echipa îmbinările, coama, streașina și scurgerea apei, apoi primești garanția.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Acoperișuri pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru acoperișuri' }),
     node('prices', 'price_table', { title: 'Prețuri orientative pentru manoperă', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă dacă nu se spune altfel. Prețul final depinde de pantă, accesibilitate, număr de ape și zonă.' }),
     node('material-h', 'heading', { text: 'Ce învelitoare alegi', level: 'h2' }),

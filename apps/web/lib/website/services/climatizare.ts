@@ -55,6 +55,7 @@ export const climatizare: ServiceContent = {
       { title: 'Vidare, probe și punere în funcțiune', text: 'Circuitul se videază și se verifică la scurgeri. Fără această etapă aparatul se deteriorează în timp.' },
       { title: 'Predare și garanție', text: 'Primești factura, fișa de punere în funcțiune și explicații pentru utilizare și curățarea filtrelor.' },
     ] }),
+    node('situation-links', 'situation_links', { title: 'Climatizare pe situații' }),
     node('prices-links', 'price_links', { title: 'Pagini de prețuri pentru climatizare' }),
     node('prices', 'price_table', { title: 'Prețuri orientative', note: 'Prețuri orientative în lei, fără TVA, pentru manoperă și accesorii de montaj. Aparatul se plătește separat. Variază după zonă, etaj și traseu.' }),
     node('choose-h', 'heading', { text: 'Cum alegi instalatorul', level: 'h2' }),

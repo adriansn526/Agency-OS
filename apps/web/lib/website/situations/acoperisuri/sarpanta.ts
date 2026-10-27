@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const sarpanta: SituationContent = {
+  slug: 'acoperisuri--sarpanta',
+  categorie: 'acoperisuri',
+  title: 'Șarpantă: construcție, reparație, manoperă',
+  seoTitle: 'Șarpantă: construcție, reparație și manoperă',
+  seoDescription: 'Cum se face o șarpantă din lemn: ce este, ordinea lucrării, astereala, greșeli frecvente, de ce depinde costul manoperei și cum compari ofertele dulgherilor.',
+  summary: 'Ce este șarpanta, cum se construiește sau se repară, ce rol are astereala și ce să compari în ofertele pentru manoperă de dulgherie.',
+  sinonime: ['sarpanta', 'sarpanta acoperis', 'pret manopera dulgherie acoperis', 'astereala acoperis', 'șarpantă', 'șarpantă acoperiș', 'preț manoperă dulgherie acoperiș', 'astereală acoperiș'],
+  intrebari: [
+    'Ce este șarpanta? | Structura acoperișului, de obicei din lemn, care preia greutatea învelitorii, a zăpezii și a vântului și o transmite zidurilor. Peste ea vin astereala sau latele, apoi învelitoarea.',
+    'Ce este astereala și când se pune? | Astereala este un strat de scânduri sau de plăci montat peste căpriori, pe care se așază hidroizolația și învelitoarea. Se folosește la mai multe tipuri de învelitori, în special la cele care cer suport continuu. Alegerea între astereală și șipci depinde de învelitoare, deci urmează indicațiile producătorului ei.',
+    'Cine proiectează șarpanta? | Un inginer constructor sau un proiectant, pe baza formei casei, a încărcărilor din zonă și a învelitorii. Dulgherul execută, dar dimensiunile pieselor și soluția constructivă trebuie să fie stabilite prin calcul sau prin proiect, nu din obișnuință.',
+    'Trebuie tratat lemnul? | De regulă da. Lemnul de șarpantă se tratează împotriva insectelor, a ciupercilor și, după caz, a focului, cu produse potrivite folosirii la interior sau la exterior. Cere produsul folosit și modul de aplicare.',
+    'Se poate repara o șarpantă fără a o schimba? | Uneori, dacă degradarea este locală: se înlocuiește o piesă, se întărește o îmbinare. Dacă lemnul este putrezit pe suprafețe mari sau structura s-a deformat, se cere evaluarea unui specialist, înainte de orice reparație.',
+    'Cum recunosc o șarpantă cu probleme? | Căpriori sau popi curbați, pete de umezeală, lemn moale sau cu făinuri de insecte, învelitoare care se lasă. Dacă observi aceste semne, cere un control înainte să apară infiltrații sau deformări.',
+    'Ce autorizații cer lucrările la șarpantă? | Depind de ce se schimbă: la modificarea formei sau a înălțimii acoperișului, în general sunt necesare acte. La o simplă reparație, regulile sunt de obicei mai simple. Întreabă la primărie înainte de începere.',
+    'De ce depinde costul manoperei? | De complexitatea acoperișului (numărul de ape, lucarne, coame, văi), de suprafață, de înălțime și de acces, de dacă se demontează o șarpantă veche și de dacă lemnul îl furnizează firma sau tu. Cere o ofertă care separă manopera de materiale.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Șarpanta: cum se construiește și ce să verifici în ofertă', subtitle: 'Ce este, în ce ordine se lucrează, ce rol are astereala și de ce depinde costul manoperei. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Rol', value: 'Structura care poartă acoperișul' },
+      { label: 'Material', value: 'De obicei lemn tratat' },
+      { label: 'Cine stabilește', value: 'Proiectantul, nu doar dulgherul' },
+      { label: 'Oferta', value: 'Manoperă separată de materiale' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Șarpanta este scheletul acoperișului. Ea preia greutatea învelitorii, a zăpezii și presiunea vântului și le transmite zidurilor. O șarpantă bine făcută se vede puțin, dar o șarpantă proastă se vede în timp, prin deformări, infiltrații și învelitoare care se lasă.',
+      'Pagina te ajută să înțelegi cum se construiește sau se repară o șarpantă, ce rol are astereala și cum compari ofertele echipelor de dulgheri. Alegerea învelitorii are pagina ei, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Din ce este făcută o șarpantă', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Căpriori', text: 'Elementele înclinate pe care se așază astereala sau șipcile. Dimensiunea și distanța dintre ei se stabilesc prin calcul.' },
+      { title: 'Pane și popi', text: 'Pane orizontale care sprijină căpriorii și popi sau stâlpi care transmit greutatea mai departe, în funcție de tipul șarpantei.' },
+      { title: 'Coame, văi și racordări', text: 'Zonele în care apele acoperișului se întâlnesc. Sunt cele mai pretențioase la execuție și cele mai expuse la infiltrații.' },
+      { title: 'Astereala sau șipcile', text: 'Stratul pe care se așază hidroizolația și învelitoarea. Se alege în funcție de învelitoare.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Șarpantele de casă se fac în mod obișnuit din lemn de rășinoase, uscat și tratat. Tratamentul împotriva insectelor, a ciupercilor și, după caz, a focului se aplică înainte de montaj și se refac dacă lemnul este tăiat pe șantier. Ancorarea de zidărie se face cu elemente metalice potrivite, nu doar cu cuie.',
+      'Astereala continuă (din scânduri sau plăci) se folosește mai ales când învelitoarea cere suport continuu, iar șipcile sau latele când învelitoarea se montează pe elemente distanțate. Alegerea o face producătorul învelitorii prin instrucțiunile de montaj, de aceea decide învelitoarea înainte de șarpantă. Subiectul este tratat pe pagina despre învelitori.',
+      'Pentru acoperișuri complexe sau de dimensiuni mari se cere un proiect de structură. Dimensiunile pieselor și soluția constructivă nu se aleg „din ochi”.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Proiect și relevee', text: 'Se stabilesc forma acoperișului, panta, încărcările și secțiunile pieselor. La casele existente se măsoară și se verifică starea zidăriei.' },
+      { title: 'Pregătirea zidăriei', text: 'Centura sau grinda de la partea de sus a zidului trebuie să fie dreaptă și să permită ancorarea.' },
+      { title: 'Tratarea lemnului', text: 'Lemnul se tratează înainte de montaj și se retratează zonele tăiate.' },
+      { title: 'Montarea structurii', text: 'Se ridică panele, popii și căpriorii în ordinea din proiect, cu îmbinări și ancoraje potrivite.' },
+      { title: 'Contravântuiri și verificări', text: 'Se verifică verticalitatea, planeitatea și rigidizările, înainte de a acoperi structura.' },
+      { title: 'Astereală sau șipci și hidroizolație', text: 'Se montează stratul suport și foile de protecție conform învelitorii alese.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Lipsa unui calcul', text: 'Secțiuni alese din obișnuință pot fi insuficiente pentru zăpadă sau vânt.' },
+      { title: 'Lemn umed sau netratat', text: 'Se deformează, e atacat de insecte și ciuperci și scurtează viața acoperișului.' },
+      { title: 'Ancorare slabă', text: 'Vântul poate smulge acoperișul dacă prinderile în zidărie sunt insuficiente.' },
+      { title: 'Văi și racordări neîngrijite', text: 'Apar infiltrații chiar sub învelitoare bună.' },
+      { title: 'Alegerea învelitorii după șarpantă', text: 'Ordinea corectă este invers: învelitoarea dictează suportul și încărcările.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț „la cheie” fără specificarea lemnului, tratamentului și a ancorării nu se poate compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Manopera de dulgherie depinde de complexitatea acoperișului (numărul de ape, lucarne, coame, văi), de suprafață, de înălțimea construcției și accesul pentru materiale, de dacă se demontează o șarpantă veche și de dacă lucrarea include astereala și hidroizolația. Prețul lemnului variază separat, în funcție de esență, calitate și tratament.',
+      'Cere oferte care despart manopera de materiale și care spun ce lemn se folosește, cum se tratează, cum se ancorează și cine răspunde de proiect. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vizita, ca să vezi calitatea îmbinărilor și a execuției. Întreabă cine proiectează, ce lemn și ce tratament folosește echipa și cum se organizează lucrul la înălțime.',
+      'Cere ofertă scrisă, cu termene și condiții de plată, și stabilește de la început cine face învelitoarea, pentru ca cele două echipe să se coordoneze.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre șarpantă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru acoperișuri' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la acoperișuri' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie acoperișul și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

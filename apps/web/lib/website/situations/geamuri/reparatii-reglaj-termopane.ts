@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const reparatiiReglajTermopane: SituationContent = {
+  slug: 'geamuri--reparatii-reglaj-termopane',
+  categorie: 'geamuri',
+  title: 'Reparații și reglaj termopane: cine le face, ce se poate repara',
+  seoTitle: 'Reparații și reglaj termopane: cine le face, ce se repară',
+  seoDescription: 'Reglaj, balamale, garnituri, broască și înlocuirea unui geam spart la termopane: ce se poate repara, cine o face, ce întrebi și de ce depinde costul.',
+  summary: 'Ce se poate regla sau repara la ferestre și uși termopan (balamale, garnituri, broască, geam spart), cine face lucrarea și cum compari ofertele.',
+  sinonime: ['reparatii termopane', 'reglaj termopane', 'reglare termopane', 'reglaj usa termopan balcon', 'balamale usa termopan', 'garnitura geam termopan', 'broasca usa termopan', 'geam spart', 'inlocuire geam termopan'],
+  intrebari: [
+    'Ce se poate regla singur și ce trebuie lăsat unui specialist? | Reglajul simplu al unei canaturi care nu se închide bine sau care freacă se poate face uneori cu o cheie potrivită, dar dacă nu ești sigur, mai bine chemi o firmă. Înlocuirea unui geam, a feroneriei sau a unui mecanism blocat cere unelte și experiență.',
+    'De ce nu se mai închide bine fereastra sau ușa de balcon? | Cauzele obișnuite sunt balamalele slăbite sau uzate, canatul lăsat din cauza greutății geamului, garnitura îmbătrânită sau mecanismul de închidere dereglat. Un specialist vede la fața locului care este cauza reală.',
+    'Se poate schimba doar garnitura, fără a schimba fereastra? | De regulă da, dacă profilul permite. Garnitura trebuie să fie compatibilă cu profilul ferestrei, de aceea se ia un model potrivit, nu orice garnitură. Firma care face lucrarea știe ce tip se montează pe sistemul tău.',
+    'Un geam spart se înlocuiește sau se schimbă toată fereastra? | De obicei se înlocuiește doar geamul termoizolant, pe măsura canatului, fără a schimba rama. Dacă rama sau feronerie sunt și ele deteriorate, firma îți poate spune dacă reparația mai are sens.',
+    'Ce informații dau când cer o ofertă? | Tipul deschiderii, dimensiunile aproximative, defectul observat și fotografii. Pentru un geam termoizolant, dimensiunile exacte le măsoară firma la fața locului, ca piesa să se potrivească.',
+    'Reparația are garanție? | Unele firme oferă garanție pentru lucrare și piese, altele nu. Întreabă ce acoperă garanția și cere să fie scrisă în ofertă sau pe documentul de lucrare.',
+    'Cât costă reparațiile la termopane? | Depinde de tipul defectului, de piesele necesare, de numărul de ferestre și de deplasare. Nu există un preț unic: compară ofertele după ce include fiecare și vezi paginile de preț pentru termopane.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Reparații și reglaj termopane', subtitle: 'Ce se poate repara sau regla la ferestre și uși termopan, cine face lucrarea și ce întrebi înainte să accepți o ofertă. Ceri oferte gratuite de la firme din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cele mai frecvente probleme', value: 'Reglaj, balamale, garnituri' },
+      { label: 'Geam spart', value: 'Se schimbă doar geamul' },
+      { label: 'Cine face lucrarea', value: 'Firme de tâmplărie și montaj' },
+      { label: 'Înainte de ofertă', value: 'Fotografii și dimensiuni' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O fereastră sau o ușă termopan bine montată poate funcționa mulți ani, dar piesele mobile se uzează: balamalele cedează, garniturile se întăresc, canatul se lasă, broasca se blochează. De cele mai multe ori nu trebuie schimbată toată tâmplăria, ci reglată sau reparată în punctul slab.',
+      'Pagina te ajută să înțelegi ce se poate repara, ce poți verifica singur și ce să ceri unei firme, ca să nu plătești pentru ferestre noi când ajunge o intervenție mai mică, și invers.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce se poate regla sau repara', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Reglajul canatului', text: 'Canatul care freacă, nu se închide ușor sau lasă aer se reglează de obicei prin feronerie, fără demontare.' },
+      { title: 'Balamale', text: 'Balamalele slăbite sau uzate se strâng, se reglează sau se înlocuiesc, mai ales la ușa de balcon, care se folosește des.' },
+      { title: 'Garnituri', text: 'Garnitura întărită sau crăpată se schimbă cu una compatibilă cu profilul, ca să revină etanșeitatea.' },
+      { title: 'Broasca și mânerul', text: 'Mecanismul de închidere, broasca și mânerul pot fi reparate sau înlocuite, inclusiv la ușa de balcon.' },
+      { title: 'Geamul spart sau crăpat', text: 'Se înlocuiește geamul termoizolant, de regulă fără a schimba rama.' },
+      { title: 'Geam cu aburire între foi', text: 'Când apare condens între foile de sticlă, se înlocuiește de obicei geamul termoizolant, nu toată fereastra.' },
+    ] }),
+    node('when-h', 'heading', { text: 'Reparație sau înlocuire completă', level: 'h2' }),
+    node('when', 'text', { body: para(
+      'Reparația are sens când problema este la o piesă: feronerie, garnitură, geam. Dacă profilul este deformat, rama este degradată sau fereastra a devenit în general nepotrivită (de exemplu, izolare slabă și multe defecte), poate fi mai rațional să discuți și o înlocuire.',
+      'Cere firmei să explice de ce propune reparația sau înlocuirea și ce riscuri vede pe termen lung. Dacă este nevoie, ia o a doua părere de la altă firmă.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge o intervenție', items: [
+      { title: 'Descrierea problemei', text: 'Spui ce nu funcționează, de când și trimiți fotografii sau un scurt film.' },
+      { title: 'Verificarea la fața locului', text: 'Firma vede defectul, stabilește cauza și ce piese sunt necesare.' },
+      { title: 'Oferta', text: 'Primești o ofertă cu piesele, manopera și termenul. Cere să fie clar ce este inclus.' },
+      { title: 'Comanda pieselor', text: 'Geamurile termoizolante se fac pe măsură, deci pot cere un timp de așteptare.' },
+      { title: 'Intervenția', text: 'Se montează piesa, se reglează feroneria și se verifică închiderea pe tot parcursul canatului.' },
+      { title: 'Recepția', text: 'Verifici deschiderea, închiderea și etanșeitatea și ceri o dovadă a lucrării și a garanției.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Reglaj fără a căuta cauza', text: 'Un canat care s-a lăsat din cauza balamalelor uzate revine în scurt timp dacă se face doar reglajul.' },
+      { title: 'Garnitură nepotrivită', text: 'O garnitură de alt profil nu etanșează și poate strica închiderea.' },
+      { title: 'Geam măsurat din ochi', text: 'Geamul termoizolant se comandă pe dimensiuni exacte, luate de firmă.' },
+      { title: 'Amânarea reparației', text: 'Un defect mic poate duce la uzura altor piese sau la pierderi de căldură.' },
+      { title: 'Fără nimic scris', text: 'Fără ofertă și garanție scrisă, nu poți cere nimic dacă defectul revine.' },
+      { title: 'Alegerea doar după preț', text: 'Oferta cea mai mică poate omite piese sau deplasarea. Compară ce conține.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul defectului, de piesele necesare (feronerie, garnituri, geam termoizolant), de dimensiunile geamului, de numărul de ferestre și uși tratate, de accesul (etaj, balcon) și de deplasare. Un reglaj simplu și înlocuirea unui geam sunt lucrări foarte diferite ca efort și materiale.',
+      'Compară ofertele după ce includ: piesele, manopera, deplasarea, termenul și garanția. Cere o ofertă defalcată și întreabă dacă piesele sunt noi și compatibile cu sistemul tău. Pentru ferestre noi, vezi paginile de preț pentru termopane.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Caută o firmă care vine la fața locului, explică cauza defectului și îți spune clar ce poate fi reparat. Întreabă de experiența cu sistemul tău de tâmplărie, de termenul de procurare a pieselor și de garanție.',
+      'Cere recomandări sau lucrări anterioare și compară cel puțin două oferte. Ai grijă la oferte care promit o reparație fără să fi văzut defectul.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre reparații și reglaj' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru geamuri și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la geamuri și tâmplărie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de reparații sau reglaj?', text: 'Descrie problema și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

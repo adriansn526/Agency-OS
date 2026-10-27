@@ -1,0 +1,87 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const poartaCulisantaAutomatizare: SituationContent = {
+  slug: 'garduri-pavaje--poarta-culisanta-automatizare',
+  categorie: 'garduri-pavaje',
+  title: 'Poartă culisantă și automatizare porți',
+  seoTitle: 'Poartă culisantă și automatizare porți: cum alegi',
+  seoDescription: 'Poartă culisantă sau batantă, motor și automatizare: ce alegi, ce spațiu cere, ce întrebi firma de montaj și de ce depinde costul.',
+  summary: 'Cum alegi între poartă culisantă și batantă, ce presupune automatizarea și ce verifici înainte să alegi firma care o montează.',
+  sinonime: ['poarta culisanta', 'poartă culisantă', 'motor poarta culisanta', 'motor poartă culisantă', 'automatizare poarta culisanta', 'automatizare poartă culisantă', 'automatizare porti', 'automatizare porți', 'poarta automata', 'poartă automată', 'automatizari porti batante', 'automatizări porți batante'],
+  intrebari: [
+    'Care este diferența dintre poarta culisantă și cea batantă? | Poarta culisantă se deschide lateral, pe lângă gard, și cere un spațiu liber pe lungimea ei. Poarta batantă se deschide pe balamale, cu aripi care ocupă spațiu în față sau în spate. Alegerea depinde de spațiul disponibil și de teren.',
+    'Ce spațiu cere o poartă culisantă? | Un traseu liber de-a lungul gardului, cel puțin cât deschiderea, plus loc pentru mecanism. Pe teren în pantă sau cu obstacole, culisarea poate fi dificilă. Un specialist verifică locul înainte de comandă.',
+    'Din ce este alcătuită automatizarea? | Din motor, centrală de comandă, telecomenzi sau alte sisteme de acces și, de obicei, dispozitive de siguranță precum fotocelule. Componentele trebuie alese după tipul și greutatea porții.',
+    'Se poate automatiza o poartă existentă? | Adesea da, dacă structura este solidă și mișcarea porții este liberă. Poarta grea sau prost ghidată cere intervenții înainte, altfel motorul se uzează repede. Cere o evaluare la fața locului.',
+    'De ce contează siguranța? | O poartă automată se mișcă singură. Fotocelulele și limitatoarele de forță reduc riscul de accidentare. Întreabă ce dispozitive de siguranță sunt incluse în ofertă.',
+    'Ce se întâmplă când nu este curent? | Motoarele au de regulă o deblocare manuală. Întreabă cum funcționează la modelul oferit și dacă este recomandabil un acumulator de rezervă.',
+    'Am nevoie de acord sau autorizație? | Pentru poarta propriu-zisă și pentru ieșirea spre stradă pot exista reguli locale. Verifică la primărie, mai ales dacă poarta se deschide spre domeniul public.',
+    'De ce diferă ofertele? | Diferă tipul și puterea motorului, accesoriile de siguranță, lucrările de fundație și cablare și dacă este inclusă poarta. Compară exact ce cuprinde fiecare ofertă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Poartă culisantă și automatizare: cum alegi', subtitle: 'Culisantă sau batantă, ce motor și ce siguranță, ce întrebi firma de montaj și de ce diferă ofertele. Dacă preferi o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Culisantă sau batantă' },
+      { label: 'Automatizare', value: 'Motor, centrală, telecomandă' },
+      { label: 'Siguranță', value: 'Fotocelule și limitatoare' },
+      { label: 'Punct critic', value: 'Spațiul și structura porții' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Poarta culisantă este alegerea frecventă când în fața porții nu e loc pentru aripi batante, iar automatizarea o face comodă la intrarea cu mașina. Alegerea corectă ține de spațiul pe care îl ai, de teren și de cât de des este folosită poarta.',
+      'Pagina te ajută să decizi între tipuri, să înțelegi ce înseamnă automatizarea și să știi ce să întrebi firma care montează. Nu este un catalog de motoare.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și cum funcționează', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Poarta culisantă se deplasează lateral, pe o șină sau suspendată, și se retrage lângă gard. Poarta batantă are una sau două aripi pe balamale. Ambele pot fi acționate de un motor comandat de la telecomandă, interfon sau alt sistem de acces.',
+      'Automatizarea include motorul, centrala de comandă, receptorul pentru telecomenzi și dispozitivele de siguranță. Un montaj corect cere ca structura porții să fie rigidă și să se miște liber, fără blocaje.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se potrivește fiecare', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Poartă culisantă', text: 'Când ai loc de-a lungul gardului și vrei să nu ocupi spațiul din fața porții.' },
+      { title: 'Poartă batantă', text: 'Când ai spațiu în față sau în spate pentru aripi și terenul e plan.' },
+      { title: 'Acces pentru mașini', text: 'Automatizarea ajută la utilizare zilnică și la siguranță, dacă este corect dimensionată.' },
+      { title: 'Poartă existentă', text: 'Se poate adăuga automatizare, după evaluarea structurii și a mișcării porții.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și detalii care contează', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Motorul se alege după greutatea și tipul porții, dar și după frecvența de utilizare. Un motor subdimensionat se uzează repede, unul supradimensionat înseamnă cost inutil; recomandarea o dă specialistul care vede poarta.',
+      'Siguranța include fotocelule, limitatoare de forță și semnalizare. Întreabă ce este inclus și cum se testează. Fundația și ghidajele porții culisante, precum și alimentarea electrică și cablarea, fac parte din lucrare.',
+      'Pentru deschidere în lipsa curentului există de obicei deblocare manuală; cere să ți se arate cum funcționează.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Evaluare la fața locului', text: 'Se verifică spațiul, panta, gardul și alimentarea electrică.' },
+      { title: 'Alegerea tipului și a motorului', text: 'Se stabilesc tipul porții, motorul și accesoriile.' },
+      { title: 'Fundații și ghidaje', text: 'Se pregătesc fundațiile și ghidajele, cu atenție la nivel.' },
+      { title: 'Montarea porții', text: 'Poarta se montează și se verifică mișcarea liberă.' },
+      { title: 'Montarea motorului și cablarea', text: 'Se instalează motorul, centrala, fotocelulele și alimentarea.' },
+      { title: 'Reglaje, teste și instruire', text: 'Se reglează cursa și forța, se testează siguranța și ți se arată deblocarea manuală.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Spațiu insuficient pentru culisare', text: 'Verifică înainte de comandă dacă traseul rămâne liber.' },
+      { title: 'Poartă grea sau prost ghidată', text: 'Motorul nu repară o poartă care se mișcă greu.' },
+      { title: 'Motor nepotrivit', text: 'Prea slab se uzează, iar alegerea la întâmplare nu e recomandată.' },
+      { title: 'Siguranța omisă', text: 'Fără fotocelule și limitatoare poarta devine un risc.' },
+      { title: 'Alimentare electrică neplanificată', text: 'Cablarea trebuie gândită înainte de turnarea fundațiilor.' },
+      { title: 'Deblocare manuală necunoscută', text: 'Asigură-te că știi cum deschizi poarta fără curent.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul porții și dimensiunea ei, de motor și accesorii, de fundații și ghidaje, de cablare, de dispozitivele de siguranță și de sistemul de acces (telecomenzi, interfon). Dacă poarta există deja, se adaugă lucrările de adaptare.',
+      'Compară ofertele pe conținut: ce motor, ce siguranță, ce lucrări de fundație și cablare sunt incluse, câte telecomenzi și cum se face service-ul. Pentru repere de preț ale gardului vezi pagina de prețuri pentru gard.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere o vizită la fața locului. Firma trebuie să vadă poarta, spațiul și alimentarea înainte să recomande motorul. Întreabă cine montează și testează, ce siguranță este inclusă și cine face service-ul.',
+      'Cere oferta în scris, cu componentele enumerate, și compară cel puțin două-trei variante. Dacă firma propune un motor fără să vadă poarta, clarifică înainte de a semna.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre poarta culisantă și automatizare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru garduri și pavaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la garduri și pavaje' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie poarta și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

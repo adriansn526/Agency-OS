@@ -1,0 +1,87 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const betonAmprentat: SituationContent = {
+  slug: 'garduri-pavaje--beton-amprentat',
+  categorie: 'garduri-pavaje',
+  title: 'Beton amprentat',
+  seoTitle: 'Beton amprentat: cine îl execută, cum alegi, costuri',
+  seoDescription: 'Beton amprentat pentru alei, parcări și terase: cum se execută, ce rol au matrițele, ce întrebi firma și de ce depinde costul. Compară ofertele.',
+  summary: 'Cum se execută betonul amprentat, ce rol au matrițele, unde se potrivește și ce verifici înainte să alegi firma și oferta.',
+  sinonime: ['beton amprentat', 'beton amprentata', 'betonul amprentat', 'matrita beton amprentat', 'matriță beton amprentat', 'matrice beton amprentat'],
+  intrebari: [
+    'Ce este betonul amprentat? | Un beton turnat pe loc, căruia i se imprimă în stare proaspătă un model (piatră, cărămidă, lemn) cu ajutorul matrițelor, apoi se colorează și se protejează cu un strat final. Rezultatul imită alte materiale, dar este o dală continuă.',
+    'Ce rol au matrițele? | Matrițele (matricele) dau forma și textura suprafeței. Se apasă în betonul încă proaspăt, la momentul potrivit, de aceea execuția cere echipă experimentată și un ritm de lucru bine organizat.',
+    'Poate fi executat singur? | Este o lucrare cu fereastră de timp scurtă: betonul trebuie amprentat înainte de a se întări. Fără experiență, rezultatul poate fi neuniform. Pentru suprafețe vizibile e mai sigur să apelezi la o firmă.',
+    'Ce suprafețe se fac din beton amprentat? | Alei, parcări, terase, zone din jurul piscinei și curți. Pentru fiecare zonă se pregătește altfel baza, în funcție de sarcinile care vor trece pe ea (pietoni sau autovehicule).',
+    'Apar fisuri? | Betonul poate să se fisureze; de aceea se prevăd rosturi de dilatație și se pregătește corect baza. Cere firmei să explice cum controlează fisurarea și ce se întâmplă dacă apar fisuri.',
+    'Cât durează până pot circula pe el? | Depinde de rețetă, de temperatură și de produsele folosite. Cere termenele de la firmă, separate pentru pietoni și pentru autoturisme.',
+    'Cum se întreține? | Stratul protector se reface periodic, iar suprafața se curăță cu produse potrivite. Întreabă firma ce întreținere recomandă și la ce interval.',
+    'De ce diferă mult ofertele? | Pentru că diferă pregătirea bazei, grosimea și armarea, calitatea betonului, matrițele și coloranții, rosturile și stratul protector. Compară ofertele pe conținut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Beton amprentat: cine îl execută și cum alegi', subtitle: 'Cum se face, ce rol au matrițele, unde se potrivește și ce întrebi firma. Dacă preferi să execute o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tip', value: 'Beton turnat pe loc' },
+      { label: 'Aspect', value: 'Model imprimat cu matrițe' },
+      { label: 'Punct critic', value: 'Baza și rosturile' },
+      { label: 'Execuție', value: 'Echipă experimentată' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Betonul amprentat este o dală de beton turnată pe loc, căreia i se dă aspect de piatră, cărămidă sau lemn. Este folosit pentru alei, parcări, terase și curți, mai ales unde se vrea o suprafață continuă, fără rosturi de pavele.',
+      'Calitatea nu depinde doar de modelul ales: baza, armarea, rosturile și momentul amprentării decid dacă suprafața rezistă în timp. De aceea alegerea echipei care o execută este mai importantă decât alegerea modelului.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este betonul amprentat', level: 'h2' }),
+    node('what', 'text', { body: para(
+      'Se toarnă un beton, se finisează suprafața, se aplică un colorant și un agent de decofrare, apoi se apasă matrițele în betonul încă proaspăt. După întărire, suprafața se curăță și se aplică un strat protector.',
+      'Matrițele (matricele) sunt formele din cauciuc sau poliuretan care dau textura. Pentru margini, colțuri și zone înguste se folosesc unelte de amprentare manuale.',
+    ) }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Alei pietonale', text: 'Sarcini mici, pregătire mai simplă a bazei.' },
+      { title: 'Parcări și accese auto', text: 'Cer o bază și o armare dimensionate pentru greutăți mai mari; discută cu un specialist.' },
+      { title: 'Terase și jur de piscină', text: 'Se pot alege texturi mai puțin alunecoase; întreabă firma ce finisaj recomandă.' },
+      { title: 'Curți întregi', text: 'Suprafețe mari cer planificarea rosturilor și a pantelor de scurgere.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și detalii care contează', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Baza este esențială: terenul compactat, un strat de fundație potrivit și, unde e cazul, armare. Soluția exactă depinde de sarcinile pe care le va purta suprafața, deci cere firmei să o explice pentru cazul tău.',
+      'Rosturile de dilatație controlează locul unde betonul se poate fisura. Modelul, culoarea și stratul protector sunt alese după preferință, dar protecția finală contribuie la rezistența la intemperii.',
+      'Panta spre scurgere trebuie gândită de la început, ca apa să nu stea pe suprafață.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Pregătirea terenului', text: 'Decopertare, nivelare și compactare, cu pante de scurgere.' },
+      { title: 'Cofraje și armare', text: 'Se montează cofrajele și, dacă este cazul, armătura.' },
+      { title: 'Turnarea betonului', text: 'Betonul se toarnă și se nivelează într-un ritm care permite finisarea la timp.' },
+      { title: 'Colorare și amprentare', text: 'Se aplică colorantul și agentul de decofrare, apoi se apasă matrițele la momentul potrivit.' },
+      { title: 'Rosturi și curățare', text: 'După priză se taie rosturile și se curăță suprafața.' },
+      { title: 'Stratul protector', text: 'Se aplică protecția finală, apoi se respectă termenele înainte de circulație.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Bază nepregătită', text: 'Teren necompactat sau strat de fundație insuficient duce la tasări și fisuri.' },
+      { title: 'Fără rosturi de dilatație', text: 'Betonul se fisurează necontrolat.' },
+      { title: 'Amprentare la momentul nepotrivit', text: 'Prea devreme sau prea târziu, modelul iese neuniform.' },
+      { title: 'Panta de scurgere uitată', text: 'Apa stagnează și degradează suprafața.' },
+      { title: 'Fără strat protector', text: 'Culoarea se estompează și suprafața se uzează mai repede.' },
+      { title: 'Circulație prea devreme', text: 'Respectă termenele indicate de firmă înainte de trecerea pietonilor sau a mașinilor.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de pregătirea terenului și a bazei, de armare, de calitatea și grosimea betonului, de model, de culoare, de rosturi și de stratul protector. Se adaugă accesul pentru betonieră, forma suprafeței (colțuri, trepte) și volumul de lucru de pregătire.',
+      'Compară ofertele pe conținut: ce se include în pregătirea bazei, dacă există armare, ce tip de strat protector, câte rosturi și ce garanție oferă firma. Pentru repere vezi pagina de prețuri pentru beton amprentat.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi lucrări făcute, de preferat mai vechi, nu doar proaspete: după câțiva ani se vede cum se comportă suprafața. Întreabă cine execută efectiv, ce echipă lucrează în ziua turnării și cum sunt tratate rosturile.',
+      'Cere oferta în scris, cu etapele enumerate, și compară cel puțin două-trei variante. Ofertele foarte diferite ascund de obicei diferențe la bază sau la protecția finală.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre betonul amprentat' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru garduri și pavaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la garduri și pavaje' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie suprafața și primești oferte de la firme din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
