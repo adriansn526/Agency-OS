@@ -1,0 +1,78 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const renovareBaie: SituationContent = {
+  slug: 'renovari-amenajari-interioare--renovare-baie',
+  categorie: 'renovari-amenajari-interioare',
+  title: 'Renovare și amenajare baie',
+  seoTitle: 'Renovare și amenajare baie: ordine, alegeri, oferte',
+  seoDescription: 'Cum se renovează o baie: ordinea lucrărilor, instalațiile, hidroizolația, ce se decide înainte de ofertă, de ce depinde costul și cum compari firmele.',
+  summary: 'Ordinea corectă a lucrărilor la o baie, ce se decide înainte de demolare, rolul hidroizolației și ce să compari în ofertele pentru renovare.',
+  sinonime: ['amenajare baie', 'amenajari baie', 'renovare baie', 'renovare baie pret', 'refacere baie', 'amenajare baie mica', 'amenajari bai', 'bai moderne', 'baii moderne', 'design baie', 'amenajare baie', 'amenajări baie', 'renovare baie preț', 'amenajare baie mică', 'amenajări băi', 'băi moderne', 'băii moderne'],
+  intrebari: [
+    'În ce ordine se renovează o baie? | De regulă: decizii și alegerea obiectelor, demolarea, refacerea instalațiilor sanitare și electrice, șapa și pantele, hidroizolația, gresia și faianța, apoi montajul obiectelor sanitare, mobilierului și finisajelor. Ordinea contează, pentru că fiecare strat acoperă lucrarea de dinainte.',
+    'Ce se decide înainte de începerea lucrării? | Poziția obiectelor sanitare, tipul de duș sau cadă, dacă se mută coloane sau scurgeri, ce plăci se folosesc și ce instalații se schimbă. O schimbare de plan după ce s-au tras țevile sau s-a pus faianța costă mult mai mult decât una făcută pe hârtie.',
+    'Se poate muta cada, toaleta sau chiuveta în altă parte? | Tehnic, adesea da, dar scurgerile au nevoie de pantă și de legătura la coloană. În bloc, coloanele comune nu se mută fără acordul asociației și al celor care răspund de instalație. Întreabă firma ce se poate face în baia ta.',
+    'Cine face hidroizolația și de ce contează? | Hidroizolația se face sub gresie și faianță, cu atenție la colțuri, praguri și la trecerile prin pardoseală. O greșeală se vede târziu, prin pete la vecinul de jos. Detalii găsești în pagina despre hidroizolația băii.',
+    'Am nevoie de autorizație pentru renovarea băii? | Pentru lucrări interioare care nu ating structura, de obicei nu. Dacă se demolează pereți, se face o deschidere sau se modifică ceva structural, regulile se schimbă. Depinde de caz, deci întreabă la primărie și, în bloc, la asociație.',
+    'Cum compar două oferte pentru aceeași baie? | Pe conținut: ce se demolează și cine scoate molozul, ce instalații se refac, ce hidroizolație se pune, cine furnizează materialele, ce montaj de obiecte e inclus, termenul și garanția pentru manoperă. Oferta fără detalii nu se poate compara.',
+    'De ce depinde costul renovării unei băi? | De suprafață, de cât se demolează, de dacă se refac instalațiile, de materialele alese, de numărul de obiecte sanitare, de accesul în bloc (lift, etaj) și de nevoia de reparații ascunse. Paginile de prețuri de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Renovare baie: ordinea lucrărilor și ce verifici în ofertă', subtitle: 'Ce se decide înainte, în ce ordine se lucrează, de ce hidroizolația nu se negociază și de ce depinde costul. Poți cere oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Primul pas', value: 'Plan și decizii înainte de demolare' },
+      { label: 'Nu se negociază', value: 'Hidroizolația și pantele' },
+      { label: 'În bloc', value: 'Întreabă asociația' },
+      { label: 'Oferta', value: 'Pe etape, cu materiale clarificate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O baie este camera cu cele mai multe meserii într-un spațiu mic: instalator, electrician, zidar sau gipsar, hidroizolator, faiansier și montator de obiecte sanitare. De aceea o renovare reușită începe cu un plan, nu cu ciocanul.',
+      'Pagina te ajută să înțelegi ordinea lucrărilor, ce trebuie decis din timp și cum compari ofertele. Nu este o galerie de modele: aici găsești partea de execuție și de alegere a firmei.',
+    ) }),
+    node('steps-h', 'heading', { text: 'În ce ordine se lucrează', level: 'h2' }),
+    node('steps', 'steps', { title: 'Etapele unei renovări de baie', items: [
+      { title: 'Plan și alegeri', text: 'Se fixează poziția obiectelor, tipul de duș sau cadă, plăcile și accesoriile, ca instalatorul și faiansierul să lucreze după aceleași cote.' },
+      { title: 'Demolare și evacuare', text: 'Se scot placările, obiectele și, după caz, pardoseala. Se stabilește din ofertă cine evacuează molozul.' },
+      { title: 'Instalații', text: 'Se refac sau se verifică țevile de apă, scurgerile și instalația electrică. Zona umedă cere materiale și protecții potrivite.' },
+      { title: 'Șapă, pante și hidroizolație', text: 'Pardoseala se aduce la nivel, cu pantă spre scurgere, apoi se tratează pardoseala, colțurile și baza pereților din zona de duș. Vezi pagina despre hidroizolarea băii.' },
+      { title: 'Gresie și faianță', text: 'Se montează placările, cu rosturi și colțuri finisate, după ce hidroizolația s-a întărit.' },
+      { title: 'Obiecte sanitare și finisaje', text: 'Se montează vasul de toaletă, chiuveta, bateriile, mobilierul, oglinda și corpurile de iluminat. Apoi se face proba de etanșeitate.' },
+    ] }),
+    node('what-h', 'heading', { text: 'Ce trebuie decis din timp', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Planul spațiului', text: 'Într-o baie mică, fiecare centimetru contează. Stabilește locul ușii, al dușului sau căzii și al mașinii de spălat dacă intră în baie.' },
+      { title: 'Ce se mută', text: 'Mutarea scurgerilor sau a coloanelor schimbă mult lucrarea și, în bloc, nu depinde doar de tine.' },
+      { title: 'Ventilația', text: 'O baie fără aerisire bună se umezește și apare mucegaiul. Verifică ce soluție există și dacă se poate îmbunătăți.' },
+      { title: 'Instalația electrică', text: 'Priza, corpurile de iluminat și protecțiile din zona umedă le execută personal autorizat. Nu o improviza.' },
+      { title: 'Accesul pentru revizii', text: 'Un capac de vizitare lângă robineți sau sifon scutește de spargeri ulterioare.' },
+      { title: 'Cine aduce materialele', text: 'Clarifică din start dacă le cumperi tu sau firma, și cine răspunde dacă ceva nu ajunge la timp.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Hidroizolație sărită sau grăbită', text: 'Apa trece prin rosturi; defectul apare la vecinul de jos, nu la tine.' },
+      { title: 'Pante insuficiente', text: 'Apa stagnează lângă scurgere și rosturile se murdăresc sau se degradează.' },
+      { title: 'Plan schimbat în timpul lucrării', text: 'Fiecare modificare după ce s-a tras instalația sau s-a pus faianța înseamnă refaceri.' },
+      { title: 'Lucrări în ordine greșită', text: 'Dacă gresia se pune înaintea instalațiilor, orice remediere cere spargere.' },
+      { title: 'Oferta „la cheie” fără detalii', text: 'Fără listă de lucrări și materiale, diferențele de preț nu se pot explica.' },
+      { title: 'Economie la partea ascunsă', text: 'Țevile și hidroizolația nu se văd, dar o greșeală acolo e cea mai scumpă de reparat.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unei băi renovate depinde de suprafață, de cât din vechea amenajare se demolează, de dacă instalațiile se refac sau doar se completează, de tipul de duș sau cadă, de gresie și faianță, de numărul de obiecte sanitare și de accesul în clădire. Contează și ce apare după demolare: țevi uzate, pereți neregulați, pardoseli care cer reparații.',
+      'Cere oferta pe etape și cu materialele separate de manoperă. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă dacă firma lucrează cu echipe proprii pentru instalații, hidroizolație și placări sau coordonează subcontractori, și cine răspunde dacă apare o problemă între etape. Cere lucrări similare pe care le poți vedea și pe cineva cu care să vorbești.',
+      'Cere contract scris, cu etapele, termenul, modul de plată pe etape și garanția pentru manoperă. Înainte de acoperire cu placări, cere fotografii ale instalațiilor și ale hidroizolației.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre renovarea băii' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru renovări' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la renovări și amenajări' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca baia să o renoveze o firmă?', text: 'Descrie baia și ce vrei să schimbi și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,76 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const autorizareIsu: SituationContent = {
+  slug: 'autorizari-avize--autorizare-isu',
+  categorie: 'autorizari-avize',
+  title: 'Autorizare și aviz ISU (securitate la incendiu)',
+  seoTitle: 'Autorizare ISU: aviz și scenariu de securitate la incendiu',
+  seoDescription: 'Ce înseamnă avizul și autorizarea ISU, ce este scenariul de securitate la incendiu, cine face ce și ce verifici la inspectorat înainte să începi dosarul.',
+  summary: 'Ce sunt avizul și autorizarea de securitate la incendiu, ce rol are scenariul, cine îl întocmește și ce verifici la inspectoratul competent.',
+  sinonime: ['autorizatie isu', 'autorizari isu', 'aviz isu', 'obtinere aviz isu', 'autorizare isu', 'autorizatie securitate la incendiu', 'scenariu securitate incendiu', 'autorizație isu', 'autorizări isu', 'obținere aviz isu', 'autorizație securitate la incendiu', 'scenariu securitate incendiu'],
+  intrebari: [
+    'Ce este avizul sau autorizația ISU? | Un act emis de inspectoratul pentru situații de urgență (ISU) prin care se confirmă că o construcție sau o activitate îndeplinește cerințele de securitate la incendiu. Nu orice clădire sau activitate are nevoie de el: depinde de destinație, de dimensiune și de risc.',
+    'Cine are nevoie de el? | Depinde de tipul clădirii, de destinația ei și de activitatea desfășurată. Spațiile publice, comerciale, de producție sau cu mulți ocupanți sunt cele la care se pune cel mai des întrebarea. Pentru cazul tău concret întreabă la ISU, la primărie sau la un specialist.',
+    'Ce este scenariul de securitate la incendiu? | Un document tehnic care descrie riscurile, măsurile de protecție și modul de evacuare și intervenție pentru o clădire. Îl întocmește un specialist autorizat, pe baza proiectului și a destinației spațiilor.',
+    'Cine întocmește documentația? | Specialiști atestați în securitate la incendiu, de obicei un proiectant sau un expert. Proprietarul depune dosarul sau mandatează pe cineva și urmărește răspunsul inspectoratului.',
+    'Ce acte se cer și cât durează? | Actele, taxele și termenele sunt stabilite prin reglementări care se schimbă și pot avea particularități locale. Verifică la ISU județean sau pe site-ul instituției; nu te baza pe liste din surse generale.',
+    'Autorizația ISU se obține înainte sau după construcție? | Depinde de etapă. Unele avize se cer în faza de proiect și autorizare, iar alte verificări apar la punerea în funcțiune sau la schimbarea destinației. Un specialist îți poate spune în ce etapă te afli.',
+    'Ce se întâmplă dacă nu am avizul când e obligatoriu? | Pot apărea sancțiuni, oprirea activității sau imposibilitatea de a deschide spațiul. Dacă ai dubii, cere o clarificare scrisă de la inspectorat înainte să investești în amenajare.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Autorizare ISU: aviz și scenariu de securitate la incendiu', subtitle: 'Când e nevoie, cine face ce și ce verifici la inspectorat. Cerințele, actele și taxele variază; aici găsești etapele și întrebările corecte.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine eliberează', value: 'Inspectoratul pentru situații de urgență' },
+      { label: 'Documentația', value: 'Specialist atestat în securitate la incendiu' },
+      { label: 'Actele și taxele', value: 'Verifică la ISU' },
+      { label: 'Nu toate clădirile', value: 'Depinde de destinație și risc' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Securitatea la incendiu este un domeniu reglementat, iar cerințele se aplică diferit pentru o casă, un spațiu comercial, o clădire de birouri sau o hală. Autorizarea ISU sau avizul confirmă că proiectul și lucrarea respectă măsurile cerute.',
+      'Pagina explică etapele și rolurile. Nu enumeră acte, taxe sau termene, pentru că ele diferă și se modifică: pentru ele, sursa corectă este inspectoratul sau specialistul tău. Procedura de autorizare a construcției are pagina ei.',
+    ) }),
+    node('what-h', 'heading', { text: 'Elementele care apar în procedură', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Aviz sau autorizare', text: 'Avizul se dă pe proiect, iar autorizarea sau verificarea privește lucrarea sau activitatea realizate. Care se cere depinde de caz.' },
+      { title: 'Scenariul de securitate', text: 'Documentul care descrie riscurile, evacuarea și măsurile de protecție, întocmit de specialist.' },
+      { title: 'Măsurile din clădire', text: 'De exemplu căi de evacuare, semnalizare, stingătoare sau instalații, în funcție de ce cere documentația. Le stabilește specialistul, nu le alegi singur.' },
+      { title: 'Instalațiile de securitate', text: 'Sistemele de detecție sau de stingere se proiectează și se montează de firme autorizate.' },
+    ] }),
+    node('steps-h', 'heading', { text: 'Etapele, la nivel de principiu', level: 'h2' }),
+    node('steps', 'steps', { title: 'Cum decurge', items: [
+      { title: 'Clarifici dacă ai nevoie', text: 'Întrebi la ISU județean sau la un specialist dacă destinația și dimensiunea spațiului cer aviz sau autorizare.' },
+      { title: 'Alegi specialistul', text: 'Un proiectant sau un expert atestat pregătește documentația și scenariul.' },
+      { title: 'Pregătești dosarul', text: 'Se colectează planurile și documentele cerute conform procedurii în vigoare, verificate la instituție.' },
+      { title: 'Depui și urmărești', text: 'Inspectoratul analizează și poate cere completări sau modificări.' },
+      { title: 'Execuți măsurile', text: 'Lucrările și instalațiile se fac conform documentației, de personal autorizat.' },
+      { title: 'Verificare și punere în funcțiune', text: 'După caz, urmează verificarea de către instituție înainte de utilizarea spațiului.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Aflarea cerinței prea târziu', text: 'Dacă afli după ce ai amenajat spațiul, poți fi obligat la modificări costisitoare.' },
+      { title: 'Alegerea unui specialist neatestat', text: 'Documentele semnate de cineva fără atestare nu sunt acceptate.' },
+      { title: 'Copierea unui scenariu de la altă clădire', text: 'Documentul se face pentru clădirea ta, cu destinația și planul ei.' },
+      { title: 'Ignorarea modificărilor ulterioare', text: 'Schimbarea destinației sau a compartimentării poate cere reluarea procedurii.' },
+      { title: 'Instalații montate de oricine', text: 'Detecția și stingerea cer firme și personal autorizat.' },
+      { title: 'Surse neoficiale pentru acte și taxe', text: 'Procedura se modifică. Verifică la inspectorat.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul documentației depinde de dimensiunea și destinația clădirii, de complexitatea riscurilor, de numărul de niveluri și de ce măsuri impune proiectul. Taxele către instituții se verifică la acestea. Executarea măsurilor (instalații, uși, semnalizare) se plătește separat.',
+      'Cere ofertă care separă documentația, depunerea dosarului și eventualele lucrări, și spune ce taxe rămân în sarcina ta.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un specialist', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere dovada atestării, referințe pentru clădiri similare și o ofertă scrisă. Întreabă dacă se ocupă și de depunere și de răspunsul la completările inspectoratului.',
+      'Dacă firma promite o rezolvare sigură sau rapidă, ține minte că decizia aparține instituției.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre autorizarea ISU' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru construcții și proiectare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la autorizări și avize' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un specialist pentru documentație?', text: 'Descrie clădirea și destinația ei și primești oferte de la specialiști din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

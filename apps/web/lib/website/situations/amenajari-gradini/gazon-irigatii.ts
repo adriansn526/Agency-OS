@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const gazonIrigatii: SituationContent = {
+  slug: 'amenajari-gradini--gazon-irigatii',
+  categorie: 'amenajari-gradini',
+  title: 'Gazon și sistem de irigații',
+  seoTitle: 'Gazon și sistem de irigații: cum se face, cum compari',
+  seoDescription: 'Gazon la rulou sau din semințe și sistem de irigații automate: pregătirea solului, ordinea lucrării, ce implică apa și electricitatea și cum compari ofertele.',
+  summary: 'Cum se pregătește terenul pentru gazon, ce diferă între rulou și semănat și ce implică un sistem de irigații automat.',
+  sinonime: ['gazon', 'gazon rulou', 'rulou gazon', 'sistem irigare gazon', 'sistem irigatii', 'irigatii automate', 'plantare gazon', 'sistem irigații', 'irigații automate'],
+  intrebari: [
+    'Gazon la rulou sau semănat? | Ruloul dă un rezultat vizibil repede și acoperă bine solul, dar cere pregătire atentă și udare constantă la început. Semănatul este mai ieftin ca principiu, mai lent și mai sensibil la vreme și la păsări.',
+    'Cum se pregătește terenul? | Se nivelează, se curăță de resturi și pietre, se corectează solul dacă e sărac și se asigură scurgerea apei. Gazonul pus pe un teren slab pregătit se vede în plăci uscate și zone galbene.',
+    'Când se pune gazonul? | Perioadele potrivite depind de climă și de tipul ales. Întreabă firma sau furnizorul ce sezon recomandă pentru zona ta.',
+    'Cât de des se udă? | Depinde de vreme, de sol și de etapa în care e gazonul. La început solul trebuie ținut umed, apoi udarea se rărește. Detaliile le dă furnizorul pentru produsul ales.',
+    'Ce este un sistem de irigații automat? | O rețea de țevi, aspersoare și un controler care udă pe zone, la ore programate. Alegerea componentelor și montajul trebuie planificate înainte de gazon.',
+    'Cine face irigațiile? | Țevile și racordul la apă le face un instalator sau o firmă de irigații, iar alimentarea electrică a controlerului o face un electrician autorizat. Nu improviza la apă sau la curent.',
+    'De ce depinde costul? | De suprafață, de pregătirea solului, de tipul de gazon, de numărul zonelor irigate și de sursa de apă. Cere oferte detaliate și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Gazon și irigații: pregătire, montaj și oferte', subtitle: 'Cum se face un gazon care ține și cum se planifică un sistem de irigații. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cheia', value: 'Pregătirea solului' },
+      { label: 'Variante', value: 'Rulou sau semănat' },
+      { label: 'Irigații', value: 'Planificate înainte' },
+      { label: 'Instalații', value: 'Instalator și electrician' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un gazon frumos nu începe cu iarba, ci cu pământul de dedesubt: nivelat, curat și drenat. Cine sare peste pregătire plătește apoi prin zone uscate, bălți și refaceri.',
+      'Pagina tratează gazonul și irigațiile împreună pentru că se decid în aceeași etapă. Amenajarea generală a grădinii și gardul viu au paginile lor în această categorie.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce alegi', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Gazon la rulou', text: 'Se așază gata crescut, pe un sol pregătit. Efectul vine repede, dar cere o montare atentă și udare constantă la început.' },
+      { title: 'Gazon semănat', text: 'Se seamănă pe un sol fin, cu amestec ales după lumină și folosire. Cere răbdare și protecție în primele săptămâni.' },
+      { title: 'Irigare manuală', text: 'Furtun, aspersor mobil, udare făcută de tine. Simplu, dar depinde de timpul tău.' },
+      { title: 'Sistem automat', text: 'Țevi îngropate, aspersoare și controler. Udă singur, dar cere proiect și instalare corectă.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și ce implică', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Amestecul de gazon se alege după lumină (soare sau umbră), trafic și întreținere. Un gazon pentru joacă și un gazon decorativ nu sunt același produs. Furnizorul poate recomanda un amestec pentru zona ta.',
+      'Sistemul de irigații se proiectează pe zone, ca să acopere uniform fără să ude drumuri sau pereți. Planul trebuie făcut înainte de montajul gazonului, pentru că țevile se îngroapă la început. Sursa de apă (rețea, puț, rezervor) schimbă componentele.',
+      'Racordul la apă și montajul țevilor sunt lucrări pentru instalator sau firmă de irigații, iar alimentarea controlerului este treaba unui electrician autorizat. Dacă apa vine dintr-un puț sau forajele au reguli locale, întreabă la autoritatea competentă.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Plan și alegerea gazonului', text: 'Stabilești zonele, tipul de gazon și dacă vrei irigare automată.' },
+      { title: 'Pregătirea terenului', text: 'Nivelare, îndepărtarea resturilor, corectarea solului și asigurarea scurgerii.' },
+      { title: 'Instalarea irigațiilor', text: 'Țevi, aspersoare și controler se montează înainte de gazon, de către specialiști.' },
+      { title: 'Montarea gazonului', text: 'Rulourile se așază strâns, fără goluri, sau se seamănă uniform, apoi se tasează ușor.' },
+      { title: 'Udarea de început', text: 'Primele săptămâni sunt decisive; programezi controlerul sau uzi manual, după indicațiile furnizorului.' },
+      { title: 'Întreținere', text: 'Tuns, fertilizat, aerat și eventual completat cu semințe în zonele rare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Sol nepregătit', text: 'Gazonul pus direct pe pământ cu resturi sau compactat nu prinde uniform.' },
+      { title: 'Irigații după gazon', text: 'Să sapi după ce gazonul e gata înseamnă să-l strici și să-l refaci.' },
+      { title: 'Amestec nepotrivit', text: 'Un gazon pentru soare în zonă umbrită se rărește repede.' },
+      { title: 'Udare neregulată la început', text: 'Rulourile și semințele nu iartă uscarea în primele săptămâni.' },
+      { title: 'Apă și curent improvizate', text: 'Racordurile și alimentarea controlerului se fac de personal autorizat.' },
+      { title: 'Ofertă fără detalii', text: 'Fără suprafață, amestec și pregătire specificate, nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul gazonului depinde de suprafață, de starea terenului, de volumul de pământ adus, de varianta aleasă (rulou sau semințe) și de acces. La irigații se adaugă numărul de zone, tipul de aspersoare, sursa de apă și lungimea țevilor.',
+      'Cere oferte care separă pregătirea terenului, gazonul, irigațiile și manopera, și vezi paginile de preț de mai jos. Fără sume inventate, compară ce conține fiecare ofertă.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi gazoane făcute de firmă acum o vreme și întreabă cum pregătește solul. O firmă care vine să vadă terenul și pune întrebări despre lumină și folosire e preferabilă uneia care dă preț doar după suprafață.',
+      'Cere ofertă scrisă, cu etape și condiții, și clarifică cine are grijă de udare în prima perioadă. La irigații, întreabă cine face racordul la apă și cine face partea electrică.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre gazon și irigații' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru amenajări de grădini' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la amenajări de grădini' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei gazon sau irigații făcute de o firmă?', text: 'Descrie terenul și ce îți dorești și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

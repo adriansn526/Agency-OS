@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiMetalice: SituationContent = {
+  slug: 'structuri-metalice-fier-forjat--usi-metalice',
+  categorie: 'structuri-metalice-fier-forjat',
+  title: 'Uși metalice de exterior și apartament',
+  seoTitle: 'Uși metalice de exterior și apartament: cum alegi',
+  seoDescription: 'Uși metalice pentru intrare, la casă sau apartament: ce tipuri există, ce verifici, montajul, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Cum alegi o ușă metalică de exterior sau de apartament, ce verifici la ofertă și la montaj și cine o instalează corect.',
+  sinonime: ['usa metalica exterior', 'usi metalice exterior', 'usa metalica apartament', 'usa metalica', 'usi metalice', 'usa metalica intrare', 'ușă metalică exterior', 'uși metalice exterior', 'ușă metalică apartament', 'ușă metalică', 'uși metalice', 'ușă metalică intrare'],
+  intrebari: [
+    'Care este diferența dintre ușa metalică de exterior și cea de apartament? | Cea de exterior este expusă la ploaie, soare și variații de temperatură, deci cere protecție anticorozivă și etanșare bună. Cea de apartament este la interior, unde contează mai mult siguranța, izolarea fonică și aspectul.',
+    'Ce înseamnă o ușă metalică sigură? | Contează structura, încuietorile, balamalele și modul de ancorare în zid. O ușă puternică montată într-un toc slab sau cu fixare precară nu oferă siguranță reală.',
+    'Cine montează ușa? | Echipa furnizorului sau o echipă specializată. Montajul decide dacă ușa se închide corect și rezistă; o ușă bună prost montată se blochează și lasă aer și apă.',
+    'Ce verific la livrare? | Starea vopselei și a tocului, funcționarea încuietorilor, alinierea și etanșarea. Verifică totul înainte de a semna recepția.',
+    'Pot schimba doar ușa, fără tocul vechi? | Uneori da, dar tocul vechi trebuie să fie în stare bună și potrivit. În multe cazuri se schimbă întregul ansamblu, ca să nu rămână puncte slabe.',
+    'Ce se întâmplă la bloc? | Dacă ușa este spre un spațiu comun, regulile de asociație sau de securitate la incendiu pot cere un anumit tip. Întreabă la asociație înainte să comanzi.',
+    'De ce depinde costul? | De tip, de finisaj, de încuietori, de izolare, de dimensiune și de montaj. Vezi paginile de preț și compară oferte detaliate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși metalice de exterior și apartament: cum alegi', subtitle: 'Tipuri, siguranță, montaj și de ce depinde costul. Ceri oferte gratuite de la firme verificate din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Exterior', value: 'Protecție și etanșare' },
+      { label: 'Apartament', value: 'Siguranță și izolare fonică' },
+      { label: 'Montaj', value: 'Decide rezultatul' },
+      { label: 'Oferta', value: 'Pe componente' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușa metalică este prima barieră în fața intrușilor și a intemperiilor, dar rezultatul depinde la fel de mult de montaj ca de produs. O ușă bună, prost fixată sau pusă într-un toc nepotrivit, nu își face treaba.',
+      'Pagina te ajută să alegi între ușa de exterior și cea de apartament, să știi ce verifici și să compari ofertele. Uși de termopan, culisante sau rulouri au pagina lor în categoria geamuri, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce situații acoperă', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Ușă de exterior la casă', text: 'Expusă la ploaie, soare și umezeală. Cere tratament anticoroziv, etanșare și un prag corect.' },
+      { title: 'Ușă de apartament', text: 'Spre casa scării. Contează siguranța, încuietorile, zgomotul și respectarea regulilor asociației.' },
+      { title: 'Ușă de intrare în curte sau anexe', text: 'Pentru garaj, magazie sau atelier, cu accent pe rezistență și pe protecție.' },
+      { title: 'Ușă înlocuită într-un toc existent', text: 'Se poate, dacă tocul este în stare bună și compatibil; altfel se schimbă ansamblul.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Ce contează la o ușă metalică', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Ușa se compune din foaie, toc, balamale, încuietori și, după caz, izolație și placare decorativă. Încuietorile și balamalele decid rezistența la forțare, iar foaia decide aspectul și o parte din izolare.',
+      'La exterior, finisajul protejează împotriva ruginii, iar etanșarea oprește apa și aerul. La apartament, izolația fonică și aspectul spre casa scării sunt la fel de importante ca siguranța.',
+      'Cere detalii despre componente și nu te baza doar pe fotografii. Un specialist de la furnizor îți poate explica diferențele, iar montajul trebuie făcut de echipă experimentată.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Măsurători', text: 'Se măsoară golul, se verifică pereții și starea tocului vechi, dacă există.' },
+      { title: 'Alegerea modelului și a finisajului', text: 'Alegi tipul de ușă, încuietorile, finisajul și accesoriile.' },
+      { title: 'Comandă și fabricație', text: 'Ușa se execută pe măsurătorile reale, nu pe ale unui model standard dacă golul diferă.' },
+      { title: 'Demontare și pregătire', text: 'Se scoate ușa veche și se pregătește golul, cu corectarea zidăriei dacă este nevoie.' },
+      { title: 'Montaj și reglaje', text: 'Ușa se fixează în zid, se reglează, se etanșează și se verifică încuietorile.' },
+      { title: 'Recepție', text: 'Verifici funcționarea, alinierea, finisajul și primești documentele produsului.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea doar după preț', text: 'Componente slabe se simt la forțare și la uzură.' },
+      { title: 'Montaj în toc slab', text: 'Un toc prins în zidărie fragilă anulează avantajele unei uși bune.' },
+      { title: 'Măsurători din ochi', text: 'Golul real se măsoară la fața locului, înaintea comenzii.' },
+      { title: 'Etanșare omisă', text: 'Aerul și apa intră pe lângă toc, mai ales la exterior.' },
+      { title: 'Ignorarea regulilor din bloc', text: 'Asociația sau regulile de securitate pot cere un anumit tip de ușă.' },
+      { title: 'Recepție făcută în grabă', text: 'Defectele de vopsea sau de aliniere se remediază mai ușor dacă le semnalezi imediat.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul se schimbă cu tipul ușii, cu mărimea, cu încuietorile, cu izolarea, cu finisajul, cu eventuala placare și cu montajul. Dacă tocul trebuie schimbat sau golul corectat, apar costuri suplimentare.',
+      'Compară ofertele pe componente și pe ce include montajul, apoi vezi paginile de preț de mai jos. Fără sume inventate, cere o ofertă scrisă pentru fiecare variantă.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi lucrări similare și întreabă cine montează, nu doar cine vinde. Un furnizor care măsoară la fața locului și îți explică componentele merită preferat unuia care dă preț fără să vadă golul.',
+      'Cere ofertă scrisă cu termen, garanție și condiții de plată, iar la bloc verifică dacă ai nevoie de acordul asociației.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși metalice' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru structuri metalice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la structuri metalice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca ușa să o monteze o firmă?', text: 'Descrie locul și tipul de ușă și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

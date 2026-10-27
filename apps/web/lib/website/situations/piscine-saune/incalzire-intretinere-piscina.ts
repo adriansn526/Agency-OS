@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const incalzireIntretinerePiscina: SituationContent = {
+  slug: 'piscine-saune--incalzire-intretinere-piscina',
+  categorie: 'piscine-saune',
+  title: 'Încălzire și întreținere piscină',
+  seoTitle: 'Încălzire și întreținere piscină: soluții și oferte',
+  seoDescription: 'Cum se încălzește și se întreține o piscină: pompă de căldură, încălzitor, filtrare, curățare, greșeli frecvente și de ce depinde costul unui contract de service.',
+  summary: 'Ce soluții de încălzire există pentru piscină, cum funcționează filtrarea și curățarea și ce să compari în ofertele pentru montaj și întreținere.',
+  sinonime: ['incalzitor piscina', 'incalzirea piscinei', 'filtru piscina', 'aspirator piscina', 'pompa caldura piscina', 'încălzitor piscină', 'încălzirea piscinei', 'filtru piscină', 'aspirator piscină', 'pompă căldură piscină'],
+  intrebari: [
+    'Cum se poate încălzi o piscină? | Prin pompă de căldură, încălzitor electric, schimbător de căldură legat la centrala casei sau panouri solare. Fiecare are costuri de montaj și de funcționare diferite, iar alegerea depinde de cât folosești piscina, de volum și de ce sursă de energie ai deja.',
+    'Ce rol are filtrul piscinei? | Reține impuritățile din apă pe măsură ce pompa o recirculă. Filtrul se dimensionează după volumul bazinului și se curăță sau se spală periodic, după indicațiile producătorului. Un filtru prea mic duce la apă tulbure, oricât tratament chimic s-ar adăuga.',
+    'Ce tipuri de aspirator există? | Manual, cu furtun legat la circuitul de filtrare, sau automat (robot) care parcurge singur fundul și pereții. Robotul scutește munca, dar nu înlocuiește filtrarea. Alegerea depinde de forma bazinului, de finisaj și de cât vrei să faci singur.',
+    'Pot face singur întreținerea? | Curățarea zilnică sau săptămânală și verificarea apei sunt la îndemâna proprietarului, după instrucțiuni. Montajul echipamentelor, conexiunile electrice și remedierea pierderilor de apă se lasă pe seama unor specialiști; instalația electrică lângă apă o face doar un electrician autorizat.',
+    'Ce înseamnă iernarea piscinei? | Pregătirea bazinului și a instalației pentru perioada rece: golirea sau protejarea circuitelor, oprirea echipamentelor și tratarea apei, după caz. Pașii depind de tipul piscinei și de climă, deci cere indicațiile constructorului sau ale firmei de service.',
+    'Cum recunosc o pierdere de apă? | Nivelul scade mai mult decât prin evaporare, apar zone umede în jurul bazinului sau pompa pornește des. Cere un control: o crăpătură sau o conexiune neetanșă se agravează dacă o ignori.',
+    'Merită un contract de întreținere? | Dacă nu ai timp sau cunoștințe, poate fi o soluție. Cere să vezi exact ce include: frecvența vizitelor, tratamentul apei, curățarea, verificarea echipamentelor și ce se întâmplă la o defecțiune.',
+    'De ce depinde costul? | Pentru încălzire, de soluție, de volumul bazinului, de sursa de energie și de lucrările de racordare. Pentru întreținere, de mărime, de frecvență, de echipamentele existente și de cât este inclus în vizită. Vezi paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Încălzire și întreținere piscină: ce soluții ai și ce întrebi', subtitle: 'Pompă de căldură, încălzitor, filtrare și curățare: cum funcționează și de ce depinde costul. Descrie piscina și primești oferte gratuite de la firme.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Încălzire', value: 'Pompă, încălzitor, solar' },
+      { label: 'Apa curată', value: 'Filtrare corect dimensionată' },
+      { label: 'Partea electrică', value: 'Doar electrician autorizat' },
+      { label: 'Oferta', value: 'Echipamente și manoperă separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O piscină poate fi folosită mai mult timp pe an dacă apa este încălzită, și rămâne plăcută numai dacă filtrarea și curățarea funcționează. Ambele sunt lucrări de instalații, nu simple accesorii, și se aleg după volumul bazinului și după felul în care îl folosești.',
+      'Pagina compară principalele soluții de încălzire și explică ce înseamnă filtrarea, curățarea și iernarea. Construirea bazinului are pagina ei, la care trimitem mai jos.',
+    ) }),
+    node('heat-h', 'heading', { text: 'Soluții de încălzire', level: 'h2' }),
+    node('heat', 'cards', { columns: '2', items: [
+      { title: 'Pompă de căldură pentru piscină', text: 'Preia căldură din aerul exterior și o transferă apei. Consumă mai puțină energie electrică decât încălzirea directă, dar randamentul scade când se răcește vremea.' },
+      { title: 'Încălzitor electric', text: 'Încălzește direct apa din circuit. Montajul este simplu, dar consumul este mai mare, iar instalația electrică trebuie dimensionată corect.' },
+      { title: 'Schimbător de căldură', text: 'Folosește căldura de la centrala casei sau de la un alt circuit. Se potrivește dacă ai deja o sursă cu rezervă de putere.' },
+      { title: 'Panouri solare', text: 'Folosesc energia soarelui pentru a încălzi apa. Rezultatul depinde de orientare, de umbră și de sezon, deseori ca soluție de completare.' },
+    ] }),
+    node('filter-h', 'heading', { text: 'Filtrarea și curățarea', level: 'h2' }),
+    node('filter', 'cards', { columns: '2', items: [
+      { title: 'Pompa și filtrul', text: 'Pompa recirculă apa, iar filtrul reține impuritățile. Se dimensionează după volumul bazinului și timpul de recirculare recomandat de producător.' },
+      { title: 'Aspirator manual sau robot', text: 'Aspiratorul manual se leagă la circuitul de filtrare; robotul parcurge singur fundul și pereții. Niciunul nu înlocuiește filtrarea.' },
+      { title: 'Tratamentul apei', text: 'Menținerea unei ape igienice cere măsurători periodice și produse potrivite, folosite după instrucțiunile producătorului.' },
+      { title: 'Iernarea', text: 'Pregătirea bazinului și a instalației pentru sezonul rece, cu pași diferiți după tipul piscinei.' },
+    ] }),
+    node('steps', 'steps', { title: 'Cum decurge montajul unei soluții noi', items: [
+      { title: 'Evaluarea piscinei', text: 'Firma vede bazinul, circuitul existent, locul echipamentelor și alimentarea electrică.' },
+      { title: 'Alegerea soluției', text: 'Se compară variantele după volum, sursa de energie și cât timp vrei să folosești piscina.' },
+      { title: 'Racordarea hidraulică', text: 'Se montează echipamentul pe circuitul de apă, cu vane care permit întreținerea.' },
+      { title: 'Alimentarea electrică', text: 'O execută un electrician autorizat, cu protecția cerută pentru spațiul din apropierea apei.' },
+      { title: 'Punere în funcțiune și instruire', text: 'Se verifică funcționarea și primești explicații despre utilizare și iernare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Echipament subdimensionat', text: 'Un încălzitor sau un filtru prea mic lucrează continuu și tot nu ține pasul.' },
+      { title: 'Alimentare electrică improvizată', text: 'Conexiunile făcute de neautorizați lângă apă sunt un risc real.' },
+      { title: 'Încălzire fără acoperire', text: 'Fără o acoperire, o mare parte din căldură se pierde la suprafață, deci contează și ea.' },
+      { title: 'Neglijarea filtrului', text: 'Un filtru necurățat reduce circulația și strică apa.' },
+      { title: 'Iernare făcută din auz', text: 'Conductele rămase cu apă pot crăpa la îngheț.' },
+      { title: 'Comparare doar după preț', text: 'Randamentul și consumul se văd în factura de după montaj.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul montajului depinde de soluția aleasă, de volumul bazinului, de distanța până la sursa de energie și de lucrările de racordare. Costul de funcționare depinde de sursa de energie, de modul de folosire și de acoperirea apei.',
+      'La întreținere contează dimensiunea piscinei, frecvența vizitelor, ce include vizita (curățare, tratament, verificarea echipamentelor) și dacă materialele sunt incluse sau facturate separat. Vezi paginile de preț de mai jos pentru factori.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să știi cine face racordarea hidraulică și cine pe cea electrică, ce garanție primești în scris pentru manoperă și ce se întâmplă la o defecțiune în sezon. Pentru un contract de întreținere, cere lista exactă a operațiunilor și frecvența lor.',
+      'Compară oferte care descriu același echipament și aceleași lucrări. O ofertă fără detalii despre racordare și punere în funcțiune este de obicei incompletă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre încălzirea și întreținerea piscinei' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru piscine și lucrări speciale' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la piscine, saune și spa' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Spune ce piscină ai și ce vrei să schimbi și primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

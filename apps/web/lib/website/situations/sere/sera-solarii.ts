@@ -1,0 +1,82 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const seraSolarii: SituationContent = {
+  slug: 'sere--sera-solarii',
+  categorie: 'sere',
+  title: 'Seră și solar: construire și montaj',
+  seoTitle: 'Seră și solar: construire și montaj de către o firmă',
+  seoDescription: 'Cum se construiește o seră sau un solar: structură, acoperire, fundație, ventilație, ordinea lucrării, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Ce presupune construirea și montajul unei sere sau al unui solar, din ce se face structura, ce acoperiri există și ce să compari în ofertele firmelor.',
+  sinonime: ['solariu gradina', 'sera', 'sera gradina', 'sere de gradina', 'sera de gradina', 'sera policarbonat', 'solar legume', 'solarii profesionale', 'sere de flori', 'mini sera gradina', 'constructie sera', 'solariu grădină', 'seră', 'seră grădină', 'sere de grădină', 'seră de grădină', 'seră policarbonat', 'construcție seră'],
+  intrebari: [
+    'Care este diferența dintre seră și solar? | În uz comun, solarul este o construcție mai simplă, de obicei un tunel sau un cadru acoperit cu folie, folosit pentru legume. Sera este o construcție mai elaborată, cu structură rigidă, acoperire din sticlă sau policarbonat și, adesea, ventilație și încălzire. Granița nu este strictă, așa că descrie firmei exact ce vrei să cultivi.',
+    'Se poate cumpăra o seră în kit sau trebuie construită la comandă? | Există ambele variante. Kiturile se potrivesc suprafețelor mici de grădină, iar construcțiile la comandă se aleg pentru dimensiuni mari sau cerințe speciale. Chiar și la un kit, montajul corect (ancorare, nivelare, etanșări) contează mai mult decât pare.',
+    'Ce acoperire aleg: folie, policarbonat sau sticlă? | Fiecare are alt comportament la lumină, la izolare, la grindină și la vânt, și alt preț de întreținere. Folia se schimbă periodic, policarbonatul este mai rezistent la șocuri, sticla lasă lumina cel mai curat dar cere o structură mai robustă. Alegerea depinde de plante, de climă și de buget.',
+    'Am nevoie de autorizație pentru o seră? | Depinde de dimensiune, de tipul construcției (provizorie sau fixă), de fundație și de zona în care te afli. Întreabă la primărie înainte de a comanda, ca să nu apară surprize după montaj.',
+    'Trebuie fundație? | Depinde de structură și de sol. O seră ușoară se poate ancora în pământ sau pe o ramă, una mare sau rigidă poate cere fundație. Firma sau un proiectant stabilește soluția după teren și după încărcările din zonă, cum sunt vântul și zăpada.',
+    'Cum se asigură ventilația și apa în seră? | O seră fără ventilație se supraîncălzește și favorizează boli ale plantelor. Se prevăd ferestre sau guri de aerisire, uneori sisteme automate, iar pentru irigare se planifică din start traseul apei și al electricității, de către personal autorizat pentru instalațiile electrice.',
+    'De ce depinde costul unei sere? | De dimensiune, de tipul structurii și al acoperirii, de fundație sau ancorare, de ventilație, încălzire și irigare, de accesul pe teren și de dacă firma livrează și montează sau doar montează. Cere oferte care detaliază fiecare element și vezi paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Seră sau solar: cum se construiește și ce să verifici în ofertă', subtitle: 'Structură, acoperire, fundație, ventilație și ordinea lucrării. Dacă vrei ca montajul să-l facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Primul pas', value: 'Ce cultivi și unde' },
+      { label: 'Se alege', value: 'Structura și acoperirea' },
+      { label: 'Nu uita', value: 'Ventilație, apă, ancorare' },
+      { label: 'Autorizare', value: 'Întreabă la primărie' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Oamenii caută „seră” sau „solar” fie ca să cumpere un produs, fie ca să-l construiască cineva pe terenul lor. Pagina aceasta este despre al doilea caz: construirea și montajul unei sere de grădină, a unui solar pentru legume sau a unei construcții profesionale, de către o firmă.',
+      'Găsești mai jos din ce se compune o seră, ce acoperiri există, în ce ordine se lucrează, ce greșeli se fac frecvent și cum compari ofertele. Pentru dimensiuni și soluții concrete e nevoie de o vizită pe teren.',
+    ) }),
+    node('what-h', 'heading', { text: 'Din ce se compune o seră', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Structura', text: 'Scheletul care ține acoperirea: metal, lemn sau profile speciale. Trebuie să reziste la vânt și, în multe zone, la zăpadă.' },
+      { title: 'Acoperirea', text: 'Folie, policarbonat sau sticlă. Influențează lumina, temperatura, durabilitatea și întreținerea.' },
+      { title: 'Fundația sau ancorarea', text: 'Legătura cu terenul. Fără ea, vântul poate muta sau ridica o construcție ușoară.' },
+      { title: 'Ventilație și umbrire', text: 'Aerisire naturală sau automată și, după caz, protecție de soare, ca plantele să nu se supraîncălzească.' },
+      { title: 'Irigare și instalații', text: 'Apă, iar uneori încălzire sau iluminat. Partea electrică o face personal autorizat.' },
+      { title: 'Amenajarea interioară', text: 'Straturi de sol, rafturi, căi de acces. Se gândește odată cu structura, nu după.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și acoperiri', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Solarele de legume se fac frecvent cu arcuri metalice și folie, o soluție mai simplă și mai ușor de schimbat. Serele cu structură rigidă folosesc profile metalice sau lemn și acoperire din policarbonat celular sau sticlă, mai rezistente în timp, dar cu cerințe mai mari la structură și la fundație.',
+      'Pentru flori sau plante sensibile, controlul temperaturii și al umidității contează mai mult, deci ventilația și, după caz, încălzirea intră în proiect de la început. Pentru culturi profesionale, discută cu firma despre acces cu utilaje, scurgerea apei și organizarea interioară.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea locului', text: 'Lumină, protecție la vânt, scurgerea apei și acces la apă. Un loc greșit nu se corectează ulterior prin structură.' },
+      { title: 'Soluția și comanda', text: 'Se stabilesc tipul de structură, acoperirea, ventilația și instalațiile, apoi se comandă elementele.' },
+      { title: 'Pregătirea terenului', text: 'Nivelare, marcare și, unde e cazul, fundație sau puncte de ancorare.' },
+      { title: 'Montajul structurii', text: 'Se ridică scheletul și se verifică verticalitatea și rigidizările înainte de acoperire.' },
+      { title: 'Acoperirea și etanșările', text: 'Se montează foliile sau panourile cu elementele de prindere și etanșare potrivite materialului.' },
+      { title: 'Instalații și finisare', text: 'Ventilație, irigare, eventual electrice, apoi verificare și predare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Ancorare insuficientă', text: 'O seră ușoară neancorată bine poate fi deteriorată de vânt.' },
+      { title: 'Lipsa ventilației', text: 'Vara temperatura urcă și plantele suferă; aerisirea se prevede din proiect.' },
+      { title: 'Alegerea locului după comoditate', text: 'Umbra, apa stătută sau accesul dificil se simt ani de zile.' },
+      { title: 'Acoperire nepotrivită plantelor', text: 'Nu toate acoperirile lasă aceeași lumină sau rețin aceeași căldură.' },
+      { title: 'Ignorarea autorizării', text: 'Unele construcții cer acte; verifici la primărie înainte, nu după.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț „la cheie” fără structură, acoperire și instalații specificate nu se poate compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unei sere depinde de suprafață și înălțime, de structură, de acoperire, de fundație sau ancorare, de ventilație, de eventuala încălzire și irigare, de accesul pe teren și de dacă prețul include livrarea. Aceeași suprafață poate costa foarte diferit în funcție de aceste alegeri.',
+      'Cere oferte care separă materialele de manoperă și care spun clar ce este inclus. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine face montajul efectiv. Verifică dacă firma vine la fața locului înainte de ofertă și dacă te ajută să alegi structura după plante, climă și teren.',
+      'Cere oferta în scris, cu termene și condiții de plată, și clarifică de la început cine se ocupă de eventualele acte și de instalațiile de apă și electricitate.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre sere și solarii' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru sere și solarii' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca sera sau solarul să fie montate de o firmă?', text: 'Descrie terenul și ce vrei să cultivi și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

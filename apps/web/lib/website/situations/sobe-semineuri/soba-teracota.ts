@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const sobaTeracota: SituationContent = {
+  slug: 'sobe-semineuri--soba-teracota',
+  categorie: 'sobe-semineuri',
+  title: 'Sobă din teracotă',
+  seoTitle: 'Sobă din teracotă: zidire, acumulare și coș de fum',
+  seoDescription: 'Cum se face o sobă din teracotă: soba cu acumulare, cu plită sau de colț, ordinea lucrării, coșul de fum, rolul sobarului și de ce depinde costul.',
+  summary: 'Ce este o sobă din teracotă, cum funcționează acumularea de căldură, cine o zidește și ce să compari în ofertele sobarilor și ale firmelor de montaj.',
+  sinonime: ['soba teracota', 'sobe teracota', 'soba de teracota', 'sobe din teracota', 'soba teracota cu plita', 'teracota', 'soba cu acumulare', 'sobă teracotă', 'sobe teracotă', 'sobă de teracotă', 'sobe din teracotă', 'sobă teracotă cu plită', 'teracotă', 'sobă cu acumulare'],
+  intrebari: [
+    'Ce este o sobă din teracotă? | O sobă zidită, cu un focar căptușit și cu un înveliș de plăci din teracotă (argilă arsă). Materialul și masa mare păstrează căldura și o cedează încet, după ce focul s-a stins. Se zidește pe loc, nu se cumpără ca aparat gata montat.',
+    'Ce înseamnă o sobă cu acumulare? | O sobă în care gazele de ardere circulă printr-un traseu lung în interiorul masei, cedându-i căldura. Masa se încălzește și degajă căldura ore bune. Traseul gazelor se proiectează și se zidește de un meșter, nu se improvizează.',
+    'Se poate face o sobă cu plită? | Da, există modele cu plită pentru gătit sau pentru încălzirea unei oale. Plita schimbă traseul gazelor și zidirea, deci se stabilește de la început, împreună cu meșterul.',
+    'Cine zidește o sobă din teracotă? | Un sobar sau o firmă cu experiență în zidirea sobelor. Meseria cere cunoașterea materialelor și a traseului gazelor. Cere lucrări similare pe care le poți vedea, nu doar promisiuni.',
+    'Ce rol are coșul de fum la o sobă? | Fără un coș potrivit, soba nu trage și poate umple casa cu fum sau gaze. Verificarea coșului, a tirajului și a legăturii cu soba o face personal autorizat; nu le face proprietarul pe cont propriu, iar distanțele față de materiale combustibile se respectă conform indicațiilor specialistului.',
+    'Poate fi montată o sobă într-o casă existentă? | Uneori. Se verifică planșeul, care trebuie să suporte greutatea unei sobe zidite, locul pentru coș și starea pereților. Întreabă un specialist în structuri înainte de orice decizie, pentru că greutatea este mare.',
+    'Am nevoie de aprobări? | Depinde de casă, de coșul nou și de regulile locale. În bloc sau la clădiri speciale există restricții. Întreabă la primărie sau la asociație înainte de începere.',
+    'De ce depinde costul? | De tipul sobei, de dimensiuni, de modelul și materialul teracotei, de complexitatea traseului gazelor, de lucrările la coș și de timpul de zidire. Cere oferte detaliate, care separă materialele de manoperă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Sobă din teracotă: cum se zidește și ce verifici înainte', subtitle: 'Cum funcționează acumularea de căldură, ce cere coșul de fum și cum alegi un sobar. Descrie ce îți dorești și primești oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Principiu', value: 'Acumulează căldura și o cedează lent' },
+      { label: 'Execuție', value: 'Zidită pe loc de un sobar' },
+      { label: 'Coșul de fum', value: 'Verificat de personal autorizat' },
+      { label: 'Structura', value: 'Planșeul se verifică, soba e grea' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Soba din teracotă este o soluție tradițională, apreciată pentru căldura constantă pe care o dă și după ce focul s-a stins. Spre deosebire de un aparat metalic, ea se zidește pe loc, iar calitatea depinde mult de meșter și de traseul gazelor.',
+      'Pagina explică cum funcționează o astfel de sobă, ce cere montajul și ce întrebi un sobar. Șemineele și sobele metalice pe lemne sau peleți au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce este și ce variante există', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Sobă cu acumulare', text: 'Gazele parcurg un traseu lung prin masa sobei, care se încălzește și degajă apoi căldura ore în șir.' },
+      { title: 'Sobă cu plită', text: 'Include o plită pentru gătit sau încălzirea unei oale. Modifică traseul gazelor, deci se hotărăște de la început.' },
+      { title: 'Sobă de colț sau de perete', text: 'Forma se adaptează spațiului disponibil și locului în care ajunge coșul.' },
+      { title: 'Placarea cu teracotă', text: 'Plăcile din argilă arsă acoperă corpul sobei. Se alege modelul și culoarea după încăpere, iar montajul cere atenție la dilatare.' },
+    ] }),
+    node('flue-h', 'heading', { text: 'Coșul de fum și siguranța', level: 'h2' }),
+    node('flue', 'text', { body: para(
+      'O sobă bine zidită funcționează doar cu un coș potrivit. Coșul, tirajul și legătura cu soba se verifică de personal autorizat; evacuarea corectă a gazelor, inclusiv a monoxidului de carbon, este o chestiune de siguranță, nu de confort. Nu improviza legături și nu folosi un coș care deservește alt aparat fără verificare.',
+      'Distanțele față de lemn, tavan sau alte materiale combustibile le stabilește specialistul care face montajul. Pentru o sobă zidită, mai contează și greutatea: planșeul se verifică înainte de a decide locul.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea modelului și a locului', text: 'Stabilești forma, dacă vrei plită și unde se poate lega la coș. Se verifică planșeul.' },
+      { title: 'Verificarea coșului', text: 'Personalul autorizat verifică un coș existent sau propune soluția pentru unul nou.' },
+      { title: 'Fundația sau suportul', text: 'Se pregătește un suport capabil să preia greutatea sobei.' },
+      { title: 'Zidirea corpului', text: 'Focarul și traseul gazelor se zidesc din materiale rezistente la căldură, după planul meșterului.' },
+      { title: 'Placarea cu teracotă', text: 'Plăcile se montează după ce corpul a fost verificat, cu rosturi potrivite dilatării.' },
+      { title: 'Uscarea și prima aprindere', text: 'Soba se usucă gradual și se aprinde cu atenție, conform indicațiilor meșterului.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Meșter fără referințe', text: 'Un traseu al gazelor greșit se observă abia când soba nu trage.' },
+      { title: 'Planșeu necontrolat', text: 'Greutatea sobei poate cere întărirea structurii.' },
+      { title: 'Coș vechi folosit fără control', text: 'Pericol de fum și de depuneri.' },
+      { title: 'Prima aprindere în grabă', text: 'Uscarea prea rapidă poate fisura corpul sobei.' },
+      { title: 'Distanțe ignorate', text: 'Materialele combustibile din apropiere se pot degrada sau aprinde.' },
+      { title: 'Ofertă fără detalii', text: 'Fără material, model și traseu nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de dimensiunea și complexitatea sobei, de modelul și calitatea plăcilor de teracotă, de traseul gazelor, de prezența plitei, de lucrările la coș și de timpul de zidire. Contează și accesul pentru materialele grele.',
+      'Cere oferte care despart materialele de manoperă și care descriu modelul, coșul și pregătirea suportului. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi sobarul sau firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi sobe făcute de același meșter și, dacă se poate, să vorbești cu proprietarii după câteva sezoane. Întreabă cine verifică coșul, ce garanție se dă în scris și cum se rezolvă o sobă care nu trage.',
+      'Compară oferte cu același model și aceeași soluție pentru coș. O ofertă fără traseul gazelor este, de obicei, incompletă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre soba din teracotă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru sobe, șeminee și coșuri' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la șeminee și sobe' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca soba să o zidească un meșter verificat?', text: 'Descrie încăperea și ce model îți dorești și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const firmaConstructiiManopera: SituationContent = {
+  slug: 'constructii-cladiri--firma-constructii-manopera',
+  categorie: 'constructii-cladiri',
+  title: 'Firmă de construcții și manoperă pentru casă',
+  seoTitle: 'Firmă de construcții și manoperă pentru casă',
+  seoDescription: 'Cum alegi o firmă de construcții pentru casă: ce intră în manoperă, etapele lucrării, de ce depinde costul, ce cuprinde contractul și cum compari ofertele.',
+  summary: 'Ce înseamnă manoperă, cine construiește o casă, cum se desfășoară lucrarea de la proiect la recepție și ce compari când ceri oferte de la firme de construcții.',
+  sinonime: ['manopera constructii', 'pret manopera constructii de la a la z', 'firma constructii', 'constructor casa', 'constructie casa pret', 'pret constructie casa', 'constructii noi', 'extindere casa', 'supraetajare', 'manoperă construcții', 'preț manoperă construcții de la a la z', 'firmă construcții', 'constructor casă', 'construcție casă preț', 'preț construcție casă', 'construcții noi', 'extindere casă'],
+  intrebari: [
+    'Ce înseamnă „manoperă” la construcția unei case? | Este partea de lucru a echipei: cine toarnă, zidește, montează, finisează. Materialele se contorizează separat. Unele firme oferă manoperă pe etape, altele „la cheie”, cu materiale incluse; cele două oferte nu se pot compara direct decât dacă specifică același lucru.',
+    'Ce trebuie să existe înainte să înceapă o firmă lucrarea? | Pentru o casă nouă, o extindere sau o supraetajare sunt necesare, în general, proiect și autorizație de construire. Ce anume se cere în cazul tău depinde de lucrare și de zonă, deci întreabă la primărie. Paginile despre autorizări și avize explică pașii.',
+    'Cine răspunde de calitatea lucrării? | Firma care execută răspunde pentru ce a făcut, conform contractului. Verificarea independentă o face dirigintele de șantier, desemnat pentru lucrările care îl cer. Pagina despre dirigintele de șantier explică ce face și ce nu face.',
+    'Ce ar trebui să cuprindă contractul? | Obiectul lucrării, ce documente stau la bază (proiect, caiet de sarcini), eșalonarea plăților pe etape, termenele de execuție, modul de recepție, garanția pentru lucrare și ce se întâmplă la întârzieri. Cere varianta scrisă înainte de a da avans.',
+    'Cum compar două oferte de la firme diferite? | Pe același conținut: ce lucrări sunt incluse, cine aduce materialele, cine plătește utilajele și transportul, cine răspunde de curățenie și de deșeuri, ce garanție se dă. O ofertă mai mică poate lăsa lucrări în afara prețului.',
+    'Se poate extinde sau supraetaja o casă existentă? | Uneori, dar doar după ce un inginer verifică structura și fundația existente. Dacă fundația nu a fost gândită pentru încărcare suplimentară, soluția trebuie consolidată sau proiectul schimbat. Nu începe o astfel de lucrare fără expertiză și proiect.',
+    'Pot angaja separat echipe pentru fiecare etapă? | Da, mulți proprietari lucrează așa, dar atunci tu coordonezi: ordinea lucrărilor, aprovizionarea, verificările înainte de acoperire. Dacă nu ai experiență, o firmă generală sau un diriginte care te reprezintă te scutește de multe greșeli.',
+    'De ce depinde costul manoperei? | De suprafață și complexitatea casei, de tipul structurii și al finisajelor, de teren și accesul pentru utilaje, de perioada în care se lucrează și de cât din lucrare e inclus. Pentru repere, vezi paginile de preț despre manoperă în construcții și la cheie.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Firmă de construcții pentru casă: ce intră în manoperă și cum compari ofertele', subtitle: 'De la proiect la recepție: cine face ce, ce cuprinde contractul și de ce depinde costul. Descrie lucrarea și primești oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Înainte de start', value: 'Proiect și autorizație' },
+      { label: 'Control', value: 'Diriginte de șantier' },
+      { label: 'Plata', value: 'Pe etape, nu integral în avans' },
+      { label: 'Oferta', value: 'Manoperă și materiale clar separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Construcția unei case, a unei extinderi sau a unui etaj nou este o lucrare în mai multe etape și cu mai mulți specialiști. Costul final și calitatea depind mult de felul în care alegi firma, de ce scrie în contract și de cum se verifică lucrarea pe parcurs.',
+      'Pagina te ajută să înțelegi ce înseamnă manoperă, în ce ordine se desfășoară o construcție și ce să compari în oferte. Pașii de autorizare, rolul dirigintelui, prețurile și casele la cheie au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poți construi și cum se lucrează', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Casă nouă', text: 'Se pornește de la teren, proiect și autorizație. Structura (fundație, ziduri, planșee, acoperiș) se execută înaintea instalațiilor și a finisajelor.' },
+      { title: 'Extindere', text: 'Se lipește o parte nouă de casa existentă. Racordul dintre vechi și nou, fundația și tasările diferite cer atenție din proiect.' },
+      { title: 'Supraetajare', text: 'Se adaugă un nivel. Înainte de orice, un inginer verifică dacă fundația și zidurile existente pot prelua încărcarea.' },
+      { title: 'Construcții anexe', text: 'Garaj, magazie sau atelier. Se aplică aceleași reguli de bază: ce se poate construi depinde de zonă, deci întrebi la primărie.' },
+    ] }),
+    node('who-h', 'heading', { text: 'Cine face ce', level: 'h2' }),
+    node('who', 'text', { body: para(
+      'Beneficiarul (tu) decide ce se construiește, plătește și recepționează. Proiectantul întocmește proiectul. Constructorul execută. Dirigintele de șantier verifică, în numele tău, dacă lucrarea respectă proiectul, iar pentru lucrările care o cer, există și alți specialiști implicați prin lege.',
+      'Chiar dacă firma de construcții are propriul responsabil de șantier, el nu înlocuiește un control independent. Detaliile despre diriginte și despre actele necesare sunt pe paginile dedicate din această secțiune.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea obișnuită a unei construcții', items: [
+      { title: 'Teren, studii și proiect', text: 'Studiul terenului și proiectul stabilesc fundația, structura și soluțiile constructive. Alege proiectantul înaintea constructorului.' },
+      { title: 'Autorizație și organizare', text: 'Autorizația se obține înainte de lucrări; documentele depind de primărie. Apoi se organizează șantierul: acces, depozitare, racorduri provizorii.' },
+      { title: 'Fundație și structură', text: 'Lucrările la care greșelile nu se mai pot corecta ușor. Se verifică înainte de acoperire și se consemnează.' },
+      { title: 'Acoperiș și închideri', text: 'După structură se pune acoperișul, apoi ferestrele și ușile, pentru ca interiorul să fie ferit de intemperii.' },
+      { title: 'Instalații și finisaje', text: 'Instalațiile se trec înaintea tencuielilor și a pardoselilor; finisajele vin la urmă.' },
+      { title: 'Recepție', text: 'Verifici lucrarea, primești documentele și garanțiile. Pașii exacți depind de tipul construcției.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Începerea fără autorizație', text: 'Lucrarea poate fi oprită, iar remedierea costă mai mult decât obținerea actelor la timp.' },
+      { title: 'Înțelegere doar verbală', text: 'Fără contract scris, orice dispută despre ce era inclus devine greu de rezolvat.' },
+      { title: 'Plata integrală în avans', text: 'Leagă plățile de etape terminate și verificate.' },
+      { title: 'Schimbări pe parcurs fără act adițional', text: 'Modificările cer notate în scris, cu efect asupra costului și termenului.' },
+      { title: 'Alegerea doar după cel mai mic preț', text: 'Diferența apare de obicei în ce nu a fost inclus, nu în preț.' },
+      { title: 'Lipsa controlului pe structură', text: 'Fundația, armarea și zidăria se verifică înainte să fie acoperite.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Manopera depinde de suprafața construită și de complexitatea ei: număr de niveluri, forma acoperișului, tipul de structură (zidărie, beton, lemn, metal), nivelul finisajelor. Mai contează terenul, accesul pentru utilaje, apropierea de utilități, sezonul și cât din lucrare e inclus în ofertă.',
+      'Diferența dintre o ofertă „doar manoperă” și una „la cheie” este mare: în a doua intră și materialele, uneori și proiectul și autorizațiile. Pentru ordine de mărime, vezi paginile de preț despre manoperă în construcții, manoperă la zidărie și case la cheie, nu cifre din discuții.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Cere de la fiecare firmă aceeași listă de lucrări și compară pe rânduri: ce etape sunt incluse, ce materiale sunt în preț, cine ridică utilajele și transportul, cine se ocupă de deșeuri și de curățenie, care sunt termenele și cum se plătește.',
+      'Dacă oferta e un total fără detalii, cere defalcare pe etape. O ofertă clară pe etape te ajută și la plată, fiindcă fiecare tranșă poate fi legată de o lucrare terminată.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă ce case sau extinderi similare a construit firma și cere să vezi una terminată și una în lucru. Verifică dacă lucrează cu personal propriu sau cu subcontractori și cine este responsabilul de șantier. Cere să vezi modelul de contract înainte de ofertă finală.',
+      'Compară cel puțin două sau trei oferte și discută cu clienții anteriori despre respectarea termenelor și despre cum a fost rezolvat ce n-a mers bine. Pe IntraConstruct vezi firmele verificate și recenziile.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre firme de construcții' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru construcții' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la construcții' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte de la firme de construcții?', text: 'Descrie casa sau extinderea și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

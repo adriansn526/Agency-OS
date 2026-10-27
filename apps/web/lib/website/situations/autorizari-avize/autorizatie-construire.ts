@@ -1,0 +1,76 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const autorizatieConstruire: SituationContent = {
+  slug: 'autorizari-avize--autorizatie-construire',
+  categorie: 'autorizari-avize',
+  title: 'Autorizație de construire',
+  seoTitle: 'Autorizație de construire: etape, roluri, ce verifici',
+  seoDescription: 'Cum decurge autorizarea unei construcții: cine face ce (primărie, proiectant, verificatori), când e nevoie de ea și ce verifici la primărie înainte să începi.',
+  summary: 'Etapele și rolurile în obținerea autorizației de construire, când e nevoie de ea, ce se întâmplă fără autorizație și ce verifici la primărie.',
+  sinonime: ['autorizatie de construire', 'autorizatia de construire', 'autorizatie de constructie', 'autorizare constructie', 'taxa autorizatie de construire', 'casa fara autorizatie', 'constructie fara autorizatie', 'obtinere autorizatie', 'autorizație de construire', 'autorizația de construire', 'autorizație de construcție', 'autorizare construcție', 'taxa autorizație de construire', 'casă fără autorizație', 'construcție fără autorizație', 'obținere autorizație'],
+  intrebari: [
+    'Ce este autorizația de construire? | Actul prin care primăria sau autoritatea competentă permite executarea unei lucrări de construcții, pe baza unui proiect și a avizelor cerute. Fără ea, în cazurile în care este obligatorie, lucrarea este considerată neautorizată.',
+    'Când este necesară? | Pentru construcții noi, extinderi, modificări importante și alte lucrări prevăzute de lege. Unele intervenții mici nu o cer, altele cer doar acte mai simple. Depinde de lucrare, de zonă și de clădire, deci întreabă la primărie înainte să începi.',
+    'Cine face ce în procedură? | Primăria analizează dosarul și emite actul. Proiectantul întocmește documentația tehnică. Specialiști autorizați pot verifica proiectul, iar instituțiile de avizare dau acorduri pe domeniul lor. Proprietarul depune, urmărește și plătește taxele.',
+    'Ce acte se cer? | Lista depinde de tipul lucrării, de zonă și de primărie și se poate schimba. Verifică la primărie sau pe site-ul instituției; proiectantul cunoaște de obicei cerințele locale și poate pregăti documentația.',
+    'Cât costă și cât durează? | Taxele și termenele depind de reglementările locale și legale și de complexitatea lucrării. Nu le poți deduce din surse generale: întreabă la primărie sau consultă site-ul instituției. La costul total se adaugă proiectul și avizele.',
+    'Ce se întâmplă dacă construiesc fără autorizație? | Pot apărea amenzi, oprirea lucrării, obligația de legalizare sau, în unele cazuri, de desființare, și greutăți la vânzare, intabulare sau credit. Dacă ai deja o construcție fără acte, discută cu un specialist și cu primăria despre variantele posibile.',
+    'Pot face singur dosarul? | Teoretic da, dar proiectul tehnic îl semnează specialiști atestați, iar procedura cere cunoașterea cerințelor locale. Un proiectant sau un birou de specialitate scurtează drumul și reduce riscul de completări repetate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Autorizația de construire: etape, roluri și ce verifici', subtitle: 'Când e nevoie de ea, cine face ce și ce întrebi la primărie. Actele, taxele și termenele diferă și se schimbă; aici găsești ordinea și întrebările corecte.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine eliberează', value: 'Primăria sau autoritatea competentă' },
+      { label: 'Documentația', value: 'Întocmită de proiectant autorizat' },
+      { label: 'Actele și taxele', value: 'Verifică la primărie' },
+      { label: 'Fără autorizație', value: 'Riscuri la vânzare și intabulare' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Autorizația de construire este actul care permite începerea unei lucrări de construcții acolo unde legea o cere. Se obține pe baza unui proiect, a unor avize și a unui dosar depus la primărie.',
+      'Pagina explică etapele și rolurile, nu enumeră acte sau taxe. Lista actelor, taxele și termenele diferă de la o primărie la alta și se schimbă în timp; ele se verifică la instituție. Certificatul de urbanism, care precede de obicei autorizarea, are pagina lui.',
+    ) }),
+    node('steps-h', 'heading', { text: 'Etapele, la nivel de principiu', level: 'h2' }),
+    node('steps', 'steps', { title: 'Cum decurge autorizarea', items: [
+      { title: 'Informare la primărie', text: 'Afli dacă lucrarea cere autorizație și ce procedură se aplică în zona ta.' },
+      { title: 'Certificat de urbanism', text: 'De obicei primul act: arată condițiile terenului și avizele necesare. Vezi pagina dedicată.' },
+      { title: 'Documentația tehnică', text: 'Proiectantul întocmește documentația, iar verificatori autorizați o pot verifica, după tipul lucrării.' },
+      { title: 'Avize și acorduri', text: 'Se obțin avizele cerute de la instituțiile competente, de exemplu pentru utilități, mediu sau securitate la incendiu.' },
+      { title: 'Depunere și analiză', text: 'Dosarul se depune la primărie, care îl analizează și poate cere completări.' },
+      { title: 'Emiterea autorizației', text: 'Citești condițiile și execuți lucrarea conform proiectului autorizat; la final, lucrarea se recepționează.' },
+    ] }),
+    node('what-h', 'heading', { text: 'Cine face ce', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Proprietarul', text: 'Depune cererea, pune la dispoziție actele despre teren, plătește taxele și respectă condițiile din autorizație.' },
+      { title: 'Proiectantul', text: 'Întocmește documentația tehnică și, de obicei, ajută la dosar și la avize.' },
+      { title: 'Verificatorii și experții', text: 'Specialiști atestați verifică proiectul pe domeniul lor, când legea o cere.' },
+      { title: 'Primăria și instituțiile de avizare', text: 'Analizează, cer completări și emit actele sau acordurile.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Începerea lucrării înainte de autorizare', text: 'Riscul este de amendă, oprire a lucrărilor sau obligația de a legaliza ulterior.' },
+      { title: 'Schimbarea proiectului în timpul execuției', text: 'Modificările față de autorizație pot cere acte noi. Întreabă înainte.' },
+      { title: 'Actele luate din surse vechi', text: 'Procedurile se schimbă. Folosește sursa oficială și actualizată.' },
+      { title: 'Plata fără contract', text: 'Cu proiectantul sau biroul, stabilește în scris ce include serviciul.' },
+      { title: 'Lipsa terenului intabulat sau clarificat', text: 'Probleme de proprietate sau de limite întârzie dosarul. Vezi pagina de cadastru.' },
+      { title: 'Presupunerea că „merge și așa”', text: 'Construcțiile fără acte afectează vânzarea, creditarea și asigurarea.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Taxele către primărie și instituții se stabilesc prin reglementări locale și legale și se verifică la ele. Costul proiectării depinde de tipul și de dimensiunea construcției, de complexitatea terenului și de numărul de avize necesare.',
+      'Cere de la proiectant ofertă scrisă care separă proiectul, depunerea dosarului, avizele și eventualele verificări, și spune ce taxe rămân în sarcina ta.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un proiectant sau un birou', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă ce lucrări similare a autorizat și dacă cunoaște primăria unde depui. Cere ofertă scrisă, cu etape și termene de predare, și verifică dacă specialiștii implicați sunt atestați pentru lucrarea ta.',
+      'Nu accepta promisiuni de „obținere sigură” sau de termene garantate, pentru că decizia aparține instituțiilor.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre autorizația de construire' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru construcții și proiectare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la autorizări și avize' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de proiectant sau de ajutor cu dosarul?', text: 'Descrie lucrarea și primești oferte de la specialiști din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

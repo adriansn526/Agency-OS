@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const marchizeCopertine: SituationContent = {
+  slug: 'structuri-metalice-fier-forjat--marchize-copertine',
+  categorie: 'structuri-metalice-fier-forjat',
+  title: 'Marchize și copertine din fier forjat',
+  seoTitle: 'Marchize și copertine: fier forjat, policarbonat',
+  seoDescription: 'Marchize și copertine din fier forjat, policarbonat sau retractabile: tipuri, prindere, siguranță, ordinea lucrării, de ce depinde costul și cum compari ofertele.',
+  summary: 'Cum alegi o marchiză sau o copertină, ce tipuri există, cum se montează în siguranță și ce compari în ofertele atelierelor.',
+  sinonime: ['marchiza', 'marchiza retractabila', 'copertina fier forjat', 'copertina policarbonat', 'marchize', 'marchiză', 'marchiză retractabilă', 'copertină fier forjat', 'copertină policarbonat'],
+  intrebari: [
+    'Ce diferență este între marchiză și copertină? | Copertina este de obicei fixă, cu structură și acoperire care protejează intrarea sau o zonă de lucru. Marchiza este adesea o pânză retractabilă, care se strânge sau se desfășoară după nevoie.',
+    'Din ce se face acoperirea copertinei? | Cel mai des din policarbonat, sticlă securizată sau tablă. Fiecare lasă să treacă diferit lumina și face alt zgomot când plouă, iar alegerea depinde de gust, de climă și de buget.',
+    'Cine stabilește prinderea în fațadă? | Atelierul sau producătorul, după ce vede peretele. Prinderea în zidărie goală, în polistiren sau în beton cere soluții diferite, iar o prindere greșită este riscul principal.',
+    'Ce rol are vântul și zăpada? | Mari. Structura trebuie să țină la vânt și, la copertine fixe, la zăpadă. Dimensionarea o face producătorul sau proiectantul, nu o estimezi tu din ochi.',
+    'Am nevoie de acordul vecinilor sau al primăriei? | Poate, dacă structura iese pe domeniu comun sau în fața unui bloc. Întreabă la primărie și, dacă locuiești în bloc, la asociație.',
+    'Marchiza retractabilă are motor? | Poate avea manual sau motor, iar la motor intervine instalația electrică, făcută de un electrician autorizat. Cere clar ce intră în ofertă.',
+    'De ce depinde costul? | De tipul structurii, de material, de mărime, de motorizare, de dificultatea prinderii și de finisaj. Vezi paginile de preț de mai jos și cere oferte detaliate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Marchize și copertine: tipuri, prindere și oferte', subtitle: 'Fier forjat, policarbonat sau marchiză retractabilă: ce alegi, cum se montează în siguranță și ce compari. Ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Fixe sau retractabile' },
+      { label: 'Siguranța', value: 'Prindere, vânt, zăpadă' },
+      { label: 'Autorizații', value: 'Depind de loc' },
+      { label: 'Oferta', value: 'Detaliată, cu montaj' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Marchiza sau copertina protejează intrarea, terasa sau o zonă de lucru de ploaie și soare. Alegerea se face între o structură fixă, din fier forjat sau oțel, și o soluție retractabilă din pânză, iar acoperirea poate fi policarbonat, sticlă sau tablă.',
+      'Pagina te ajută să vezi diferențele și să știi ce întrebi. Dimensiunile, încărcările și prinderea le stabilește producătorul sau proiectantul pentru casa ta. Terasele și pergolele au pagina lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de soluții', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Copertină din fier forjat', text: 'Structură decorativă din oțel, cu acoperire din sticlă, policarbonat sau tablă. Se potrivește unor intrări tradiționale.' },
+      { title: 'Copertină din policarbonat', text: 'Acoperire ușoară care lasă lumină. Cere tipul potrivit exteriorului și structura de susținere.' },
+      { title: 'Marchiză retractabilă', text: 'Pânză care se desfășoară când este nevoie, manual sau cu motor. Util pe terasă și la ferestre expuse soarelui.' },
+      { title: 'Copertină la acces', text: 'Protejează ușa de intrare, o rampă sau un loc de parcare, cu structură prinsă în perete sau pe stâlpi.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Structura din fier forjat sau oțel se protejează cu vopsea sau zincare, iar îmbinările sudate se verifică înainte de montaj. Acoperirea se alege după lumină, zgomot și întreținere: policarbonatul este ușor, sticla securizată este mai grea, iar tabla dă mai puțină lumină.',
+      'La marchizele retractabile contează țesătura, mecanismul și rezistența la vânt. Un sistem cu motor cere racord electric, făcut de un electrician autorizat, nu de atelierul de fier.',
+      'Dimensionarea și soluția de prindere le stabilește producătorul sau proiectantul. Peretele (zidărie, beton, termosistem) schimbă tipul de ancoră, deci spune-i atelierului din ce este făcută fațada.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea tipului și a locului', text: 'Stabilești ce protejezi și ce acoperire vrei. Verifici dacă ai nevoie de acorduri.' },
+      { title: 'Măsurători și proiect', text: 'Atelierul măsoară, verifică fațada și îți propune soluția, cu desen de execuție.' },
+      { title: 'Fabricație', text: 'Structura se execută în atelier și se protejează împotriva coroziunii.' },
+      { title: 'Montaj în siguranță', text: 'Echipa fixează structura, montează acoperirea și face racordul pentru scurgerea apei.' },
+      { title: 'Verificare', text: 'Se verifică rigiditatea, scurgerea apei și funcționarea mecanismului, la marchizele cu motor.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Prindere în fațadă slabă', text: 'Ancorele puse în polistiren sau în zidărie ușoară pot ceda sub vânt sau zăpadă.' },
+      { title: 'Scurgere neglijată', text: 'Apa care se prelinge pe perete sau cade pe trecători strică finisajul și deranjează.' },
+      { title: 'Acoperire nepotrivită', text: 'Policarbonat de calitate slabă sau nepotrivit exteriorului se degradează repede.' },
+      { title: 'Fără acorduri, unde se cer', text: 'O structură care iese pe domeniu comun poate fi oprită sau contestată.' },
+      { title: 'Marchiză fără motor corect montat', text: 'Racordul electric făcut de neautorizați este un risc.' },
+      { title: 'Oferte necomparabile', text: 'Fără material, grosime și montaj specificate nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul structurii (fier forjat cu decorațiuni sau simplă), de acoperire, de mărime, de dificultatea prinderii, de existența motorului și de finisaj. O marchiză motorizată cu senzori costă diferit de una manuală.',
+      'Cere ofertă separată pe structură, acoperire, montaj și accesorii și vezi paginile de preț de mai jos. Fără sume inventate, compară ce primești în fiecare ofertă.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi atelierul', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă ce material de acoperire folosesc, cum fac prinderea și cum protejează metalul. Un atelier care nu vine să măsoare nu poate da o ofertă serioasă.',
+      'Cere ofertă scrisă, cu termen, condiții de plată și detalii despre retușuri după montaj. La lucrările electrice, întreabă cine le face și dacă este autorizat.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre marchize și copertine' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru structuri metalice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la structuri metalice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei o marchiză sau o copertină montată de profesioniști?', text: 'Descrie locul și tipul dorit și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const haleConstructiiMetalice: SituationContent = {
+  slug: 'structuri-metalice-fier-forjat--hale-constructii-metalice',
+  categorie: 'structuri-metalice-fier-forjat',
+  title: 'Hale și construcții metalice',
+  seoTitle: 'Hale și construcții metalice: ce cere, cum compari',
+  seoDescription: 'Hale și construcții metalice: proiect, fundație, structură, închideri, autorizații care depind de caz, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Cum se face o hală sau o construcție metalică, ce etape are, ce autorizații pot fi necesare și ce compari în ofertele firmelor.',
+  sinonime: ['hala metalica', 'hale metalice', 'confectii metalice', 'constructii metalice', 'structura metalica', 'hala pret', 'hală metalică', 'confecții metalice', 'construcții metalice', 'structură metalică', 'hală preț'],
+  intrebari: [
+    'Ce include o hală metalică? | De regulă proiectul, fundația, structura din oțel, învelitoarea și închiderile laterale, uneori și porți, ferestre și instalații. Oferta trebuie să spună exact ce intră și ce rămâne în sarcina ta.',
+    'Cine proiectează structura? | Un inginer constructor sau un proiectant, pe baza destinației halei, a locului și a încărcărilor din zonă. Dimensionarea nu se face din obișnuință sau din ofertă tip.',
+    'Am nevoie de autorizație? | Depinde de destinație, de dimensiune, de teren și de zonă. Nu da nimic de bun fără să întrebi la primărie și la proiectantul tău; regulile diferă și se schimbă.',
+    'Ce rol are fundația? | Hala se așază pe fundații calculate pentru sol și încărcări. Soluția o stabilește proiectantul după un studiu al terenului, iar execuția o face echipa de beton.',
+    'Se poate extinde o hală existentă? | Uneori da, dacă structura și fundațiile permit. Cere o evaluare a celei existente înainte să decizi, pentru că adăugirea schimbă încărcările.',
+    'Ce înseamnă construcții metalice la scară mică? | Șoproane, copertine mari, structuri pentru terase și alte lucrări din oțel. Siguranța se stabilește și aici prin calcul, nu doar după aspect.',
+    'De ce depinde costul? | De destinație, de dimensiuni, de tipul închiderilor, de fundații, de teren, de transport și montaj și de dotări. Paginile de preț și o ofertă detaliată te ajută mai mult decât un preț pe metru.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Hale și construcții metalice: pașii și ce întrebi', subtitle: 'De la proiect la montaj, ce autorizații pot fi necesare și cum compari ofertele. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Structura', value: 'Proiectată de inginer' },
+      { label: 'Autorizații', value: 'Depind de caz' },
+      { label: 'Execuția', value: 'Echipe calificate' },
+      { label: 'Oferta', value: 'Pe etape, clară' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O hală metalică se alege pentru viteza de montaj și pentru deschiderile libere mari. Poate fi depozit, atelier, garaj mare, spațiu agricol sau un spațiu comercial. Fiecare destinație are cerințe diferite, deci oferta unei firme trebuie să pornească de la ce vei face în hală.',
+      'Pagina explică etapele, riscurile și întrebările utile. Dimensiunile, încărcările și autorizațiile depind de caz, așa că aici nu apar cifre, iar firma și proiectantul răspund pentru hala ta.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poate fi o construcție metalică', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Hală industrială sau de depozitare', text: 'Spațiu mare, cu deschideri libere, destinat depozitării sau producției.' },
+      { title: 'Hală agricolă', text: 'Pentru utilaje, cereale sau adăposturi, cu închideri adaptate destinației.' },
+      { title: 'Garaj sau atelier mare', text: 'Variantă pentru curți mari, unde structura metalică se montează rapid.' },
+      { title: 'Structuri auxiliare', text: 'Șoproane, copertine mari și platforme, unde structura ține mai mult decât pare.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Din ce se compune și ce soluții există', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Structura se compune din stâlpi, grinzi și contravântuiri din oțel, îmbinate prin sudură sau șuruburi, și se sprijină pe fundații din beton. Peste ea vine învelitoarea, iar pereții laterali se închid cu panouri sau alte soluții.',
+      'Alegerea panourilor și a izolației depinde de ce se întâmplă în hală. Un depozit de piese nu cere ce cere un spațiu cu oameni care lucrează toată ziua. Cere detalii despre izolare și ventilare dacă hala va fi încălzită sau climatizată.',
+      'Sudura și îmbinările portante se fac de personal calificat. Proiectul de structură și detaliile de îmbinare trebuie să fie scrise, nu improvizate pe șantier.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Clarificarea destinației și a terenului', text: 'Definești ce faci în hală și verifici ce cere terenul din punct de vedere al regulilor locale. Întreabă la primărie.' },
+      { title: 'Proiect și autorizații', text: 'Se întocmește proiectul de structură și, dacă este cazul, se obțin avizele. Ce este necesar depinde de caz.' },
+      { title: 'Fundații', text: 'Se execută conform proiectului, cu ancoraje pentru stâlpi poziționate exact.' },
+      { title: 'Fabricație și montaj structură', text: 'Elementele se pregătesc în atelier, apoi se ridică și se îmbină pe șantier cu echipă calificată.' },
+      { title: 'Învelitoare și închideri', text: 'Se montează acoperișul, pereții, porțile și ferestrele, apoi se verifică etanșeitatea.' },
+      { title: 'Instalații și recepție', text: 'Electricitate, iluminat și alte dotări, apoi verificări și recepția lucrării.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Comandă fără destinație clară', text: 'Hala gândită pentru depozit nu se potrivește unui spațiu cu program zilnic de lucru.' },
+      { title: 'Lipsa studiului de teren', text: 'Fundația bazată pe presupuneri poate da probleme după ce hala e montată.' },
+      { title: 'Început fără acte', text: 'Dacă se cer autorizații și nu le ai, riști oprirea lucrării sau alte consecințe.' },
+      { title: 'Ofertă „la cheie” fără listă', text: 'Fără listă clară nu poți compara firmele și nu știi ce lipsește.' },
+      { title: 'Îmbinări slab controlate', text: 'Sudura și șuruburile trebuie verificate, mai ales la nodurile principale.' },
+      { title: 'Uitarea instalațiilor', text: 'Electric, scurgeri și ventilație se planifică de la început, nu după ridicarea pereților.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul se schimbă cu destinația, cu mărimea, cu tipul fundațiilor, cu izolarea, cu închiderile, cu transportul și cu accesul pe șantier. Dotările (porți, ferestre, instalații) pot schimba mult oferta, iar terenul influențează fundația.',
+      'O cifră „pe metru” fără listă de ce include nu te ajută să compari. Cere ofertă pe etape (proiect, fundație, structură, închideri, montaj) și uită-te la paginile de preț de mai jos pentru factorii care contează.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vizita și întreabă cine proiectează, cine execută sudura și cine răspunde de structură. O firmă serioasă separă clar proiectul de execuție.',
+      'Cere contract scris cu etape, termene și condiții de plată, și stabilește cum se fac recepția și remedierea defectelor. Evită plata integrală în avans.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre hale metalice' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru structuri metalice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la structuri metalice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Plănuiești o hală sau o structură metalică?', text: 'Descrie destinația și terenul și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,83 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const diriginteSantierAutorizat: SituationContent = {
+  slug: 'diriginte-santier--diriginte-santier-autorizat',
+  categorie: 'diriginte-santier',
+  title: 'Diriginte de șantier autorizat',
+  seoTitle: 'Diriginte de șantier autorizat: rol, cum îl alegi',
+  seoDescription: 'Ce face un diriginte de șantier autorizat, când este necesar, cum verifici autorizarea, ce urmărește pe etape, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce face dirigintele de șantier, când se cere, cum verifici că este autorizat și ce să cuprindă contractul și oferta.',
+  sinonime: ['diriginte santier', 'diriginte de santier pret', 'diriginte de santier autorizat', 'isc diriginte de santier', 'lista diriginti de santier isc', 'registru diriginte de santier', 'dirigintie de santier', 'diriginte șantier', 'diriginte de șantier preț', 'diriginte de șantier autorizat', 'isc diriginte de șantier', 'listă diriginți de șantier isc', 'registru diriginte de șantier', 'diriginție de șantier'],
+  intrebari: [
+    'Ce face un diriginte de șantier? | Reprezintă beneficiarul pe șantier și verifică dacă lucrarea se execută conform proiectului, autorizației și regulilor aplicabile. Urmărește calitatea execuției, participă la verificările pe etape și semnalează neconformitățile.',
+    'Cine poate fi diriginte de șantier? | O persoană autorizată în acest scop de Inspectoratul de Stat în Construcții (ISC), în domeniul corespunzător lucrării. Autorizarea se verifică în evidențele instituției, nu pe cuvânt.',
+    'Când este nevoie de diriginte? | În general la lucrările pentru care se cere autorizație de construire, iar pentru unele lucrări mai mici regulile diferă. Ca să afli, întreabă la primărie sau la ISC dacă proiectul tău are nevoie de el.',
+    'Dirigintele este același lucru cu responsabilul tehnic cu execuția? | Nu. Dirigintele este de partea beneficiarului, iar responsabilul tehnic cu execuția este în echipa constructorului. Sunt roluri separate, cu atribuții diferite, și bine ar fi să nu fie aceeași persoană.',
+    'Cum verific că dirigintele este autorizat? | Cere legitimația sau atestatul și caută-l în registrul sau în lista publicată de ISC. Verifică și domeniul pentru care este autorizat, să corespundă lucrării tale.',
+    'Poate dirigintele să fie și constructorul? | Nu este recomandat și, în multe situații, nici permis, pentru că ar controla propria lucrare. Alege un diriginte independent de firma care execută.',
+    'Ce urmărește dirigintele pe etape? | Începutul lucrării, verificarea fundațiilor, structurii, instalațiilor și finisajelor, participarea la verificările lucrărilor ascunse și la recepție. Detaliile le stabilește contractul și natura lucrării.',
+    'De ce depinde costul dirigintelui? | De mărimea și complexitatea lucrării, de cât durează execuția, de numărul vizitelor pe șantier și de distanță. Cere oferta scrisă cu frecvența vizitelor. Pentru repere vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Diriginte de șantier autorizat: cum îl alegi și ce face', subtitle: 'Rolul lui pe șantier, cum verifici autorizarea și ce să ceri în contract. Descrie lucrarea și primești oferte, fără obligații.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Rol', value: 'Reprezintă beneficiarul pe șantier' },
+      { label: 'Autorizare', value: 'Diriginte autorizat ISC' },
+      { label: 'Verifici', value: 'Evidența publică a ISC' },
+      { label: 'Contract', value: 'Vizite și atribuții scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Pe un șantier, constructorul execută, iar cineva trebuie să verifice în numele beneficiarului că se execută corect. Acesta este dirigintele de șantier. El nu construiește: urmărește, controlează și semnalează, astfel încât să nu descoperi abia la final ce s-a făcut greșit.',
+      'Pagina explică rolul lui, cum verifici că este autorizat și ce să ceri într-o ofertă. Dacă ai nevoie de el pentru o lucrare concretă, poți cere oferte de la specialiști verificați.',
+    ) }),
+    node('role-h', 'heading', { text: 'Ce face un diriginte', level: 'h2' }),
+    node('role', 'cards', { columns: '2', items: [
+      { title: 'Verifică conformitatea', text: 'Compară ce se execută cu proiectul și cu autorizația și cere corectarea abaterilor.' },
+      { title: 'Urmărește calitatea', text: 'Verifică materialele folosite, documentele lor și modul de punere în operă.' },
+      { title: 'Participă la lucrările ascunse', text: 'Fundații, armături, hidroizolații și instalații îngropate se verifică înainte de a fi acoperite.' },
+      { title: 'Ține evidența', text: 'Consemnează constatările și comunicările în documentele șantierului.' },
+      { title: 'Participă la recepție', text: 'Alături de beneficiar și constructor, la finalul lucrării.' },
+      { title: 'Te informează', text: 'Îți spune în scris ce a găsit și ce trebuie remediat, ca să decizi în cunoștință de cauză.' },
+    ] }),
+    node('auth-h', 'heading', { text: 'Cum verifici autorizarea', level: 'h2' }),
+    node('auth', 'text', { body: para(
+      'Dirigintele de șantier trebuie să fie autorizat de Inspectoratul de Stat în Construcții (ISC), în domeniul corespunzător lucrării. Autorizarea este pe domenii, deci o persoană autorizată pentru instalații nu este automat potrivită pentru o structură.',
+      'Cere să vezi legitimația și verifică persoana în lista sau registrul public al ISC. Dacă ai dubii, ISC sau inspectoratul teritorial îți pot spune ce s-a înregistrat și ce domenii are persoana respectivă.',
+      'Nu este nevoie să memorezi regulile: important este ca titlul să fie verificabil, nu doar afirmat în ofertă.',
+    ) }),
+    node('steps', 'steps', { title: 'Etapele lucrării și rolul dirigintelui', items: [
+      { title: 'Înainte de start', text: 'Verifică dacă autorizația și proiectul sunt la șantier și dacă datele de început sunt consemnate.' },
+      { title: 'Fundații și structură', text: 'Urmărește execuția și verificările înainte de turnare sau de acoperire.' },
+      { title: 'Zidărie, acoperiș, instalații', text: 'Verifică respectarea proiectului și a prescripțiilor, inclusiv la lucrările care vor fi ascunse.' },
+      { title: 'Finisaje', text: 'Urmărește calitatea execuției și remedierea defectelor semnalate.' },
+      { title: 'Recepție', text: 'Participă la recepția lucrării și la întocmirea documentelor de final, împreună cu beneficiarul și constructorul.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Dirigintele ales de constructor', text: 'Își pierde independența. Beneficiarul îl alege și îl plătește direct.' },
+      { title: 'Nu verifici autorizarea', text: 'O persoană neautorizată nu are calitatea cerută, iar documentele ei pot fi contestate.' },
+      { title: 'Contract fără frecvența vizitelor', text: 'Fără vizite stabilite, dirigenția devine o semnătură la final.' },
+      { title: 'Lucrări ascunse acoperite fără el', text: 'Fundația sau hidroizolația nu se mai pot verifica după acoperire.' },
+      { title: 'Confuzia cu responsabilul tehnic', text: 'Sunt două roluri diferite; clarifică în contracte cine ce face.' },
+      { title: 'Observații doar verbale', text: 'Cere constatările în scris, ca să poți obliga constructorul la remediere.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul depinde de mărimea și complexitatea lucrării, de cât durează execuția, de numărul de vizite pe șantier, de distanța până la șantier și de domeniul de autorizare necesar. O casă mică și o clădire cu mai multe niveluri nu se compară.',
+      'Cere să fie scris în ofertă ce include prețul: frecvența vizitelor, participarea la lucrările ascunse, recepția și eventualele deplasări suplimentare. Pentru ordine de mărime vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum compari ofertele și alegi dirigintele', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere cel puțin două oferte și compară-le pe aceleași criterii: domeniul de autorizare, vizitele incluse, atribuțiile scrise și disponibilitatea la lucrările ascunse. Un preț mic cu puține vizite nu protejează lucrarea.',
+      'Întreabă ce lucrări asemănătoare a urmărit și cum comunică observațiile. Pe IntraConstruct vezi specialiștii verificați și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre dirigintele de șantier' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru diriginte de șantier' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la diriginte de șantier' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un diriginte de șantier?', text: 'Descrie lucrarea și primești oferte de la diriginți autorizați din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

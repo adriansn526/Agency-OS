@@ -1,0 +1,83 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const plaseTantari: SituationContent = {
+  slug: 'geamuri--plase-tantari',
+  categorie: 'geamuri',
+  title: 'Plase de țânțari (rulou, plisse, magnetice)',
+  seoTitle: 'Plase de țânțari: tipuri, montaj, măsurare, ofertă',
+  seoDescription: 'Plase de țânțari rulou, plisse, culisante sau magnetice: tipuri, unde se montează la ferestre și uși, cum se măsoară, întreținere și cum compari ofertele.',
+  summary: 'Ce tipuri de plase de țânțari există, unde se potrivește fiecare, cum se măsoară, cum se întrețin și ce să compari în oferte.',
+  sinonime: ['plase tantari', 'plasa tantari', 'plasa tantar', 'plasa de tantari', 'plase de tantari', 'plasa tantari rulou', 'plase tantari plisse', 'plasa tantari usa', 'plasa insecte', 'plase insecte', 'plasa tantari magnetica', 'plase țânțari', 'plasă țânțari', 'plasă țânțar', 'plasă de țânțari', 'plase de țânțari', 'plasă țânțari rulou', 'plase țânțari plisse', 'plasă țânțari ușă', 'plasă insecte', 'plasă țânțari magnetică'],
+  intrebari: [
+    'Ce tipuri de plase de țânțari există? | Cele frecvente sunt plasa fixă în ramă, plasa rulou, plasa plisse (pliantă), plasa culisantă și plasa cu bandă magnetică sau cu velcro. Se aleg după locul unde se montează, frecvența de folosire și cât spațiu ai la fereastră sau la ușă.',
+    'Care plasă este potrivită pentru ușa de balcon? | La uși se folosesc de obicei plasele rulou, plisse sau culisante, pentru că se deschid ușor și lasă trecerea liberă. Cele magnetice ușoare sunt pentru uz ocazional, mai puțin pentru trafic intens.',
+    'Ce diferență este între plasa rulou și cea plisse? | Plasa rulou se strânge într-o casetă și se trage pe ghidaje. Plisse-ul se pliază ca un acordeon și se deschide lateral sau în sus, util mai ales la uși. Alege după spațiul disponibil și după cât de des treci prin deschidere.',
+    'Plasa se poate monta pe orice fereastră sau ușă? | De cele mai multe ori da, dar depinde de tipul tâmplăriei, de spațiul din jurul ei și de rulouri sau jaluzele exterioare. Dacă ai rulouri exterioare, spune-i firmei ca să nu se blocheze reciproc.',
+    'Cum se măsoară pentru plasa de țânțari? | Se măsoară deschiderea în care intră plasa, nu geamul. Cel mai sigur este să măsoare firma, pentru că măsurătorile se iau diferit după tipul plasei și locul de montaj.',
+    'Cum se întreține o plasă de țânțari? | Se curăță cu apă și detergent blând, cu o cârpă sau o perie moale, fără a întinde sau a înțepa plasa. La plasele rulou și plisse se curăță și ghidajele, ca să nu se blocheze cu praf.',
+    'Plasa oprește și praful sau polenul? | Depinde de țesătura aleasă. Există țesături cu ochiuri mai dese, dar acestea pot reduce aerisirea și lumina; întreabă firma ce variante are și ce efect au.',
+    'De ce depinde costul? | De tipul plasei, de dimensiunea deschiderii, de culoarea profilelor, de complexitatea montajului și de numărul de bucăți. Cere ofertă cu specificațiile scrise. Pentru repere vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Plase de țânțari: cum alegi tipul și cum compari ofertele', subtitle: 'Rulou, plisse, culisante sau magnetice: unde se potrivește fiecare, cum se măsoară și ce întrebi firma. Descrie ce ai și primești oferte, fără obligații.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Fixă, rulou, plisse, culisantă, magnetică' },
+      { label: 'Măsurare', value: 'Preferabil de către firmă' },
+      { label: 'Atenție', value: 'Compatibilitate cu rulourile' },
+      { label: 'Întreținere', value: 'Apă, detergent blând, ghidaje curate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Plasa de țânțari pare simplă, dar tipul greșit se vede repede: se blochează, se rupe sau stă greu la ușa folosită zilnic. Alegerea depinde de unde o montezi, cât de des o folosești și ce ai deja la fereastră sau la ușă.',
+      'Pagina trece prin tipuri, locuri de montaj, măsurare și întreținere, și te ajută să compari ofertele. Tâmplăria în sine are pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de plase', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Plasa fixă în ramă', text: 'Se montează în cadrul ferestrei și se scoate pentru curățare. Potrivită pentru ferestre care nu se folosesc ca trecere.' },
+      { title: 'Plasa rulou', text: 'Se strânge într-o casetă și se trage pe ghidaje. Păstrează deschiderea liberă când nu e folosită.' },
+      { title: 'Plasa plisse', text: 'Se pliază ca un acordeon. Este frecventă la uși și la deschideri mari, unde se trece des.' },
+      { title: 'Plasa culisantă', text: 'Alunecă pe șine, ca o ușă culisantă. Potrivită pentru ferestre și uși cu deschidere laterală.' },
+      { title: 'Plasa magnetică', text: 'Se prinde cu bandă magnetică sau cu velcro. Soluție simplă pentru uz ocazional, mai puțin pentru trafic intens.' },
+      { title: 'Plasa pentru ușa de balcon', text: 'De obicei rulou, plisse sau culisantă, pentru că lasă trecerea liberă și rezistă folosirii zilnice.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se montează și ce verifici înainte', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Plasa se montează pe ferestre, pe uși de balcon sau de terasă, uneori și pe luminatoare. Verifică dacă ai rulouri sau jaluzele exterioare, dacă tâmplăria permite fixarea ghidajelor și cât spațiu rămâne pentru casetă. Pentru uși și ferestre noi sau înlocuite, poți decide plasa odată cu tâmplăria, ca să se potrivească cu profilele.',
+      'Dacă se montează la înălțime sau pe exterior, întreabă cum se face accesul. Lucrul la înălțime îl face personal pregătit, nu se improvizează pe scară sau pe pervaz.',
+    ) }),
+    node('measure-h', 'heading', { text: 'Măsurare și montaj', level: 'h2' }),
+    node('measure', 'steps', { title: 'Cum decurge comanda', items: [
+      { title: 'Alegi tipul', text: 'Pornești de la locul de montaj și de cât de des treci prin deschidere.' },
+      { title: 'Măsurarea', text: 'Se măsoară deschiderea în care intră plasa. Măsurătorile diferă după tipul plasei, deci cel mai sigur este să le ia firma.' },
+      { title: 'Confecționarea', text: 'Plasa se face pe dimensiune, cu profilele și țesătura alese.' },
+      { title: 'Montajul', text: 'Se fixează ghidajele sau rama și se verifică deschiderea, închiderea și etanșeitatea la margini.' },
+      { title: 'Verificarea', text: 'Încearcă plasa de mai multe ori înainte să semnezi recepția și cere instrucțiunile de întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Măsurarea geamului, nu a deschiderii', text: 'Plasa nu intră sau lasă goluri pe margini.' },
+      { title: 'Plasa magnetică la trafic intens', text: 'Se desprinde sau se rupe la folosire zilnică.' },
+      { title: 'Ignorarea rulourilor existente', text: 'Casetele se pot bloca reciproc dacă nu se planifică împreună.' },
+      { title: 'Țesătură nepotrivită', text: 'Ochiurile foarte dese pot reduce aerisirea și lumina.' },
+      { title: 'Ghidaje neîntreținute', text: 'Praful și resturile blochează plasa rulou sau plisse.' },
+      { title: 'Ofertă fără specificații', text: 'Fără tip, țesătură și profile scrise, ofertele nu se pot compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul depinde de tipul plasei, de dimensiunea deschiderii, de culoarea și calitatea profilelor, de țesătura aleasă, de complexitatea montajului și de numărul de bucăți. O plasă rulou pentru o ușă mare nu se compară cu una fixă pentru o fereastră mică.',
+      'Cere ofertă care spune tipul, țesătura, culoarea profilelor, dacă măsurarea și montajul sunt incluse. Ordinele de mărime le găsești în paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere cel puțin două oferte și compară-le pe aceleași criterii: tipul plasei, țesătura, profilele, măsurarea și montajul incluse și garanția. Întreabă ce modele a montat la ferestre ca ale tale și cere să le vezi dacă se poate.',
+      'Dacă ai de schimbat și tâmplăria, uită-te la paginile despre uși termopan, uși culisante sau rulouri exterioare, ca să le potrivești între ele.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre plasele de țânțari' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru geamuri și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la geamuri' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei plase de țânțari montate de o firmă?', text: 'Descrie ferestrele și ușile și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

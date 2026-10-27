@@ -1,0 +1,91 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const demolareCasaConstructii: SituationContent = {
+  slug: 'demolari--demolare-casa-constructii',
+  categorie: 'demolari',
+  title: 'Demolare casă, perete sau construcție',
+  seoTitle: 'Demolare casă, perete sau construcție: pași și oferte',
+  seoDescription: 'Cum se face demolarea unei case, a unui perete sau a unei construcții: acte, utilități, azbest, evacuarea molozului, de ce depinde costul și cum alegi firma.',
+  summary: 'Ce presupune demolarea unei case sau a unui perete, ce acte și oprirea utilităților se cer, cum se evacuează molozul, ce riscuri există și ce compari în ofertele firmelor.',
+  sinonime: ['demolare', 'demolare casa', 'demolare casa veche', 'pret demolare casa', 'pret demolari case', 'demolari', 'desfiintare constructii', 'demolare perete', 'spargere perete', 'evacuare moloz', 'container moloz', 'inchiriere container moloz', 'demolare casă', 'demolare casă veche', 'preț demolare casă', 'preț demolări case', 'demolări', 'desființare construcții', 'închiriere container moloz'],
+  intrebari: [
+    'Am nevoie de autorizație ca să demolez o casă? | În general, desființarea unei construcții cere acte, iar ce anume depinde de tipul construcției, de zonă și de statutul terenului. Întreabă la primărie înainte să începi: o demolare făcută fără acte poate atrage consecințe, iar alte lucrări de pe teren depind de ea.',
+    'Pot sparge singur un perete? | Un perete despărțitor poate fi spart, dar nu înainte să afli dacă e structural și dacă prin el trec conducte sau cabluri. Pentru pereții portanți, se cere un inginer structurist și, de regulă, un proiect; fără el poți slăbi clădirea. În bloc, cere acordul asociației și întreabă la primărie.',
+    'Ce utilități trebuie oprite înainte de demolare? | Electricitatea, gazul, apa și, după caz, canalizarea și alte rețele. Deconectarea o fac operatorii sau personal autorizat, nu echipa de demolare. Cere confirmarea scrisă a deconectării și nu începe lucrul până o primești.',
+    'Ce este cu azbestul? | Unele construcții vechi au materiale cu azbest, de exemplu plăci de acoperiș. Nu se sparg și nu se aruncă la întâmplare: se manipulează de firme autorizate, cu protecție, conform regulilor. Dacă bănuiești azbest, spune-i firmei înainte de ofertă.',
+    'Unde se duce molozul? | Molozul este deșeu și se transportă la locuri autorizate. Poți închiria un container sau poți angaja firma să evacueze. Cere în ofertă cine răspunde de transport și de eliminare, și păstrează documentele de predare.',
+    'Poate firma să demoleze fără proiect? | Pentru o casă întreagă, firma lucrează după o metodă clară, cu măsuri de siguranță pentru vecini, drum și utilități. Când vecinii sunt aproape sau clădirile sunt lipite, se cere un plan scris. Nu accepta ofertele care nu menționează siguranța.',
+    'Cine răspunde dacă se strică ceva la vecini? | Contractul și asigurarea firmei stabilesc răspunderea. Cere să vezi dacă firma are asigurare de răspundere civilă și notează în contract cine acoperă pagubele. Documentează cu poze starea vecinătății înainte de lucru.',
+    'De ce depinde costul demolării? | De tipul și mărimea construcției, de materiale (zidărie, beton armat, lemn, azbest), de acces pentru utilaje, de metoda aleasă (manual sau cu utilaj), de evacuarea și eliminarea molozului și de actele necesare. Cere ofertă care separă demolarea de transport.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Demolare: acte, siguranță, moloz și cum alegi firma', subtitle: 'Casă veche, perete sau anexă: ce verifici la primărie, ce utilități se opresc, cum se evacuează molozul și de ce depinde costul. Primești oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Înainte de start', value: 'Întrebi la primărie' },
+      { label: 'Utilități', value: 'Oprite de operatori, în scris' },
+      { label: 'Azbest', value: 'Doar firme autorizate' },
+      { label: 'Moloz', value: 'Transport și eliminare autorizate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Demolarea pare simplă, dar este una dintre lucrările cu cel mai mare risc: prăbușiri, utilități rămase active, praf cu substanțe periculoase, pagube la vecini. Siguranța are prioritate în fața vitezei și a prețului.',
+      'Pagina te ajută să înțelegi ce presupune o demolare, ce verifici înainte și ce compari între oferte. Terenul eliberat se folosește apoi pentru construcție; pentru asta vezi paginile despre firme de construcții și despre fundații.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de demolare', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Casă sau clădire întreagă', text: 'Se face cu utilaj, după un plan care ține cont de vecini, drum și utilități. Include evacuarea și eliminarea molozului.' },
+      { title: 'Demolare parțială', text: 'Se păstrează o parte a clădirii. Cere atenție la structură și la racordul dintre partea păstrată și cea demolată.' },
+      { title: 'Perete interior', text: 'Se verifică dacă este portant și ce trece prin el. Pereții portanți nu se sparg fără inginer structurist.' },
+      { title: 'Anexe, garaje, șoproane', text: 'Construcții mici, dar cu aceleași reguli de bază: acte după caz, utilități oprite, moloz evacuat.' },
+    ] }),
+    node('law-h', 'heading', { text: 'Acte, utilități și azbest', level: 'h2' }),
+    node('law', 'text', { body: para(
+      'Desființarea unei construcții implică, în general, acte care depind de tipul ei și de zonă; întreabă la primărie ce ai de făcut. Dacă clădirea este într-o zonă protejată sau are statut special, regulile pot fi mai stricte. Dacă demolezi ca să construiești în loc, actele celor două lucrări se leagă, iar pașii sunt pe paginile despre autorizări și avize.',
+      'Înainte de demolare, toate utilitățile se opresc și se debranșează de personal autorizat. Dacă există materiale cu azbest, acestea se tratează separat, de firme autorizate; nu le atinge. Siguranța vecinilor și a trecătorilor se asigură prin împrejmuire și prin metoda de lucru.',
+    ) }),
+    node('steps', 'steps', { title: 'Ordinea unei demolări', items: [
+      { title: 'Verificări la primărie', text: 'Afli ce acte se cer și ce condiții se aplică terenului și clădirii.' },
+      { title: 'Oprirea utilităților', text: 'Operatorii deconectează electricitatea, gazul, apa și canalizarea. Păstrezi confirmările scrise.' },
+      { title: 'Evaluare și plan', text: 'Firma vede construcția, verifică materialele, vecinătatea și accesul, apoi propune metoda.' },
+      { title: 'Pregătirea șantierului', text: 'Împrejmuire, semnalizare, protecția drumului și a construcțiilor vecine.' },
+      { title: 'Demolarea', text: 'Se lucrează în ordinea stabilită, de obicei de sus în jos, cu materialele periculoase tratate separat.' },
+      { title: 'Evacuarea molozului și curățarea', text: 'Transport către locuri autorizate, cu documente de predare, apoi nivelarea terenului.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Începerea fără acte', text: 'Poate duce la oprirea lucrării și la probleme pentru terenul tău.' },
+      { title: 'Utilități rămase conectate', text: 'Un cablu sau o conductă tăiată poate provoca accidente grave.' },
+      { title: 'Spargerea unui perete portant', text: 'Slăbește structura; se face doar cu proiect și supraveghere.' },
+      { title: 'Ignorarea azbestului', text: 'Praful de azbest este periculos; tratarea cere firme autorizate.' },
+      { title: 'Moloz lăsat la întâmplare', text: 'Aruncarea în locuri neautorizate atrage sancțiuni și probleme pentru tine, ca proprietar.' },
+      { title: 'Ofertă fără evacuare', text: 'Verifică dacă prețul include transportul și eliminarea sau doar demolarea.' },
+    ] }),
+    node('moloz-h', 'heading', { text: 'Moloz: container sau evacuare de către firmă', level: 'h2' }),
+    node('moloz', 'text', { body: para(
+      'Pentru lucrări mici, un container pentru moloz poate fi suficient: îl comanzi, îl umpli cu ce este acceptat și este ridicat. Întreabă ce materiale nu se pun în container și unde trebuie amplasat, pentru că pe domeniul public se poate cere acord de la primărie.',
+      'La demolări mari, firma își asumă de obicei evacuarea. Cere în contract cine transportă, unde se predă molozul și ce documente primești, ca să nu răspunzi tu dacă este lăsat în alt loc.',
+    ) }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de mărimea și materialul construcției (zidărie, beton armat, lemn), de metoda (cu utilaj sau manual), de accesul curții și al drumului, de prezența azbestului sau a altor materiale speciale, de actele cerute și de distanța și modul de evacuare a molozului.',
+      'Un perete interior costă diferit de o casă întreagă, nu doar prin volum, ci și prin curățenie, protecția restului locuinței și evacuare. Cere oferte care separă demolarea de transport și eliminare. Pentru orientare, vezi pagina de preț despre demolare.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce intră în fiecare ofertă: demolarea, utilajele, evacuarea molozului, curățarea terenului, tratarea materialelor periculoase, asigurarea și actele. O ofertă care nu menționează evacuarea sau siguranța e incompletă.',
+      'Cere o vizită la fața locului. Oferta dată doar după telefon nu poate ține cont de acces, vecini sau materiale ascunse.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă ce demolări similare a făcut firma, ce utilaje folosește și cum se protejează vecinii. Cere dovada asigurării de răspundere civilă și întreabă cine se ocupă de molozul și de eventualul azbest.',
+      'Încheie contract scris, cu lucrările incluse, termenul și răspunderea pentru pagube. Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre demolări' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru demolări' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la demolări' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o firmă de demolări?', text: 'Descrie construcția și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

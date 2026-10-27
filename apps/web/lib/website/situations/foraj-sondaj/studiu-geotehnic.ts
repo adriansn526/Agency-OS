@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const studiuGeotehnic: SituationContent = {
+  slug: 'foraj-sondaj--studiu-geotehnic',
+  categorie: 'foraj-sondaj',
+  title: 'Studiu geotehnic',
+  seoTitle: 'Studiu geotehnic: ce este, când e necesar, cine îl face',
+  seoDescription: 'Ce este un studiu geotehnic, cum se face, când se cere pentru o casă, ce conține, de ce depinde costul și cum alegi firma care realizează forajele de sondaj.',
+  summary: 'Ce conține un studiu geotehnic, cum se fac forajele de sondaj pe teren, când are nevoie de el o casă și ce compari în ofertele firmelor specializate.',
+  sinonime: ['studiu geotehnic', 'foraj sonda geotehnic', 'foraj sondă geotehnic'],
+  intrebari: [
+    'Ce este un studiu geotehnic? | Un document întocmit de un specialist autorizat, care descrie terenul de sub construcție: straturile, comportarea lor, apa subterană și recomandările pentru fundare. Se bazează pe sondaje de teren și pe încercări de laborator.',
+    'De ce am nevoie de el? | Fundația se proiectează după teren. Fără date despre sol, proiectantul riscă să aleagă o soluție nepotrivită, cu tasări, fisuri sau costuri suplimentare. Studiul oferă datele pe care se sprijină proiectul structurii.',
+    'Este obligatoriu pentru casa mea? | Depinde de tipul și mărimea construcției și de cerințele din proiect și din autorizare. Întreabă proiectantul și primăria. Chiar și atunci când nu e cerut explicit, merită discutat cu proiectantul, mai ales pe terenuri în pantă sau cu apă la mică adâncime.',
+    'Cine face studiul geotehnic? | O firmă sau un specialist cu atestare pentru domeniu. Echipa face sondaje de teren, ridică probe și le analizează, apoi un inginer întocmește documentul. Cere dovada atestării înainte să contractezi.',
+    'Cum se execută sondajele pe teren? | Cu un utilaj de foraj de sondă sau cu excavații de probă, în puncte alese de specialist după forma construcției și a terenului. Se extrag probe de pământ și se notează straturile și apa întâlnită.',
+    'Cât durează și ce primesc la final? | Durata depinde de numărul de sondaje, de laborator și de volumul de lucru al firmei; cere termenul în ofertă. La final primești un raport cu descrierea straturilor, parametrii pentru calcul și recomandări pentru fundare.',
+    'Studiul înlocuiește proiectul? | Nu. Studiul oferă datele despre teren; proiectul de structură stabilește fundația și restul elementelor. Cele două documente se completează, dar sunt întocmite de specialiști diferiți.',
+    'De ce depinde costul? | De numărul și locul sondajelor, de accesul utilajului, de încercările de laborator, de complexitatea terenului și de conținutul raportului. Cere o ofertă care spune exact ce include și ce se plătește în plus.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Studiu geotehnic: ce este și cum alegi firma', subtitle: 'Ce conține, cum se fac sondajele, când e necesar pentru o casă și de ce depinde costul. Descrie terenul și primești oferte gratuite de la firme specializate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce descrie', value: 'Terenul de sub construcție' },
+      { label: 'Cine îl face', value: 'Specialist atestat' },
+      { label: 'Se folosește la', value: 'Proiectul fundației' },
+      { label: 'Oferta', value: 'Sondaje, laborator, raport' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Casa stă pe teren, nu doar pe fundație. Studiul geotehnic spune din ce este făcut terenul, cum se comportă, dacă există apă subterană și ce soluție de fundare se potrivește. Este baza pentru proiectul fundației și pentru multe decizii care apar mai târziu.',
+      'Pagina explică ce conține studiul, cum se fac sondajele și cum compari ofertele. Alegerea fundației și turnarea ei se tratează la fundații și lucrări din beton, iar forajul unui puț de apă are pagina lui.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce conține un studiu geotehnic', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Sondaje de teren', text: 'Foraje sau excavații de probă, în puncte alese după construcție, din care se extrag probe de pământ.' },
+      { title: 'Încercări de laborator', text: 'Probele se analizează pentru a afla proprietățile solului, necesare calculului fundației.' },
+      { title: 'Descrierea straturilor', text: 'Succesiunea straturilor și prezența apei subterane, cu observații despre stabilitate.' },
+      { title: 'Recomandări pentru fundare', text: 'Parametrii pentru calcul și sugestii despre tipul fundației, la care proiectantul se raportează.' },
+    ] }),
+    node('when-h', 'heading', { text: 'Când este potrivit și cine îl cere', level: 'h2' }),
+    node('when', 'text', { body: para(
+      'Pentru o casă nouă, o extindere sau o supraetajare, proiectantul îți va spune dacă are nevoie de datele geotehnice și în ce formă. Pe terenuri în pantă, lângă ape, pe umpluturi sau în zone cu probleme cunoscute, importanța crește.',
+      'Dacă autorizarea cere studiul, o spune primăria. Întreabă ce document se acceptă și ce atestare trebuie să aibă cel care îl semnează.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge un studiu', items: [
+      { title: 'Stabilirea cerințelor', text: 'Proiectantul sau constructorul spune ce date îi trebuie și unde se amplasează construcția.' },
+      { title: 'Plan de sondaje', text: 'Specialistul propune numărul și locul sondajelor, în funcție de teren și de clădire.' },
+      { title: 'Lucrări pe teren', text: 'Se execută sondajele, se iau probe și se notează straturile și apa.' },
+      { title: 'Analize de laborator', text: 'Probele sunt analizate pentru a obține parametrii necesari.' },
+      { title: 'Raport', text: 'Documentul final cu rezultate și recomandări. Îl dai proiectantului și îl păstrezi cu actele casei.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Proiectarea fundației fără date de teren', text: 'Se bazează pe presupuneri, iar costul schimbărilor apare după ce s-a turnat.' },
+      { title: 'Sondaje prea puține sau în locuri nepotrivite', text: 'Datele nu reprezintă terenul sub întreaga construcție.' },
+      { title: 'Studiu fără atestare', text: 'Poate fi respins de proiectant sau la autorizare.' },
+      { title: 'Alegerea doar după preț', text: 'Un studiu foarte ieftin poate însemna sondaje sau analize reduse.' },
+      { title: 'Folosirea studiului altui teren', text: 'Terenurile vecine pot avea straturi diferite.' },
+      { title: 'Studiu făcut prea târziu', text: 'Trebuie să existe înainte de proiectul fundației, nu după.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de numărul și tipul sondajelor, de accesul utilajului pe teren, de analizele de laborator cerute, de complexitatea terenului și de conținutul raportului. O clădire mai mare sau un teren dificil cer mai multe sondaje.',
+      'Cere ofertă scrisă care spune câte puncte se execută, ce analize se fac, cine semnează raportul și în cât timp îl primești. Pentru orientare, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară numărul de sondaje, tipul lor, analizele din laborator, atestarea celui care semnează și termenul de predare. Dacă o ofertă are mai puține sondaje, întreabă proiectantul dacă sunt suficiente.',
+      'Cere să vezi un exemplu de raport anterior, fără date personale, ca să înțelegi ce vei primi.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Verifică atestarea și experiența pe tipul de teren din zona ta. Discută cu proiectantul înainte de comandă, ca studiul să conțină exact ce îi trebuie.',
+      'Cere ofertă scrisă și termen clar. Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre studiul geotehnic' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru lucrări conexe' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la foraj și sondaj' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un studiu geotehnic?', text: 'Descrie terenul și construcția și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

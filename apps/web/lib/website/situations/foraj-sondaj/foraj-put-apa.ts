@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const forajPutApa: SituationContent = {
+  slug: 'foraj-sondaj--foraj-put-apa',
+  categorie: 'foraj-sondaj',
+  title: 'Foraj puț de apă',
+  seoTitle: 'Foraj puț de apă: pași, acte și cum alegi firma',
+  seoDescription: 'Cum se face un foraj pentru puț de apă: ce se verifică la autoritatea competentă, etapele, utilizarea apei, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce presupune un foraj pentru puț de apă, ce întrebi înainte la autoritatea competentă, cum decurge lucrarea, cum se echipează puțul și ce compari în ofertele firmelor de foraj.',
+  sinonime: ['foraje puturi', 'foraje puțuri', 'forat puturi apa', 'foraje puturi pret', 'forat puturi pret', 'forat put', 'foraj puturi apa', 'foraj fantana', 'foraj fintini', 'put forat', 'put apa', 'forare put', 'foraje puțuri', 'forat puțuri apă', 'foraje puțuri preț', 'forat puțuri preț', 'forat puț', 'foraj puțuri apă', 'foraj fântână', 'foraj fântâni', 'puț forat', 'puț apă', 'forare puț'],
+  intrebari: [
+    'Ce este un puț forat și prin ce diferă de o fântână săpată? | Puțul forat se execută cu un utilaj de foraj și are o coloană de tubaj care ajunge la stratul de apă. Fântâna săpată se face cu inele de beton și captează de obicei apa din straturile mai de suprafață. Ce se potrivește depinde de zonă și de ce apă ai disponibilă.',
+    'Am nevoie de acte pentru a fora un puț? | Depinde de scopul puțului, de locul unde este și de reglementările locale. Pentru captarea apei subterane pot exista cerințe la autoritatea de gospodărire a apelor și, după caz, la primărie. Întreabă înainte de a începe: lucrarea făcută fără acte poate fi oprită.',
+    'Ce adâncime și ce debit voi avea? | Nu se poate spune dinainte. Straturile de apă diferă de la o zonă la alta, chiar între curți vecine. Firma se poate orienta după puțurile din zonă și după datele geologice, dar rezultatul se vede abia în foraj. Evită ofertele care promit un rezultat sigur.',
+    'Pot bea apa din puț? | Doar după ce apa a fost analizată într-un laborator autorizat. Apa limpede nu înseamnă apă potabilă; poate conține nitrați, bacterii, fier sau alte substanțe. Dacă analiza arată probleme, se discută tratarea apei sau folosirea ei doar pentru alte scopuri.',
+    'Ce se montează după foraj? | Coloana de tubaj, o pompă (submersibilă sau de suprafață), conducta de refulare, tabloul de comandă și, de obicei, un hidrofor sau un rezervor. Pompa și instalația electrică se aleg după puț; partea electrică o face un electrician autorizat.',
+    'Cine face forajul? | O firmă de foraj, cu utilaj propriu și experiență în zona ta. Verifică ce lucrări a făcut în apropiere, cum documentează lucrarea și ce garantează. Instalația interioară de apă are pagina ei, la instalații sanitare.',
+    'Se poate fora oriunde pe teren? | Nu orice loc se potrivește. Contează accesul utilajului, distanța față de fosă, grajd, gard și alte surse de poluare, distanța față de vecini și reglementările locale. Alege locul împreună cu firma și verifică ce cere primăria.',
+    'De ce depinde costul? | De adâncimea la care se găsește apa, de felul rocilor, de accesul utilajului, de diametrul și materialul tubajului, de pompă și instalație și de analiza apei. Pentru că adâncimea nu se știe dinainte, cere o ofertă care spune cum se calculează prețul și ce se întâmplă dacă forajul nu dă apă.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Foraj pentru puț de apă: ce verifici înainte și cum alegi firma', subtitle: 'Ce întrebi la autoritatea competentă, cum decurge forajul, de ce depinde costul și ce compari în oferte. Descrie terenul și primești oferte gratuite de la firme de foraj.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Înainte de start', value: 'Întrebi la autoritatea competentă' },
+      { label: 'Rezultatul', value: 'Nu se garantează dinainte' },
+      { label: 'Apa de băut', value: 'Doar după analiză de laborator' },
+      { label: 'Oferta', value: 'Cum se calculează prețul și ce intră' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un puț forat poate fi singura sursă de apă pentru o casă fără rețea publică sau o variantă pentru irigat și gospodărie. Rezultatul depinde de subsol și nu se poate promite complet dinainte, de aceea contează mult cum alegi firma, ce scrie în ofertă și ce verifici la final.',
+      'Pagina explică etapele unui foraj, ce echipare vine după el și ce să compari între oferte. Dacă vrei să știi cum se face racordul la rețeaua publică, vezi pagina despre branșamentele de apă și canalizare.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de puțuri și surse de apă', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Puț forat', text: 'Se execută cu utilaj și are coloană de tubaj. Poate ajunge la straturi mai adânci decât o fântână, iar calitatea apei se verifică prin analiză.' },
+      { title: 'Fântână săpată', text: 'Se face cu inele sau cămin și captează apa de la mică adâncime. Este mai expusă poluării de suprafață.' },
+      { title: 'Folosire în gospodărie', text: 'Apă pentru spălat, grădină sau animale. Condițiile pentru apă de băut sunt mai stricte și se stabilesc prin analize.' },
+      { title: 'Alternativă: rețeaua publică', text: 'Unde există rețea, racordarea se discută cu operatorul. Pagina despre branșamente explică pașii.' },
+    ] }),
+    node('law-h', 'heading', { text: 'Ce întrebi înainte la autoritatea competentă', level: 'h2' }),
+    node('law', 'text', { body: para(
+      'Captarea apei subterane este reglementată. Dacă ai nevoie de autorizații, avize sau doar de o înștiințare, depinde de scopul puțului, de volumul folosit și de zona în care te afli. Pentru lămuriri, întreabă la primărie și la autoritatea de gospodărire a apelor care răspunde de zona ta.',
+      'Nu te baza pe ce a făcut un vecin: regulile se pot aplica diferit. O firmă de foraj serioasă îți spune ce acte ar trebui să verifici, dar răspunderea de a le obține rămâne la proprietar, dacă nu s-a stabilit altfel în contract.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge un foraj', items: [
+      { title: 'Alegerea locului', text: 'Împreună cu firma, ținând cont de acces, de surse de poluare din apropiere și de reglementările locale.' },
+      { title: 'Verificări și acte', text: 'Cum am explicat mai sus: întrebi autoritățile înainte de a plăti sau a începe lucrarea.' },
+      { title: 'Forajul', text: 'Utilajul sapă până la stratul de apă. Firma notează straturile întâlnite și introduce tubajul.' },
+      { title: 'Probe de pompare', text: 'Se verifică dacă puțul dă apă constant și se alege pompa în funcție de rezultat.' },
+      { title: 'Echiparea', text: 'Pompa, conducta, tabloul electric și sistemul de presiune. Partea electrică o face personal autorizat.' },
+      { title: 'Analiza apei și predare', text: 'Mostra se trimite la un laborator autorizat. Primești documentele lucrării și instrucțiunile de întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Promisiuni de rezultat sigur', text: 'Un foraj nu poate garanta dinainte adâncimea sau cantitatea de apă.' },
+      { title: 'Lipsa analizei apei', text: 'Apa fără analiză nu se folosește la băut sau la gătit.' },
+      { title: 'Foraj prea aproape de fosă sau grajd', text: 'Crește riscul de contaminare a apei și de probleme cu autoritățile.' },
+      { title: 'Pompă aleasă la întâmplare', text: 'O pompă nepotrivită se poate defecta repede sau poate goli puțul.' },
+      { title: 'Începerea fără verificarea actelor', text: 'Lucrarea poate fi oprită, iar investiția compromisă.' },
+      { title: 'Ofertă fără condiții pentru foraj fără apă', text: 'Stabilește în scris ce se plătește dacă puțul nu dă apă.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Forajul se calculează, de obicei, pe lungimea forată, dar lungimea nu se cunoaște la semnarea ofertei. Mai contează felul rocilor, accesul utilajului, diametrul și materialul tubajului, pompa, instalația electrică și hidraulică, analizele și actele.',
+      'Cere firmei să explice cum calculează prețul, ce include (tubaj, probă de pompare, pompă, transport) și ce se întâmplă dacă forajul nu găsește apă. Pentru orientare, vezi paginile de preț de mai jos, nu cifre fără sursă.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele pe același set de lucrări: forajul, tubajul, proba de pompare, pompa și instalația, analiza apei, transportul și curățarea terenului. Verifică ce garanție se oferă pentru lucrare și pentru pompă.',
+      'Nu alege doar după prețul pe unitatea de foraj. O ofertă care pare ieftină la foraj poate adăuga separat tubajul sau pompa.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere puțuri executate în apropiere, la care poți vorbi cu proprietarii. Întreabă ce utilaj folosește firma, cum documentează straturile, ce documente îți dă la final și cine răspunde dacă puțul se colmatează.',
+      'Cere o ofertă scrisă, cu condițiile de plată pe etape. Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre foraj puț de apă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru lucrări conexe' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la foraj și sondaj' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte de la firme de foraj?', text: 'Descrie terenul și ce vrei să faci cu apa și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

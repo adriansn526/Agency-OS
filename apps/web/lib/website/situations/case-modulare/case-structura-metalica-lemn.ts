@@ -1,0 +1,87 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const caseStructuraMetalicaLemn: SituationContent = {
+  slug: 'case-modulare--case-structura-metalica-lemn',
+  categorie: 'case-modulare',
+  title: 'Case pe structură metalică sau din lemn',
+  seoTitle: 'Case pe structură metalică sau din lemn: ce compari',
+  seoDescription: 'Case pe structură metalică sau din lemn: cum diferă soluțiile, ce se verifică la proiect, izolație și finisaje, de ce depinde costul și cum compari ofertele.',
+  summary: 'Cum diferă casele pe structură metalică de cele din lemn, ce trebuie verificat la proiect, izolație și execuție și ce compari în oferte.',
+  sinonime: ['case pe structura metalica', 'casa structura metalica', 'case structura metalica', 'casa pe structura metalica', 'case din lemn', 'casa din lemn', 'case de lemn', 'case din lemn la cheie', 'case lemn', 'cabane lemn', 'case pe structură metalică', 'casă structură metalică', 'casă pe structură metalică', 'casă din lemn', 'cabane din lemn'],
+  intrebari: [
+    'Ce este o casă pe structură metalică? | O casă al cărei schelet este din profile metalice, închis cu pereți ușori, izolați, și finisat la interior și la exterior. Structura poartă încărcările, iar pereții au rol de închidere și de izolare.',
+    'Ce tipuri de case din lemn există? | În mare, case din lemn masiv (bușteni sau grinzi) și case pe schelet de lemn, cu pereți izolați. Diferențele privesc comportamentul la căldură, la umiditate și la contracția lemnului; cere de la firmă explicația pentru soluția oferită.',
+    'Este o casă din lemn sau pe structură metalică mai ieftină ori mai rapidă? | Nu prin definiție. Depinde de proiect, de finisaje, de lucrările de teren, de acte și de producător. Nu accepta ca argument de vânzare o promisiune de preț sau de termen fără listă de lucrări.',
+    'Cine proiectează structura? | Un inginer constructor sau un proiectant autorizat, pe baza zonei seismice, a încărcărilor din zăpadă și vânt și a terenului. Nu te baza doar pe un model de catalog; cere proiectul de structură.',
+    'Ce autorizații cere o astfel de casă? | O locuință nouă cere de regulă acte, indiferent din ce material e făcută. Detaliile depind de teren și de localitate; întreabă la primărie ce documente se cer înainte să comanzi.',
+    'Cum se tratează lemnul și metalul? | Lemnul se tratează împotriva umezelii, insectelor, ciupercilor și, după caz, a focului; metalul se protejează împotriva coroziunii. Cere produsele folosite și modul de aplicare.',
+    'Cum se comportă la foc și la zgomot? | Depinde de compoziția pereților, de materialele de izolare și de finisaje. Cere informații despre soluția aleasă și, dacă e cazul, despre protecția la foc, de la proiectant sau de la producător.',
+    'De ce depinde costul? | De suprafață și de complexitatea formei, de structură și izolație, de finisaje, de lucrările de fundație și racorduri, de transport și montaj. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Case pe structură metalică sau din lemn: cum compari soluțiile', subtitle: 'Ce înseamnă fiecare soluție, ce se verifică la proiect și în ofertă și de ce depinde costul. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Două soluții', value: 'Schelet metalic sau lemn' },
+      { label: 'Structura', value: 'Se proiectează, nu se alege din catalog' },
+      { label: 'Protecție', value: 'Lemn tratat, metal protejat' },
+      { label: 'Atenție', value: 'Preț și termen nu se promit pe cuvânt' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Casele pe structură ușoară, metalică sau din lemn, sunt construite diferit față de o casă clasică din zidărie. Scheletul preia încărcările, iar pereții închid și izolează. De aici decurg și avantajele, și punctele care cer atenție: izolația, etanșeitatea, ventilația și protecția materialului.',
+      'Pagina compară cele două familii de soluții și te ajută să pui întrebări potrivite în ofertă. Casele modulare livrate la cheie și containerele de locuit au paginile lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce soluții întâlnești', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Schelet metalic', text: 'Profile de oțel care formează structura, cu pereți ușori izolați. Se montează din elemente pregătite în atelier.' },
+      { title: 'Schelet din lemn', text: 'Montanți și grinzi din lemn, închise cu plăci și izolație. Mai multe variante constructive, cu detalii diferite la pereți.' },
+      { title: 'Lemn masiv', text: 'Pereți din grinzi sau bușteni. Comportamentul lemnului în timp, mai ales contracția, se ia în calcul de la proiect.' },
+      { title: 'Cabane și construcții ușoare', text: 'Folosite adesea ca locuințe ocazionale sau anexe; pentru locuit permanent se cer, de regulă, aceleași acte ca la orice locuință nouă.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții de verificat', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'La orice structură ușoară contează stratul de izolație, bariera de vapori, protecția la vânt și ventilarea pereților. Dacă acestea nu sunt gândite împreună, apar condensul, mucegaiul și degradarea în interiorul peretelui, adică acolo unde nu se vede.',
+      'Lemnul se alege uscat și se tratează; metalul se protejează împotriva coroziunii, mai ales în zonele de îmbinare și de contact cu fundația. Cere de la firmă lista materialelor din fiecare strat al peretelui, în ordinea lor, de la exterior spre interior.',
+      'Fundația rămâne necesară și la o casă ușoară: ea se proiectează după teren și după încărcări, nu se omite.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Acte și proiect', text: 'Se lămuresc cu primăria actele și se întocmește proiectul de arhitectură și de structură, de către specialiști autorizați.' },
+      { title: 'Fundația', text: 'Se execută după proiect și se lasă să se așeze și să se verifice înainte de montajul structurii.' },
+      { title: 'Structura', text: 'Scheletul se montează și se ancorează de fundație, cu verificarea verticalității și a îmbinărilor.' },
+      { title: 'Închideri și izolare', text: 'Pereții, acoperișul și izolațiile se montează în ordinea stabilită, cu atenție la îmbinări și la etanșeitate.' },
+      { title: 'Instalații', text: 'Electrice, sanitare și de încălzire, executate de personal autorizat, respectând traseele prevăzute în proiect.' },
+      { title: 'Finisaje și recepție', text: 'Se verifică izolația, etanșeitatea, ferestrele și ușile, apoi se predau documentele casei.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Fără proiect de structură', text: 'Un model de catalog nu ține loc de calcul pentru zonă și teren.' },
+      { title: 'Izolație fără bariere corecte', text: 'Umezeala prinsă în perete se vede târziu și se repară greu.' },
+      { title: 'Materiale nespecificate', text: 'Oferta care nu descrie straturile peretelui nu se poate compara.' },
+      { title: 'Încredere în „rapid” și „ieftin”', text: 'Termenul și prețul se stabilesc pe baza lucrării, nu din reclamă.' },
+      { title: 'Ignorarea fundației', text: 'Și o casă ușoară are nevoie de o bază corectă și de protecție la umezeală.' },
+      { title: 'Instalații executate fără personal autorizat', text: 'Lucrările la electrice, gaz și sanitare le fac specialiști autorizați.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață și de forma casei, de tipul structurii și al izolației, de finisaje, de fundație și racorduri, de transport și montaj, de proiect și acte. O casă cu forme complicate sau cu multe deschideri mari este mai pretențioasă decât una simplă.',
+      'Cere oferte care detaliază structura, izolația, închiderile, ferestrele și finisajele. Pentru ordine de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce structură propune fiecare firmă, cum arată peretele strat cu strat, ce fundație presupune, ce tratamente sunt prevăzute și ce rămâne în afara ofertei. Cere să vezi lucrări terminate și, dacă se poate, una locuită de câțiva ani.',
+      'Întreabă și cum se întreține casa: tratamentele lemnului, verificările metalului și garanția oferită, scrisă în contract.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care lucrează cu proiect și specialiști autorizați, îți explică soluția constructivă și nu minimizează actele sau fundația. Verifică referințele și cere contract cu specificațiile materialelor.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre case pe structură metalică sau din lemn' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru case și structuri ușoare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la case modulare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte pentru o casă pe structură ușoară?', text: 'Descrie casa dorită și terenul și primești oferte de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

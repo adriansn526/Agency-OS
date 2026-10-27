@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiGaraj: SituationContent = {
+  slug: 'tamplarie-dulgherie--usi-garaj',
+  categorie: 'tamplarie-dulgherie',
+  title: 'Uși de garaj',
+  seoTitle: 'Uși de garaj: tipuri, siguranță, automatizare și ofertă',
+  seoDescription: 'Uși de garaj: secționale, batante sau rulante, siguranța și automatizarea făcute de personal calificat, ordinea montajului, costul și compararea ofertelor.',
+  summary: 'Ce tipuri de uși de garaj există, de ce contează siguranța și automatizarea făcute de personal calificat și ce compari în oferte.',
+  sinonime: ['usa garaj', 'usi garaj', 'usi de garaj', 'usa garaj sectionala', 'porti garaj', 'usa garaj automata', 'ușa garaj', 'uși garaj', 'uși de garaj', 'ușa garaj secțională', 'porți garaj', 'ușa garaj automată'],
+  intrebari: [
+    'Ce tipuri de uși de garaj există? | Secționale (panouri care urcă pe ghidaje), batante (cu două canate), rulante (cu lamele care se înfășoară) și basculante. Fiecare ocupă spațiul diferit în interior și în fața garajului; alege după cum este garajul.',
+    'Cum se compară ușile secționale și cele batante? | Ușa secțională nu are nevoie de spațiu în față pentru deschidere, dar cere spațiu sub tavan pentru ghidaje. Cea batantă cere loc în față, dar e mai simplă. Un montator îți spune ce se potrivește la garajul tău.',
+    'De ce contează siguranța la o ușă de garaj? | O ușă mare și grea poate răni sau strivi, mai ales când are motor. Sistemele de siguranță ale automatizării, precum limitatoarele și fotocelulele, sunt obligatorii în sens practic: ele opresc sau inversează mișcarea când apare un obstacol.',
+    'Cine montează automatizarea? | Personal calificat, care face reglajele și testează siguranțele conform instrucțiunilor producătorului. Nu monta singur motorul și nu dezactiva siguranțele, pentru că riști accidente grave.',
+    'Pot automatiza o ușă de garaj existentă? | Uneori, dacă ușa este în stare bună, echilibrată și compatibilă cu un motor. Un specialist verifică ușa înainte; una dezechilibrată sau uzată nu se automatizează în siguranță.',
+    'Ce se întâmplă la o pană de curent? | Majoritatea sistemelor au un mod de deschidere manuală. Cere să ți se arate cum funcționează și testează-l la predare, pentru a nu rămâne blocat.',
+    'De ce depinde costul? | De tipul ușii, de dimensiunile golului, de izolare, de automatizare și accesorii, de montaj și de pregătirea golului. Compară oferte care detaliază fiecare element; vezi și paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși de garaj: tipuri, siguranță și ce compari în ofertă', subtitle: 'Secționale, batante sau rulante, plus automatizarea făcută de personal calificat. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Secționale, batante, rulante' },
+      { label: 'Siguranța', value: 'Limitatoare și fotocelule' },
+      { label: 'Automatizare', value: 'Montată de personal calificat' },
+      { label: 'Oferta', value: 'Ușă, motor, accesorii, montaj' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușa de garaj este, de obicei, cel mai mare element mobil al unei case. Mișcarea ei zilnică, mai ales cu motor, cere o construcție solidă, reglaje precise și sisteme de siguranță funcționale. Multe căutări sunt de produs; aici contează tipul potrivit garajului, cine montează și ce siguranțe ai.',
+      'Automatizarea porții culisante de curte are pagina ei, la garduri și pavaje, iar ușile de intrare și cele de interior la tâmplărie; le găsești mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de uși de garaj', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Secționale', text: 'Panouri articulate care urcă sub tavan, pe ghidaje; nu ocupă loc în fața garajului, dar cer spațiu sub tavan.' },
+      { title: 'Batante', text: 'Două canate care se deschid spre exterior sau interior; simple, cer spațiu în față sau în interior.' },
+      { title: 'Rulante', text: 'Lamele care se înfășoară într-un tambur; economisesc spațiu, dar tamburul ocupă loc deasupra golului.' },
+      { title: 'Basculante', text: 'Un singur panou care se ridică; mai rar la construcții noi, cere spațiu pentru mișcarea panoului.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Siguranța și automatizarea', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'O ușă de garaj motorizată trebuie să se oprească sau să se întoarcă dacă întâlnește un obstacol. Aceasta se asigură prin limitatoare de forță, fotocelule și alte dispozitive de siguranță, reglate și testate la montaj. Reglajele și punerea în funcțiune le face personal calificat, conform instrucțiunilor producătorului.',
+      'Nu dezactiva siguranțele și nu repara singur resorturile sau cablurile ușii: sunt sub tensiune mecanică mare și pot răni grav. Întreabă la predare cum se deschide ușa manual și ce întreținere necesită.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Alegerea tipului', text: 'Se alege după spațiul din fața garajului și de sub tavan, după felul în care folosești garajul și după nevoia de izolare.' },
+      { title: 'Măsurătoarea', text: 'Se face pe loc de către montator, cu verificarea golului, a spațiului lateral și a celui de sub tavan.' },
+      { title: 'Pregătirea golului', text: 'Golul trebuie să fie solid, drept și potrivit pentru ancorarea ghidajelor sau a tocului.' },
+      { title: 'Montajul ușii', text: 'Se montează ghidajele sau tocul, canatele sau panourile, apoi mecanismele de echilibrare.' },
+      { title: 'Automatizarea', text: 'Motorul și siguranțele se montează și se reglează de personal calificat, cu test de funcționare.' },
+      { title: 'Predare', text: 'Primești telecomenzile, instrucțiunile și o demonstrație a deschiderii manuale.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Montajul făcut de neinstruiți', text: 'Reglajele greșite compromit siguranța și durata de viață a ușii.' },
+      { title: 'Siguranțe dezactivate', text: 'Pentru a „evita probleme” se scot fotocelule sau limitatoare, ceea ce expune la accidente.' },
+      { title: 'Golul neverificat', text: 'Un gol neregulat sau slab nu susține ancorarea corectă.' },
+      { title: 'Alegerea fără măsurarea spațiului', text: 'Fără spațiu sub tavan sau în față, un tip de ușă poate să nu se monteze.' },
+      { title: 'Reparații la resorturi pe cont propriu', text: 'Sunt piese sub tensiune; lasă intervenția unui specialist.' },
+      { title: 'Ofertă fără detalii', text: 'Nespecificarea motorului și a siguranțelor face oferta greu de comparat.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul ușii, de dimensiunile golului, de izolarea panourilor, de motor și accesorii (telecomenzi, cititoare, fotocelule), de montaj și de pregătirea golului. O ușă cu aspect personalizat sau cu elemente de sticlă are alte costuri decât una simplă.',
+      'Cere oferte care despart ușa, automatizarea, accesoriile și montajul. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară tipul ușii, materialul și izolarea, motorul și siguranțele incluse, accesoriile, montajul și garanția. Verifică dacă punerea în funcțiune și testul siguranțelor sunt în ofertă.',
+      'Întreabă cine face service-ul după garanție și ce întreținere recomandă producătorul.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care măsoară pe loc, explică siguranțele și montează automatizarea cu personal calificat. Cere ofertă scrisă, garanție și un contact pentru intervenții în caz de defecțiune.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși de garaj' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru uși și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la tâmplărie și dulgherie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți montator pentru ușa de garaj?', text: 'Descrie garajul și ce fel de ușă vrei și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

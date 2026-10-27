@@ -1,0 +1,76 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const cadastruIntabulare: SituationContent = {
+  slug: 'topografie-cadastru--cadastru-intabulare',
+  categorie: 'topografie-cadastru',
+  title: 'Cadastru și intabulare',
+  seoTitle: 'Cadastru și intabulare: etape, roluri, ce verifici',
+  seoDescription: 'Ce înseamnă cadastrul și intabularea pentru casă, apartament sau teren: etapele, rolul topografului, al notarului și al OCPI și de ce depinde costul.',
+  summary: 'Ce sunt cadastrul și intabularea, cine face ce (topograf, notar, OCPI), ce verifici la instituție și de ce depinde costul.',
+  sinonime: ['intabulare', 'cadastru si intabulare', 'cadastrul si intabularea', 'intabulare casa', 'intabulare apartament', 'intabulare teren', 'intabularea terenului', 'pret intabulare casa veche', 'documentatie cadastrala', 'dezmembrare teren', 'cadastru și intabulare', 'cadastrul și intabularea', 'intabulare casă', 'prețul intabulării casei vechi', 'preț intabulare casă veche', 'documentație cadastrală'],
+  intrebari: [
+    'Ce este intabularea? | Înscrierea dreptului de proprietate (sau a altui drept real) în cartea funciară, la oficiul de cadastru și publicitate imobiliară (OCPI). Prin ea, dreptul tău apare în evidența oficială a imobilului.',
+    'Ce este cadastrul și cum se leagă de intabulare? | Cadastrul descrie imobilul din punct de vedere tehnic: limite, suprafață, construcții și identificare. Pentru înscrierea în cartea funciară se cere de obicei o documentație cadastrală întocmită de un specialist autorizat, acolo unde situația o impune.',
+    'Cine face ce? | Topograful sau persoana autorizată în cadastru măsoară și întocmește documentația tehnică. Notarul autentifică actele atunci când forma o cere. OCPI primește cererea și înscrie dreptul. Proprietarul pune la dispoziție actele, plătește taxele și urmărește dosarul.',
+    'Ce acte se cer și cât costă? | Actele, taxele și tarifele variază în funcție de tipul imobilului, de situația juridică și de reglementările în vigoare, care se schimbă. Verifică la OCPI, la notar sau pe site-urile instituțiilor; nu te baza pe liste din surse generale.',
+    'Pot intabula o casă veche sau un teren moștenit? | De multe ori da, dar procedura depinde de actele pe care le ai, de existența limitelor clare și de dacă moștenirea a fost deja dezbătută. Un notar și un specialist în cadastru îți pot spune ce lipsește.',
+    'Ce înseamnă dezmembrarea unui teren? | Împărțirea lui în mai multe parcele, fiecare cu identificare proprie. Se face pe baza unei documentații tehnice și, de regulă, a unor acte din partea autorității locale. Regulile diferă de la o localitate la alta, deci întreabă la primărie și la OCPI.',
+    'De ce este importantă intabularea? | Fără ea poți avea greutăți la vânzare, ipotecare sau credit, la cumpărător, în relația cu alți proprietari sau în litigii de proprietate. Pentru multe operațiuni, instituțiile cer extras de carte funciară.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Cadastru și intabulare: cine face ce și ce verifici', subtitle: 'Etape și roluri pentru casă, apartament sau teren. Actele, tarifele și taxele variază; aici găsești ordinea și întrebările corecte. Poți cere oferte de la specialiști.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Intabularea', value: 'Înscrierea dreptului în cartea funciară' },
+      { label: 'Cine măsoară', value: 'Topograf autorizat în cadastru' },
+      { label: 'Cine înscrie', value: 'OCPI' },
+      { label: 'Actele și taxele', value: 'Verifică la OCPI și la notar' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Intabularea este pasul prin care proprietatea ta apare în cartea funciară. Pentru multe imobile, mai ales case vechi și terenuri, ea cere întâi o documentație cadastrală: măsurători, limite, identificare.',
+      'Pagina explică etapele și rolurile. Procedura exactă, actele, tarifele și taxele diferă în funcție de imobil și de instituție și se schimbă în timp; pentru ele, sursa corectă este OCPI sau notarul. Măsurătorile în sine au pagina lor.',
+    ) }),
+    node('what-h', 'heading', { text: 'Cine face ce', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Proprietarul', text: 'Strânge actele de proprietate, stabilește ce vrea (intabulare, alipire, dezmembrare) și urmărește dosarul.' },
+      { title: 'Topograful sau specialistul în cadastru', text: 'Măsoară imobilul, identifică limitele și întocmește documentația tehnică cerută.' },
+      { title: 'Notarul', text: 'Autentifică actele când forma legală o cere, de exemplu pentru vânzări, donații sau dezbateri succesorale.' },
+      { title: 'OCPI', text: 'Verifică documentația și înscrie în cartea funciară, dacă dosarul e în regulă.' },
+    ] }),
+    node('steps-h', 'heading', { text: 'Etapele, la nivel de principiu', level: 'h2' }),
+    node('steps', 'steps', { title: 'Cum decurge', items: [
+      { title: 'Verifici situația actuală', text: 'Afli ce acte ai, dacă imobilul e deja în cartea funciară și dacă există diferențe între acte și teren.' },
+      { title: 'Clarifici ce operațiune ai nevoie', text: 'Intabulare simplă, dezmembrare, alipire sau actualizarea unei construcții. Fiecare are propria documentație.' },
+      { title: 'Măsurători și documentație', text: 'Un specialist autorizat măsoară și întocmește documentația cadastrală.' },
+      { title: 'Acte juridice', text: 'Dacă e cazul, se completează actele cu notarul: succesiune, vânzare, donație sau alt act.' },
+      { title: 'Depunere la OCPI', text: 'Dosarul se depune conform procedurii instituției; completările cerute se aduc la timp.' },
+      { title: 'Înscrierea în cartea funciară', text: 'După admitere, dreptul apare în evidență și poți cere extras.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Amânarea până la vânzare', text: 'Clarificările durează și blochează tranzacția. Mai bine din timp.' },
+      { title: 'Limite nediscutate cu vecinii', text: 'Neînțelegerile apar la măsurare. Anunță vecinii și clarifică din timp.' },
+      { title: 'Specialist neautorizat', text: 'Documentația semnată de cineva fără autorizare nu este acceptată.' },
+      { title: 'Acte lipsă sau neactualizate', text: 'Moștenirile nedezbătute și construcțiile neînscrise încurcă procedura.' },
+      { title: 'Informații din surse vechi', text: 'Lista actelor și tarifele se schimbă. Verifică la instituții.' },
+      { title: 'Ofertă care nu spune ce include', text: 'Cere clar ce acoperă prețul: măsurători, documentație, depunere, urmărire.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul total are mai multe componente: documentația tehnică (depinde de suprafață, relief, accesul în teren, numărul de parcele și de dacă există și construcții de înscris), tarifele instituțiilor și onorariul notarului, atunci când e cazul. Fiecare are reglementări proprii care se verifică la sursă.',
+      'Cere oferte scrise care separă măsurătorile, documentația, depunerea și urmărirea, și spune ce taxe rămân în sarcina ta.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un specialist', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Verifică autorizarea în cadastru și cere referințe pentru imobile similare. Întreabă dacă se ocupă și de depunere și de completările cerute de OCPI.',
+      'Nu accepta promisiuni de rezolvare sigură sau de termene garantate: decizia aparține instituției.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre cadastru și intabulare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru topografie și cadastru' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la topografie și cadastru' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un specialist în cadastru?', text: 'Descrie imobilul și ce operațiune ai nevoie și primești oferte de la specialiști din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

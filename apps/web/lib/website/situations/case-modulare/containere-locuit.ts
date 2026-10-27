@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const containereLocuit: SituationContent = {
+  slug: 'case-modulare--containere-locuit',
+  categorie: 'case-modulare',
+  title: 'Containere de locuit și case din containere',
+  seoTitle: 'Containere de locuit și case din containere: ce verifici',
+  seoDescription: 'Containere de locuit și case din containere: ce înseamnă, ce primești, ce racorduri și acte trebuie lămurite, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce este un container de locuit sau o casă din containere, ce se pregătește pe teren, ce acte și racorduri trebuie lămurite și ce compari în oferte.',
+  sinonime: ['containere de locuit', 'containere modulare', 'container modular', 'casa container', 'case din containere', 'casa din containere', 'container de locuit cu baie si bucatarie', 'container birou', 'container locuit', 'casă container', 'casă din containere', 'case din containere', 'container de locuit cu baie și bucătărie'],
+  intrebari: [
+    'Ce este un container de locuit? | Un modul prefabricat, construit în fabrică sau atelier, cu structură metalică, pereți izolați și, de obicei, instalații pregătite. Poate fi folosit ca locuință, birou sau anexă. De la un container maritim reconvertit diferă prin modul de execuție și de izolare, de aceea întreabă mereu ce anume ți se oferă.',
+    'Am nevoie de autorizație pentru un container de locuit? | Depinde de locul unde îl pui, de cât timp stă acolo, de folosință și de regulile locale. Nu există un răspuns valabil peste tot: întreabă la primăria din localitatea terenului înainte de comandă și cere în scris ce documente se cer.',
+    'Pot locui într-un container pe un teren pe care nu am casă? | Depinde de categoria de folosință a terenului și de planul urbanistic al zonei. Verifică la primărie, înainte de a plăti vreun avans, dacă o locuință de acest tip este permisă pe terenul tău.',
+    'Ce pregătesc pe teren înainte să vină containerul? | Un suport stabil, plan și protejat de apă, accesul pentru transport și macara și soluțiile pentru racorduri. Tipul de fundație sau de reazem îl stabilește un specialist, în funcție de teren și de modul în care e construit containerul.',
+    'Ce racorduri trebuie făcute? | La curent, apă și canalizare sau fosă. Racordarea la rețele o fac operatorii sau personalul autorizat, cu acordul furnizorului. Întreabă din start cine se ocupă de ele și ce intră în ofertă.',
+    'Ce izolație are un container și contează? | Contează mult: metalul transmite căldura și frigul. Întreabă din ce este făcută izolația pereților, a podelei și a acoperișului, cum sunt tratate punțile termice și cum se ventilează interiorul, ca să eviți condensul.',
+    'De ce depinde costul unui container de locuit? | De dotări (baie, bucătărie, încălzire), de finisaje, de izolație, de transport și montaj, de pregătirea terenului și de racorduri. Compară oferte care listează aceleași elemente; paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Containere de locuit: ce primești și ce trebuie lămurit înainte', subtitle: 'Acte, teren, racorduri, izolație și ofertă: ce întrebi înainte să comanzi. Dacă ai nevoie de o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce este', value: 'Modul prefabricat pe structură metalică' },
+      { label: 'Primul pas', value: 'Verifici la primărie ce se permite' },
+      { label: 'Pe teren', value: 'Suport stabil și racorduri' },
+      { label: 'Oferta', value: 'Ce include, ce rămâne în sarcina ta' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Containerele de locuit și casele din containere atrag prin ideea unei locuințe pregătite în afara șantierului. În practică, ce primești depinde mult de producător: unele module sunt gândite de la început pentru locuit, altele sunt containere reconvertite, cu un grad de izolație și de finisare diferit.',
+      'Pagina te ajută să pui întrebările potrivite: ce acte sunt necesare la tine în localitate, ce se pregătește pe teren, cine face racordurile și ce trebuie să conțină o ofertă comparabilă. Casele modulare mai ample, livrate la cheie, au pagina lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poate fi un container de locuit', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Modul pentru locuit', text: 'Unitate cu izolație, ferestre, uși și instalații pregătite pentru o locuință de sine stătătoare.' },
+      { title: 'Casă din mai multe containere', text: 'Mai multe module aduse împreună și îmbinate, cu zone comune, etaj sau terasă, după proiect.' },
+      { title: 'Container birou', text: 'Folosit pentru birou de șantier, de curte sau de grădină, uneori cu grup sanitar și mic oficiu.' },
+      { title: 'Anexă sau spațiu de oaspeți', text: 'Un modul separat lângă casa existentă, pentru oaspeți, atelier sau cameră de lucru.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se potrivește', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Se potrivește când vrei o construcție mai ușor de mutat sau de extins, când accesul pe teren permite transportul și ridicarea cu macara, sau când ai nevoie de un spațiu auxiliar. Nu e o soluție universală: pe un teren cu pantă, cu acces îngust sau fără utilități apropiate, costurile de pregătire pot depăși ce părea simplu la început.',
+      'La izolație și la ventilație contează în mod deosebit clima locului: o hală metalică încălzită vara și rece iarna se simte în orice modul care nu e izolat corect.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea pașilor', items: [
+      { title: 'Verifică la primărie', text: 'Întreabă dacă terenul permite o locuință de acest tip, ce acte se cer și ce se întâmplă dacă modulul se mută sau se extinde.' },
+      { title: 'Alege tipul de modul', text: 'Decide între un container construit pentru locuit și unul reconvertit; cere descrierea izolației și a finisajelor.' },
+      { title: 'Pregătește terenul', text: 'Se stabilește suportul, drumul de acces și locul pentru macara. Soluția o dă un specialist.' },
+      { title: 'Stabilește racordurile', text: 'Curent, apă, canalizare sau fosă, încălzire. Lucrările la instalații le fac personal autorizat și operatorii.' },
+      { title: 'Transport și montaj', text: 'Modulul este adus, ridicat și fixat; se verifică nivelul, îmbinările și etanșeitatea.' },
+      { title: 'Finisaje și recepție', text: 'Se verifică izolația, ventilația, ușile, ferestrele și funcționarea instalațiilor înainte de plata finală.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Comanda înainte de verificarea actelor', text: 'Un avans plătit fără să știi dacă locuința e permisă pe teren poate fi greu de recuperat.' },
+      { title: 'Izolație subestimată', text: 'Fără izolație și ventilație bune apar condensul, mucegaiul și disconfortul termic.' },
+      { title: 'Teren neglijat', text: 'Un suport inegal sau neprotejat de apă duce la deformări și la uși care nu se mai închid.' },
+      { title: 'Racorduri uitate din ofertă', text: 'Prețul modulului nu include de regulă drumul, fundația și racordurile; întreabă explicit.' },
+      { title: 'Confuzia între birou și locuință', text: 'Un modul vândut ca birou nu are neapărat dotările și izolația unei locuințe.' },
+      { title: 'Lipsa unui contract clar', text: 'Specificațiile, termenele și plata pe etape trebuie scrise, nu doar promise.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul de modul, de dotări (baie, bucătărie, încălzire, climatizare), de izolație și finisaje, de transport și ridicare, de pregătirea terenului și de racorduri. Două oferte cu același titlu pot acoperi lucruri foarte diferite.',
+      'Cere să fie listate separat modulul, dotările, transportul și montajul, pregătirea terenului, racordurile și garanția. Pentru ordine de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce structură are modulul, ce izolație, ce ferestre și uși, ce instalații vin montate și ce rămâne de făcut după livrare. Cere fișa tehnică și, dacă se poate, vizitează un modul similar deja livrat.',
+      'Întreabă cine răspunde de transport și de eventualele deteriorări, cine face montajul pe loc și ce garanție primești, în scris.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care îți explică ce acte trebuie lămurite și nu te grăbește cu avansul. Cere exemple de module livrate, contract cu specificații și precizări despre racorduri și despre ce se întâmplă dacă apar întârzieri.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre containere de locuit' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru case modulare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la case modulare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte pentru un container de locuit?', text: 'Descrie terenul și ce ai nevoie și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
