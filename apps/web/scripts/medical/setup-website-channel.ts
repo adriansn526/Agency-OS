@@ -35,6 +35,10 @@ const COLLECTIONS: { key: string; name: string; namePlural: string; kind: string
       { key: 'consult_online', type: 'select', label: 'Consult online', options: ['da', 'nu'], filterable: true },
       { key: 'program', type: 'text', label: 'Program de lucru' },
       { key: 'certificari', type: 'list', label: 'Competențe și atestate' },
+      { key: 'experienta_ani', type: 'number', label: 'Ani de experiență' },
+      { key: 'subspecializari', type: 'list', label: 'Subspecializări' },
+      { key: 'studii', type: 'list', label: 'Studii și formare' },
+      { key: 'afilieri', type: 'list', label: 'Afilieri profesionale' },
       { key: 'tema', type: 'text', label: 'Temă de culoare' },
       { key: 'accent', type: 'text', label: 'Culoare de accent' },
     ],
@@ -82,11 +86,18 @@ async function main() {
   }
 
   for (const c of COLLECTIONS) {
-    await db.websiteCollection.upsert({
-      where: { businessLineId_key: { businessLineId: line.id, key: c.key } },
-      create: { businessLineId: line.id, key: c.key, name: c.name, namePlural: c.namePlural, kind: c.kind, fields: c.fields as never, sortOrder: c.sortOrder },
-      update: {},
-    })
+    const existing = await db.websiteCollection.findUnique({ where: { businessLineId_key: { businessLineId: line.id, key: c.key } }, select: { id: true, fields: true } })
+    if (!existing) {
+      await db.websiteCollection.create({ data: { businessLineId: line.id, key: c.key, name: c.name, namePlural: c.namePlural, kind: c.kind, fields: c.fields as never, sortOrder: c.sortOrder } })
+      continue
+    }
+    // an existing collection keeps what the team edited; only fields it does not have yet are added
+    const have = (Array.isArray(existing.fields) ? existing.fields : []) as { key: string }[]
+    const missing = c.fields.filter((f) => !have.some((h) => h.key === f.key))
+    if (missing.length) {
+      await db.websiteCollection.update({ where: { id: existing.id }, data: { fields: [...have, ...missing] as never } })
+      console.log(`${c.key}: câmpuri adăugate: ${missing.map((m) => m.key).join(', ')}`)
+    }
   }
   console.log(`Canal gata (${keys.length} chei), ${COLLECTIONS.length} colecții`)
 }
