@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const pompaCalduraAerApa: SituationContent = {
+  slug: 'centrale-pompe-caldura--pompa-caldura-aer-apa',
+  categorie: 'centrale-pompe-caldura',
+  title: 'Pompă de căldură aer-apă: alegere, instalare, cost',
+  seoTitle: 'Pompă de căldură aer-apă: alegere, instalare, cost',
+  seoDescription: 'Pompă de căldură aer-apă: cum funcționează, pentru ce case se potrivește, cine o instalează, rolul instalației de încălzire și de ce depinde costul.',
+  summary: 'Pompa de căldură aer-apă: ce este, cum alegi, ce trebuie să aibă casa, cine o instalează și ce să compari în ofertele firmelor.',
+  sinonime: ['pompa de caldura', 'pompe de caldura', 'pompe de căldură', 'pompa caldura', 'pompa de caldura aer apa', 'pompa caldura aer apa', 'pompe caldura aer apa', 'pompa de caldura pret', 'pompe de caldura pret', 'boiler cu pompa de caldura', 'pompa de căldură', 'pompa căldură', 'pompa de căldură aer apă', 'pompa de căldură aer-apă', 'pompa căldură aer apă', 'pompe căldură aer apă', 'pompa de căldură preț', 'pompe de căldură preț', 'boiler cu pompă de căldură'],
+  intrebari: [
+    'Ce este o pompă de căldură aer-apă? | Un aparat cu o unitate exterioară care preia căldura din aerul de afară și o transmite apei din instalația de încălzire a casei. Apa încălzită poate alimenta încălzirea în pardoseală, radiatoarele sau un boiler. Nu se confundă cu pompa aer-aer, care încălzește direct aerul din cameră.',
+    'Care este diferența față de pompa de căldură aer-aer? | Pompa aer-aer, cunoscută și din aerul condiționat, încălzește direct aerul camerei. Pompa aer-apă încălzește apa din instalație, deci se leagă la radiatoare sau încălzire în pardoseală. Pentru varianta aer-aer vezi pagina din climatizare.',
+    'Pentru ce fel de casă se potrivește? | Depinde de izolația casei, de instalația de încălzire și de nevoile tale. Se potrivește mai bine instalațiilor care lucrează la temperaturi joase, cum este încălzirea în pardoseală. Un instalator evaluează casa înainte să recomande un model.',
+    'Poate înlocui complet centrala? | Uneori, dar depinde de casă, de aparat și de instalație; în alte cazuri pompa lucrează împreună cu o altă sursă. Cere instalatorului o evaluare concretă, nu o promisiune generală.',
+    'Cine instalează pompa de căldură? | O firmă de instalații cu personal calificat pentru partea frigorifică, hidraulică și electrică. Lucrările electrice și racordarea la tablou se fac de electrician autorizat. Nu se instalează după instrucțiuni generale.',
+    'Ce trebuie pregătit în casă? | Loc pentru unitatea exterioară și pentru partea interioară, instalația de încălzire potrivită, alimentare electrică și, adesea, un rezervor de apă. Instalatorul verifică toate acestea la vizită, înainte de ofertă.',
+    'De ce depinde costul? | De tipul și mărimea aparatului, de instalația de încălzire existentă, de montajul unității exterioare, de alimentarea electrică, de rezervor și accesorii și de acces. Cere ofertă cu aparat și manoperă separat; pagina de prețuri explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Pompă de căldură aer-apă: cum alegi și ce întrebi', subtitle: 'Ce este, cum diferă de pompa aer-aer, ce trebuie să aibă casa și de ce depinde costul. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce face', value: 'Încălzește apa din instalație' },
+      { label: 'Se leagă la', value: 'Pardoseală, radiatoare, boiler' },
+      { label: 'Cine instalează', value: 'Firmă calificată, electrician autorizat' },
+      { label: 'Oferta', value: 'Aparat și manoperă separat' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Pompa de căldură aer-apă preia căldura din aerul exterior și o transmite apei din instalația casei. Este o alternativă la centrala clasică, dar nu se potrivește oricărei case: contează izolația, instalația de încălzire și ce vrei să obții.',
+      'Pagina te ajută să înțelegi cum funcționează, ce verifică un instalator înainte de ofertă și cum compari ofertele. Pompa de căldură aer-aer are pagina ei în climatizare; încălzirea în pardoseală și radiatoarele au paginile lor în instalații termice.',
+    ) }),
+    node('what-h', 'heading', { text: 'Cum funcționează și ce înseamnă', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Unitatea exterioară', text: 'Preia căldura din aer. Are nevoie de loc potrivit, cu acces pentru service și fără obstacole care îi blochează aerul.' },
+      { title: 'Partea interioară', text: 'Transmite căldura apei din instalație. Poate include rezervor și componente hidraulice, după model.' },
+      { title: 'Instalația de încălzire', text: 'Încălzirea în pardoseală sau radiatoarele potrivite regimului pompei. Instalatorul verifică dacă instalația existentă se poate folosi.' },
+      { title: 'Apa caldă menajeră', text: 'Se poate încălzi prin pompa de căldură, printr-un rezervor sau un boiler. Alegerea depinde de consum și de aparat.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Ce se evaluează înainte', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Înainte de ofertă, instalatorul vede casa: cât este de izolată, ce instalație de încălzire are, unde poate sta unitatea exterioară și ce alimentare electrică există. Din aceste date reiese dacă pompa se potrivește și ce model. Dimensionarea o face instalatorul pe baza fișei tehnice, nu o ghicim aici.',
+      'Pompele de căldură lucrează în condiții bune cu instalații la temperaturi joase, de aceea încălzirea în pardoseală este o pereche frecventă. La radiatoare, instalatorul verifică dacă acestea sunt potrivite regimului pompei. Alimentarea electrică, protecțiile și racordarea la tablou le face un electrician autorizat.',
+      'Boilerul cu pompă de căldură este o variantă pentru apa caldă menajeră; pentru instalații de apă și boilere clasice vezi pagina de instalații sanitare. Întreabă și despre service și întreținere, pentru că aparatul are părți care cer verificare periodică.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge lucrarea cu o firmă', items: [
+      { title: 'Vizită și evaluare', text: 'Firma vede casa, instalația, locul pentru unitate și alimentarea electrică.' },
+      { title: 'Ofertă scrisă', text: 'Cere aparatul exact, accesoriile, lucrările incluse la instalație și la electric și garanția.' },
+      { title: 'Pregătirea locului', text: 'Se pregătesc suportul pentru unitatea exterioară, traseele și alimentarea electrică.' },
+      { title: 'Montaj și racordare', text: 'Se montează unitățile, se racordează la instalația de încălzire și la tablou, de personal calificat și autorizat.' },
+      { title: 'Punere în funcțiune', text: 'Se verifică funcționarea, se reglează sistemul și ți se explică folosirea.' },
+      { title: 'Documente și service', text: 'Primești documentele aparatului, garanția scrisă și informații despre întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegere fără evaluarea casei', text: 'Aparatul se potrivește izolației și instalației, nu doar unei liste de modele.' },
+      { title: 'Instalație de încălzire nepotrivită', text: 'Radiatoare prea mici pentru regimul pompei pot da confort slab.' },
+      { title: 'Locul unității exterioare', text: 'O poziție prost aleasă poate afecta funcționarea și vecinii.' },
+      { title: 'Confuzia cu pompa aer-aer', text: 'Sunt aparate diferite, cu rosturi diferite; verifică ce ți se oferă.' },
+      { title: 'Alimentare electrică neverificată', text: 'Aparatul poate cere o alimentare pe care casa nu o are încă.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț fără instalație, electric și punere în funcțiune nu se compară cu altul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul și mărimea aparatului, de instalația de încălzire existentă sau de cea care trebuie făcută, de montajul unității exterioare, de alimentarea electrică, de rezervor și accesorii și de accesul la locul de montaj. Aparatul și manopera variază separat.',
+      'Cere oferte care despart aparatul, instalația și lucrările electrice și care spun ce include punerea în funcțiune. Pentru instalații termice și centrale, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine face partea electrică, cine face punerea în funcțiune și ce service oferă firma. Cere oferta și garanția în scris.',
+      'Compară cel puțin două sau trei oferte pe aceleași criterii: aparat, accesorii, lucrări la instalație și electric, documente și garanție. O ofertă mult mai mică omite de regulă ceva important.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre pompa de căldură aer-apă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru centrale și instalații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la centrale și pompe de căldură' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie casa și instalația și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

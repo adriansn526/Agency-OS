@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const izolatiePodSpumaPoliuretanica: SituationContent = {
+  slug: 'izolatii-termice--izolatie-pod-spuma-poliuretanica',
+  categorie: 'izolatii-termice',
+  title: 'Izolația podului: spumă poliuretanică, vată, polistiren',
+  seoTitle: 'Izolația podului: spumă poliuretanică sau vată',
+  seoDescription: 'Cum izolezi podul: spumă poliuretanică cu celulă închisă, vată sau polistiren, cine aplică, ce întrebi, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce variante de izolare a podului există, cum se aplică spuma poliuretanică, când alegi vata sau polistirenul și ce să întrebi echipele care lucrează.',
+  sinonime: ['spuma poliuretanica izolatie pod', 'spuma poliuretanica izolare pod', 'izolatie pod', 'izolare pod', 'izolatii pod', 'izolatie cu spuma poliuretanica', 'izolatie cu spuma poliuretanica pret', 'izolare cu spuma poliuretanica pret', 'izolatie spuma poliuretanica', 'spuma poliuretanica izolatii', 'spuma izolatie termica', 'spuma poliuretanica cu celula inchisa', 'spuma celula inchisa', 'vata izolatie pod', 'vata izolare pod', 'spumă poliuretanică izolație pod', 'spumă poliuretanică izolare pod', 'izolație pod', 'izolații pod', 'izolație cu spumă poliuretanică', 'izolație cu spumă poliuretanică preț', 'izolare cu spumă poliuretanică preț', 'izolație spumă poliuretanică', 'spumă poliuretanică izolații', 'spumă izolație termică', 'spumă poliuretanică cu celulă închisă', 'spumă celulă închisă', 'vată izolație pod', 'vată izolare pod'],
+  intrebari: [
+    'De ce se izolează podul? | O parte importantă din căldura casei se pierde prin tavan, iar podul este adesea cel mai simplu loc în care se poate interveni. O izolație corectă reduce pierderile iarna și încălzirea excesivă a etajului vara.',
+    'Ce variante de izolare există? | Spumă poliuretanică aplicată prin pulverizare, vată minerală în rulouri sau saltele, polistiren în plăci sau granule. Alegerea depinde de tipul podului (circulabil sau nu, cu sau fără șarpantă vizibilă), de acces și de buget.',
+    'Cum se aplică spuma poliuretanică? | Se pulverizează cu echipament special, în straturi, pe suprafața care trebuie izolată. Echipa se protejează cu echipament adecvat, iar încăperea se ventilează conform instrucțiunilor produsului. Aplicarea cere echipe instruite și echipament, nu este o lucrare de improvizat.',
+    'Ce înseamnă spumă cu celulă închisă? | Este un tip de spumă ale cărei celule sunt etanșe, spre deosebire de cea cu celulă deschisă. Diferențele de comportare se găsesc în fișa tehnică a produsului; cere-o echipei și întreab-o de ce a ales acel tip pentru podul tău.',
+    'Se poate lăsa podul circulabil? | Depinde de soluție. Peste o izolație moale, cum e vata, nu se circulă direct, ci se montează o platformă sau un podeț. Întreabă ce acces rămâne după lucrare și ce protecție se pune dacă ai nevoie de depozitare.',
+    'Ce trebuie verificat înainte de izolare? | Învelitoarea să nu aibă infiltrații, șarpanta să nu fie atacată de umezeală sau insecte, iar ventilația podului și instalațiile (electrice, coșuri de fum) să fie rezolvate. Izolația peste o problemă existentă o ascunde, nu o repară.',
+    'Izolația podului înlocuiește izolația acoperișului? | Sunt soluții diferite: la un pod nelocuit se izolează planșeul de deasupra camerelor, iar la o mansardă se izolează învelișul acoperișului. Pentru mansardă vezi pagina dedicată izolației mansardei.',
+    'De ce depinde costul? | De suprafață, de tipul de izolație, de grosimea cerută de proiect sau de recomandarea firmei, de accesul în pod, de pregătirea suprafeței și de lucrările conexe. Cere ofertă cu produsul, grosimea și garanția scrise.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Izolația podului: ce variante ai și ce întrebi echipa', subtitle: 'Spumă poliuretanică, vată sau polistiren: diferențe, ordinea lucrării și de ce depinde costul. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Variante', value: 'Spumă, vată, polistiren' },
+      { label: 'Înainte de lucrare', value: 'Acoperiș și șarpantă verificate' },
+      { label: 'Spuma', value: 'Se aplică de echipe instruite' },
+      { label: 'Oferta', value: 'Produs, grosime, garanție scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Podul este adesea locul cel mai ușor de izolat al unei case, iar efectul se simte iarna în facturi și vara în temperatura etajului. Sunt mai multe soluții, iar cea potrivită depinde de modul în care arată podul și de cum îl folosești.',
+      'Pagina te ajută să alegi între spumă poliuretanică, vată și polistiren și să știi ce să întrebi echipele care aplică. Nu repetăm aici izolația mansardei, care are pagină proprie. Alegerea dintre polistiren și vată, în general, e explicată în ghidul de mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Soluțiile pentru pod', level: 'h2' }),
+    node('what', 'cards', { columns: '3', items: [
+      { title: 'Spumă poliuretanică', text: 'Se pulverizează și formează un strat continuu, util pe suprafețe neregulate sau greu accesibile. Se aplică doar cu echipament și echipe instruite.' },
+      { title: 'Vată minerală', text: 'Rulouri sau saltele așezate pe planșeu sau între elemente. Este o soluție des folosită la poduri accesibile, cu montaj relativ simplu.' },
+      { title: 'Polistiren', text: 'Plăci așezate pe planșeu sau, în unele cazuri, granule. Se alege după acces și după ce se pune deasupra.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Cum alegi soluția', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Spuma poliuretanică se potrivește mai ales când podul are forme neregulate, goluri greu de acoperit sau acces dificil. Întreabă dacă produsul propus este cu celulă închisă sau deschisă și cere fișa tehnică; diferențele contează în privința umezelii și a comportării în timp.',
+      'Vata minerală și polistirenul sunt alternative frecvente când planșeul este plan și accesibil. Dacă vrei să folosești podul pentru depozitare, spune de la început, ca firma să prevadă platforma sau podețul.',
+      'Indiferent de variantă, izolația nu trebuie să blocheze ventilația învelitorii, iar în jurul coșurilor de fum și al instalațiilor electrice se respectă distanțele și materialele din instrucțiunile produselor. Dacă ai dubii, cere avizul unui specialist.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Inspecția podului', text: 'Se verifică învelitoarea, șarpanta, umezeala, ventilația și traseele de instalații.' },
+      { title: 'Rezolvarea problemelor existente', text: 'Infiltrațiile, lemnul degradat și golurile din planșeu se repară înainte de izolare.' },
+      { title: 'Pregătirea suprafeței', text: 'Se curăță podul de resturi și praf și se protejează zonele care nu se izolează.' },
+      { title: 'Aplicarea izolației', text: 'Spuma se pulverizează în straturi; vata și polistirenul se așază fără goluri la îmbinări și la margini.' },
+      { title: 'Zonele speciale', text: 'Trapa de acces, coșurile și traversările de instalații se tratează cu detalii adecvate.' },
+      { title: 'Verificare și recepție', text: 'Se verifică continuitatea stratului, grosimea și curățenia lucrării; se primesc fișele produselor și garanția.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Izolare peste infiltrații', text: 'Umezeala rămâne sub izolație și degradează lemnul și materialul.' },
+      { title: 'Goluri și punți termice', text: 'O izolație cu spații libere la margini sau la trapă își pierde din eficiență.' },
+      { title: 'Blocarea ventilației', text: 'Învelitoarea are nevoie de aer sub ea; acoperirea gurilor de ventilație poate crea condens.' },
+      { title: 'Neluarea în calcul a instalațiilor', text: 'Cablurile și coșurile de fum cer soluții și distanțe specifice.' },
+      { title: 'Alegerea doar după preț', text: 'Produsul, grosimea și aplicarea contează la fel de mult ca soluția aleasă.' },
+      { title: 'Lipsa ventilării la aplicarea spumei', text: 'Instrucțiunile produsului privind aerisirea și accesul în pod după aplicare se respectă.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața podului, de soluția aleasă, de grosimea stratului, de acces și de pregătirea suprafeței. Contează și dacă firma face și reparații la acoperiș, platforme de circulație sau tratarea lemnului.',
+      'Cere o ofertă care precizează produsul, grosimea, suprafața și lucrările incluse. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară produsul exact și grosimea, nu doar tipul de izolație. Întreabă ce pregătire face echipa, cum tratează trapa și coșurile, ce garanție oferă și ce documente primești. Oferta mai mică cu produs sau grosime nespecificate nu este comparabilă cu una detaliată.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Pentru spumă, întreabă dacă echipa este instruită și dotată pentru aplicare și ce protecții folosește. Cere lucrări similare, contract scris și garanție pentru manoperă.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre izolația podului' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru izolații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la izolații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie podul și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

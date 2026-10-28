@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const tavanFalsRigips: SituationContent = {
+  slug: 'ipsoserie-gips-carton--tavan-fals-rigips',
+  categorie: 'ipsoserie-gips-carton',
+  title: 'Tavan fals din rigips',
+  seoTitle: 'Tavan fals din rigips: montaj, ordine și ofertă',
+  seoDescription: 'Cum se montează un tavan fals din gips-carton: structura, ușa de vizitare, instalațiile din tavan, greșeli frecvente, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce este un tavan fals, din ce se compune, cum se montează, ce să verifici înainte de închidere și ce trebuie să conțină oferta montatorului.',
+  sinonime: ['tavan fals', 'tavan fals rigips', 'tavan rigips', 'schema montaj tavan rigips', 'schemă montaj tavan rigips', 'usa vizitare rigips', 'ușă vizitare rigips', 'tavan fals polistiren'],
+  intrebari: [
+    'Ce este un tavan fals? | Un tavan suspendat sub planșeul real, care ascunde instalațiile, permite spoturi și poate îmbunătăți aspectul sau acustica. Cel din gips-carton are o structură metalică prinsă de planșeu și plăci fixate pe ea.',
+    'Care sunt componentele unui tavan din rigips? | Profile metalice, elemente de suspendare prinse de planșeu, plăci de gips-carton, șuruburi, bandă și material pentru rosturi. La nevoie se adaugă izolație, spoturi și ușă de vizitare. Schema de montaj o dă producătorul sistemului.',
+    'Ce este ușa de vizitare? | O deschidere în tavan, cu capac, prin care ajungi la ceva ascuns deasupra: o vană, un racord, o cutie de joncțiune. Se prevede acolo unde trebuie să ai acces; a o adăuga după ce tavanul e finisat înseamnă tăieri și refaceri.',
+    'Ce rol au instalațiile din tavan? | Țevi, cabluri, tuburi de ventilație sau lămpi se pun înainte de închiderea cu plăci. De aceea ordinea contează: instalatorii și electricianul termină traseele, se verifică, apoi se închide tavanul.',
+    'Ce este tavanul fals din polistiren? | Plăci ușoare de polistiren montate pe tavan sau pe o structură, pentru aspect. Rezistența la foc, la umezeală și la lovituri diferă mult de a rigipsului, deci verifică fișa produsului și ce cer normele pentru spațiul respectiv.',
+    'Pot avea spoturi și lumini ascunse? | Da, dacă se planifică din timp: poziții, alimentare, spațiul din tavan și răcirea corpurilor de iluminat. Montatorul și electricianul trebuie să se pună de acord înainte de închidere.',
+    'Se poate face tavan fals în baie sau bucătărie? | Cu plăci potrivite zonelor umede și cu ventilație bună, da. Placa obișnuită nu se folosește în spații cu umezeală; sistemul se alege după fișa tehnică.',
+    'De ce depinde costul unui tavan fals? | De suprafață, de numărul de nivele și de forme (curbe, goluri, rafturi luminoase), de înălțimea la care se lucrează, de izolație și instalații incluse și de finisaj (glet, vopsit). Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Tavan fals din rigips: cum se montează și ce să verifici', subtitle: 'Structura, plăcile, ușa de vizitare, instalațiile din tavan și de ce depinde costul. Dacă preferi să o facă o echipă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Structură', value: 'Profile metalice suspendate' },
+      { label: 'Plăci', value: 'Gips-carton, tip după spațiu' },
+      { label: 'Planifici', value: 'Spoturi și ușă de vizitare' },
+      { label: 'Oferta', value: 'Montaj, finisaj, instalații' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Tavanul fals din rigips ascunde instalațiile, permite iluminat încastrat, ajută la acustică și dă formă camerei. Un tavan bine făcut este plan, fără fisuri la rosturi și cu acces la ce se ascunde deasupra.',
+      'Pagina te ajută să înțelegi cum se montează un tavan din gips-carton, ce trebuie stabilit înainte de închidere și cum compari ofertele echipelor de montaj. Pereții și placările au pagina lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Din ce este făcut un tavan fals', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Structura metalică', text: 'Profile prinse de planșeu prin elemente de suspendare. Distanțele și prinderile se iau din schema producătorului.' },
+      { title: 'Plăcile de gips-carton', text: 'Se șurubuiesc pe structură, cu rosturile decalate. Tipul plăcii se alege după spațiu (uscat, umed, cerințe de foc).' },
+      { title: 'Rosturi și finisaj', text: 'Rosturile se bandează și se masează cu material specific, apoi urmează glet și vopsit.' },
+      { title: 'Elemente suplimentare', text: 'Izolație termică sau fonică, spoturi, ușă de vizitare, nișe pentru jaluzele sau perdele.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Tavanele false se fac în apartamente, case, birouri și spații comerciale: pentru a ascunde instalații, a corecta un planșeu neplan, a obține iluminat ascuns sau a separa vizual zone. Pentru bucătării, băi și alte spații umede se aleg plăci și accesorii potrivite.',
+      'Pentru spațiile cu cerințe de siguranță la foc, sistemul se alege conform cerințelor pentru clădirea respectivă, nu doar după aspect.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Proiect și trasare', text: 'Se stabilesc nivelul tavanului, nivelele multiple, pozițiile spoturilor și ale ușii de vizitare, apoi se trasează pe pereți.' },
+      { title: 'Instalațiile din tavan', text: 'Traseele electrice, de ventilație și de apă se execută și se verifică înainte de închidere.' },
+      { title: 'Structura de suspendare', text: 'Se montează profilele și elementele de suspendare după schema producătorului, în nivel.' },
+      { title: 'Izolație, la nevoie', text: 'Se pune izolația termică sau fonică prevăzută, înainte de plăci.' },
+      { title: 'Plăcile', text: 'Se fixează plăcile cu șuruburi, cu rosturile decalate, și se prevăd deschiderile pentru spoturi și ușă.' },
+      { title: 'Rosturi, glet și finisaj', text: 'Se banda rosturile, se aplică glet, se șlefuiește și se vopsește.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Închis tavanul înainte de verificarea instalațiilor', text: 'Un defect descoperit după închidere înseamnă tăieri și refaceri.' },
+      { title: 'Fără ușă de vizitare', text: 'Acolo unde ai nevoie de acces la vane sau racorduri, lipsa ușii cere distrugerea tavanului.' },
+      { title: 'Suspendare slabă', text: 'Prinderi nepotrivite pot duce la deformări sau la căderea plăcilor. Se respectă schema și ancorele potrivite planșeului.' },
+      { title: 'Placă nepotrivită spațiului', text: 'Placa obișnuită în spații umede se deteriorează. Alege tipul recomandat pentru spațiu.' },
+      { title: 'Rosturi neîntărite', text: 'Fără bandă sau material adecvat, rosturile se fisurează în timp.' },
+      { title: 'Spoturi prea apropiate sau fără aerisire', text: 'Corpurile de iluminat se aleg și se montează conform instrucțiunilor, cu atenție la încălzire.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul manoperei depinde de suprafață, de numărul de nivele și de forme (curbe, goluri, nișe), de înălțimea la care se lucrează, de dacă se montează izolație, spoturi și ușă de vizitare și de finisaj (glet, vopsit). Materialele se calculează separat.',
+      'Cere oferte care despart manopera de materiale și spun clar ce finisaj este inclus. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Verifică dacă oferta include doar montajul plăcilor sau și rosturile, gletul și vopsitul; ce tip de placă și ce structură se folosesc; cine face tăierile pentru spoturi și ușa de vizitare; cine ridică schela sau platforma. Diferențele mari vin de obicei din finisaj și din complexitatea formelor.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cum se coordonează cu electricianul și cu instalatorul. Stabilește în scris termenul, materialele, finisajul inclus și condițiile de plată.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre tavan fals' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru rigips și ipsoserie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la ipsoserie și gips-carton' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie camera și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

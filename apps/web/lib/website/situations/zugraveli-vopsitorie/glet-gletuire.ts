@@ -1,0 +1,90 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const gletGletuire: SituationContent = {
+  slug: 'zugraveli-vopsitorie--glet-gletuire',
+  categorie: 'zugraveli-vopsitorie',
+  title: 'Glet și gletuire pereți',
+  seoTitle: 'Glet și gletuire pereți: aplicare și cum alegi firma',
+  seoDescription: 'Ce este gletul, diferența dintre gletul de încărcare și cel de finisaj, ordinea gletuirii, gletuirea cu pompa, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce face gletul, când se folosește gletul de încărcare și când cel de finisaj, cum se aplică manual sau cu pompa și ce să compari în oferte.',
+  sinonime: ['glet', 'glet finisaj', 'glet de finisaj', 'glet de incarcare', 'glet de încărcare', 'gleturi de incarcare', 'gleturi de încărcare', 'gletuire', 'pompa gletuit', 'pompă gletuit', 'pompa glet', 'pompă glet'],
+  intrebari: [
+    'Ce este gletul? | Un material pe bază de ghips sau ciment, aplicat în strat subțire pe pereți și tavane pentru a obține o suprafață netedă, pregătită pentru vopsit sau alt finisaj. Tipul potrivit depinde de suport și de spațiu, iar datele sunt în fișa tehnică a produsului.',
+    'Care este diferența dintre gletul de încărcare și cel de finisaj? | Gletul de încărcare se aplică primul, în strat mai gros, ca să corecteze neregularitățile mari. Gletul de finisaj se aplică la urmă, în strat subțire, pentru o suprafață fină. Dacă peretele este bun, uneori ajunge doar finisajul.',
+    'Trebuie dat glet pe toți pereții? | Nu neapărat. Pe pereți drepți, în stare bună, poate fi suficientă o pregătire mai simplă. Gletul se justifică pe pereți denivelați, cu multe reparații sau când vrei o suprafață foarte netedă, de exemplu pentru vopsea cu luciu.',
+    'Cum se aplică gletul și de ce se șlefuiește? | Se aplică în straturi subțiri cu fierul de glet, se lasă să se usuce conform fișei tehnice și se șlefuiește pentru a elimina urmele. Praful rezultat se curăță înainte de grunduire și vopsire.',
+    'Ce este gletuirea cu pompa? | O metodă mecanizată, în care materialul este pompat și aplicat cu echipament, apoi netezit manual. Ajută la suprafețe mari, dar nu orice firmă o oferă și nu e potrivită oricărui spațiu; întreabă ce metodă se folosește și de ce.',
+    'Se poate da glet peste vopsea sau peste glet vechi? | Uneori, după verificarea aderenței și pregătirea suprafeței. Vopseaua care se desprinde sau gletul care se fărâmă se îndepărtează întâi. Specialistul verifică pe loc.',
+    'Cât de mult trebuie să se usuce un perete gletuit înainte de vopsit? | Depinde de produs, de grosimea stratului și de condițiile din încăpere. Respectă timpii din fișa tehnică a produsului și întreabă firma ce termene folosește.',
+    'De ce depinde costul gletuirii? | De suprafață, de starea pereților, de numărul de straturi și de șlefuire, de înălțimea camerelor și de metodă (manual sau cu pompa). Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Glet și gletuire: cine îl aplică și ce să verifici în ofertă', subtitle: 'Glet de încărcare sau de finisaj, aplicare manuală sau cu pompa și de ce depinde costul. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Rol', value: 'Suprafață netedă pentru vopsit' },
+      { label: 'Tipuri', value: 'De încărcare și de finisaj' },
+      { label: 'Metode', value: 'Manual sau cu pompa' },
+      { label: 'Compari', value: 'Straturi, șlefuire, suprafață' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Gletul este stratul care netezește peretele înainte de vopsit. El decide cât de plană și de fină arată suprafața, mai ales în lumină rasantă, unde orice neregularitate se vede.',
+      'Mulți caută „glet” ca produs. Pagina aceasta se concentrează pe lucrare: cum se aplică, cine o face și cum compari ofertele. Vopsitul propriu-zis are pagina lui, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de glet și rolul lor', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Glet de încărcare', text: 'Primul strat, mai gros, care corectează denivelările și acoperă reparațiile. Nu este un finisaj fin.' },
+      { title: 'Glet de finisaj', text: 'Stratul final, subțire, care dă suprafața fină, pregătită pentru grund și vopsea.' },
+      { title: 'Pe bază de ghips sau de ciment', text: 'Diferă prin utilizare: unele sunt pentru interior uscat, altele pentru spații cu umezeală sau pentru exterior. Verifică fișa tehnică.' },
+      { title: 'Gata preparat sau pudră', text: 'Unele produse se livrează gata de folosit, altele se amestecă cu apă. Se alege după lucrare și după recomandarea producătorului.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Când este necesar gletul', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Gletul se folosește la pereți și tavane interioare noi sau refăcute, la reparații întinse și atunci când vrei o suprafață fină, fără urme. Pe suprafețe deja drepte și în stare bună, un zugravit simplu poate fi suficient.',
+      'Pentru pereți din gips-carton, rosturile și șuruburile se tratează conform sistemului; vezi pagina despre pereți și placări din rigips. Dacă peretele este umed, gletul nu rezolvă cauza.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea suportului', text: 'Peretele trebuie să fie curat, uscat și stabil. Părțile care se desprind se îndepărtează.' },
+      { title: 'Grunduirea', text: 'Se aplică grundul recomandat de producătorul gletului, ca să se regleze absorbția.' },
+      { title: 'Glet de încărcare, la nevoie', text: 'Se corectează denivelările, în straturi, cu timp de uscare între ele.' },
+      { title: 'Glet de finisaj', text: 'Se aplică strat subțire, se netezește și se lasă să se usuce conform fișei tehnice.' },
+      { title: 'Șlefuirea', text: 'Se șlefuiește pentru a elimina urmele, apoi se curăță praful.' },
+      { title: 'Verificarea în lumină rasantă', text: 'Se controlează suprafața cu o sursă de lumină laterală și se retușează înainte de grunduire și vopsire.' },
+    ] }),
+    node('pump-h', 'heading', { text: 'Gletuirea cu pompa', level: 'h2' }),
+    node('pump', 'text', { body: para(
+      'La suprafețe mari, unele firme aplică gletul cu pompă. Materialul este pulverizat sau distribuit mecanizat, apoi netezit manual. Avantajul principal este viteza pe suprafețe întinse; nu înlocuiește însă netezirea și șlefuirea făcute cu grijă.',
+      'Întreabă firma ce metodă folosește, ce produs și dacă prețul include protejarea spațiului, deoarece o lucrare mecanizată cere acoperirea atentă a mobilei și a pardoselii.',
+    ) }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Glet pe suport neîntărit sau umed', text: 'Se crapă sau se desprinde. Suportul trebuie verificat înainte.' },
+      { title: 'Straturi prea groase', text: 'Un strat gros într-o singură trecere poate crăpa. Se lucrează în straturi, după indicațiile produsului.' },
+      { title: 'Lipsa grundului', text: 'Gletul se usucă prea repede și aderă slab pe suporturi care absorb mult.' },
+      { title: 'Șlefuire sărită', text: 'Urmele de fier se văd sub vopsea, mai ales în lumină rasantă.' },
+      { title: 'Glet de încărcare folosit drept finisaj', text: 'Suprafața rămâne granulată; ordinea și tipul de produs contează.' },
+      { title: 'Ofertă fără număr de straturi', text: 'Nu poți compara două oferte dacă nu spun câte straturi și ce șlefuire includ.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul gletuirii depinde de suprafață, de starea pereților, de câte straturi sunt necesare, de dacă se face doar finisaj sau și încărcare, de șlefuire, de înălțimea camerelor și de metodă. Materialul se calculează separat de manoperă.',
+      'Cere oferte care spun explicit straturile, produsul și dacă șlefuirea și curățenia sunt incluse. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Verifică dacă oferta include doar manopera sau și materialul, dacă are în vedere încărcare și finisaj, cine șlefuiește și curăță și cum se măsoară suprafața. O ofertă mult mai mică omite, de multe ori, un strat sau șlefuirea.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere fotografii sau lucrări vizitabile, mai ales din lumină rasantă, și întreabă ce produse folosește echipa. Stabilește în scris termenele, suprafața și condițiile de plată, fără plată integrală în avans.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre glet și gletuire' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru glet și zugrăveli' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la zugrăveli și vopsitorie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie pereții și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

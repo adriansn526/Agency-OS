@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const izolatieFatadaTermosistem: SituationContent = {
+  slug: 'izolatii-termice--izolatie-fatada-termosistem',
+  categorie: 'izolatii-termice',
+  title: 'Izolația fațadei: termosistem cu polistiren sau vată',
+  seoTitle: 'Izolația fațadei: termosistem, polistiren sau vată',
+  seoDescription: 'Cum se izolează o casă pe exterior cu termosistem: straturile, soclul, dibluirea, greșelile frecvente, de ce depinde costul și cum compari ofertele echipelor.',
+  summary: 'Ce este un termosistem, din ce straturi se face, cum se execută soclul și dibluirea și ce să compari în ofertele pentru izolarea casei pe exterior.',
+  sinonime: ['izolare casa exterior', 'izolatie exterioara casa', 'termosistem', 'termosistem decorativ exterior', 'polistiren fatada', 'dibluire polistiren', 'profil soclu polistiren', 'izolatie fatada', 'izolare casă exterior', 'izolație exterioară casă', 'polistiren fațadă', 'izolație fațadă'],
+  intrebari: [
+    'Ce este un termosistem? | Un sistem de izolare a fațadei pe exterior, format din plăci izolante lipite și fixate pe perete, un strat armat cu plasă și un finisaj decorativ. Se vorbește despre „sistem” pentru că straturile sunt gândite să funcționeze împreună; componentele luate separat, din surse diferite, nu garantează același rezultat.',
+    'Polistiren sau vată pentru fațadă? | Ambele se folosesc. Polistirenul este ușor și des întâlnit; vata minerală se alege când contează mai mult comportarea la foc sau permeabilitatea la vapori a peretelui. Alegerea depinde de clădire și de cerințele proiectului; diferențele sunt explicate în ghidul de comparare de mai jos.',
+    'Cum se fixează plăcile pe perete? | De regulă se lipesc cu adeziv special și, în funcție de sistem și de suportul peretelui, se fixează suplimentar cu dibluri. Tipul și numărul diblurilor se stabilesc după fișa tehnică a sistemului și după materialul peretelui, nu după obișnuința echipei.',
+    'De ce contează soclul? | Zona de la baza casei primește stropi, zăpadă și umezeală. Se pornește de la un profil de soclu care susține primul rând de plăci, iar în zona de contact cu solul se folosesc materiale potrivite umezelii. Un soclu neglijat este printre primele locuri unde sistemul se degradează.',
+    'Se poate izola fațada pe orice anotimp? | Adezivii și tencuielile au limite de temperatură și de umiditate la aplicare, scrise în fișele tehnice. Lucrarea se programează în intervale potrivite și se protejează schela de ploaie și soare puternic.',
+    'Ce trebuie verificat la peretele existent înainte? | Dacă tencuiala veche se ține bine, dacă peretele este uscat, fără igrasie sau infiltrații, și dacă este suficient de plan. Problemele de umezeală se rezolvă înainte, altfel apar pete și desprinderi sub izolație.',
+    'Ce autorizații cer lucrările? | Depinde de clădire și de zonă: în zone protejate sau la clădiri cu valoare istorică pot fi cerințe speciale, iar în blocuri decide asociația. Întreabă la primărie înainte de începere.',
+    'De ce depinde costul? | De suprafața fațadei, de înălțime și de schelă, de materialul izolant și de grosimea lui, de numărul de goluri și colțuri, de starea peretelui și de finisaj. Cere ofertă cu produsele exacte și cu lucrările la ferestre și soclu incluse sau separate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Izolația fațadei cu termosistem: ce verifici în ofertă', subtitle: 'Straturile sistemului, soclul, dibluirea și greșelile care apar cel mai des. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce este', value: 'Izolare pe exteriorul peretelui' },
+      { label: 'Straturi', value: 'Placă, adeziv, plasă, finisaj' },
+      { label: 'Zonă sensibilă', value: 'Soclul și golurile' },
+      { label: 'Oferta', value: 'Produse și detalii scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Izolarea casei pe exterior se face, în mod obișnuit, cu un termosistem: plăci izolante lipite pe perete, armate cu plasă și acoperite cu un finisaj decorativ. Avantajul este că izolația înconjoară casa și acoperă zonele reci din jurul planșeelor și colțurilor.',
+      'Pagina explică ce înseamnă un termosistem, cum se lucrează și ce să urmărești într-o ofertă. Izolația pereților pe interior și izolația podului au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Din ce este făcut un termosistem', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Profilul de soclu', text: 'Susține primul rând de plăci și așază sistemul drept. Se montează înaintea plăcilor, la o înălțime stabilită față de teren.' },
+      { title: 'Plăcile izolante', text: 'Polistiren sau vată minerală, lipite cu adeziv și, după caz, fixate cu dibluri. Se montează în rânduri alternate, cu îmbinările bine strânse.' },
+      { title: 'Stratul armat', text: 'Un strat de masă de șpaclu cu plasă din fibre, care preia tensiunile și protejează plăcile. Colțurile și golurile primesc armare suplimentară.' },
+      { title: 'Grunduirea și finisajul', text: 'Un grund și o tencuială decorativă, aleasă după aspect și după compatibilitatea cu sistemul.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Placa izolantă este de obicei din polistiren sau din vată minerală. Polistirenul este ușor și se lucrează repede; vata minerală este aleasă mai ales când contează comportarea la foc sau permeabilitatea la vapori. Comparația completă este în ghidul de mai jos.',
+      'Un sistem funcționează corect doar cu componentele compatibile între ele: adeziv, plăci, masă de armare, plasă, dibluri și tencuială. Cere ca oferta să numească sistemul și să nu amestece materiale din surse diferite fără acordul producătorului.',
+      'În zonele expuse la apă, de exemplu lângă teren, se folosesc materiale potrivite umezelii, iar profilele de colț și picurătorile protejează marginile.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea peretelui', text: 'Se verifică umezeala, tencuiala veche și planeitatea. Părțile care se desprind se refac, iar sursele de umezeală se tratează.' },
+      { title: 'Schela și pregătirea golurilor', text: 'Se montează schela și se pregătesc zonele de la ferestre, uși și streașină, ca izolația să le poată racorda.' },
+      { title: 'Profilul de soclu', text: 'Se fixează drept și la nivel, fiindcă de el depinde alinierea întregului sistem.' },
+      { title: 'Lipirea și dibluirea plăcilor', text: 'Plăcile se lipesc strâns, în rânduri alternate, apoi se fixează cu dibluri conform sistemului.' },
+      { title: 'Armarea', text: 'Se aplică masa de armare cu plasă, cu profile de colț și întărituri la goluri.' },
+      { title: 'Grund și finisaj decorativ', text: 'După uscarea stratului armat se aplică grundul și tencuiala decorativă, apoi se montează picurătorile și se etanșează racordurile.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Perete umed sau cu igrasie', text: 'Izolația nu rezolvă umezeala; o acoperă și o agravează. Cauza se tratează înainte.' },
+      { title: 'Dibluire insuficientă sau nepotrivită', text: 'Plăcile se pot desprinde în timp, mai ales la înălțime sau în zone cu vânt.' },
+      { title: 'Soclu neglijat', text: 'Fără profil și materiale potrivite, umezeala de la bază degradează sistemul.' },
+      { title: 'Armare slabă la colțuri și goluri', text: 'Apar crăpături care pornesc din colțurile ferestrelor.' },
+      { title: 'Amestec de materiale incompatibile', text: 'Un adeziv sau o tencuială nepotrivite pot cauza desprinderi sau pete.' },
+      { title: 'Lucru pe vreme nepotrivită', text: 'Ploaia sau frigul puternic în timpul aplicării afectează aderența și finisajul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața fațadei, de înălțime și de schelă, de materialul izolant și de grosimea aleasă, de numărul de goluri, colțuri și detalii, de starea peretelui și de finisajul decorativ. Lucrările de la ferestre, soclu și streașină pot fi incluse sau cerute separat.',
+      'Cere ofertă care spune ce sistem se folosește, ce include (schela, soclul, reparațiile la perete) și cum se plătește. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ofertele pe aceleași puncte: materialul și grosimea plăcilor, tipul de dibluire, produsele de armare și finisaj, ce se întâmplă la soclu și la goluri, cine asigură schela și ce garanție primești în scris. O ofertă mult mai mică lasă de obicei deoparte unul dintre aceste lucruri.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine execută, cu ce sistem lucrează echipa și cum se protejează lucrarea de ploaie. Cere contract scris, cu termene și garanție pentru manoperă.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre izolația fațadei' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru izolații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la izolații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie casa și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

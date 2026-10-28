@@ -6,9 +6,10 @@ import { CATEGORIES } from '../../glossary/taxonomy'
 import { EXTRA_CATEGORY_SLUGS } from '../../services/categories'
 
 test('every guide is valid (blocks, SEO lengths, FAQ format, no unwritten marker)', () => { for (const g of GUIDES) assert.deepEqual(validateGuide(g), [], g.slug) })
-test('three informative guides for the hub, unique slugs, all in hidroizolatii', () => {
-  assert.equal(GUIDES.length, 3); assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 3)
-  for (const g of GUIDES) assert.equal(g.serviciu, 'hidroizolatii')
+test('informative guides: unique slugs, three for the hub hidroizolatii and one each for the other hubs that have one', () => {
+  assert.equal(GUIDES.length, 5); assert.equal(new Set(GUIDES.map((g) => g.slug)).size, 5)
+  assert.equal(GUIDES.filter((g) => g.serviciu === 'hidroizolatii').length, 3)
+  assert.deepEqual(GUIDES.filter((g) => g.serviciu !== 'hidroizolatii').map((g) => `${g.serviciu}/${g.slug}`).sort(), ['fotovoltaice-energie-regenerabila/prosumator-cum-functioneaza', 'izolatii-termice/polistiren-sau-vata-bazaltica'])
 })
 test('the guides belong to categories that exist', () => { const ok = new Set([...CATEGORIES.map((c) => c.slug), ...EXTRA_CATEGORY_SLUGS]); for (const g of GUIDES) assert.ok(ok.has(g.serviciu), g.slug) })
 test('one page per group of terms: no search term is served by two guides', () => {

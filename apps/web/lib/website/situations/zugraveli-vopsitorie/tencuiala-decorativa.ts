@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const tencuialaDecorativa: SituationContent = {
+  slug: 'zugraveli-vopsitorie--tencuiala-decorativa',
+  categorie: 'zugraveli-vopsitorie',
+  title: 'Tencuială decorativă și vopsea decorativă',
+  seoTitle: 'Tencuială decorativă și vopsea decorativă: alegere',
+  seoDescription: 'Tencuială decorativă și vopsea decorativă pentru interior și fațadă: tipuri de finisaj, unde se potrivesc, ordinea aplicării, greșeli frecvente și cum alegi firma.',
+  summary: 'Ce tipuri de finisaje decorative există, unde se potrivesc la interior și la exterior, cum se aplică și ce să compari în ofertele aplicatorilor.',
+  sinonime: ['tencuiala decorativa', 'tencuială decorativă', 'tencuiala decorativa exterior', 'tencuială decorativă exterior', 'tencuiala decorativa interior', 'tencuială decorativă interior', 'tencuialadecorativa', 'vopsea decorativa', 'vopsea decorativă', 'vopseaua decorativa', 'vopseaua decorativă', 'vopsea decorativa exterior', 'vopsea decorativă exterior', 'tencuiala mozaicata', 'tencuială mozaicată', 'decorativa bob de orez', 'decorativă bob de orez', 'structurata exterior', 'structurată exterior'],
+  intrebari: [
+    'Ce este tencuiala decorativă? | Un finisaj aplicat în strat subțire pe pereți, interiori sau exteriori, care dă o textură și o culoare proprii, fără să fie nevoie de vopsea deasupra. Există mai multe tipuri, în funcție de granulație și de materialul liant.',
+    'Ce înseamnă „bob de orez” sau „structurată”? | Sunt denumiri pentru aspectul texturii: bob de orez are striuri neregulate, iar tencuiala structurată poate avea alte modele. Aspectul depinde de granulația produsului și de modul de aplicare.',
+    'Ce este tencuiala mozaicată? | Un finisaj cu granule colorate de piatră, folosit frecvent la socluri și zone expuse la lovituri și umezeală. Se alege pentru rezistență și aspect; produsul exact îl indică fișa tehnică.',
+    'Ce este vopseaua decorativă? | O vopsea cu efect de textură sau de culoare (de exemplu efecte de nuanțe, metalizate sau texturate), aplicată în mai multe straturi sau cu unelte speciale. Aplicarea cere mână sigură; cere exemple din lucrări făcute.',
+    'Se poate folosi la exterior? | Da, dar doar cu produse destinate exteriorului, aplicate pe un sistem compatibil, de exemplu pe izolația unei fațade. Dacă fațada se izolează, finisajul face parte din sistem și se alege odată cu el.',
+    'Pe ce suprafață se aplică? | Pe un suport curat, stabil și uscat, pregătit conform produsului: de multe ori cu grund. Suporturile neplane se corectează înainte, deoarece finisajul subțire nu le ascunde.',
+    'Cât durează și cum se întreține? | Rezistența și curățarea diferă de la un produs la altul și între interior și exterior. Întreabă firma ce produs propune, ce garanție oferă și cum se curăță finisajul; datele sunt în fișa tehnică.',
+    'De ce depinde costul? | De tipul de finisaj, de suprafață, de pregătirea suportului, de înălțimea și accesul la fațadă (schele), de numărul de culori sau efecte și de dificultatea modelului. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Tencuială decorativă și vopsea decorativă: cum alegi finisajul', subtitle: 'Tipuri de finisaj pentru interior și fațadă, ordinea aplicării și ce să verifici în ofertă. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce alegi', value: 'Textură, culoare, rezistență' },
+      { label: 'Spațiu', value: 'Interior sau exterior' },
+      { label: 'Suportul', value: 'Pregătit, curat, stabil' },
+      { label: 'Compari', value: 'Produs, aplicator, suprafață' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Tencuiala decorativă și vopseaua decorativă sunt finisaje care schimbă aspectul unui perete prin textură și culoare. Se folosesc pe fațade, în holuri, în zone de accent din living sau în spații comerciale.',
+      'Un finisaj decorativ arată bine doar dacă este bine aplicat, iar aplicarea depinde mult de aplicator. Pagina te ajută să alegi tipul potrivit și să compari ofertele. Tencuiala obișnuită, de nivelare, are pagina ei în categoria de ipsoserie.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de finisaje decorative', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Tencuială decorativă structurată', text: 'Textură dată de granule: de exemplu „bob de orez” sau alte modele. Folosită pe fațade și în interior.' },
+      { title: 'Tencuială mozaicată', text: 'Granule colorate de piatră. Frecventă la socluri și zone expuse la lovituri și umezeală.' },
+      { title: 'Vopsea decorativă', text: 'Efecte de culoare sau de textură obținute prin aplicare în mai multe straturi sau cu unelte speciale.' },
+      { title: 'Finisaje de interior cu efect', text: 'Soluții pentru pereți de accent, unde contează aspectul și întreținerea. Alegerea o face aplicatorul împreună cu tine, după mostre.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Unde se aplică', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'La interior, finisajele decorative se folosesc pe pereți de accent și în spații de trecere. La exterior, tencuiala decorativă poate fi stratul final al unei fațade izolate sau neizolate, cu produse făcute pentru ploaie, îngheț și soare.',
+      'Dacă fațada se izolează termic, finisajul decorativ este ultimul strat al sistemului și se alege împreună cu acesta. Izolațiile au categoria lor, la care trimitem din paginile de mai jos.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea finisajului pe mostre', text: 'Cere mostre aplicate, nu doar poze, și privește-le la lumina din locul respectiv.' },
+      { title: 'Verificarea și pregătirea suportului', text: 'Suprafața trebuie să fie curată, stabilă, uscată și corectată acolo unde are denivelări.' },
+      { title: 'Grunduirea', text: 'Se aplică grundul recomandat de producător, uneori colorat în nuanța finisajului.' },
+      { title: 'Aplicarea finisajului', text: 'Se aplică și se texturează într-o singură trecere pe fiecare suprafață continuă, ca să nu apară rosturi vizibile.' },
+      { title: 'Uscarea și protecția', text: 'Finisajul se ferește de ploaie și de îngheț în perioada indicată de producător.' },
+      { title: 'Recepția', text: 'Se verifică uniformitatea culorii și a texturii, la lumină naturală, înainte de demontarea schelei.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Suport neplan sau neuscat', text: 'Un finisaj subțire nu ascunde defectele și se poate desprinde.' },
+      { title: 'Întreruperi în mijlocul peretelui', text: 'Se văd rosturi și diferențe de textură. Se lucrează continuu pe suprafață, cu echipă suficientă.' },
+      { title: 'Produs de interior pus la exterior', text: 'Nu rezistă la umezeală, îngheț și soare. Verifică destinația produsului.' },
+      { title: 'Șarje diferite de culoare', text: 'Nuanța poate varia între loturi; cantitatea se calculează cu rezervă.' },
+      { title: 'Lucru pe vreme nepotrivită', text: 'Ploaia, vântul puternic sau temperaturile limită strică aspectul; respectă condițiile din fișa tehnică.' },
+      { title: 'Alegere fără mostră', text: 'Nuanța și textura se văd altfel pe suprafață mare decât într-o poză.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul de finisaj, de suprafață, de pregătirea suportului, de accesul la fațadă (schelă sau platformă), de numărul de culori sau efecte și de complexitatea modelului. Materialul se calculează separat de manoperă.',
+      'Cere oferte care spun produsul, numărul de straturi sau treceri, pregătirea inclusă și cine asigură schela. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară produsul exact, suprafața măsurată, pregătirea suportului, grundul, schela și cine face curățenia. Cere mostră aplicată și referințe pentru același tip de finisaj, pentru că aplicarea decorativă diferă mult de la o echipă la alta.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o echipă care a mai aplicat același tip de finisaj și îți poate arăta lucrări. Cere contract scris, cu termen, suprafață, produs și garanție pentru manoperă, și evită plata integrală în avans.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre finisaje decorative' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru zugrăveli și finisaje' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la zugrăveli și vopsitorie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie suprafața și finisajul dorit și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

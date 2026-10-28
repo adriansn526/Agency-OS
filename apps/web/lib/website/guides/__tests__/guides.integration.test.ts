@@ -5,21 +5,22 @@ import assert from 'node:assert/strict'
 const URL_ = process.env.GUIDES_TEST_DATABASE_URL
 const skip = !URL_
 if (URL_) process.env.DATABASE_URL = URL_
-let db: any, G: typeof import('../seed'), Z: typeof import('../../storefront/serialize')
+let db: any, G: typeof import('../seed'), GI: typeof import('../index'), Z: typeof import('../../storefront/serialize')
 
 before(async () => {
   if (skip) return
-  ;({ db } = await import('@repo/db')); G = await import('../seed'); Z = await import('../../storefront/serialize')
+  ;({ db } = await import('@repo/db')); G = await import('../seed'); GI = await import('../index'); Z = await import('../../storefront/serialize')
   await db.$executeRawUnsafe(`TRUNCATE "WebsiteLayoutVersion","WebsiteMedia","WebsiteEntry","WebsiteCollection","WebsiteChannel","Activity","Lead","BusinessLine" CASCADE`)
   await db.businessLine.create({ data: { id: 'bl', slug: 'bl', name: 'bl', icon: 'x', color: '#000', config: {} } })
   const gl = await db.websiteCollection.create({ data: { id: 'cg', businessLineId: 'bl', key: 'servicii', name: 'Serviciu', namePlural: 'Servicii', kind: 'article', fields: [] } })
   await db.websiteEntry.create({ data: { id: 'g1', businessLineId: 'bl', collectionId: gl.id, slug: 'hidroizolatii', title: 'Hidroizolații', status: 'draft', data: { tip: 'categorie', parinte: 'lucrari-speciale' } } })
+  for (const c of new Set(GI.GUIDES.map((g) => g.serviciu))) if (c !== 'hidroizolatii') await db.websiteEntry.create({ data: { id: `c-${c}`, businessLineId: 'bl', collectionId: gl.id, slug: c, title: c, status: 'draft', data: { tip: 'categorie', parinte: 'lucrari-speciale' } } })
 })
 after(async () => { if (db) await db.$disconnect() })
 
 test('the plan lists the guides; a missing category is a problem', { skip }, async () => {
   const p = await G.planGuides('bl')
-  assert.equal(p.collection, false); assert.equal(p.toCreate.length, 3); assert.ok(p.toCreate.some((g) => g.slug === 'igrasie')); assert.deepEqual(p.problems, [])
+  assert.equal(p.collection, false); assert.equal(p.toCreate.length, GI.GUIDES.length); assert.ok(p.toCreate.some((g) => g.slug === 'igrasie')); assert.deepEqual(p.problems, [])
   await db.websiteEntry.update({ where: { id: 'g1' }, data: { slug: 'altceva' } })
   assert.ok((await G.planGuides('bl')).problems.some((x) => x.includes('nu există în glosar')))
   await assert.rejects(async () => G.applyGuides(await G.planGuides('bl')), /Conținut invalid/)
@@ -27,11 +28,11 @@ test('the plan lists the guides; a missing category is a problem', { skip }, asy
 })
 test('apply creates the collection and the drafts with layout, data and a seed version', { skip }, async () => {
   const r = await G.applyGuides(await G.planGuides('bl'))
-  assert.deepEqual(r, { created: 3, rewritten: 0 })
+  assert.deepEqual(r, { created: GI.GUIDES.length, rewritten: 0 })
   const col = await db.websiteCollection.findFirst({ where: { key: 'ghiduri' } })
   assert.equal(col.kind, 'article')
   const rows = await db.websiteEntry.findMany({ where: { collectionId: col.id }, include: { media: true } })
-  assert.equal(rows.length, 3); for (const e of rows) assert.equal(e.status, 'draft')
+  assert.equal(rows.length, GI.GUIDES.length); for (const e of rows) assert.equal(e.status, 'draft')
   const e = rows.find((x: any) => x.slug === 'igrasie')
   assert.equal(e.data.in_constructie, 'da') // a new guide starts ticked "în construcție": its text must be checked first
   assert.equal(e.data.serviciu, 'hidroizolatii'); assert.ok(e.data.intrebari.length >= 5); assert.ok(e.seoTitle.length <= 60)
@@ -40,15 +41,15 @@ test('apply creates the collection and the drafts with layout, data and a seed v
   assert.equal(d.hasBlocks, true); assert.equal(d.ready, false); assert.equal(d.wip, true); assert.ok(d.pageLayout.blocks.length >= 10)
 })
 test('a second run changes nothing; --force rewrites and keeps the history', { skip }, async () => {
-  const p = await G.planGuides('bl'); assert.equal(p.toCreate.length, 0); assert.equal(p.skipped.length, 3)
+  const p = await G.planGuides('bl'); assert.equal(p.toCreate.length, 0); assert.equal(p.skipped.length, GI.GUIDES.length)
   assert.deepEqual(await G.applyGuides(p), { created: 0, rewritten: 0 })
   // the team checked the damp guide and cleared the tick; a rewrite must not tick it again
   await db.websiteEntry.updateMany({ where: { slug: 'igrasie' }, data: { data: { serviciu: 'hidroizolatii', in_constructie: 'nu' } } })
-  const f = await G.planGuides('bl', true); assert.equal(f.toRewrite.length, 3)
-  assert.deepEqual(await G.applyGuides(f), { created: 0, rewritten: 3 })
+  const f = await G.planGuides('bl', true); assert.equal(f.toRewrite.length, GI.GUIDES.length)
+  assert.deepEqual(await G.applyGuides(f), { created: 0, rewritten: GI.GUIDES.length })
   const e = await db.websiteEntry.findFirst({ where: { slug: 'igrasie' } })
   assert.equal(await db.websiteLayoutVersion.count({ where: { entryId: e.id } }), 2)
-  assert.equal(await db.websiteEntry.count({ where: { collection: { key: 'ghiduri' } } }), 3)
+  assert.equal(await db.websiteEntry.count({ where: { collection: { key: 'ghiduri' } } }), GI.GUIDES.length)
   assert.equal(e.data.in_constructie, 'nu') // the decision of the team survives the rewrite
   assert.equal((await db.websiteEntry.findFirst({ where: { slug: 'membrana-epdm-sau-bituminoasa' } })).data.in_constructie, 'da') // untouched guides keep theirs
 })

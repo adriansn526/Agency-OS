@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const calorifereRadiatoare: SituationContent = {
+  slug: 'instalatii-termice--calorifere-radiatoare',
+  categorie: 'instalatii-termice',
+  title: 'Calorifere și radiatoare: alegere și montaj',
+  seoTitle: 'Calorifere și radiatoare: alegere și montaj',
+  seoDescription: 'Cum alegi calorifere din aluminiu, oțel sau fontă, cum se montează, ce rol are termostatul, greșeli frecvente și de ce depinde costul manoperei.',
+  summary: 'Calorifere și radiatoare: ce tipuri există, cum alegi după cameră și sursa de căldură, cine le montează, rolul termostatului și ce să compari în oferte.',
+  sinonime: ['calorifere', 'calorifer', 'radiatoare', 'calorifer baie', 'calorifere baie', 'calorifer vertical', 'calorifer aluminiu', 'calorifere aluminiu', 'calorifer fonta', 'calorifere fonta', 'calorifere otel', 'montaj calorifere', 'pret manopera montare centrala termica si calorifere', 'termostat calorifer', 'calorifer fontă', 'calorifere fontă', 'calorifere oțel', 'preț manoperă montare centrală termică și calorifere'],
+  intrebari: [
+    'Ce tipuri de calorifere există? | După material, cele frecvente sunt din oțel (panouri), din aluminiu și din fontă. Mai există variante verticale, pentru spații înguste, și radiatoare de baie care pot susține și prosoape. Fiecare tip reacționează diferit la încălzire și la răcire și are alt aspect.',
+    'Cum aleg caloriferul potrivit pentru o cameră? | Pornește de la ce trebuie să încălzească: dimensiunea și izolația camerei, ferestrele și sursa de căldură. Alegerea mărimii se face de instalator, pe baza fișei tehnice a radiatorului și a regimului de funcționare al instalației, nu după aspect.',
+    'Contează sursa de căldură la alegerea radiatoarelor? | Da. Centrala pe gaz, cea pe lemne sau pe peleți și pompa de căldură lucrează la regimuri diferite, iar radiatoarele trebuie dimensionate pentru regimul sursei tale. Spune instalatorului ce sursă ai sau vei avea.',
+    'Cine montează caloriferele? | Un instalator termic. Montajul include fixarea pe perete, racordarea la conducte, robinetele, aerisirea și proba de etanșeitate. Racordarea la centrala termică sau la gaz rămâne în sarcina personalului autorizat.',
+    'La ce folosește termostatul și robineții termostatici? | Termostatul de cameră comandă sursa de căldură după temperatura din încăpere; robinetul termostatic reglează fiecare radiator. Împreună permit un confort mai uniform, iar modul de montare și de reglare se stabilește cu instalatorul.',
+    'Pot schimba doar caloriferele, fără să refac instalația? | Adesea da, dacă țevile sunt în stare bună și noile radiatoare se potrivesc regimului. Instalatorul verifică racordurile și starea conductelor înainte să dea o ofertă.',
+    'De ce depinde costul manoperei? | De numărul de calorifere, de dacă înlocuiești unele existente sau montezi pe traseu nou, de tipul de perete, de modificările de țevi și de dacă lucrarea se face odată cu montajul centralei. Cere ofertă cu manopera separată de materiale.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Calorifere și radiatoare: cum alegi și ce verifici în ofertă', subtitle: 'Aluminiu, oțel sau fontă, rolul termostatului, ordinea montajului și de ce depinde costul manoperei. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Materiale', value: 'Oțel, aluminiu, fontă' },
+      { label: 'Cine montează', value: 'Instalator termic' },
+      { label: 'Reglaj', value: 'Termostat și robinete termostatice' },
+      { label: 'Oferta', value: 'Manoperă separată de materiale' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Caloriferele sunt cele mai răspândite corpuri de încălzire din locuințe. Alegerea nu ține doar de aspect: un radiator prea mic nu încălzește camera, iar unul nepotrivit sursei de căldură lucrează prost sau consumă mai mult.',
+      'Pagina te ajută să înțelegi tipurile de calorifere, cum alegi după cameră și sursă, cine le montează și cum compari ofertele. Încălzirea în pardoseală și sursele de căldură au paginile lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de calorifere', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Din oțel', text: 'Panouri sau radiatoare tubulare, foarte răspândite, în mai multe forme și dimensiuni. Răspund destul de repede la încălzire.' },
+      { title: 'Din aluminiu', text: 'Ușoare, cu schimb rapid de căldură, folosite adesea în locuințe noi sau renovate. Se aleg după fișa tehnică și calitatea apei din instalație.' },
+      { title: 'Din fontă', text: 'Grele, păstrează căldura mai mult timp și arată clasic. Cer pereți care le pot susține și un montaj atent.' },
+      { title: 'Verticale și de baie', text: 'Radiatoarele verticale ocupă puțină lățime, iar cele de baie pot fi folosite și pentru uscat prosoape. Se aleg pentru spații cu loc restrâns.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Cum alegi și ce se montează', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Un radiator nu se alege doar după dimensiune. Instalatorul ține cont de pierderile de căldură ale camerei, de regimul în care lucrează sursa (centrală, pompă de căldură, cazan pe lemne sau peleți) și de locul disponibil, de obicei sub fereastră. Mărimea potrivită se citește din fișa tehnică a producătorului.',
+      'La montaj intră consolele sau suporții potriviți pereților, racordurile, robinetele de reglaj, aerisirea și, după caz, robineții termostatici și termostatul de cameră. La instalațiile vechi, instalatorul poate recomanda spălarea sau verificarea conductelor înainte de schimbarea radiatoarelor.',
+      'Dacă pe aceeași instalație ai și încălzire în pardoseală, regimurile de funcționare diferă, deci cere instalatorului să explice cum se reglează fiecare circuit.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Verificarea instalației', text: 'Instalatorul vede conductele, sursa de căldură și radiatoarele existente și propune soluția.' },
+      { title: 'Alegerea și dimensionarea', text: 'Se aleg tipul și mărimea radiatoarelor pentru fiecare cameră, după regimul sursei.' },
+      { title: 'Demontarea celor vechi', text: 'Se golește circuitul, se scot radiatoarele vechi și se pregătesc racordurile.' },
+      { title: 'Montarea și racordarea', text: 'Se fixează noile radiatoare pe suporți potriviți peretelui, apoi se racordează și se montează robinetele.' },
+      { title: 'Probă și aerisire', text: 'Se umple circuitul, se verifică etanșeitatea și se aerisesc radiatoarele.' },
+      { title: 'Reglaj', text: 'Se reglează robineții și termostatul, iar instalatorul îți explică folosirea.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegere după aspect', text: 'Un radiator frumos, dar prea mic pentru cameră, nu o încălzește.' },
+      { title: 'Ignorarea sursei de căldură', text: 'Radiatoarele trebuie potrivite regimului centralei sau pompei de căldură.' },
+      { title: 'Suporți nepotriviți', text: 'Radiatoarele grele pe pereți fragili cer fixări adecvate.' },
+      { title: 'Fără aerisire și probă', text: 'Aerul rămas în circuit face radiatorul să se încălzească doar parțial.' },
+      { title: 'Lipsa reglajului', text: 'Fără robineți și termostat, încăperile se încălzesc inegal.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț fără tipul radiatoarelor, robinete și probă nu se poate compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Manopera depinde de numărul de calorifere, de dacă înlocuiești aceleași locuri sau montezi pe un traseu nou, de tipul de perete, de modificările de țevi, de accesul la conducte și de dacă lucrarea se face odată cu montajul sau schimbarea centralei. Prețul radiatoarelor variază separat, după material, mărime și model.',
+      'Cere oferte care despart manopera de materiale și care precizează tipul radiatoarelor, robinetele, termostatul și proba. Pentru lucrarea la centrală, vezi pagina de preț a montajului de centrală termică.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea, ofertă scrisă cu detalii despre materiale și manoperă și garanție pentru manoperă. Întreabă cine răspunde de proba instalației și cine se ocupă de racordarea la sursa de căldură, care se face de personal autorizat.',
+      'Compară cel puțin două sau trei oferte pe aceleași criterii: tip și număr de radiatoare, robinete, termostat, probă și termen.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre calorifere' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie camerele și sursa de căldură și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

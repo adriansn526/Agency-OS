@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const revizieServiceCentralaTermica: SituationContent = {
+  slug: 'centrale-pompe-caldura--revizie-service-centrala-termica',
+  categorie: 'centrale-pompe-caldura',
+  title: 'Revizie, verificare și reparații centrală termică',
+  seoTitle: 'Revizie și reparații centrală termică: cine le face',
+  seoDescription: 'Revizia și verificarea centralei termice: cine o face, cât de des, ce include, când chemi service pentru reparații și cum compari ofertele firmelor autorizate.',
+  summary: 'Revizie, verificare și reparații la centrala termică: cine le face, cât de des, ce include o vizită de service și ce să compari în ofertele firmelor.',
+  sinonime: ['revizie centrala termica', 'revizii centrala termica', 'verificare centrala termica', 'verificare centrala termica la 2 ani pret', 'reparatii centrale termice', 'reparatii centrale', 'service centrala termica', 'revizie centrală termică', 'revizii centrală termică', 'verificare centrală termică', 'verificare centrală termică la 2 ani preț', 'reparații centrale termice', 'reparații centrale', 'service centrală termică'],
+  intrebari: [
+    'Ce include o revizie a centralei termice? | De obicei o verificare a funcționării, a siguranțelor, a arderii și a evacuării, curățarea componentelor accesibile și o probă de funcționare, după fișa aparatului. Conținutul exact îl precizează firma în ofertă și îl găsești în documentele centralei.',
+    'Cine poate face revizia sau reparațiile? | Personal autorizat, cu pregătire pentru aparate pe gaz. Nu o face oricine și nu se amână dacă observi probleme; la mirosul de gaz sau semne de pericol se acționează conform regulilor distribuitorului, nu cu improvizații.',
+    'Cât de des se face revizia? | Frecvența depinde de tipul aparatului, de recomandările producătorului și de cerințele aplicabile locuinței tale. Verifică în cartea tehnică a centralei și întreabă firma de service sau distribuitorul de gaze ce se aplică în cazul tău.',
+    'Este obligatorie verificarea periodică? | Există cerințe pentru instalațiile de gaz, iar detaliile (ce, cum, la ce intervale) depind de situația locuinței și se confirmă la distribuitor sau la firma autorizată. Nu ne bazăm aici pe o anumită regulă; verifică la sursă.',
+    'Când chem service în afara reviziei? | Când centrala se oprește, face zgomote neobișnuite, pierde apă, afișează coduri de eroare repetate sau încălzește slab. Oprește folosirea aparatului la orice semn de pericol și cheamă personal autorizat.',
+    'Se pot repara centralele vechi sau mai bine se schimbă? | Depinde de defect, de vechimea aparatului, de disponibilitatea pieselor și de cât de des a avut probleme. Un specialist poate recomanda reparația sau schimbarea; pentru schimbare vezi pagina de montaj.',
+    'De ce depinde costul? | De tipul aparatului, de ce include revizia sau reparația, de piesele necesare, de accesul la centrală, de deplasare și de urgență. Cere o ofertă care spune ce se face, ce se schimbă și ce se facturează separat.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Revizie și reparații la centrala termică: cine le face și ce ceri', subtitle: 'Ce include o vizită de service, cât de des se face și cum compari ofertele firmelor autorizate. Ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine face', value: 'Personal autorizat' },
+      { label: 'Frecvență', value: 'După aparat și cerințe, verificate la distribuitor' },
+      { label: 'Oferta', value: 'Ce include și ce piese se plătesc separat' },
+      { label: 'Documente', value: 'Păstrează fișa de revizie' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Centrala termică are nevoie de verificări la intervale potrivite și de intervenție rapidă când apare o problemă. Revizia nu înseamnă doar curățare: se verifică funcționarea și siguranța aparatului, iar rezultatul se trece într-o fișă.',
+      'Pagina te ajută să știi ce să ceri, cine poate lucra la un aparat pe gaz și cum compari ofertele. Montajul sau schimbarea centralei are pagina ei, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poate însemna o vizită de service', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Revizie periodică', text: 'Verificare programată: funcționare, siguranțe, ardere, evacuare și probă. Previne defecțiunile și menține aparatul în stare bună.' },
+      { title: 'Verificare', text: 'Control al instalației, cerut la intervale, pentru a confirma că aparatul și racordurile funcționează în siguranță.' },
+      { title: 'Reparație', text: 'Intervenție când aparatul nu funcționează sau se oprește. Se stabilește cauza, apoi se repară sau se înlocuiește piesa.' },
+      { title: 'Schimb de piese', text: 'Piesele uzate se înlocuiesc cu cele potrivite aparatului. Cere să știi ce s-a schimbat și să păstrezi documentele.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Siguranță și responsabilitate', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'La un aparat pe gaz, ardere, evacuarea gazelor și ventilarea încăperii sunt probleme de siguranță, inclusiv riscul de monoxid de carbon. Le verifică și le repară numai personal autorizat; aici nu dăm instrucțiuni de intervenție. Dacă simți miros de gaz sau ai alte semne de pericol, oprește utilizarea și anunță distribuitorul sau serviciile competente, cum ți se cere în documentele aparatului.',
+      'Întreabă firma ce documente primești după revizie (fișă, proces-verbal) și păstrează-le împreună cu cartea tehnică a centralei. Ele pot fi cerute de producător pentru garanție sau de distribuitor.',
+      'Dacă ai și alte surse de căldură sau radiatoare, informează tehnicianul: poate verifica și racordurile și reglajul instalației. Pentru pompa de căldură aer-apă vezi pagina ei.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge o intervenție', items: [
+      { title: 'Programare și descriere', text: 'Spui ce aparat ai, ce simptome observi și când a fost ultima verificare.' },
+      { title: 'Diagnostic', text: 'Tehnicianul verifică aparatul și stabilește ce trebuie făcut.' },
+      { title: 'Ofertă pentru lucrare', text: 'Primești informații despre ce se repară sau se schimbă și ce se plătește separat, înainte de lucrare.' },
+      { title: 'Revizie sau reparație', text: 'Se execută lucrarea, de personal autorizat, cu piese potrivite aparatului.' },
+      { title: 'Probă de funcționare', text: 'Se verifică funcționarea aparatului și a instalației după intervenție.' },
+      { title: 'Documente', text: 'Primești fișa de revizie sau factura detaliată și garanția pentru lucrare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Amânarea reviziei', text: 'Problemele mici devin defecțiuni scumpe sau chiar riscuri de siguranță.' },
+      { title: 'Reparație de către neautorizați', text: 'La un aparat pe gaz, intervenția improvizată este periculoasă.' },
+      { title: 'Ignorarea semnelor', text: 'Zgomote, pierderi de apă sau coduri repetate arată că aparatul cere control.' },
+      { title: 'Fără documente', text: 'Fișa de revizie lipsă îngreunează garanția și eventualele verificări.' },
+      { title: 'Reparații repetate la un aparat uzat', text: 'Uneori schimbarea este soluția mai bună; cere părerea tehnicianului.' },
+      { title: 'Ofertă neclară', text: 'Fără detalii despre ce include revizia și ce piese se plătesc separat, nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unei revizii sau reparații depinde de tipul aparatului, de ce cuprinde vizita, de piesele necesare, de accesul la centrală, de deplasare și de urgență. Piesele se pot factura separat de manoperă.',
+      'Cere să știi dinainte ce include prețul și ce se plătește în plus. Pentru centrala nouă sau schimbare, vezi pagina de preț a montajului.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma de service', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă cu personal autorizat pentru aparate pe gaz, care lucrează cu aparatul tău sau cu tipul lui, și care îți dă fișă și factură detaliată. Întreabă cât de repede intervine și cum se face garanția lucrării.',
+      'Compară cel puțin două sau trei oferte pe aceleași criterii: ce include revizia, piesele, deplasarea și documentele.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre revizia centralei termice' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru centrale termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la centrale și pompe de căldură' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie aparatul și problema și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const centralaLemnePeleti: SituationContent = {
+  slug: 'instalatii-termice--centrala-lemne-peleti',
+  categorie: 'instalatii-termice',
+  title: 'Centrală pe lemne sau pe peleți, cu puffer',
+  seoTitle: 'Centrală pe lemne sau peleți, cu puffer: alegere',
+  seoDescription: 'Centrală pe lemne sau pe peleți: cum alegi, ce este pufferul, cine o instalează, ce se verifică la coș și ventilare, greșeli frecvente și de ce depinde costul.',
+  summary: 'Centrala pe lemne sau pe peleți și pufferul: cum alegi între ele, ce trebuie pregătit în casă, cine o instalează și ce să compari în ofertele firmelor.',
+  sinonime: ['centrala pe lemne', 'centrala lemne', 'centrala lemn', 'cazan pe lemne', 'central pe peleti', 'centrala pe peleti', 'peleti centrala', 'puffer', 'centrală pe lemne', 'centrală lemne', 'centrală lemn', 'cazan pe lemne', 'centrală pe peleți', 'peleți centrală'],
+  intrebari: [
+    'Care este diferența dintre o centrală pe lemne și una pe peleți? | Cea pe lemne se alimentează de obicei manual, cu lemne de foc, și cere depozit de lemne și atenție la ardere. Cea pe peleți se alimentează dintr-un rezervor, cu peleți (granule din lemn presat), și are un grad mai mare de automatizare, dar cere loc de depozitare pentru peleți și combustibil potrivit.',
+    'Ce este pufferul și de ce se montează? | Este un rezervor mare de apă caldă care înmagazinează căldura produsă de centrală și o cedează apoi instalației. Ajută mai ales la centralele pe lemne, unde arderea produce căldură mai multă decât are nevoie casa în acel moment. Mărimea și racordarea le stabilește instalatorul după fișa tehnică a centralei.',
+    'Cine instalează o centrală pe lemne sau pe peleți? | O firmă de instalații termice, cu personal calificat. Evacuarea gazelor, coșul de fum și ventilarea încăperii trebuie să fie verificate de specialiști autorizați, iar cerințele se verifică la autorități și la furnizorul aparatului. Nu se improvizează.',
+    'Ce trebuie pregătit în casă? | Un loc potrivit pentru centrală și pentru puffer, un coș de fum corespunzător, ventilare adecvată a încăperii, loc pentru lemne sau peleți și acces pentru alimentare și curățare. Toate se stabilesc cu instalatorul înainte de achiziție, nu după.',
+    'Este nevoie de autorizări sau avize? | Poate fi, în funcție de tipul aparatului și de situația locuinței. Întreabă instalatorul și autoritățile locale înainte de începerea lucrării, ca să nu fii nevoit să schimbi ceva după montaj.',
+    'Se poate combina cu radiatoare sau cu încălzire în pardoseală? | Da, centrala încălzește apa din instalație, iar aceasta poate alimenta radiatoare sau încălzire în pardoseală. Instalatorul stabilește regimul de funcționare și reglajul, iar pufferul ajută la echilibrarea cererii.',
+    'De ce depinde costul? | De tipul de centrală, de puffer și de accesoriile necesare, de starea coșului, de ventilare și de racordările la instalația existentă, de dacă se adaugă sau nu radiatoare și de accesul la locul de montaj. Cere ofertă care separă aparatul, puffer-ul și manopera.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Centrală pe lemne sau pe peleți: cum alegi și ce întrebi', subtitle: 'Diferența dintre cele două variante, rolul pufferului, ce se pregătește în casă și de ce depinde costul. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Variante', value: 'Pe lemne sau pe peleți' },
+      { label: 'Puffer', value: 'Rezervor care stochează căldura' },
+      { label: 'Siguranța', value: 'Coș și ventilare, verificate de autorizați' },
+      { label: 'Oferta', value: 'Aparat, puffer și manoperă separat' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O centrală pe lemne sau pe peleți încălzește casa cu un combustibil solid, adesea ales pentru că este disponibil local. Alegerea nu se face doar după tipul aparatului: contează unde ai loc de depozitare, cât timp poți dedica alimentării și ce condiții are casa în privința coșului și a ventilării.',
+      'Pagina te ajută să înțelegi diferența dintre variante, ce este pufferul și cum compari ofertele instalatorilor. Centrala pe gaz, pompa de căldură și radiatoarele au paginile lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Variante și componente', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Centrală pe lemne', text: 'Arde lemne de foc, de obicei alimentate manual. Cere loc de depozitare, uscarea lemnelor și atenție la ardere.' },
+      { title: 'Centrală pe peleți', text: 'Folosește peleți din rezervor, cu alimentare mai automatizată. Cere depozit uscat pentru peleți și combustibil potrivit aparatului.' },
+      { title: 'Puffer', text: 'Rezervor de apă caldă care păstrează căldura produsă și o cedează instalației. Se racordează de instalator, după fișa tehnică.' },
+      { title: 'Coș de fum și ventilare', text: 'Elemente de siguranță: sunt verificate și execuția lor este făcută de specialiști autorizați.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Ce se alege și ce se verifică', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Prima alegere este combustibilul: lemne sau peleți. Cele pe lemne se potrivesc dacă ai acces la lemne uscate și accepți alimentarea manuală. Cele pe peleți cer un combustibil standardizat și un rezervor, dar se pot automatiza mai mult. Spune instalatorului ce sursă ai, cât loc ai și cât timp poți dedica.',
+      'Pufferul și racordurile sunt dimensionate de instalator după aparat și după nevoile casei. Coșul de fum, evacuarea gazelor și ventilarea încăperii sunt probleme de siguranță: le verifică și le execută personal autorizat, iar condițiile se confirmă cu furnizorul aparatului și cu autoritățile. În acest ghid nu dăm instrucțiuni de montaj pentru ele.',
+      'Dacă ai deja radiatoare sau încălzire în pardoseală, centrala se leagă la ele; vezi paginile lor pentru alegere. Boilerul și instalațiile de apă au pagina de instalații sanitare.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Vizită și alegerea soluției', text: 'Firma vede casa, coșul, spațiul și instalația existentă și recomandă varianta potrivită.' },
+      { title: 'Pregătirea locului', text: 'Se pregătesc încăperea pentru centrală și puffer, ventilarea și spațiul pentru combustibil.' },
+      { title: 'Verificarea coșului și a evacuării', text: 'Partea aceasta o face sau o confirmă personal autorizat.' },
+      { title: 'Montarea centralei și a pufferului', text: 'Se instalează aparatele și se racordează la instalația de încălzire și la siguranțele prevăzute de fișa tehnică.' },
+      { title: 'Probă și punere în funcțiune', text: 'Se verifică etanșeitatea și funcționarea, iar instalatorul îți explică folosirea și întreținerea.' },
+      { title: 'Documente și garanție', text: 'Primești documentele aparatului și garanția scrisă pentru manoperă.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Cumpărarea înainte de verificarea casei', text: 'Aparatul se alege după coș, loc și ventilare, nu invers.' },
+      { title: 'Lipsa pufferului acolo unde este recomandat', text: 'Centrala poate funcționa neeconomic sau neregulat fără un rezervor potrivit.' },
+      { title: 'Combustibil nepotrivit', text: 'Lemne umede sau peleți de calitate slabă strică randamentul și murdăresc aparatul și coșul.' },
+      { title: 'Ventilare și coș neglijate', text: 'Sunt probleme de siguranță, de aceea le tratează doar personal autorizat.' },
+      { title: 'Lipsa depozitului uscat', text: 'Combustibilul ud nu arde bine și poate deteriora aparatul.' },
+      { title: 'Ofertă fără detalii', text: 'Un preț fără puffer, racorduri, coș și probă nu se poate compara cu altul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul de centrală, de puffer și accesorii, de starea coșului și de eventualele lucrări de ventilare, de racordările la instalația existentă, de dacă se adaugă radiatoare sau încălzire în pardoseală și de accesul la locul de montaj. Aparatul și manopera variază separat.',
+      'Cere oferte care despart aparatul, pufferul și manopera și care spun cine face fiecare parte. Pentru instalații termice, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine face coșul și ventilarea, cine răspunde de punerea în funcțiune și ce service oferă firma ulterior. Ofertele scrise, cu aceleași elemente, se pot compara.',
+      'Verifică dacă firma lucrează cu personal calificat pentru partea de siguranță și cere garanția pentru manoperă în scris.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre centrala pe lemne sau peleți' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru instalații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la instalații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie casa și instalația și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

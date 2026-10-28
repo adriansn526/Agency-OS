@@ -1,0 +1,71 @@
+import { node, para, type GuideContent } from './types'
+
+export const prosumatorCumFunctioneaza: GuideContent = {
+  slug: 'prosumator-cum-functioneaza',
+  serviciu: 'fotovoltaice-energie-regenerabila',
+  title: 'Prosumator: cum funcționează, etape și ce întrebi firma',
+  seoTitle: 'Prosumator: cum funcționează, etape și ce întrebi',
+  seoDescription: 'Ce înseamnă să fii prosumator, etapele generale (ofertă, proiect, acord de la operator, montaj, contor), cine face ce și unde verifici regulile în vigoare.',
+  summary: 'Ce înseamnă prosumator, care sunt etapele generale ale unui sistem fotovoltaic conectat la rețea, cine face ce și unde verifici regulile în vigoare.',
+  keyword: 'prosumator',
+  keywords: ['prosumator', 'legislatie prosumator', 'legea prosumatorului', 'certificat racordare prosumator', 'prosumator fotovoltaice', 'legislație prosumator'],
+  intrebari: [
+    'Ce înseamnă prosumator? | Este un consumator de energie electrică care produce și el energie, de obicei cu panouri fotovoltaice, pentru nevoile proprii, și se conectează la rețeaua de distribuție. Cum se face conectarea și cum se tratează energia produsă se stabilește prin reglementările în vigoare.',
+    'Unde aflu regulile actuale? | Legislația și schemele de sprijin se schimbă. Verifică la operatorul de distribuție din zona ta, pe site-ul ANRE și la instituțiile care administrează programele în vigoare. Nu te baza doar pe ce spune o firmă sau pe informații vechi de pe internet.',
+    'Cine face documentele pentru operator? | De regulă firma care proiectează și montează sistemul pregătește documentația tehnică, dar tu ești cel care depune cererea sau dă împuternicirea. Stabilește în contract cine face fiecare pas și cine răspunde dacă operatorul cere modificări.',
+    'Pot monta panourile înainte de acordul operatorului? | Pașii și ordinea lor sunt stabilite de reglementări și de operator. Întreabă firma și operatorul ce trebuie obținut înainte de montaj și înainte de conectare, și nu începe conectarea fără ele.',
+    'Ce este certificatul de racordare? | Este un act emis în cadrul procedurii cu operatorul, legat de conectarea la rețea. Ce conține, cine îl cere și când se obține rezultă din regulile în vigoare; cere operatorului sau firmei explicațiile în scris.',
+    'Ce se schimbă la contor? | Pentru un sistem conectat la rețea se poate cere un contor sau o configurare potrivite schimbului de energie. Cine le asigură și cum se face aflii de la operatorul de distribuție.',
+    'Ce să întreb firma înainte de contract? | Cine face proiectul și documentele pentru operator, ce componente sunt incluse, ce garanții oferă, ce se întâmplă dacă operatorul cere modificări, ce nu include oferta și cine rămâne responsabil după punerea în funcțiune.',
+    'Se poate obține sprijin financiar? | Există sau au existat programe, dar condițiile se schimbă și nu sunt aceleași pentru toți. Verifică programul în vigoare la sursă și cere firmei să nu-ți promită nimic ce nu poate arăta în scris.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Prosumator: cum funcționează și ce urmează', subtitle: 'Etapele generale, cine face ce și ce întrebi firma. Regulile concrete le verifici la operator și la autorități. Dacă ai nevoie de o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Prosumator', value: 'Consumi și produci energie' },
+      { label: 'Regulile', value: 'Se verifică la operator și ANRE' },
+      { label: 'Firma', value: 'Proiect, montaj, documentație' },
+      { label: 'Operatorul', value: 'Aprobă și conectează' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Prosumator este cel care consumă energie electrică și, în același timp, produce o parte din ea, de obicei cu panouri fotovoltaice montate pe casă. Sistemul se leagă la rețeaua de distribuție, iar relația cu operatorul are reguli stabilite prin reglementări.',
+      'Aceste reguli, ca și schemele de sprijin, se schimbă. Ghidul de față nu enunță condiții, praguri sau sume: explică etapele generale și te trimite să verifici fiecare lucru la sursa lui. Pagina despre panourile fotovoltaice pentru casă descrie lucrarea propriu-zisă.',
+    ) }),
+    node('steps', 'steps', { title: 'Etapele generale', items: [
+      { title: 'Analiza și oferta', text: 'O firmă vede locul, consumul și acoperișul și propune un sistem. Cere oferta detaliată, cu ce este inclus și ce nu.' },
+      { title: 'Proiect', text: 'Se pregătește documentația tehnică a sistemului. Întreabă cine o întocmește și cine răspunde de ea.' },
+      { title: 'Acord sau aviz de la operator', text: 'Operatorul de distribuție stabilește ce trebuie depus și ce aprobare se cere înainte de conectare. Pașii exacți îi afli de la el.' },
+      { title: 'Montaj', text: 'Firma montează sistemul, cu personal calificat și autorizat pentru lucrul la acoperiș și pentru partea electrică.' },
+      { title: 'Punere în funcțiune și contor', text: 'Se verifică instalația și se parcurg pașii finali cu operatorul pentru conectare și pentru contorizare.' },
+    ] }),
+    node('who-h', 'heading', { text: 'Cine face ce', level: 'h2' }),
+    node('who', 'cards', { columns: '3', items: [
+      { title: 'Tu, beneficiarul', text: 'Decizi lucrarea, semnezi contractul și, după caz, cererile către operator sau împuternicești firma.' },
+      { title: 'Firma de montaj', text: 'Proiectează sau coordonează proiectul, montează sistemul și, de regulă, pregătește documentele tehnice.' },
+      { title: 'Operatorul de distribuție', text: 'Stabilește condițiile de conectare, aprobă documentația și face sau verifică partea ce ține de contor și rețea.' },
+    ] }),
+    node('check-h', 'heading', { text: 'Unde verifici regulile', level: 'h2' }),
+    node('check', 'text', { body: para(
+      'Condițiile de conectare, tratamentul energiei produse și programele de sprijin nu sunt aceleași în timp. Întreabă operatorul de distribuție din zona ta, consultă informațiile publicate de ANRE și cele ale instituțiilor care administrează programele în vigoare.',
+      'O firmă serioasă îți explică aceste lucruri în scris și le trimite la sursă, în loc să-ți promită rezultate. Dacă o ofertă garantează economii sau finanțare fără să-ți fi văzut situația, cere dovada.',
+    ) }),
+    node('ask-h', 'heading', { text: 'Ce întrebi firma', level: 'h2' }),
+    node('ask', 'cards', { columns: '2', items: [
+      { title: 'Cine face dosarul pentru operator?', text: 'Stabilește în contract cine pregătește și depune documentele și cine răspunde dacă se cer modificări.' },
+      { title: 'Ce include oferta?', text: 'Componentele cu modelele exacte, montajul, proiectul, actele și punerea în funcțiune, separat.' },
+      { title: 'Ce garanții primesc?', text: 'Pentru produse și pentru montaj, în scris, cu condițiile fiecăruia.' },
+      { title: 'Ce se întâmplă dacă operatorul respinge sau cere schimbări?', text: 'Cere să afli dinainte cine suportă modificările.' },
+      { title: 'Cine lucrează la acoperiș și la partea electrică?', text: 'Personal calificat și autorizat, nu improvizat.' },
+      { title: 'Ce urmează după punerea în funcțiune?', text: 'Service, instrucțiuni și persoana de contact pentru probleme.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unui sistem depinde de mărime, de componente, de acoperiș, de accesul pentru montaj, de lucrările la tablou și de actele necesare. Taxele și condițiile către operator se verifică la el. Pentru un ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre prosumator' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru fotovoltaice' }),
+    node('guides', 'guide_links', { title: 'Alte ghiduri despre fotovoltaice' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de o firmă sau de o ofertă?', text: 'Descrie casa și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

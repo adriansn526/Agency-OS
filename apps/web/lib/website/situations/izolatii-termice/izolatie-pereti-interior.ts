@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const izolatiePeretiInterior: SituationContent = {
+  slug: 'izolatii-termice--izolatie-pereti-interior',
+  categorie: 'izolatii-termice',
+  title: 'Izolația pereților pe interior',
+  seoTitle: 'Izolația pereților pe interior: când are sens',
+  seoDescription: 'Când are sens izolarea pereților pe interior, riscul de condens, cum se face lucrarea, ce materiale există, de ce depinde costul și cum alegi firma.',
+  summary: 'Când se izolează pereții pe interior, ce riscuri are soluția (condens, punți termice), cum se execută și ce să compari în oferte.',
+  sinonime: ['izolatie pereti interior', 'izolare pereti interior', 'termoizolatie', 'izolarea termica', 'izolație pereți interior', 'izolare pereți interior', 'termoizolație', 'izolarea termică'],
+  intrebari: [
+    'Când are sens izolarea pereților pe interior? | Când izolarea pe exterior nu este posibilă: clădiri cu fațadă protejată, apartamente în bloc, pereți pe limita proprietății. Pe interior se poate izola o singură cameră sau un perete rece, fără a atinge fațada.',
+    'Care sunt dezavantajele? | Se pierde din suprafața camerei, iar izolația nu acoperă zonele de la planșee și pereții despărțitori, unde rămân punți termice. În plus, peretele devine mai rece, iar umezeala din aer poate condensa în spatele izolației dacă detaliile sunt greșite.',
+    'De ce apare riscul de condens? | Aerul cald și umed din cameră ajunge la suprafața rece a peretelui, aflată în spatele izolației, și condensează. De aceea se alege un sistem gândit împotriva acestui risc: barieră de vapori sau materiale capabile să gestioneze umezeala, executate fără goluri. Pentru casele cu probleme de umezeală, cere avizul unui specialist.',
+    'Ce materiale se folosesc? | Plăci izolante lipite sau fixate pe perete, panouri compozite cu gips-carton, saltele pe structură metalică sau soluții cu tencuieli izolante. Alegerea depinde de grosimea disponibilă, de umiditatea peretelui și de ce urmează deasupra.',
+    'Pot izola un perete cu igrasie? | Nu înainte de a trata cauza. Izolația peste un perete umed se degradează și poate ascunde problema. Mai întâi se stabilește sursa apei și se tratează, apoi se usucă peretele.',
+    'Cum se tratează colțurile și tavanul? | Zonele de întâlnire cu planșeele și pereții despărțitori sunt locurile slabe ale izolării pe interior. Un meșter cu experiență propune soluții pentru a reduce punțile termice și prevede ventilația încăperii.',
+    'Cine face lucrarea? | Zugravi, montatori de gips-carton și echipe de finisaje, unele specializate pe izolații. Întreabă ce sistem folosesc și de ce, nu doar ce preț dau.',
+    'De ce depinde costul? | De suprafața pereților, de sistemul ales, de pregătirea peretelui, de numărul de colțuri și goluri, de refacerea instalațiilor și a finisajelor. Cere ofertă care include și lucrările de finisare.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Izolația pereților pe interior: când merită și cum se face', subtitle: 'Riscul de condens, punțile termice și materialele posibile. Dacă preferi să o facă o firmă, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Când', value: 'Când exteriorul nu se poate izola' },
+      { label: 'Risc principal', value: 'Condens în spatele izolației' },
+      { label: 'Punți termice', value: 'Rămân la planșee și pereți' },
+      { label: 'Oferta', value: 'Sistem, finisaje, ventilație' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Izolarea pereților pe interior este o soluție de compromis: nu o alegi dacă poți izola fațada, dar uneori este singura posibilă, de pildă într-un apartament sau la o clădire cu fațadă care nu se modifică. Funcționează bine doar când detaliile sunt gândite cu grijă.',
+      'Pagina explică când are sens, ce riscuri există și cum compari ofertele. Izolația fațadei și cea a podului au pagini separate.',
+    ) }),
+    node('when-h', 'heading', { text: 'Când are sens și când nu', level: 'h2' }),
+    node('when', 'cards', { columns: '2', items: [
+      { title: 'Are sens', text: 'Fațadă care nu se poate modifica, perete rece dintr-o singură cameră, apartament în bloc unde asociația nu aprobă izolarea exterioară.' },
+      { title: 'Trebuie atenție', text: 'Pereți cu umezeală, camere cu mult abur (baie, bucătărie) sau încăperi neventilate, unde condensul apare ușor.' },
+      { title: 'Nu rezolvă', text: 'Igrasia sau infiltrațiile. Cauza se tratează înainte, apoi peretele se usucă.' },
+      { title: 'Costă spațiu', text: 'Izolația și finisajul scad suprafața utilă a camerei; se ține cont de asta la mobilare.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Se folosesc plăci izolante lipite pe perete, panouri compozite cu gips-carton sau structuri metalice umplute cu izolație. Alegerea se face după grosimea disponibilă, umiditatea peretelui și finisajul dorit.',
+      'Cheia lucrării este controlul umezelii: barieră de vapori montată fără goluri sau materiale care gestionează umezeala, plus ventilația încăperii. Un sistem bun spune clar cum rezolvă aceste lucruri; dacă răspunsul lipsește, întreabă mai departe.',
+      'Diferențele dintre polistiren și vată sunt explicate în ghidul de mai jos.',
+    ) }),
+    node('steps-h', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Evaluarea peretelui', text: 'Se verifică umezeala, mucegaiul, planeitatea și starea tencuielii.' },
+      { title: 'Tratarea cauzelor', text: 'Infiltrațiile, igrasia și condensul se rezolvă înainte de izolare.' },
+      { title: 'Pregătirea suportului', text: 'Se curăță, se repară și se grunduiește peretele, conform sistemului ales.' },
+      { title: 'Montarea izolației', text: 'Plăcile sau panourile se fixează fără goluri, iar îmbinările se etanșează.' },
+      { title: 'Bariera de vapori și detaliile', text: 'Colțurile, golurile, prizele și racordurile la planșee se execută cu atenție.' },
+      { title: 'Finisaje', text: 'Se montează gips-cartonul sau stratul de armare, apoi se zugrăvește.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Izolare peste perete umed', text: 'Umezeala rămâne blocată și apare mucegaiul.' },
+      { title: 'Goluri la îmbinări', text: 'Prin ele ajunge aer umed în spatele izolației.' },
+      { title: 'Ignorarea punților termice', text: 'Planșeele și pereții despărțitori rămân zone reci, unde poate apărea condens.' },
+      { title: 'Lipsa ventilației', text: 'Camerele izolate trebuie aerisite, altfel umiditatea crește.' },
+      { title: 'Fixarea corpurilor grele fără suport', text: 'Mobilierul și corpurile suspendate cer fixare în structură, nu doar în izolație.' },
+      { title: 'Ofertă fără sistem numit', text: 'Fără produs și detalii, nu poți compara lucrările.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața pereților, de sistemul ales, de pregătirea suportului, de numărul de colțuri, goluri și instalații care se mută și de finisajele cerute. Un perete umed adaugă lucrări suplimentare.',
+      'Cere ofertă cu sistemul numit, lucrările incluse și finisajele. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Cere să afli cum tratează echipa condensul, bariera de vapori și punțile termice. Compară sistemele și detaliile, nu doar prețul pe metru pătrat; ofertele fără aceste detalii nu sunt comparabile.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare și referințe și întreabă ce sistem folosește echipa. Dacă peretele are probleme de umezeală, cere avizul unui specialist înainte de ofertă. Cere contract scris și garanție pentru manoperă.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre izolația pe interior' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru izolații termice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la izolații termice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca lucrarea să o facă o firmă?', text: 'Descrie camera și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
