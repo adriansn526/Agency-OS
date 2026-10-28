@@ -62,8 +62,9 @@ async function recentRequests(entryIds: string[], now: Date) {
 }
 
 /** Always resolves the same way, whether or not a profile matches. */
-export async function requestLogin(lineId: string, rawIdentifier: unknown, o: { notifier: Notifier; siteUrl: string; now?: Date }): Promise<void> {
+export async function requestLogin(lineId: string, rawIdentifier: unknown, o: { notifier: Notifier; siteUrl: string; brandName?: string; now?: Date }): Promise<void> {
   const now = o.now ?? new Date()
+  const brand = o.brandName ?? 'IntraConstruct'
   const id = parseIdentifier(rawIdentifier)
   if (!id) return
   const entries = await entriesFor(lineId, id)
@@ -79,7 +80,7 @@ export async function requestLogin(lineId: string, rawIdentifier: unknown, o: { 
     }
     const list = links.map((l) => `<li><a href="${l.url}">${escapeHtml(l.title)}</a></li>`).join('')
     await o.notifier.email(
-      id.value, 'Intră în profilul tău IntraConstruct',
+      id.value, `Intră în profilul tău ${brand}`,
       `<p>Bună ziua,</p><p>Apăsați pe link pentru a intra în profilul firmei (valabil 30 de minute, o singură dată):</p><ul>${list}</ul><p>Dacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.</p>`,
       `Bună ziua,\n\nIntrați în profilul firmei (link valabil 30 de minute, o singură dată):\n${links.map((l) => `${l.title}: ${l.url}`).join('\n')}\n\nDacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.`,
     )
@@ -89,7 +90,7 @@ export async function requestLogin(lineId: string, rawIdentifier: unknown, o: { 
   if (entries.length !== 1) return
   const code = String(randomInt(0, 1_000_000)).padStart(6, '0')
   await db.websitePartnerLogin.create({ data: { entryId: entries[0]!.id, channel: 'sms', codeHash: hashSmsCode(entries[0]!.id, code), createdAt: now, expiresAt: new Date(now.getTime() + CODE_TTL_MS) } })
-  await o.notifier.sms(id.value, `Codul IntraConstruct: ${code}. Valabil 10 minute. Nu îl da nimănui.`)
+  await o.notifier.sms(id.value, `Codul ${brand}: ${code}. Valabil 10 minute. Nu îl da nimănui.`)
 }
 
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)

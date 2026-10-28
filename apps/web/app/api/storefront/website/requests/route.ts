@@ -18,7 +18,7 @@ export const POST = websiteHandler(async (req, ctx) => {
   const body = await req.json().catch(() => null)
   try {
     const [line, channel] = await Promise.all([db.businessLine.findUnique({ where: { id: ctx.businessLineId }, select: { slug: true } }), db.websiteChannel.findUnique({ where: { businessLineId: ctx.businessLineId }, select: { siteUrl: true } })])
-    const r = await createRequest(ctx.businessLineId, body, { notifier: defaultNotifier(line?.slug), siteUrl: siteUrlOf(channel?.siteUrl) })
+    const r = await createRequest(ctx.businessLineId, body, { notifier: defaultNotifier(line?.slug), siteUrl: siteUrlOf(ctx.siteUrl ?? channel?.siteUrl) })
     return NextResponse.json(r, { status: 201, headers: { 'Cache-Control': 'no-store' } })
   } catch (e) {
     if (e instanceof ZodError) return NextResponse.json({ error: e.issues[0]?.message ?? 'invalid', issues: e.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) }, { status: 422 })

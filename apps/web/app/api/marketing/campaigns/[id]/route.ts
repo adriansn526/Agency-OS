@@ -377,7 +377,7 @@ export async function POST(
       } else if (campaign.channel === 'email') {
         // real delivery through the line's "partners" mailbox (see lib/marketing/dispatch.ts); a lead is "sent" only if the mail server accepted it
         const pc = await previewContext(campaign, [])
-        const r = await dispatchEmails(pendingLeads as any, { campaignId: campaign.id, lineSlug: campaign.businessLine?.slug, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(pc.siteUrl, e) })
+        const r = await dispatchEmails(pendingLeads as any, { campaignId: campaign.id, lineSlug: campaign.businessLine?.slug, brandName: campaign.businessLine?.name, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(pc.siteUrl, e) })
         sentCount += r.sent
       }
 

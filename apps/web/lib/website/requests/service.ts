@@ -186,7 +186,7 @@ export async function listForPartner(lineId: string, entry: EntryLike, now = new
 
 export const respondSchema = z.object({ action: z.enum(['accept', 'decline']) })
 
-export async function respond(lineId: string, entry: EntryLike & { title: string; email: string | null; phone: string | null }, requestId: string, raw: unknown, o: { notifier?: Notifier; now?: Date } = {}) {
+export async function respond(lineId: string, entry: EntryLike & { title: string; email: string | null; phone: string | null }, requestId: string, raw: unknown, o: { notifier?: Notifier; brandName?: string; now?: Date } = {}) {
   const now = o.now ?? new Date()
   const { action } = respondSchema.parse(raw)
   const found = await db.websiteRequestDelivery.findFirst({ where: { requestId, entryId: entry.id, businessLineId: lineId }, include: { request: true } })
@@ -215,12 +215,12 @@ export async function respond(lineId: string, entry: EntryLike & { title: string
     return 'accepted'
   })
   const d = await db.websiteRequestDelivery.findUniqueOrThrow({ where: { id: found.id }, include: { request: true } })
-  if (outcome === 'accepted' && o.notifier) void notifyCustomer(d.request, entry, o.notifier).catch((e) => console.error('[requests] notify customer', e instanceof Error ? e.message : e))
+  if (outcome === 'accepted' && o.notifier) void notifyCustomer(d.request, entry, o.notifier, o.brandName ?? 'IntraConstruct').catch((e) => console.error('[requests] notify customer', e instanceof Error ? e.message : e))
   return { state: outcome, request: await serialize(lineId, entry, d, now) }
 }
 
-async function notifyCustomer(r: { customerEmail: string; customerName: string }, firm: { title: string; email: string | null; phone: string | null }, n: Notifier) {
-  const body = `Bună ziua, ${r.customerName},\n\n${firm.title} a acceptat cererea dumneavoastră și vă va contacta în curând.\nContact firmă: ${[firm.phone, firm.email].filter(Boolean).join(' · ') || 'veți fi contactat de firmă'}\n\nEchipa IntraConstruct`
+async function notifyCustomer(r: { customerEmail: string; customerName: string }, firm: { title: string; email: string | null; phone: string | null }, n: Notifier, brand: string) {
+  const body = `Bună ziua, ${r.customerName},\n\n${firm.title} a acceptat cererea dumneavoastră și vă va contacta în curând.\nContact firmă: ${[firm.phone, firm.email].filter(Boolean).join(' · ') || 'veți fi contactat de firmă'}\n\nEchipa ${brand}`
   await n.email(r.customerEmail, `${firm.title} a acceptat cererea dumneavoastră`, body.split('\n').map((l) => `<p>${esc(l)}</p>`).join(''), body)
 }
 

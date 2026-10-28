@@ -8,9 +8,10 @@
  */
 import { NextResponse } from 'next/server'
 import { db } from '@repo/db'
-import { hashWebsiteKey, keyMatches, parseStoredKeys, WEBSITE_KEY_RE, type StoredApiKey } from './keys'
+import { findMatchingKey, hashWebsiteKey, parseStoredKeys, WEBSITE_KEY_RE, type StoredApiKey } from './keys'
 
-export interface WebsiteContext { businessLineId: string; channelId: string }
+/** `brand` / `siteUrl` come from the presented key when the line has one key per site; both are absent for plain keys. */
+export interface WebsiteContext { businessLineId: string; channelId: string; brand?: string; brandName?: string; siteUrl?: string }
 
 interface CachedChannel { channelId: string; businessLineId: string; keys: StoredApiKey[] }
 let cache: { at: number; channels: CachedChannel[] } | null = null
@@ -54,12 +55,13 @@ export function websiteHandler<P = Record<string, string>>(
     if (!m) return json({ error: 'Unauthorized' }, 401)
     const presented = m[1]!
 
-    const match = (await loadChannels()).find((c) => keyMatches(c.keys, presented))
-    if (!match) return json({ error: 'Unauthorized' }, 401)
+    const hits = (await loadChannels()).map((c) => ({ c, key: findMatchingKey(c.keys, presented) })).find((h) => h.key !== null)
+    if (!hits) return json({ error: 'Unauthorized' }, 401)
+    const match = hits.c, key = hits.key
     if (rateLimited(hashWebsiteKey(presented))) return json({ error: 'Too many requests' }, 429)
 
     try {
-      const data = await handler(req, { businessLineId: match.businessLineId, channelId: match.channelId }, await routeCtx.params)
+      const data = await handler(req, { businessLineId: match.businessLineId, channelId: match.channelId, brand: key?.brand, brandName: key?.brandName, siteUrl: key?.siteUrl }, await routeCtx.params)
       if (data instanceof Response) return data
       if (data === null) return json({ error: 'Not found' }, 404)
       return json(data, 200)

@@ -16,8 +16,8 @@ export function textToHtml(text: string): string {
   return text.trim().split(/\n{2,}/).map((p) => `<p>${linked(p).replace(/\n/g, '<br>')}</p>`).join('\n')
 }
 
-export function fillSubject(subject: string | null | undefined, lead: { companyName?: string | null; city?: string | null; county?: string | null }): string {
-  return (subject || 'IntraConstruct')
+export function fillSubject(subject: string | null | undefined, lead: { companyName?: string | null; city?: string | null; county?: string | null }, brandName = 'IntraConstruct'): string {
+  return (subject || brandName)
     .replace(/\{\{(?:company_name|companyName)\}\}/g, lead.companyName || '').replace(/\{\{city\}\}/g, lead.city || '').replace(/\{\{county\}\}/g, lead.county || '')
     .replace(/\s+/g, ' ').trim()
 }
@@ -26,7 +26,7 @@ export function fillSubject(subject: string | null | undefined, lead: { companyN
 export const hasDraftMarker = (body: string) => /\[DE COMPLETAT/i.test(body)
 
 export interface DispatchItem { id: string; leadId: string; messageBody: string | null; lead: { email: string | null; companyName: string | null; city: string | null; county: string | null } }
-export interface DispatchCtx { campaignId: string; lineSlug?: string; subject: string | null; unsubscribeUrl: (email: string) => string }
+export interface DispatchCtx { campaignId: string; lineSlug?: string; brandName?: string; subject: string | null; unsubscribeUrl: (email: string) => string }
 export interface DispatchDeps { send: typeof sendRawEmail }
 
 export async function dispatchEmails(items: DispatchItem[], ctx: DispatchCtx, deps: DispatchDeps = { send: sendRawEmail }, now = new Date()): Promise<{ sent: number; failed: number }> {
@@ -40,10 +40,10 @@ export async function dispatchEmails(items: DispatchItem[], ctx: DispatchCtx, de
       continue
     }
     const unsub = ctx.unsubscribeUrl(email)
-    const footer = `\n\nNu mai doriți mesaje de la IntraConstruct? ${unsub}`
+    const footer = `\n\nNu mai doriți mesaje de la ${ctx.brandName ?? 'IntraConstruct'}? ${unsub}`
     try {
       await deps.send({
-        to: email, subject: fillSubject(ctx.subject, it.lead), text: body + (body.includes(unsub) ? '' : footer), html: textToHtml(body + (body.includes(unsub) ? '' : footer)),
+        to: email, subject: fillSubject(ctx.subject, it.lead, ctx.brandName), text: body + (body.includes(unsub) ? '' : footer), html: textToHtml(body + (body.includes(unsub) ? '' : footer)),
         businessLine: ctx.lineSlug, purpose: 'partners', link: { leadId: it.leadId }, source: `campaign:${ctx.campaignId}`,
         headers: { 'List-Unsubscribe': `<${unsub}>`, 'X-Campaign-Id': ctx.campaignId },
       })
