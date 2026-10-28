@@ -8,6 +8,7 @@ import { categoryTitles } from '../glossary/taxonomy'
 import { effectiveLayout } from '../layout/blocks'
 import { contentReady, effectiveContentLayout, isContentCollection } from '../content/blocks'
 import { isWip } from '../content/wip'
+import { activeCmr, CMR_KEY, decodeCmr } from '../verification/cmr-data'
 
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
@@ -28,6 +29,16 @@ interface CollectionRow { key: string; name: string; namePlural: string; kind: s
 const num = (v: EntryRow['ratingAvg']): number | null => (v == null ? null : Number(v.toString()))
 const iso = (d: Date | null) => (d ? d.toISOString() : null)
 
+/** The CMR verification is internal (who checked, parafă); the site only gets whether it is currently valid. */
+function withCmr(data: unknown, collectionKey: string) {
+  const d = { ...((data ?? {}) as Record<string, unknown>) }
+  const raw = d[CMR_KEY]
+  delete d[CMR_KEY]
+  if (collectionKey !== 'companii') return { data: d }
+  const v = activeCmr(decodeCmr(raw))[0]
+  return { data: d, cmr: v ? { verifiedAt: v.verifiedAt, practiceUntil: v.practiceUntil, specialities: v.specialities } : null }
+}
+
 /** `cats`: the line's live service categories (slug → title); defaults to the built-in list. */
 export function serializeListItem(e: EntryRow, collectionKey: string, cats?: { slug: string; title: string }[]) {
   return {
@@ -35,7 +46,7 @@ export function serializeListItem(e: EntryRow, collectionKey: string, cats?: { s
     city: e.city, county: e.county, address: e.address, lat: e.lat, lng: e.lng,
     coverUrl: e.coverUrl, logoUrl: e.logoUrl, verified: e.verified, featured: e.featured, founder: (e._count?.foundingSlots ?? 0) > 0,
     ratingAvg: num(e.ratingAvg), ratingCount: e.ratingCount,
-    data: e.data ?? {}, publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
+    ...withCmr(e.data, collectionKey), publishedAt: iso(e.publishedAt), updatedAt: e.updatedAt.toISOString(),
     // services and prices: whether the team arranged the page with blocks (a page with only the seeded skeleton is not finished)
     // `ready`: the page may be shown in full (blocks without the marker, or a written body, and not ticked "în construcție"); a page that is not ready is shown as "în construcție"
     ...(isContentCollection(collectionKey) ? (() => { const l = effectiveContentLayout(e.layout); return { hasBlocks: l.blocks.length > 0, ready: !isWip(e.data) && contentReady(l, e.body), wip: isWip(e.data) } })() : {}),
