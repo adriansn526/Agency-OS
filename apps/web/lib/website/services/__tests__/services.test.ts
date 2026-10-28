@@ -24,3 +24,14 @@ test('new categories: unique, not already built in, known groups', () => {
   assert.equal(new Set(slugs).size, slugs.length)
   for (const c of NEW_CATEGORIES) { assert.ok(!CATEGORIES.some((x) => x.slug === c.slug), c.slug); assert.ok(GROUPS.some((g) => g.slug === c.group), c.group) }
 })
+
+test('no invented amounts in a pillar: no lei/euro, no percentages, no warranty years or fixed durations in the text, the FAQ or the price list', () => {
+  const money = /\d[\d.,]*\s*[–-]?\s*[\d.,]*\s*(lei|ron|€|euro|eur)\b/i
+  const range = /\d+\s*[–-]\s*\d+\s*(ani|zile|ore|mp|ml|%)/i
+  const other = /\d+\s?%|\b\d+\s*(ani|zile|ore)\b/i
+  for (const c of SERVICE_CONTENT) {
+    const text = JSON.stringify(c.blocks) + c.intrebari.join(' ') + c.preturi.join(' ') + c.seoTitle + c.seoDescription + c.summary
+    for (const re of [money, range, other]) assert.ok(!re.test(text), `${c.slug}: ${re} → ${text.match(re)?.[0]}`)
+    assert.ok(c.hub, `${c.slug}: prices live in the dedicated price pages, so every pillar is a hub`)
+  }
+})
