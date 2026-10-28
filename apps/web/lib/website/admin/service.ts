@@ -40,7 +40,7 @@ export async function getOverview(lineId: string) {
   return {
     line,
     channel: {
-      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config), legalEmail: ((channel.config as { legalEmail?: unknown } | null)?.legalEmail as string | undefined) ?? null, sendingWindow: parseSendingWindow((channel.config as { sendingWindow?: unknown } | null)?.sendingWindow),
+      id: channel.id, isEnabled: channel.isEnabled, siteUrl: channel.siteUrl, createdAt: channel.createdAt, previewValidityDays: validityDays(channel.config), endorsementsPublic: (channel.config as { endorsementsPublic?: unknown } | null)?.endorsementsPublic === true, legalEmail: ((channel.config as { legalEmail?: unknown } | null)?.legalEmail as string | undefined) ?? null, sendingWindow: parseSendingWindow((channel.config as { sendingWindow?: unknown } | null)?.sendingWindow),
       // hashes never leave the server
       keys: parseStoredKeys(channel.apiKeys).map((k) => ({ id: k.id, label: k.label, createdAt: k.createdAt, lastUsedAt: k.lastUsedAt ?? null })),
     },
@@ -68,6 +68,7 @@ export async function updateChannel(lineId: string, raw: unknown) {
   let nextConfig: Record<string, unknown> | undefined
   if (input.previewValidityDays !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), previewValidityDays: input.previewValidityDays }
   if (input.sendingWindow !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), sendingWindow: input.sendingWindow }
+  if (input.endorsementsPublic !== undefined) nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>), endorsementsPublic: input.endorsementsPublic }
   if (input.legalEmail !== undefined) { nextConfig = { ...(nextConfig ?? (exists.config ?? {}) as Record<string, unknown>) }; if (input.legalEmail) nextConfig.legalEmail = input.legalEmail; else delete nextConfig.legalEmail }
   const config = nextConfig ? (nextConfig as Prisma.InputJsonValue) : undefined
   await db.websiteChannel.update({ where: { businessLineId: lineId }, data: { ...(input.siteUrl !== undefined ? { siteUrl: input.siteUrl } : {}), ...(input.isEnabled !== undefined ? { isEnabled: input.isEnabled } : {}), ...(config ? { config } : {}) } })

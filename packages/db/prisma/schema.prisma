@@ -2131,6 +2131,8 @@ model WebsiteEndorsement {
   showName       Boolean      @default(false)
   /// Computed when created: a shared clinic means the endorsement is not counted
   sameClinic     Boolean      @default(false)
+  /// What the endorser recommends the colleague for: slugs of the taxonomy (`servicii`), a subset of what the colleague lists; empty = no specific area
+  forServicii    Json         @default("[]")
   /// active | withdrawn (by the endorser) | removed (by the team)
   status         String       @default("active")
   removedReason  String?

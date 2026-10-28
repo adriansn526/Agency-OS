@@ -19,7 +19,7 @@ export const collectionCreate = z.object({
 })
 export const collectionPatch = collectionCreate.omit({ key: true }).partial().extend({ isActive: z.boolean().optional() })
 
-export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional(), previewValidityDays: z.number().int().min(1).max(90).optional(), legalEmail: z.string().trim().email().max(200).nullable().optional(), sendingWindow: sendingWindowSchema }).partial()
+export const channelPatch = z.object({ siteUrl: url, isEnabled: z.boolean().optional(), previewValidityDays: z.number().int().min(1).max(90).optional(), legalEmail: z.string().trim().email().max(200).nullable().optional(), endorsementsPublic: z.boolean().optional(), sendingWindow: sendingWindowSchema }).partial()
 
 const entryFields = {
   title: z.string().trim().min(2).max(160), slug: z.string().trim().regex(keyRe, 'Slug invalid').optional(),

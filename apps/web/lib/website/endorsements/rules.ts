@@ -16,6 +16,8 @@ export const endorseInput = z.object({
   slug: z.string().trim().regex(/^[a-z0-9][a-z0-9-]{0,118}$/, 'Profil invalid'),
   note: z.string().trim().max(NOTE_MAX).optional(),
   showName: z.boolean().optional(),
+  /** what the colleague is recommended FOR (taxonomy slugs); optional: without it the endorsement shows the name and specialty only */
+  servicii: z.array(z.string().trim().regex(/^[a-z0-9][a-z0-9-]{0,118}$/)).max(6).optional(),
 }).strict()
 
 export const visibilityInput = z.object({ showName: z.boolean() }).strict()

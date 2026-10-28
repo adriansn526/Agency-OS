@@ -19,6 +19,7 @@ before(async () => {
   await db.businessLine.create({ data: { id: 'bl', slug: 'bl', name: 'bl', icon: 'x', color: '#000', config: {} } })
   await db.websiteChannel.create({ data: { id: 'ch', businessLineId: 'bl', apiKeys: [] } })
   await db.websiteCollection.create({ data: { id: 'c', businessLineId: 'bl', key: 'companii', name: 'M', namePlural: 'M', fields: [{ key: 'cod_parafa', label: 'Parafă', type: 'text' }] } })
+  await db.websiteCollection.create({ data: { id: 'tax', businessLineId: 'bl', key: 'servicii', name: 'S', namePlural: 'S', fields: [] } })
   await db.websiteEntry.createMany({ data: [
     doc('a'), doc('b'), doc('c'), doc('d'), doc('nocmr', { data: { clinici: ['X'] } }), doc('old', { data: { verificare_cmr: cmr('2026-01-01') } }), doc('draft', { status: 'draft' }),
     doc('same1', { data: { clinici: ['Clinica Comună'], verificare_cmr: cmr() } }), doc('same2', { data: { clinici: ['clinica comuna'], verificare_cmr: cmr() } }),
@@ -79,12 +80,41 @@ test('at most 10 new recommendations in 30 days; updating an existing one does n
   await E.endorse(me('c'), { slug: 't10' }, new Date(NOW.getTime() + 31 * 86_400_000))
 })
 
-test('the public listing and detail carry the count; other lines get nothing extra', { skip }, async () => {
+test('"recommended for": only what the colleague really lists, shown with titles next to the name', { skip }, async () => {
+  await db.websiteEntry.update({ where: { id: 'b' }, data: { data: { specializare: 'Cardiologie', clinici: ['Clinica b'], verificare_cmr: cmr(), servicii: ['tiroida', 'colecist'] } } })
+  await db.websiteEntry.createMany({ data: [
+    { id: 'tx0', businessLineId: 'bl', collectionId: 'tax', slug: 'g', title: 'Grup', status: 'published', data: { tip: 'grup' } },
+    { id: 'tx1', businessLineId: 'bl', collectionId: 'tax', slug: 'tiroida', title: 'Chirurgia tiroidei', status: 'published', data: { tip: 'categorie', parinte: 'g' } },
+    { id: 'tx2', businessLineId: 'bl', collectionId: 'tax', slug: 'colecist', title: 'Colecistectomie', status: 'published', data: { tip: 'categorie', parinte: 'g' } },
+    { id: 'tx3', businessLineId: 'bl', collectionId: 'tax', slug: 'hernii', title: 'Hernii', status: 'published', data: { tip: 'categorie', parinte: 'g' } },
+  ] })
+  ;(await import('../../glossary/live')).invalidateTaxonomy() // the taxonomy is cached for a few seconds
+  await assert.rejects(E.endorse(me('c'), { slug: 'b', servicii: ['hernii'] }, NOW), (e: any) => e.status === 422 && /pentru ce face colegul/.test(e.message))
+  const r = await E.endorse(me('c'), { slug: 'b', showName: true, servicii: ['tiroida'] }, NOW)
+  assert.deepEqual(r.servicii, ['tiroida'])
+  const item = (await E.summaries('bl', ['b'], NOW)).get('b')!.items.find((i) => i.slug === 'c')!
+  assert.deepEqual(item.servicii, [{ slug: 'tiroida', title: 'Chirurgia tiroidei' }])
+  // without "for" it stays name + specialty only; a later update without the field keeps what was set
+  await E.endorse(me('c'), { slug: 'b', note: 'actualizat' }, NOW)
+  assert.deepEqual((await E.summaries('bl', ['b'], NOW)).get('b')!.items.find((i) => i.slug === 'c')!.servicii, [{ slug: 'tiroida', title: 'Chirurgia tiroidei' }])
+  await E.endorse(me('c'), { slug: 'b', servicii: [] }, NOW)
+  assert.deepEqual((await E.summaries('bl', ['b'], NOW)).get('b')!.items.find((i) => i.slug === 'c')!.servicii, [])
+  // if the colleague stops listing the area, it disappears from the endorsement
+  await E.endorse(me('c'), { slug: 'b', servicii: ['colecist'] }, NOW)
+  await db.websiteEntry.update({ where: { id: 'b' }, data: { data: { specializare: 'Cardiologie', clinici: ['Clinica b'], verificare_cmr: cmr(), servicii: ['tiroida'] } } })
+  assert.deepEqual((await E.summaries('bl', ['b'], NOW)).get('b')!.items.find((i) => i.slug === 'c')!.servicii, [])
+})
+
+test('public API: names only, no counts, and only while the channel switch is on; lists carry no counts', { skip }, async () => {
   const list: any = await Q.listEntries(ctx(), new URLSearchParams('collection=companii&limit=50'))
-  assert.equal(list.items.find((i: any) => i.slug === 'b').endorsementCount, 1)
-  const detail: any = await Q.getEntry(ctx(), 'companii', 'b')
-  assert.equal(detail.endorsements.count, 1)
-  assert.equal(JSON.stringify(detail).includes('Excelent colaborator'), false) // a note is only shown with its author's name
+  assert.equal(list.items.some((i: any) => 'endorsementCount' in i), false)
+  const off: any = await Q.getEntry(ctx(), 'companii', 'b')
+  assert.deepEqual(off.endorsements, { items: [] }) // switch off by default
+  await E.endorse(me('c'), { slug: 'b', note: 'colaborator bun', showName: true }, NOW) // an update replaces the note
+  await db.websiteChannel.update({ where: { id: 'ch' }, data: { config: { endorsementsPublic: true } } })
+  const on: any = await Q.getEntry(ctx(), 'companii', 'b')
+  assert.ok(on.endorsements.items.length >= 1 && !('count' in on.endorsements))
+  assert.equal(JSON.stringify(on).includes('colaborator bun'), true) // the note shows with its author's name
   await db.websiteCollection.update({ where: { id: 'c' }, data: { fields: [] } })
   const plain: any = await Q.getEntry(ctx(), 'companii', 'b')
   assert.equal('endorsements' in plain, false)
