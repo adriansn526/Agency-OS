@@ -5,6 +5,7 @@ import { WebsiteInputError } from './auth'
 import { parseListQuery, isSlug, type FieldDef } from './query'
 import { serializeCollection, serializeDetail, serializeListItem } from './serialize'
 import { getTaxonomy } from '../glossary/live'
+import { summaries } from '../endorsements/service'
 
 /** Children (a firm's projects) are public only while their parent entry is published. */
 const PARENT_PUBLISHED: Prisma.WebsiteEntryWhereInput = { OR: [{ parentId: null }, { parent: { status: 'published' } }] }
@@ -33,6 +34,15 @@ const ORDER: Record<string, Prisma.WebsiteEntryOrderByWithRelationInput[]> = {
   name: [{ title: 'asc' }],
   rating: [{ ratingAvg: { sort: 'desc', nulls: 'last' } }, { ratingCount: 'desc' }, { title: 'asc' }],
   new: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { title: 'asc' }],
+}
+
+/** Doctor endorsements only exist for collections that declare `cod_parafa` (the medical line); a database without the table yet answers "none" instead of failing the listing. */
+const hasEndorsements = (c: { key: string; fields: unknown }) => c.key === 'companii' && Array.isArray(c.fields) && (c.fields as { key?: string }[]).some((f) => f.key === 'cod_parafa')
+async function endorsementSummaries(lineId: string, ids: string[]) {
+  try { return await summaries(lineId, ids) } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2021') return new Map<string, Awaited<ReturnType<typeof summaries>> extends Map<string, infer V> ? V : never>()
+    throw e
+  }
 }
 
 export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
@@ -67,6 +77,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     db.websiteEntry.count({ where }),
     db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT }, _count: { select: { foundingSlots: true } } } }),
   ])
+  const endo = hasEndorsements(collection) ? await endorsementSummaries(ctx.businessLineId, rows.map((r) => r.id)) : null
   // `facet=county`: number of published entries per county for the same filters (without the county filter itself)
   let facets: { county: { value: string; count: number }[] } | undefined
   if (sp.get('facet') === 'county') {
@@ -77,7 +88,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
   return {
     collection: serializeCollection(collection),
     total, page: q.page, limit: q.limit, pages: Math.max(1, Math.ceil(total / q.limit)),
-    items: rows.map((e) => serializeListItem(e, collection.key, tax.categories)),
+    items: rows.map((e) => ({ ...serializeListItem(e, collection.key, tax.categories), ...(endo ? { endorsementCount: endo.get(e.id)?.count ?? 0 } : {}) })),
     ...(facets ? { facets } : {}),
   }
 }
@@ -95,7 +106,11 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
       reviews: { where: { status: 'approved' }, orderBy: { createdAt: 'desc' }, take: 20 },
     },
   })
-  return entry ? serializeDetail(entry, collection.key, entry.media, entry.reviews, (await getTaxonomy(ctx.businessLineId)).categories) : null
+  if (!entry) return null
+  const detail = serializeDetail(entry, collection.key, entry.media, entry.reviews, (await getTaxonomy(ctx.businessLineId)).categories)
+  if (!hasEndorsements(collection)) return detail
+  const e = (await endorsementSummaries(ctx.businessLineId, [entry.id])).get(entry.id)
+  return { ...detail, endorsements: e ?? { count: 0, items: [] } }
 }
 
 /** Slugs and last-modified dates of everything published, for the site's sitemap. */

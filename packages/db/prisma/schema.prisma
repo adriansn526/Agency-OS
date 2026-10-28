@@ -1949,6 +1949,8 @@ model WebsiteEntry {
   layout           Json?
   layoutVersions   WebsiteLayoutVersion[]
   foundingSlots    WebsiteFoundingSlot[]
+  endorsementsGiven    WebsiteEndorsement[] @relation("EndorsementGiver")
+  endorsementsReceived WebsiteEndorsement[] @relation("EndorsementReceiver")
   /// gratuit | abonament (abonament: direct requests arrive with full contact data, no per-request fee)
   plan             String            @default("gratuit")
   planUntil        DateTime?
@@ -2115,6 +2117,34 @@ model WebsiteFoundingSlot {
 
   @@unique([entryId, county, category])
   @@index([businessLineId, county, category])
+}
+
+/// Doctor-to-doctor endorsement. DDL (manual, additive): packages/db/prisma/sql/website_endorsements.sql
+model WebsiteEndorsement {
+  id             String       @id @default(cuid())
+  businessLineId String
+  endorserId     String
+  endorseeId     String
+  /// Why, max 280 characters (CHECK in SQL)
+  note           String?
+  /// The endorser agreed to be named on the endorsee's public profile
+  showName       Boolean      @default(false)
+  /// Computed when created: a shared clinic means the endorsement is not counted
+  sameClinic     Boolean      @default(false)
+  /// active | withdrawn (by the endorser) | removed (by the team)
+  status         String       @default("active")
+  removedReason  String?
+  /// Last time it was (re)made: drives the monthly limit
+  endorsedAt     DateTime     @default(now())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  endorser       WebsiteEntry @relation("EndorsementGiver", fields: [endorserId], references: [id], onDelete: Cascade)
+  endorsee       WebsiteEntry @relation("EndorsementReceiver", fields: [endorseeId], references: [id], onDelete: Cascade)
+
+  @@unique([endorserId, endorseeId])
+  @@index([endorseeId, status])
+  @@index([endorserId, endorsedAt])
+  @@index([businessLineId, status])
 }
 
 model WebsiteRequest {
