@@ -61,7 +61,7 @@ export function validateEntryData(fields: CollectionField[], input: unknown): Re
         const arr = Array.isArray(v) ? v : String(v).split(/[\n,;]/)
         const items = arr.map((x) => String(x).trim()).filter(Boolean)
         if (items.length > MAX_LIST) issues.push(`„${f.label}” are prea multe elemente (max ${MAX_LIST})`)
-        else if (items.some((x) => x.length > 200)) issues.push(`Elementele din „${f.label}” sunt prea lungi`)
+        else if (items.some((x) => x.length > 600)) issues.push(`Elementele din „${f.label}” sunt prea lungi`)
         else out[f.key] = items
         break
       }

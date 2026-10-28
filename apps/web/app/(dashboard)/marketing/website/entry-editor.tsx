@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthorizationsPanel } from "./authorizations-panel"
 import { CmrPanel } from "./cmr-panel"
+import { PendingPanel } from "./pending-panel"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
@@ -126,7 +127,7 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             <section>
               <h3 className="text-sm font-semibold mb-2">Câmpuri {collection.name.toLowerCase()}</h3>
               <div className="grid grid-cols-2 gap-3">
-                {collection.fields.filter((f) => f.key !== "autorizatii_verificate" && f.key !== "verificare_cmr" && f.key !== "in_constructie").map((f) => (
+                {collection.fields.filter((f) => f.key !== "autorizatii_verificate" && f.key !== "verificare_cmr" && f.key !== "modificari_asteptare" && f.key !== "in_constructie").map((f) => (
                   <div key={f.key} className={f.type === "list" ? "col-span-2" : ""}>
                     <label className={labelCls} htmlFor={`cf-${f.key}`}>{f.label}{f.required && draft.status === "published" && <span className="text-destructive"> *</span>}</label>
                     <FieldInput f={f} value={draft.data[f.key]} onChange={(v) => set("data", { ...draft.data, [f.key]: v })} />
@@ -144,6 +145,8 @@ export function EntryEditor({ lineId, entryId, collections, defaultCollectionId,
             </section>
           )}
           {builder && entryId && <ContentBuilder lineId={lineId} entryId={entryId} onClose={() => setBuilder(false)} />}
+
+          {entryId && collection?.key === "companii" && collection.fields.some((f) => f.key === "cod_parafa") && <PendingPanel lineId={lineId} entryId={entryId} onChanged={() => { /* the editor reloads the entry on save */ }} />}
 
           {entryId && collection?.key === "companii" && collection.fields.some((f) => f.key === "cod_parafa") && <CmrPanel lineId={lineId} entryId={entryId} title={draft.title} value={draft.data.verificare_cmr} onChanged={(list) => set("data", { ...draft.data, verificare_cmr: list })} />}
 

@@ -10,6 +10,8 @@ import { contentReady, effectiveContentLayout, isContentCollection } from '../co
 import { isWip } from '../content/wip'
 import { activeCmr, CMR_KEY, decodeCmr } from '../verification/cmr-data'
 
+const PENDING_KEY = 'modificari_asteptare'
+
 interface EntryRow {
   slug: string; title: string; summary: string | null; body: string | null
   city: string | null; county: string | null; address: string | null; lat: number | null; lng: number | null
@@ -34,6 +36,7 @@ function withCmr(data: unknown, collectionKey: string) {
   const d = { ...((data ?? {}) as Record<string, unknown>) }
   const raw = d[CMR_KEY]
   delete d[CMR_KEY]
+  delete d[PENDING_KEY]
   if (collectionKey !== 'companii') return { data: d }
   const v = activeCmr(decodeCmr(raw))[0]
   return { data: d, cmr: v ? { verifiedAt: v.verifiedAt, practiceUntil: v.practiceUntil, specialities: v.specialities } : null }

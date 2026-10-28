@@ -7,6 +7,23 @@ import { getTaxonomy, unknownCategories, type LiveTaxonomy } from '../glossary/l
 import { nationalPhone } from '../../prospectare/import-mapping'
 import { THEME_PRESETS } from '../theme'
 
+/** Medical claims proposed by the doctor wait here for the team (data key, JSON text); the public profile keeps showing the checked values. */
+export const PENDING_KEY = 'modificari_asteptare'
+export const GATED_KEYS = ['servicii', 'specializare', 'subspecializari', 'cod_parafa'] as const
+const MEDICAL_LIVE_KEYS = ['tarif_consultatie', 'consult_online', 'experienta_ani', 'clinici', 'limbi', 'studii', 'afilieri', 'intrebari'] as const
+export type Gated = Partial<Record<(typeof GATED_KEYS)[number], string | string[] | null>>
+
+export function parsePending(v: unknown): (Gated & { at?: string }) | null {
+  if (typeof v !== 'string' || !v) return null
+  try { const o = JSON.parse(v); return o && typeof o === 'object' && !Array.isArray(o) ? o : null } catch { return null }
+}
+
+/** A medical line is one whose people collection declares the parafa code. */
+export async function isMedicalEntry(entry: { collectionId: string }) {
+  const c = await db.websiteCollection.findUnique({ where: { id: entry.collectionId }, select: { fields: true } })
+  return Array.isArray(c?.fields) && (c!.fields as { key?: string }[]).some((f) => f.key === 'cod_parafa')
+}
+
 /** Name and CUI are not editable here: changing them needs re-verification by the team. */
 export const LOCKED_FIELDS = ['title', 'cui'] as const
 
@@ -23,6 +40,20 @@ export const profilePatch = z.object({
   }),
   servicii: z.array(z.string().trim().min(1).max(60)).max(12).optional(),
   certificari: z.array(z.string().trim().min(1).max(120)).max(20).optional(),
+  // medical lines (collection with the cod_parafa field): the doctor's own facts, live at once
+  tarif_consultatie: z.number().int().min(0).max(100_000).nullish().transform((v) => v ?? null),
+  consult_online: z.enum(['da', 'nu']).nullish().transform((v) => v ?? null),
+  experienta_ani: z.number().int().min(0).max(70).nullish().transform((v) => v ?? null),
+  clinici: z.array(z.string().trim().min(1).max(200)).max(10).optional(),
+  limbi: z.array(z.string().trim().min(1).max(60)).max(15).optional(),
+  studii: z.array(z.string().trim().min(1).max(300)).max(15).optional(),
+  afilieri: z.array(z.string().trim().min(1).max(150)).max(15).optional(),
+  /** "Întrebare | Răspuns" */
+  intrebari: z.array(z.string().trim().min(3).max(600).refine((s) => /\|/.test(s) && s.split('|')[0]!.trim().length >= 3 && s.split('|').slice(1).join('|').trim().length >= 1, 'Format: Întrebare | Răspuns')).max(12).optional(),
+  // medical lines: medical claims that the team checks before they show (specialty, procedures, sub-specialities, parafa code)
+  specializare: text(120),
+  subspecializari: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
+  cod_parafa: z.string().trim().regex(/^[A-Za-z0-9]{4,10}$/, 'Codul de parafă are 4–10 litere și cifre').nullish().transform((v) => v ?? null),
   /** colour theme: a preset key and/or a custom #rrggbb accent (null clears) */
   tema: z.enum(THEME_PRESETS as [string, ...string[]]).nullish().transform((v) => v ?? null),
   accent: z.string().trim().regex(/^#[0-9a-fA-F]{6}$/, 'Culoare invalidă (#rrggbb)').nullish().transform((v) => (v ? v.toLowerCase() : null)),
@@ -36,9 +67,17 @@ function heroVideoOf(media: EntryWithMedia['media']) {
   return v && p ? { url: v.url, posterUrl: p.url, bytes: v.sizeBytes } : null
 }
 
-export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy) {
+export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy, medical = false) {
   const d = (e.data ?? {}) as Record<string, unknown>
+  const list = (k: string) => (Array.isArray(d[k]) ? (d[k] as unknown[]).map(String) : [])
   return {
+    ...(medical ? {
+      medical: true,
+      tarif_consultatie: typeof d.tarif_consultatie === 'number' ? d.tarif_consultatie : null, consult_online: d.consult_online === 'da' || d.consult_online === 'nu' ? d.consult_online : null,
+      experienta_ani: typeof d.experienta_ani === 'number' ? d.experienta_ani : null, specializare: typeof d.specializare === 'string' ? d.specializare : null, cod_parafa: typeof d.cod_parafa === 'string' ? d.cod_parafa : null,
+      clinici: list('clinici'), limbi: list('limbi'), studii: list('studii'), afilieri: list('afilieri'), subspecializari: list('subspecializari'), intrebari: list('intrebari'),
+      pending: parsePending(d[PENDING_KEY]),
+    } : {}),
     id: e.id, slug: e.slug, status: e.status, title: e.title, cui: typeof d.cui === 'string' ? d.cui : null,
     summary: e.summary, body: e.body, phone: e.phone, email: e.email, websiteUrl: e.websiteUrl, address: e.address, city: e.city, county: e.county,
     logoUrl: e.logoUrl, coverUrl: e.coverUrl,
@@ -57,6 +96,8 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   const parsed = profilePatch.safeParse(raw)
   if (!parsed.success) throw new AdminError('Date invalide', 422, parsed.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
   const p = parsed.data
+  const medical = await isMedicalEntry(entry)
+  if (!medical) for (const k of ['specializare', 'subspecializari', 'cod_parafa', ...MEDICAL_LIVE_KEYS] as const) if ((p as Record<string, unknown>)[k] !== undefined) throw new AdminError('Date invalide', 422, [`${k}: câmp indisponibil pe această linie`])
   if (p.servicii) {
     const bad = unknownCategories(await getTaxonomy(entry.businessLineId), p.servicii)
     if (bad.length) throw new AdminError('Date invalide', 422, [`servicii: categorie necunoscută (${bad.join(', ')})`])
@@ -77,7 +118,33 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
     if (v === null) delete d[k]; else d[k] = v
     changed.push(k)
   }
-  for (const k of ['servicii', 'program', 'certificari'] as const) {
+  // medical: free-form facts go live; claims the team must check are only proposed
+  const gatedProposal: Gated = {}
+  for (const k of GATED_KEYS) { if (medical && (p as Record<string, unknown>)[k] !== undefined) (gatedProposal as Record<string, unknown>)[k] = (p as Record<string, unknown>)[k] }
+  for (const k of medical ? MEDICAL_LIVE_KEYS : []) {
+    const v = (p as Record<string, unknown>)[k]
+    if (v === undefined) continue
+    if (JSON.stringify(v) === JSON.stringify(d[k] ?? (Array.isArray(v) ? [] : null))) continue
+    if (v === null || (Array.isArray(v) && v.length === 0)) delete d[k]; else d[k] = v
+    changed.push(k)
+  }
+  if (Object.keys(gatedProposal).length) {
+    const pend = { ...(parsePending(d[PENDING_KEY]) ?? {}) } as Record<string, unknown>
+    let touched = false
+    for (const k of GATED_KEYS) {
+      const v = (gatedProposal as Record<string, unknown>)[k]
+      if (v === undefined) continue
+      const live = d[k] ?? (Array.isArray(v) ? [] : null)
+      if (JSON.stringify(v ?? (Array.isArray(live) ? [] : null)) === JSON.stringify(live)) { if (k in pend) { delete pend[k]; touched = true } continue }
+      pend[k] = v; touched = true
+    }
+    if (touched) {
+      const { at: _at, ...rest } = pend
+      if (Object.keys(rest).length) d[PENDING_KEY] = JSON.stringify({ ...rest, at: new Date().toISOString() }); else delete d[PENDING_KEY]
+      changed.push('modificari_in_asteptare')
+    }
+  }
+  for (const k of (medical ? ['program', 'certificari'] : ['servicii', 'program', 'certificari']) as ('servicii' | 'program' | 'certificari')[]) {
     const v = p[k]
     if (v === undefined) continue
     if (JSON.stringify(v) === JSON.stringify(d[k] ?? (k === 'program' ? null : []))) continue
@@ -85,7 +152,7 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
     changed.push(k)
   }
   if (!changed.length) return { changed }
-  if (changed.some((k) => ['servicii', 'program', 'certificari', 'tema', 'accent'].includes(k))) column.data = d as Prisma.InputJsonValue
+  if (changed.some((k) => ['servicii', 'program', 'certificari', 'tema', 'accent', 'modificari_in_asteptare', ...MEDICAL_LIVE_KEYS].includes(k))) column.data = d as Prisma.InputJsonValue
   await db.$transaction([
     db.websiteEntry.update({ where: { id: entry.id }, data: column }),
     db.activity.create({ data: {
