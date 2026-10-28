@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const designInterior: SituationContent = {
+  slug: 'proiectare-arhitectura--design-interior',
+  categorie: 'proiectare-arhitectura',
+  title: 'Design interior și amenajări',
+  seoTitle: 'Design interior: ce primești și cum alegi designerul',
+  seoDescription: 'Design interior pentru casă sau apartament: ce primești (planșe, randări, liste), etapele colaborării, de ce depinde costul și cum alegi un designer.',
+  summary: 'Ce înseamnă design interior, ce primești de la un designer, cum decurge colaborarea, de ce depinde costul și cum alegi designerul potrivit.',
+  sinonime: ['design interior', 'designul interior', 'designuri interioare', 'designer de interior', 'designer interior', 'dizainer interior', 'designer interioare'],
+  intrebari: [
+    'Ce face un designer de interior? | Gândește spațiul pe care îl locuiești: cum sunt aranjate încăperile, ce materiale și culori se folosesc, unde se pun corpurile de iluminat, prizele și mobilierul. Rezultatul se prezintă prin planuri, randări și liste de materiale.',
+    'Care este diferența dintre design interior și arhitectură? | Arhitectura privește clădirea (volum, structură, fațade), designul interior privește interiorul: funcțiuni, finisaje, mobilier, lumină. Când se modifică pereți portanți sau structura, e nevoie de proiectant autorizat, nu doar de designer.',
+    'Ce primesc în urma colaborării? | Depinde de contract: de obicei planuri de amenajare, randări 3D, plan de iluminat, lista de materiale și finisaje, detalii pentru mobilierul pe comandă. Cere lista livrabilelor în scris, înainte de începere.',
+    'Pot lucra cu un designer doar pentru o cameră? | Da, mulți designeri fac proiecte parțiale, de exemplu bucătărie, baie sau living. Spune de la început ce spațiu și ce nivel de detaliu dorești.',
+    'Designerul se ocupă și de execuția lucrărilor? | Uneori oferă și coordonare sau supervizare, alteori doar proiectul. Clarifică în contract dacă lucrările le execută alte firme și cine verifică respectarea proiectului.',
+    'Când schimb ceva de la structura sau instalațiile locuinței? | La mutarea pereților, a băilor sau a bucătăriei se pot cere acte sau avize și intervenția specialiștilor în structură și instalații. Întreabă la primărie sau la asociația de proprietari, în funcție de caz.',
+    'De ce depinde costul serviciilor de design? | De suprafață, de nivelul de detaliu, de numărul de încăperi, de livrabile (planuri, randări, detalii de mobilier) și de coordonarea execuției. Cere oferta pe etape, cu livrabilele numite.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Design interior: ce primești de la un designer', subtitle: 'Planșe, randări, liste de materiale și etape: ce cuprinde colaborarea și ce întrebi înainte de contract. Ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce primești', value: 'Planuri, randări, liste' },
+      { label: 'Nu înlocuiește', value: 'Proiectul de structură' },
+      { label: 'Etape', value: 'Brief, concept, detalii' },
+      { label: 'Contract', value: 'Livrabile și execuție clarificate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Designul interior este modul în care un spațiu e gândit ca să funcționeze și să arate bine: aranjarea camerelor, finisajele, lumina, mobilierul. Mulți caută inspirație în imagini; un designer transformă ideile în soluții aplicabile pe spațiul tău, în limitele bugetului.',
+      'Pagina explică ce livrează un designer, cum decurge colaborarea și ce să stabilești în contract. Proiectul de casă și partea de structură au pagina lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poți primi', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Plan de amenajare', text: 'Cum sunt așezate camerele, mobilierul și circulațiile, în funcție de felul în care locuiești.' },
+      { title: 'Randări 3D', text: 'Imagini care arată cum va arăta spațiul, utile ca să decizi înainte să cumperi și să execuți.' },
+      { title: 'Iluminat și instalații', text: 'Poziția corpurilor de iluminat, a prizelor și a punctelor de apă, transmise electricianului și instalatorului.' },
+      { title: 'Materiale și finisaje', text: 'Liste cu pardoseli, culori, plăci și accesorii, cu referințe pentru achiziție.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Când are sens un designer', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Are sens la o casă nouă sau la o renovare mai amplă, la bucătării și băi unde ergonomia contează, sau când ai nevoie de un concept coerent pentru mai multe camere. Pentru o singură modificare simplă poate fi suficient un proiect parțial sau o consultație.',
+      'Designerul nu înlocuiește specialiștii: dacă ai nevoie să muți un perete, să schimbi instalații sau să modifici structura, intervin și proiectantul, și personalul autorizat al instalațiilor.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Cum decurge colaborarea', items: [
+      { title: 'Discuție inițială', text: 'Descrii spațiul, stilul, bugetul și felul în care locuiești; designerul vede locul sau planurile.' },
+      { title: 'Relevee', text: 'Se măsoară spațiul și se notează instalațiile existente.' },
+      { title: 'Concept', text: 'Se propun variante de plan și de atmosferă; alegi direcția.' },
+      { title: 'Proiect detaliat', text: 'Se întocmesc planurile, randările, planul de iluminat și lista de materiale.' },
+      { title: 'Execuție și coordonare', text: 'Lucrările le fac echipe specializate; designerul poate urmări respectarea proiectului, dacă e prevăzut în contract.' },
+      { title: 'Recepție', text: 'Compari rezultatul cu proiectul și notezi eventualele diferențe.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea după imagini', text: 'Randările frumoase nu spun nimic despre cât de bine funcționează spațiul.' },
+      { title: 'Contract fără livrabile', text: 'Ce nu e scris nu se poate cere la final.' },
+      { title: 'Bugetul stabilit târziu', text: 'Fără buget, conceptul poate depăși ce îți permiți.' },
+      { title: 'Instalații gândite după finisaje', text: 'Prizele și punctele de apă se fixează înainte de zugrăveli și placări.' },
+      { title: 'Confuzia cu proiectul de arhitectură', text: 'Modificările de structură cer proiectant autorizat, nu doar designer.' },
+      { title: 'Lipsa coordonării execuției', text: 'Proiectul bun se pierde dacă nimeni nu verifică lucrarea.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul serviciilor depinde de suprafață și de numărul de încăperi, de nivelul de detaliu cerut, de livrabile (planuri, randări, detalii de mobilier), de dacă designerul coordonează și execuția și de experiența lui.',
+      'Cere oferta pe etape, cu livrabilele numite, și stabilește cum se tratează modificările cerute după aprobarea conceptului. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce livrabile intră în fiecare ofertă, câte variante de concept sunt incluse, dacă există vizite pe șantier și cum se tratează modificările. O ofertă mai mică poate exclude randările sau lista de materiale.',
+      'Cere să vezi proiecte deja realizate, pentru spații asemănătoare cu al tău, nu doar imagini de portofoliu.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un designer', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege un designer al cărui stil și mod de lucru ți se potrivesc și care ascultă ce ai nevoie, nu doar ce îi place lui. Cere contract cu etape, livrabile și drepturile asupra proiectului.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre design interior' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru amenajări' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la proiectare și arhitectură' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți un designer de interior?', text: 'Descrie spațiul și ce îți dorești și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

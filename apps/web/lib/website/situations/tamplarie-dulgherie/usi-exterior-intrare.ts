@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiExteriorIntrare: SituationContent = {
+  slug: 'tamplarie-dulgherie--usi-exterior-intrare',
+  categorie: 'tamplarie-dulgherie',
+  title: 'Uși de exterior și de intrare (casă, apartament)',
+  seoTitle: 'Uși de exterior și de intrare: casă și apartament',
+  seoDescription: 'Uși de exterior și de intrare pentru casă sau apartament: materiale, siguranță, izolare, ordinea montajului, de ce depinde costul și cum compari ofertele.',
+  summary: 'Cum alegi ușa de intrare pentru casă sau apartament, ce contează la siguranță și izolare, cum se montează și ce compari în oferte.',
+  sinonime: ['usi exterior', 'usa exterioara', 'usa intrare apartament', 'usa intrare casa', 'usi de exterior', 'uși exterior', 'ușa exterioară', 'ușă intrare apartament', 'ușă intrare casă', 'uși de exterior'],
+  intrebari: [
+    'Ce tipuri de uși de exterior există? | Uși de intrare din lemn, metal, aluminiu sau compozite, uși pentru apartament (cu cerințe de siguranță și, în bloc, de aspect) și uși de curte sau de service. Ușile din PVC cu sticlă sunt tratate la geamuri, nu aici.',
+    'Ce contează la o ușă de intrare în apartament? | Siguranța încuietorii și a tocului, comportamentul la zgomot, aspectul spre palier și regulile asociației de proprietari. Pentru modificări la aspectul exterior, întreabă asociația înainte să comanzi.',
+    'Ce contează la o ușă de intrare în casă? | Rezistența la ploaie, vânt și soare, izolarea față de frig și etanșeitatea la aer, plus siguranța. Materialul și finisajul se aleg după expunere: o ușă sub streașină nu are aceleași cerințe ca una direct la ploaie.',
+    'Cum recunosc o ușă sigură? | Contează tocul, ancorarea lui în zid, balamalele, încuietoarea și rezistența canatului la forțare. Cere informații despre construcția ușii, nu doar despre aspect, și compară-le între oferte.',
+    'Cine montează ușa de intrare? | O echipă care știe să fixeze tocul în zid, să izoleze golul și să regleze ușa. O montare greșită anulează calitățile ușii: curenți, infiltrații și o ușă care nu se închide bine.',
+    'Pot schimba doar ușa, fără tocul vechi? | Uneori, dacă tocul e solid și potrivit. De regulă, ușa nouă vine cu toc nou, care e fixat în golul existent; ia o decizie după vizita unui montator.',
+    'De ce depinde costul? | De material și construcție, de dimensiuni, de tip de încuietoare, de finisaje, de montaj și de eventualele reparații ale golului. Compară oferte care detaliază fiecare element; vezi și paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși de exterior și de intrare: ce verifici înainte să comanzi', subtitle: 'Casă sau apartament: siguranță, izolare, montaj și ofertă. Dacă ai nevoie de un montator, ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Siguranța', value: 'Toc, balamale, încuietoare' },
+      { label: 'Casă', value: 'Expunere la ploaie și vânt' },
+      { label: 'Apartament', value: 'Regulile asociației' },
+      { label: 'Montaj', value: 'La fel de important ca ușa' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușa de intrare este bariera dintre locuință și exterior: ține frigul afară, oprește zgomotul și o protejează de intruși. De aceea nu e nici ea doar o chestiune de aspect. Pagina te ajută să alegi după nevoi și să afli ce să ceri unui furnizor sau unui montator.',
+      'Ușile de interior au pagina lor, iar ușile de garaj la fel. Ușile termopan și cele culisante sunt tratate la geamuri; le găsești mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce soluții întâlnești', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Uși de intrare în apartament', text: 'Cu accent pe siguranță și zgomot, cu un aspect potrivit spre palier.' },
+      { title: 'Uși de intrare în casă', text: 'Cu rezistență la intemperii, izolare și o încuietoare solidă; se aleg după expunere.' },
+      { title: 'Uși metalice și compozite', text: 'Construcții cu miez izolant și foi metalice sau compozite, cu finisaje variate.' },
+      { title: 'Uși din lemn masiv', text: 'Estetice și durabile dacă sunt protejate corespunzător; cer întreținere periodică.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Siguranță și izolare', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Siguranța vine din ansamblu: toc ancorat, balamale robuste, încuietori potrivite și canat greu de forțat. O încuietoare bună într-o ușă ușoară nu rezolvă problema. Cere informații concrete despre construcție și compară-le între oferte.',
+      'Izolarea depinde de miezul ușii, de garnituri și de modul în care tocul e etanșat în gol. Un montaj slab lasă curenți chiar dacă ușa e bine făcută.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Alegere și verificări', text: 'Decizi tipul de ușă, discuți cu asociația dacă e cazul și verifici că golul permite schimbarea.' },
+      { title: 'Măsurătoare', text: 'Se face pe loc, de către montator, cu verificarea golului și a sensului de deschidere.' },
+      { title: 'Demontarea ușii vechi', text: 'Se scoate ușa veche, se curăță golul și se repară zidăria acolo unde e nevoie.' },
+      { title: 'Montajul tocului', text: 'Se fixează aliniat și ancorat în zid, apoi se etanșează față de pereți.' },
+      { title: 'Montajul canatului și al încuietorilor', text: 'Se prinde canatul, se reglează jocurile și se verifică funcționarea fiecărei încuietori.' },
+      { title: 'Finisaje și predare', text: 'Se fac ornamentele și curățenia, apoi primești cheile și documentele ușii.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea după aspect', text: 'Fără informații despre toc, încuietoare și canat, nu știi cât de sigură e ușa.' },
+      { title: 'Ignorarea asociației', text: 'La apartament, aspectul spre palier poate fi reglementat; întreabă înainte.' },
+      { title: 'Montajul neglijat', text: 'Un toc prost ancorat reduce siguranța și lasă curenți.' },
+      { title: 'Material nepotrivit expunerii', text: 'Ușa din lemn direct la ploaie fără protecție se degradează repede.' },
+      { title: 'Ofertă doar pe ușă', text: 'Demontarea, montajul și reparația golului pot fi separate.' },
+      { title: 'Grabă la măsurătoare', text: 'Comanda pe baza dimensiunilor aproximative duce la uși care nu se potrivesc.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de materialul și construcția ușii, de dimensiuni, de tipul și numărul încuietorilor, de finisaje și accesorii, de demontarea ușii vechi și de montaj. Se mai adaugă reparațiile golului și, la comenzi pe măsură, timpul de producție.',
+      'Cere oferte care despart ușa, montajul, încuietorile și lucrările la gol. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară construcția ușii (toc, canat, balamale, încuietori), izolarea, finisajul exterior, ce se montează și ce garanție primești. Verifică dacă demontarea ușii vechi și evacuarea ei sunt incluse.',
+      'Cere pozele unor lucrări similare și întreabă ce se întâmplă dacă ușa nu se potrivește la montaj.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege o firmă care vine să vadă golul, îți explică opțiunile de siguranță și izolare și nu recomandă o ușă fără să știe cum o vei folosi. Cere ofertă scrisă și garanție pentru montaj.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși de exterior și de intrare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru uși și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la tâmplărie și dulgherie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți montator pentru ușa de intrare?', text: 'Spune-ne ce ușă ai nevoie să schimbi și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

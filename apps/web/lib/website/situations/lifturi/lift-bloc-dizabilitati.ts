@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const liftBlocDizabilitati: SituationContent = {
+  slug: 'lifturi--lift-bloc-dizabilitati',
+  categorie: 'lifturi',
+  title: 'Lift de bloc și pentru persoane cu dizabilități',
+  seoTitle: 'Lift de bloc și pentru persoane cu dizabilități',
+  seoDescription: 'Ascensor într-un bloc sau platformă pentru persoane cu dizabilități: cine decide, ce avize și verificări contează, ce soluții există și cum compari ofertele.',
+  summary: 'Ce implică montarea, înlocuirea sau modernizarea unui ascensor de bloc, a unei platforme pentru dizabilități sau a unui lift de marfă și cine decide.',
+  sinonime: ['ascensor', 'ascensoare', 'lift', 'lift bloc', 'lift persoane cu dizabilitati', 'lift pentru persoane cu dizabilitati', 'platforma elevatoare', 'lift marfa', 'pret lift bloc 10 etaje', 'lift persoane cu dizabilități', 'lift pentru persoane cu dizabilități', 'platformă elevatoare', 'lift marfă', 'preț lift bloc 10 etaje'],
+  intrebari: [
+    'Cine decide montarea sau înlocuirea unui ascensor într-un bloc? | Decizia aparține proprietarilor, prin asociația de proprietari, conform regulilor ei interne și legii. Montarea unui lift nou sau modernizarea celui existent cere, de regulă, acordul asociației și, în funcție de situație, și acte de la autorități. Întreabă la asociație și la primărie.',
+    'Ce verificări și autorizări are un ascensor? | Ascensoarele sunt supuse unor reguli de punere în funcțiune, verificare periodică și întreținere, făcute de personal și firme autorizate. Detaliile și frecvența depind de reglementările în vigoare, deci cere firmei și autorității competente informații actualizate.',
+    'Se poate monta un ascensor într-un bloc fără lift? | Uneori da, pe exteriorul clădirii sau într-un spațiu din casa scării, dar depinde de structură, de spațiu, de acces și de acordul proprietarilor. Un proiectant și o firmă de specialitate evaluează fezabilitatea.',
+    'Ce soluții există pentru persoane cu dizabilități? | Rampe, platforme elevatoare, lifturi cu dimensiuni și comenzi adaptate sau lifturi de scară, în funcție de diferența de nivel și de spațiul disponibil. Alegerea se face după nevoile utilizatorului și după reglementările de accesibilitate aplicabile clădirii.',
+    'Ce este un lift de marfă? | Un lift destinat în principal transportului de bunuri, folosit în spații comerciale, depozite sau clădiri cu activitate. Are cerințe și reguli diferite de cel pentru persoane, iar firma care îl montează trebuie să fie autorizată.',
+    'Cine face service-ul? | O firmă autorizată, în baza unui contract. Verifică în contract intervențiile de rutină, modul de intervenție în caz de avarie și cine răspunde de verificările periodice.',
+    'De ce depinde costul? | De tipul de lift, numărul de niveluri, de lucrările la structură, de accesibilitate, de finisaje, de montaj și de service. La blocuri, contează și modul de finanțare și acordul proprietarilor. Cere oferte detaliate și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Ascensor de bloc și lift pentru persoane cu dizabilități: ce să știi', subtitle: 'Cine decide, ce verificări contează, ce soluții există și cum compari ofertele. Montajul îl face doar personal autorizat.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Decide', value: 'Asociația de proprietari' },
+      { label: 'Cine montează', value: 'Doar personal autorizat' },
+      { label: 'Verificări', value: 'Periodice, prin firme autorizate' },
+      { label: 'Detalii legale', value: 'Întreabă autoritatea' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un ascensor într-un bloc este o investiție comună și o instalație cu risc: de aceea montarea, înlocuirea sau modernizarea lui urmează reguli stricte și se face doar de personal autorizat. În plus, cere acordul proprietarilor și, după caz, acte de la autorități.',
+      'Pagina explică ce soluții există, cine decide și ce să întrebi firmelor. Pentru liftul unei case individuale, vezi pagina dedicată. Pentru detalii juridice și de autorizare, adresează-te asociației, primăriei și firmelor autorizate.',
+    ) }),
+    node('what-h', 'heading', { text: 'Situații frecvente', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Ascensor nou în bloc fără lift', text: 'Se evaluează dacă se poate monta pe exterior sau în casa scării și ce spun proprietarii.' },
+      { title: 'Modernizarea unui lift vechi', text: 'Se înlocuiesc componente sau întregul sistem pentru siguranță, confort și consum.' },
+      { title: 'Acces pentru persoane cu dizabilități', text: 'Rampe, platforme elevatoare sau lifturi adaptate, în funcție de diferența de nivel.' },
+      { title: 'Lift de marfă', text: 'Pentru spații comerciale sau clădiri cu activitate, cu reguli diferite de cele pentru persoane.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Cine decide și ce se verifică', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'La bloc, proprietarii decid prin asociație, iar lucrările la părțile comune cer, în general, hotărâre și cerere la autorități. Regulile exacte și actele necesare depind de situație, deci întreabă la asociație și la primărie înainte să contractezi.',
+      'Liftul este o instalație supusă unor verificări înainte de punerea în funcțiune și periodic, făcute de personal și firme autorizate. Cere firmei să-ți explice ce documente primești și cine răspunde de verificările ulterioare. Nu accepta improvizații la o instalație care transportă oameni.',
+      'Pentru accesibilitate, soluția se alege după nevoile utilizatorului și după spațiul disponibil: o platformă poate rezolva o diferență mică de nivel, un lift complet un acces la mai multe etaje.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Nevoia și acordul', text: 'Se clarifică cine folosește liftul și se obține acordul asociației.' },
+      { title: 'Evaluarea clădirii', text: 'Specialiștii verifică structura, spațiul și variantele de amplasare.' },
+      { title: 'Proiect și acte', text: 'Se întocmesc documentele cerute și se clarifică ce aprobări sunt necesare.' },
+      { title: 'Pregătirea și montajul', text: 'Lucrări la structură, instalația electrică și montajul liftului, de către personal autorizat.' },
+      { title: 'Punere în funcțiune', text: 'Probe și verificări, cu predarea documentelor.' },
+      { title: 'Service și verificări', text: 'Contract de întreținere cu o firmă autorizată.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Decizie fără acordul proprietarilor', text: 'Blochează lucrarea sau creează litigii.' },
+      { title: 'Alegerea firmei doar după preț', text: 'La lifturi contează autorizarea, service-ul și răspunsul la avarii.' },
+      { title: 'Lipsa unui contract de service clar', text: 'Intervențiile și răspunderea trebuie scrise în contract.' },
+      { title: 'Ignorarea accesibilității', text: 'O soluție neadaptată nu ajută utilizatorii pentru care este făcută.' },
+      { title: 'Amânarea modernizării', text: 'Un lift vechi poate deveni nesigur sau greu de întreținut.' },
+      { title: 'Ofertă incompletă', text: 'Verifică ce intră în ofertă: structura, finisajele, montajul, service-ul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul liftului, de numărul de niveluri, de lucrările la structură, de alimentarea electrică, de finisaje, de accesibilitate și de contractul de service. La bloc, contează și cum se finanțează lucrarea și cum se împart cheltuielile între proprietari.',
+      'Cere oferte care separă lift, lucrări pregătitoare, montaj și service. Pentru ordin de mărime, vezi paginile de preț.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere dovada autorizării pentru montaj și service, lucrări similare la blocuri și referințe de la alte asociații. Întreabă cum se intervine în caz de avarie și ce documente primește asociația.',
+      'Compară ofertele pe aceleași criterii și prezintă-le asociației cu detaliile la vedere, ca decizia să fie luată informat.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre ascensoare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru lifturi' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la lifturi' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți oferte pentru un ascensor sau o platformă?', text: 'Descrie clădirea și nevoia și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

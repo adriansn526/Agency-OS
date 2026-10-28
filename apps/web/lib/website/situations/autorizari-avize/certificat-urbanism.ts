@@ -1,0 +1,75 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const certificatUrbanism: SituationContent = {
+  slug: 'autorizari-avize--certificat-urbanism',
+  categorie: 'autorizari-avize',
+  title: 'Certificat de urbanism',
+  seoTitle: 'Certificat de urbanism: ce este și cum se obține',
+  seoDescription: 'Ce este certificatul de urbanism, la ce folosește, cine face ce și de ce depinde costul. Actele se verifică la primărie; diferă de la o localitate la alta.',
+  summary: 'Ce este certificatul de urbanism, la ce folosește, ce rol au primăria și proiectantul și ce verifici la instituție înainte de depunere.',
+  sinonime: ['certificat de urbanism', 'certificat urbanism', 'cerere certificat de urbanism', 'certificat urbanistic', 'acte necesare certificat urbanism', 'certificat de urbanism online', 'prelungire certificat de urbanism'],
+  intrebari: [
+    'Ce este certificatul de urbanism? | Un act emis de primărie care arată ce se poate face cu un teren sau cu o construcție: regimul juridic, economic și tehnic al imobilului și ce avize și acte trebuie obținute pentru etapele următoare. Nu este autorizație de construire și nu permite începerea lucrărilor.',
+    'La ce folosește? | Este de obicei primul act dintr-un proces de autorizare: arată ce condiții are terenul și ce avize se cer. Se folosește și pentru informare, de exemplu înainte de a cumpăra un teren, pentru a vedea ce se poate construi pe el.',
+    'Cine îl emite? | Primăria sau autoritatea locală competentă pentru zona unde se află terenul. Procedura, formularele și modul de depunere (la ghișeu sau online) diferă de la o primărie la alta, deci verifică pe site-ul instituției.',
+    'Ce acte se cer? | Lista actelor, formularele și modul de depunere diferă de la o primărie la alta și se pot schimba. Verifică la primărie sau pe site-ul instituției lista actuală; un proiectant sau un birou de specialitate te poate ajuta să pregătești dosarul.',
+    'Cât costă și cât durează? | Taxa și termenul depind de primărie și de tipul de certificat și se stabilesc prin reglementări locale și legale care se schimbă. Nu le poți deduce din surse generale: întreabă la ghișeul instituției sau consultă site-ul primăriei.',
+    'Se poate prelungi sau se refolosește? | Certificatul are o perioadă de valabilitate și, în anumite condiții, poate fi prelungit prin cerere. Condițiile și termenele le stabilește legea și primăria, deci verifică înainte să expire, la instituție.',
+    'Am nevoie de ajutor ca să-l obțin? | Poți depune singur dacă ai actele, dar mulți proprietari apelează la un proiectant, topograf sau birou de arhitectură care cunoaște cerințele locale. Când lucrarea e simplă, adesea ajută o discuție prealabilă la primărie.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Certificatul de urbanism: ce este și cine face ce', subtitle: 'Primul act din multe proceduri de autorizare. Aici găsești etapele și rolurile; actele și taxele le verifici la primărie, pentru că diferă. Poți cere oferte pentru servicii de proiectare.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce este', value: 'Act de informare și condiționare, nu autorizație' },
+      { label: 'Cine îl emite', value: 'Primăria locală' },
+      { label: 'Actele și taxele', value: 'Verifică la primărie' },
+      { label: 'Ajutor', value: 'Proiectant sau birou de specialitate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Certificatul de urbanism spune ce poți face cu un teren sau cu o clădire și ce alte acte trebuie obținute înainte de lucrări. Este un act de informare și de îndrumare, nu o permisiune de a construi.',
+      'Pagina explică la nivel de etape și roluri cum se ajunge la el. Procedura exactă, actele, taxele și termenele diferă de la o primărie la alta și se modifică în timp: pentru ele, sursa corectă este primăria sau site-ul ei.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce urmărești în procedură', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Scopul cererii', text: 'Cererea arată de ce îl ceri: informare, construcție nouă, extindere, schimbarea destinației, dezmembrare sau altă operațiune. Scopul influențează ce se menționează în certificat.' },
+      { title: 'Ce conține', text: 'Date despre teren, reglementările urbanistice aplicabile și lista avizelor și acordurilor necesare pentru pasul următor.' },
+      { title: 'Rolul primăriei', text: 'Analizează cererea și emite certificatul. Poate cere completări; urmărește comunicările și răspunde la timp.' },
+      { title: 'Rolul proiectantului', text: 'Ajută la formularea cererii, la planurile atașate și la înțelegerea reglementărilor, dacă lucrarea e complexă.' },
+    ] }),
+    node('steps-h', 'heading', { text: 'Etapele pe scurt', level: 'h2' }),
+    node('steps', 'steps', { title: 'Cum decurge, la nivel de principiu', items: [
+      { title: 'Te informezi la primărie', text: 'Verifici ce formulare și ce acte se cer acum și cum se depune: ghișeu, poștă sau online.' },
+      { title: 'Pregătești dosarul', text: 'Strângi documentele despre teren și, dacă se cere, planurile necesare. Un topograf sau un proiectant te poate ajuta.' },
+      { title: 'Depui cererea', text: 'Primești o confirmare. Plata taxei se face conform regulilor instituției.' },
+      { title: 'Primești certificatul', text: 'Citești cu atenție condițiile și lista avizelor cerute pentru etapa următoare.' },
+      { title: 'Treci la avize și autorizare', text: 'În funcție de certificat, urmează avizele și, dacă se construiește, autorizația de construire.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Confuzia cu autorizația', text: 'Certificatul nu dă dreptul de a construi. Începutul lucrărilor fără autorizație, când e nevoie, poate duce la sancțiuni.' },
+      { title: 'Acte din surse neactualizate', text: 'Listele găsite pe forumuri pot fi vechi. Verifică la primărie.' },
+      { title: 'Scop formulat vag', text: 'Un certificat cerut pentru alt scop decât cel real poate fi inutil pentru pasul următor.' },
+      { title: 'Ignorarea valabilității', text: 'Certificatul are o perioadă de valabilitate. Planifică depunerea următoarelor acte din timp.' },
+      { title: 'Neîntrebarea înainte de cumpărare', text: 'Înainte să cumperi un teren, află ce se poate construi pe el.' },
+      { title: 'Plată către intermediari fără contract', text: 'Dacă apelezi la un birou, cere ofertă scrisă și arată ce include.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Taxa de la primărie depinde de reglementările locale și de tipul certificatului și se verifică la instituție. Dacă apelezi la un birou de proiectare sau la un topograf, costul depinde de complexitatea terenului, de documentația cerută și de volumul de muncă.',
+      'Cere oferte care spun clar ce include serviciul (dosar, depunere, urmărire) și ce rămâne în sarcina ta (taxe, copii, deplasări).',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un specialist', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă dacă are experiență cu primăria unde depui și ce lucrări similare a pregătit. Cere ofertă scrisă, cu etape, responsabilități și moment de predare a documentelor.',
+      'Dacă lucrarea e mică, cere întâi un sfat la primărie: uneori nu e nevoie de intermediar.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre certificatul de urbanism' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru construcții și proiectare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la autorizări și avize' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un specialist pentru dosar?', text: 'Descrie terenul și ce vrei să faci și primești oferte de la specialiști din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

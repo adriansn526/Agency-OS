@@ -1,0 +1,76 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const renovareApartament: SituationContent = {
+  slug: 'renovari-amenajari-interioare--renovare-apartament',
+  categorie: 'renovari-amenajari-interioare',
+  title: 'Renovare apartament',
+  seoTitle: 'Renovare apartament: etape, ordine, cum compari oferte',
+  seoDescription: 'Cum se renovează un apartament: ordinea lucrărilor, instalațiile, ce cere acord în bloc, de ce depinde costul și cum compari ofertele firmelor.',
+  summary: 'Ordinea lucrărilor într-o renovare de apartament, ce se schimbă mai întâi, ce necesită acord în bloc și ce să compari în oferte.',
+  sinonime: ['renovare apartament', 'renovare apartamente', 'renovari apartament', 'renovare apartament pret', 'reabilitare apartament', 'amenajari interioare', 'amenajare apartament', 'renovări apartament', 'renovare apartament preț', 'amenajări interioare'],
+  intrebari: [
+    'De unde încep renovarea unui apartament? | De la un plan: ce rămâne, ce se schimbă, ce buget ai și ce ordine urmează. Apoi se verifică instalațiile (electrică, sanitară, încălzire), pentru că ele decid cât de adânc intervii. Finisajele se aleg la sfârșit, dar se hotărăsc din timp.',
+    'În ce ordine se fac lucrările? | De obicei: demolări, instalații, tencuieli și șape, tâmplărie, hidroizolația băii și a bucătăriei, placări, zugrăveli, pardoseli, apoi montajul ușilor, mobilierului și al corpurilor de iluminat. Praful și umezeala impun ca lucrările „umede” să vină înaintea celor fine.',
+    'Am nevoie de autorizație sau acord pentru renovare? | Depinde. Lucrările de finisaj de obicei nu cer autorizație, dar mutarea sau demolarea pereților, modificarea instalațiilor comune sau a fațadei pot cere acte și acord. În bloc, întreabă la asociație și la primărie înainte să începi.',
+    'Pot demola un perete? | Nu toți pereții sunt la fel: unii sunt structurali și nu se ating fără proiect și avize. Doar un specialist (inginer constructor) poate spune care sunt. Nu demola nimic înainte de această verificare.',
+    'Se pot păstra instalațiile vechi? | Uneori, dacă sunt în stare bună, dar într-o renovare serioasă merită verificate. Instalațiile electrice și de gaz se verifică și se modifică doar de personal autorizat. Țevile vechi sub șapă sau tencuială sunt o sursă frecventă de avarii.',
+    'Cum compar două oferte de renovare? | Pe lista de lucrări, pe materiale (cine le cumpără și ce calitate), pe etape și pe termene, pe curățenia și evacuarea molozului, pe modul de plată și pe garanția manoperei. Oferta „la cheie” fără detalii nu e comparabilă.',
+    'De ce depinde costul unei renovări? | De suprafață, de cât se demolează, de starea instalațiilor, de materiale, de numărul de camere umede, de accesul în clădire și de program (lucru în perioade aglomerate, lucrări pe etape). Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Renovare apartament: etape, ordine și ce verifici în ofertă', subtitle: 'Ce se face întâi, ce cere acord în bloc, de ce depinde costul și cum compari firmele. Poți cere oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Primul pas', value: 'Plan și verificarea instalațiilor' },
+      { label: 'Ordinea', value: 'Lucrări umede înaintea celor fine' },
+      { label: 'În bloc', value: 'Întreabă înainte de modificări structurale' },
+      { label: 'Oferta', value: 'Listă de lucrări și materiale clare' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O renovare de apartament adună mai multe meserii într-o ordine care nu se poate schimba: ce e ascuns sub finisaje trebuie terminat înaintea finisajelor. Cine respectă ordinea evită refaceri, praf pe lucrări gata și blocaje între echipe.',
+      'Pagina explică etapele, ce se verifică înainte de a începe, ce poate cere acord sau autorizație și cum compari ofertele. Baia are pagina ei, la care trimitem mai jos; la fel zugrăvelile, pardoselile și instalațiile.',
+    ) }),
+    node('steps-h', 'heading', { text: 'În ce ordine se lucrează', level: 'h2' }),
+    node('steps', 'steps', { title: 'Etapele unei renovări', items: [
+      { title: 'Plan, relevee și buget', text: 'Se stabilesc ce se păstrează și ce se schimbă, se măsoară spațiul și se aleg sistemele mari: încălzire, instalații, tâmplărie.' },
+      { title: 'Acorduri și verificări', text: 'Dacă planul atinge pereți sau instalații comune, se clarifică acordul asociației și eventualele acte, înainte de demolare.' },
+      { title: 'Demolări și evacuare', text: 'Se scot finisajele vechi și elementele care nu rămân. Molozul se evacuează conform regulilor clădirii.' },
+      { title: 'Instalații', text: 'Se refac sau se completează instalațiile electrică, sanitară și de încălzire, apoi se verifică înainte de acoperire.' },
+      { title: 'Tencuieli, șape, tâmplărie, camere umede', text: 'Se aduc suprafețele la nivel, se montează geamurile dacă se schimbă, apoi hidroizolația băii și a bucătăriei și placările.' },
+      { title: 'Finisaje', text: 'Zugrăveli, pardoseli, uși, mobilier și corpuri de iluminat, în ordinea care protejează lucrările gata.' },
+    ] }),
+    node('what-h', 'heading', { text: 'Ce poate cere acord sau acte', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Finisaje', text: 'Zugrăveli, pardoseli, placări și mobilier de obicei nu cer autorizație, dar regulile asociației privind programul și zgomotul se respectă.' },
+      { title: 'Pereți și deschideri', text: 'Mutarea sau desființarea pereților, mai ales a celor structurali, nu se face fără specialist și, de regulă, fără acte. Depinde de caz.' },
+      { title: 'Instalații comune', text: 'Coloane, contoare și branșamente nu se modifică fără acordul celui care le administrează.' },
+      { title: 'Fațadă și balcon', text: 'Geamuri, închideri și unități exterioare pot cere acord. Întreabă la asociație și la primărie.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Începutul fără plan', text: 'Fiecare schimbare după ce a început lucrarea înseamnă refaceri și întârzieri.' },
+      { title: 'Instalații lăsate pe ultimul loc', text: 'Dacă sunt vechi, se descoperă probleme după ce ai pus finisajele noi.' },
+      { title: 'Demolări fără verificare', text: 'Un perete structural nu se atinge fără inginer și acte.' },
+      { title: 'Echipe necoordonate', text: 'Când fiecare meseriaș vine când vrea, se strică lucrările celorlalți. Cineva trebuie să conducă lucrarea.' },
+      { title: 'Materiale cumpărate fără listă', text: 'Cantitățile lipsă sau loturile diferite de la același produs duc la întârzieri.' },
+      { title: 'Plată prea mare în avans', text: 'Plata pe etape, după recepție, protejează ambele părți.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unei renovări depinde de suprafață, de numărul de camere umede, de cât se demolează și se refac instalațiile, de materialele alese, de accesul în clădire și de cât de multe lucrări sunt de finisaj, față de lucrările în structura ascunsă. O renovare „cosmetică” și una completă se compară greu.',
+      'Cere ofertă pe etape, cu manopera separată de materiale. Pentru ordin de mărime, vezi pagina de preț pentru renovarea apartamentului.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă cine coordonează lucrarea și dacă echipele sunt ale firmei sau subcontractate. Cere lucrări similare pe care le poți vizita, un grafic pe etape și un contract cu termene, plată pe etape și garanție pentru manoperă.',
+      'Verifică firma pe IntraConstruct, după recenzii și lucrări. Cere ca instalațiile electrice și de gaz să fie făcute de personal autorizat.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre renovarea apartamentului' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru renovări' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la renovări și amenajări' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca apartamentul să îl renoveze o firmă?', text: 'Descrie apartamentul și lucrările dorite și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

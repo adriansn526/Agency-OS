@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { SERVICE_CONTENT, NEW_CATEGORIES } from '../index'
+import { LIVE_ONLY_GROUPS } from '../categories'
 import { validateContent } from '../seed'
 import { CATEGORIES, GROUPS } from '../../glossary/taxonomy'
 
@@ -22,7 +23,7 @@ test('pilot pages have prices, FAQ and the full section order', () => {
 test('new categories: unique, not already built in, known groups', () => {
   const slugs = NEW_CATEGORIES.map((c) => c.slug)
   assert.equal(new Set(slugs).size, slugs.length)
-  for (const c of NEW_CATEGORIES) { assert.ok(!CATEGORIES.some((x) => x.slug === c.slug), c.slug); assert.ok(GROUPS.some((g) => g.slug === c.group), c.group) }
+  for (const c of NEW_CATEGORIES) { assert.ok(!CATEGORIES.some((x) => x.slug === c.slug), c.slug); assert.ok(GROUPS.some((g) => g.slug === c.group) || LIVE_ONLY_GROUPS.includes(c.group), c.group) }
 })
 
 test('no invented amounts in a pillar: no lei/euro, no percentages, no warranty years or fixed durations in the text, the FAQ or the price list', () => {

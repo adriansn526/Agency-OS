@@ -1,0 +1,76 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const certificatEnergetic: SituationContent = {
+  slug: 'audit-certificat-energetic--certificat-energetic',
+  categorie: 'audit-certificat-energetic',
+  title: 'Certificat energetic',
+  seoTitle: 'Certificat energetic: când e necesar, cine îl face',
+  seoDescription: 'Ce este certificatul energetic pentru casă sau apartament, când se cere, ce face auditorul energetic, ce verifici înainte și de ce depinde costul.',
+  summary: 'Ce este certificatul de performanță energetică, cine îl întocmește, când se cere, ce pregătești pentru auditor și de ce depinde costul.',
+  sinonime: ['certificat energetic', 'certificat energetic pret', 'certificat energetic apartament', 'certificat energetic casa', 'certificat de performanta energetica', 'certificat performanta energetica', 'audit energetic', 'auditor energetic', 'acte necesare pentru certificat energetic', 'certificat energetic preț', 'certificat energetic casă', 'certificat de performanță energetică', 'certificat performanță energetică', 'acte necesare pentru certificat energetic'],
+  intrebari: [
+    'Ce este certificatul energetic? | Un document care descrie performanța energetică a unei clădiri sau a unei locuințe și o încadrează într-o clasă. Îl întocmește un auditor energetic atestat, pe baza datelor despre clădire și a unui calcul.',
+    'Când se cere? | În situații prevăzute de reglementări, de exemplu la vânzare sau la închiriere, la recepția unor clădiri noi sau la anumite finanțări și programe. Dacă ai dubii, întreabă notarul, agentul imobiliar, primăria sau finanțatorul.',
+    'Cine îl face? | Un auditor energetic atestat pentru tipul de clădire respectiv. Verifică atestarea și cere să vezi dovada. Proprietarul pune la dispoziție datele și accesul în locuință.',
+    'Ce acte și informații pregătesc? | Auditorul cere, de regulă, date despre clădire, acte de proprietate, planuri sau relevee, informații despre instalații și izolații și accesul pentru verificări. Lista exactă o dă auditorul; reglementările pot cere documente specifice, deci confirmă cu el.',
+    'Cât costă și cât durează? | Depinde de tipul și dimensiunea clădirii, de complexitatea instalațiilor, de documentele disponibile și de auditor. Cere ofertă scrisă și compară ce include. Termenele de valabilitate și cele de întocmire le stabilesc reglementările și specialistul; verifică la sursă.',
+    'Ce diferență este între certificat și audit energetic? | Certificatul descrie și încadrează performanța actuală. Auditul energetic este o analiză mai amplă, cu propuneri de măsuri de îmbunătățire; el se cere în anumite proiecte de reabilitare sau finanțări.',
+    'Pot îmbunătăți clasa energetică? | Da, prin măsuri precum izolarea, schimbarea geamurilor, modernizarea încălzirii sau a ventilației. Auditorul poate spune ce măsuri au efect în clădirea ta. Lucrările au pagini proprii, la care trimitem mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Certificat energetic: când e necesar și cine îl întocmește', subtitle: 'Ce este, ce face auditorul energetic, ce pregătești și de ce depinde costul. Cerințele variază în funcție de situație; aici găsești întrebările corecte. Poți cere oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce este', value: 'Încadrarea energetică a clădirii' },
+      { label: 'Cine îl face', value: 'Auditor energetic atestat' },
+      { label: 'Când se cere', value: 'Depinde de situație, verifică' },
+      { label: 'Oferta', value: 'Ce include și ce date îți trebuie' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Certificatul energetic arată cât de eficientă energetic este o locuință sau o clădire și o încadrează într-o clasă. Informația ajută la decizii de vânzare, închiriere, renovare sau finanțare.',
+      'Pagina explică ce este, cine îl întocmește și cum compari ofertele. Obligativitatea, documentele și termenele de valabilitate depind de situație și de reglementări care se modifică: pentru ele, întreabă auditorul sau instituția care îl cere.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce trebuie să știi', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Ce evaluează', text: 'Anvelopa clădirii (pereți, acoperiș, ferestre), instalațiile de încălzire, apă caldă, ventilație și, după caz, iluminat.' },
+      { title: 'Ce rezultă', text: 'Un document cu clasa energetică și indicatori calculați, plus recomandări de îmbunătățire.' },
+      { title: 'Rolul auditorului', text: 'Colectează datele, vizitează clădirea, face calculul și semnează documentul în limitele atestării.' },
+      { title: 'Rolul proprietarului', text: 'Pune la dispoziție actele și datele, asigură accesul și verifică dacă documentul se potrivește scopului.' },
+    ] }),
+    node('steps-h', 'heading', { text: 'Cum decurge', level: 'h2' }),
+    node('steps', 'steps', { title: 'Etapele, la nivel de principiu', items: [
+      { title: 'Clarifici scopul', text: 'Pentru vânzare, închiriere, finanțare sau proiect. Scopul decide tipul de document cerut.' },
+      { title: 'Alegi auditorul', text: 'Verifici atestarea și ceri ofertă scrisă, cu ce include.' },
+      { title: 'Pregătești datele', text: 'Strângi actele și informațiile cerute de auditor, inclusiv despre instalații și izolații.' },
+      { title: 'Vizita în clădire', text: 'Auditorul verifică și măsoară ce e necesar pentru calcul.' },
+      { title: 'Calcul și întocmire', text: 'Se calculează performanța și se redactează certificatul.' },
+      { title: 'Predare și verificare', text: 'Verifici datele din document și cum se înregistrează sau se predă, după regulile aplicabile.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Aflarea cerinței în ultimul moment', text: 'Întreabă din timp notarul sau agentul dacă e nevoie, ca să nu amâni tranzacția.' },
+      { title: 'Alegerea după cel mai mic preț', text: 'Verifică atestarea și ce include oferta; un document incomplet poate fi respins.' },
+      { title: 'Date incorecte despre clădire', text: 'Calculul depinde de datele introduse. Spune corect ce izolații și instalații ai.' },
+      { title: 'Confuzia între certificat și audit', text: 'Nu sunt același lucru; află ce cere instituția sau finanțatorul.' },
+      { title: 'Nefolosirea recomandărilor', text: 'Documentul arată și ce poți îmbunătăți; discută cu auditorul.' },
+      { title: 'Surse neoficiale pentru reguli', text: 'Obligațiile se schimbă; verifică la instituții și la specialist.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul clădirii (apartament, casă, clădire mai mare), de suprafață, de complexitatea instalațiilor, de documentele disponibile, de cât de mult trebuie măsurat și de gradul de detaliu al documentului. Auditul energetic, mai amplu, costă diferit față de certificat.',
+      'Cere ofertă scrisă, care spune ce document primești, ce date îți cere și ce taxe sau înregistrări sunt incluse. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi auditorul', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere dovada atestării pentru tipul de clădire. Întreabă ce date îi trebuie, ce vizită face și cum predă documentul. Cere ofertă scrisă și, dacă ai în plan renovări, discută despre ce măsuri ar îmbunătăți performanța.',
+      'Evită promisiunile de „clasă garantată” fără analiză: rezultatul vine din calcul.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre certificatul energetic' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru audit și certificare' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la audit și certificare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un auditor energetic?', text: 'Descrie clădirea și scopul și primești oferte de la auditori din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

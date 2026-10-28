@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const amenajareGradinaCurte: SituationContent = {
+  slug: 'amenajari-gradini--amenajare-gradina-curte',
+  categorie: 'amenajari-gradini',
+  title: 'Amenajarea grădinii și a curții',
+  seoTitle: 'Amenajare grădină și curte: etape și cum compari',
+  seoDescription: 'Amenajarea grădinii și a curții: proiect peisagistic, etape, zone, materiale, de ce depinde costul și cum compari ofertele firmelor de peisagistică.',
+  summary: 'Cum se amenajează o grădină sau o curte: proiect peisagistic, etapele lucrării, ce decizi tu și ce compari în ofertele firmelor.',
+  sinonime: ['amenajare gradina', 'amenajari gradini', 'amenajari gradina', 'amenajare curte', 'amenajari curtii', 'amenajari curti', 'amenajari curte poze', 'idei amenajare curte', 'peisagistica', 'proiect peisagistic', 'amenajare grădină', 'amenajări grădini', 'amenajări grădină', 'amenajări curți', 'amenajări curte poze', 'idei amenajare curte', 'peisagistică'],
+  intrebari: [
+    'Ce este un proiect peisagistic? | Un plan care arată cum se organizează grădina: zonele, aleile, plantele, iluminatul și, dacă e cazul, irigarea. Ajută să vezi rezultatul și să compari ofertele pe același punct de plecare.',
+    'Am nevoie de peisagist sau pot începe singur? | Pentru o curte mică și simplă poți începe singur, cu idei și un plan pe hârtie. Pentru terenuri mari, cu denivelări sau cu instalații, un peisagist te ajută să eviți greșeli greu de reparat.',
+    'Care este ordinea lucrărilor? | Mai întâi lucrările de structură (nivelare, scurgeri, alei, instalații), apoi solul și plantările, iar la urmă finisajele. Invers apar stricăciuni la plante sau la alei.',
+    'Cum aleg plantele? | După lumină, tip de sol, climă și timpul pe care îl poți dedica întreținerii. Un peisagist sau o pepinieră te poate sfătui pe zona ta.',
+    'Pot tăia copaci sau modifica relieful? | Poate fi nevoie de acord pentru tăierea unor copaci sau pentru lucrări în zone protejate sau pe terenuri cu reguli speciale. Întreabă la primărie înainte să începi.',
+    'Se pot face alei, iluminat și irigare? | Da, dar instalațiile cu apă și electricitate se fac de un instalator sau electrician autorizat, nu de firma de grădinărit. Planifică-le înainte de plantări.',
+    'De ce depinde costul? | De suprafață, de starea terenului, de instalații, de materialele alese, de plante și de accesul pentru utilaje. Vezi paginile de preț și cere oferte detaliate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Amenajarea grădinii și a curții: de la plan la lucrare', subtitle: 'Proiect, etape, materiale și ce compari în oferte. Ceri oferte gratuite de la firme verificate din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Primul pas', value: 'Plan pe zone' },
+      { label: 'Ordinea', value: 'Structură, sol, plante' },
+      { label: 'Instalații', value: 'Instalator și electrician' },
+      { label: 'Oferta', value: 'Pe etape' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O grădină sau o curte amenajată bine se vede în fiecare zi, dar rezultatul se decide în primele etape: cum se scurge apa, unde sunt alei, unde sunt plantele și ce instalații trec pe sub ele. Ideile și pozele ajută, dar planul pe terenul tău contează mai mult.',
+      'Pagina te ajută să pui lucrurile în ordine și să întrebi ce trebuie. Gazonul și irigația, precum și gardul viu, au pagini separate în această categorie, iar gardurile și pavajele sunt tratate în categoria lor.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce include o amenajare', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Proiect peisagistic', text: 'Schița zonelor: odihnă, joacă, legume, parcare, alei. Poate include lista de plante și iluminatul.' },
+      { title: 'Lucrări de teren', text: 'Nivelare, drenaj, aducere de pământ vegetal, eliminarea resturilor de la construcție.' },
+      { title: 'Alei, terase și mobilier', text: 'Zone dure pentru circulație și stat, făcute cu materiale potrivite scurgerii apei.' },
+      { title: 'Plantări și iluminat', text: 'Arbori, arbuști, flori și corpuri de iluminat, plasate după lumină și după întreținerea dorită.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și materiale', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Pentru alei și zone de stat se folosesc piatră, pavaj, beton sau lemn, alese după trafic și climă. Solul se pregătește înainte de plantări, deoarece un pământ sărac sau compactat se vede în plante toată viața lor.',
+      'Plantele se aleg după lumină, scurgere și întreținere. Fără liste aici, pentru că depind de zonă, de sol și de ce vrei de la grădină; o pepinieră locală sau un peisagist te poate ghida.',
+      'Dacă proiectul include fântână, iluminat sau irigare, instalațiile cu apă și electricitate le face personal autorizat. Planifică traseele înainte, ca să nu desfaci aleile după ce sunt gata.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Plan și temă', text: 'Stabilești zonele, preferințele și bugetul, apoi cu un specialist faci o schiță simplă.' },
+      { title: 'Acorduri și verificări', text: 'Dacă tai copaci sau lucrezi în zonă cu reguli speciale, întreabă la primărie ce acorduri se cer.' },
+      { title: 'Lucrări de teren și instalații', text: 'Nivelare, scurgeri și trasee de apă și electricitate, făcute de specialiștii potriviți.' },
+      { title: 'Alei și zone dure', text: 'Se execută după ce traseele de sub ele sunt gata.' },
+      { title: 'Sol și plantări', text: 'Se aduce pământ bun, se plantează în ordine și se udă corespunzător.' },
+      { title: 'Finisaje și predare', text: 'Mulci, iluminat, curățenie și instrucțiuni de întreținere.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Plantare înaintea lucrărilor dure', text: 'Utilajele și materialele strică plantele deja puse.' },
+      { title: 'Scurgere neglijată', text: 'Apa adunată lângă casă sau în gazon duce la probleme pe termen lung.' },
+      { title: 'Plante alese după poză', text: 'Ce arată bine în imagini poate să nu reziste la lumina sau solul tău.' },
+      { title: 'Instalații uitate', text: 'Desfacerea aleilor pentru țevi sau cabluri adaugă costuri și întârzieri.' },
+      { title: 'Fără plan de întreținere', text: 'O grădină bună are nevoie de îngrijire, iar uitarea ei strică investiția.' },
+      { title: 'Ofertă fără detalii', text: 'Fără plante, sol și manoperă separate, nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață, de starea terenului, de volumul de pământ adus, de zonele dure, de instalații, de numărul și mărimea plantelor și de accesul pentru utilaje. Plantele mari costă diferit față de cele tinere, dar diferă și ca timp de așteptare până la efect.',
+      'Cere oferte care separă proiectul, lucrările de teren, materialele, plantele și manopera, și uită-te la paginile de preț de mai jos pentru factori. Poți face lucrarea pe etape.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi grădini făcute de firmă acum o vreme, nu doar cele proaspete, pentru că adevărul se vede în timp. Întreabă ce soiuri folosește, de unde sunt plantele și ce întreținere propune.',
+      'Cere ofertă scrisă, cu etape, termene și condiții de plată, și clarifică ce se întâmplă dacă o plantă nu prinde. Pentru instalații, cere ca lucrarea să o facă personal autorizat.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre amenajarea grădinii' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru amenajări de grădini' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la amenajări de grădini' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca grădina să o amenajeze o firmă?', text: 'Descrie terenul și ce îți dorești și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

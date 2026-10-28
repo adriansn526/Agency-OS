@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const gardViu: SituationContent = {
+  slug: 'amenajari-gradini--gard-viu',
+  categorie: 'amenajari-gradini',
+  title: 'Gard viu: plantare și întreținere',
+  seoTitle: 'Gard viu: plantare, întreținere și cum compari',
+  seoDescription: 'Gard viu din leylandii, laur sau alte specii veșnic verzi, plus variante artificiale: alegere, plantare, tuns, distanțe față de vecini și cum compari ofertele.',
+  summary: 'Cum alegi și plantezi un gard viu, ce întreținere cere, ce reguli față de vecini pot conta și când ai nevoie de o firmă.',
+  sinonime: ['gard viu', 'gardviu', 'gard viu leylandii', 'gard viu vesnic verde', 'gard viu laur englezesc', 'gard viu artificial', 'gard viu veșnic verde'],
+  intrebari: [
+    'Ce este un gard viu? | Un rând de plante, de obicei arbuști sau conifere, plantate dens, care formează un paravan natural. Poate delimita proprietatea, ascunde priveliști și oferi protecție la vânt și praf.',
+    'Ce specii se folosesc? | Se folosesc des leylandii, laur englezesc și alte plante veșnic verzi, dar alegerea depinde de zonă, de sol, de lumină și de cât spațiu ai. O pepinieră locală te poate ghida spre ce se potrivește.',
+    'Cât durează până arată ca un gard? | Depinde de specie, de mărimea plantelor la plantare și de îngrijire. Plantele mai mari dau efect mai repede, dar prind uneori mai greu.',
+    'Câtă întreținere cere? | Tuns regulat, udare la început, fertilizare, curățarea ramurilor uscate. Unele specii cresc repede și cer tuns mai des.',
+    'Există reguli față de vecini? | Poate exista, în funcție de înălțimea și distanța la care plantezi. Întreabă la primărie și vorbește cu vecinii înainte, ca să eviți conflicte.',
+    'Gard viu artificial: merită? | Este un panou sau o împletitură cu frunze artificiale, fără udare sau tuns. Nu se comportă ca un gard viu real, dar se montează rapid. Alegerea ține de ce urmărești: intimitate, estetică sau întreținere zero.',
+    'De ce depinde costul? | De specie, de mărimea plantelor, de numărul lor, de pregătirea solului, de irigare și de acces. Cere oferte care separă plantele de manoperă și vezi paginile de preț.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Gard viu: alegere, plantare și întreținere', subtitle: 'Ce specii se folosesc, cum se plantează și ce întreținere cere. Ceri oferte gratuite de la firme verificate din zona ta.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Alegerea', value: 'După zonă și lumină' },
+      { label: 'Plantarea', value: 'Sol pregătit, udare' },
+      { label: 'Vecini', value: 'Reguli posibile, întreabă' },
+      { label: 'Oferta', value: 'Plante și manoperă separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un gard viu bun aduce intimitate, umbră și un aspect natural, dar cere răbdare. Nu este gata în prima zi, iar o alegere greșită de specie sau o plantare în grabă se vede ani la rând.',
+      'Pagina te ajută să alegi tipul de gard viu, să știi ce cere plantarea și întreținerea și să compari ofertele firmelor. Gardurile din beton, metal sau lemn au pagini în categoria lor, iar amenajarea generală a grădinii este tratată separat.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de gard viu', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Conifere veșnic verzi', text: 'Cresc des repede și oferă paravan tot anul. Cer tuns regulat și spațiu pentru dezvoltare.' },
+      { title: 'Laur englezesc', text: 'Frunze mari, lucioase, folosit des ca paravan. Se tunde, iar alegerea depinde de zonă și de iarnă.' },
+      { title: 'Gard viu amestecat', text: 'Arbuști cu flori sau fructe care atrag păsări. Mai variat, cu tuns mai puțin strict.' },
+      { title: 'Gard viu artificial', text: 'Panouri sau împletituri cu frunze artificiale, fixate pe un gard existent sau pe stâlpi, fără udare.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Soluții și ce implică', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Specia se alege după lumină, sol, climă și înălțimea dorită. Un gard care crește prea mult cere tuns frecvent și poate umbri vecinii. Distanța dintre plante și distanța față de limita proprietății contează și pentru dezvoltare, și pentru relația cu vecinii.',
+      'Solul se pregătește înainte de plantare, iar la început plantele se udă constant. Un sistem de picurare poate ajuta, dar instalațiile cu apă și electricitate le face personal autorizat; vezi și pagina despre gazon și irigații.',
+      'Tăierea sau mutarea copacilor existenți poate cere acorduri. Dacă locuiești într-o zonă protejată, întreabă la primărie înainte să începi.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea speciei și a traseului', text: 'Decizi unde trece gardul, ce înălțime vrei și ce specie se potrivește zonei.' },
+      { title: 'Verificări și discuție cu vecinii', text: 'Întrebi la primărie ce reguli există și vorbești cu vecinii despre distanțe.' },
+      { title: 'Pregătirea solului', text: 'Se sapă șanțul sau gropile, se corectează pământul și se asigură drenajul.' },
+      { title: 'Plantarea', text: 'Plantele se așază la distanța potrivită, se acoperă cu pământ și se tasează ușor.' },
+      { title: 'Udare și mulcire', text: 'Primele perioade sunt critice; mulciul ajută la păstrarea umidității.' },
+      { title: 'Tuns și îngrijire', text: 'Primele tăieri formează gardul; apoi se continuă regulat, după specie.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Specie nepotrivită zonei', text: 'Plantele care nu suportă iarna sau solul tău se răresc și se usucă.' },
+      { title: 'Plantare prea aproape de limită', text: 'Gardul poate deranja vecinii și poate crea dispute.' },
+      { title: 'Plante prea dese sau prea rare', text: 'Distanța greșită strică forma și crește riscul de boli.' },
+      { title: 'Udare insuficientă la început', text: 'Plantele tinere se usucă repede dacă solul nu e ținut umed.' },
+      { title: 'Uitarea tunsului', text: 'Un gard lăsat să crească se golește la bază și devine greu de formatat.' },
+      { title: 'Ofertă fără detalii', text: 'Fără specie, mărimea plantelor și numărul lor, nu poți compara.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de specie, de mărimea plantelor la plantare, de lungimea gardului, de pregătirea solului, de irigare și de acces. Plantele mai mari dau efect mai repede și costă diferit față de cele mici.',
+      'Cere oferte care separă plantele de manoperă și întreabă dacă intră în preț și udarea de început sau înlocuirea plantelor care nu prind. Vezi paginile de preț de mai jos pentru factorii care contează.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere să vezi garduri vii plantate de firmă acum câțiva ani, ca să poți judeca rezultatul în timp. Întreabă de unde vin plantele și ce specie recomandă pentru zona ta, iar nu doar ce are disponibil.',
+      'Cere ofertă scrisă, cu specii, număr de plante, etape, termen și condiții de plată, și clarifică ce se întâmplă cu plantele care nu prind.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre gard viu' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru amenajări de grădini' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la amenajări de grădini' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca gardul viu să-l planteze o firmă?', text: 'Descrie locul și specia dorită și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

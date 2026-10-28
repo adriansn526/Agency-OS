@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const usiInterior: SituationContent = {
+  slug: 'tamplarie-dulgherie--usi-interior',
+  categorie: 'tamplarie-dulgherie',
+  title: 'Uși de interior: alegere și montaj',
+  seoTitle: 'Uși de interior: alegere, montaj și ce compari în ofertă',
+  seoDescription: 'Uși de interior: tipuri, materiale, ușa de baie, măsurători, ordinea montajului, greșeli frecvente, de ce depinde costul și cum compari ofertele de montaj.',
+  summary: 'Cum alegi ușile de interior, ce măsori, cum se montează, ce e special la ușa de baie și ce compari în ofertele pentru montaj.',
+  sinonime: ['usi interior', 'usii interior', 'usa interior', 'usi de interior', 'usii de interior', 'usi interior albe', 'usi albe interior', 'usa baie', 'montaj usi interior', 'uși interior', 'uși de interior', 'ușa interior', 'uși interior albe', 'uși albe interior', 'ușa baie', 'montaj uși interior'],
+  intrebari: [
+    'Din ce materiale se fac ușile de interior? | Cele mai întâlnite sunt lemnul masiv, plăcile pe structură de lemn cu furnir sau folie, MDF vopsit sau laminat și sticla în combinație cu rame. Diferă comportamentul la umiditate, uzură și întreținere; alege după camera în care o montezi.',
+    'Ce ușă se potrivește la baie? | Una care rezistă la umiditate și variații de temperatură, cu margini și canturi bine protejate și, dacă se poate, cu ventilare. Anunță firma că e pentru baie, ca să propună materialul și tocul potrivite.',
+    'Ce trebuie să măsor înainte de comandă? | Lățimea și înălțimea golului, grosimea peretelui, sensul de deschidere și starea pardoselii finite. Cea mai sigură variantă este ca măsurătoarea să o facă firma care montează ușa, nu să o iei din reclamă.',
+    'Se montează ușa înainte sau după pardoseală și zugrăveli? | De obicei după ce pereții și pardoseala sunt aproape finalizate, ca ușa să nu se strice și să se potrivească cu nivelul podelei. Stabilește ordinea cu meșterii care fac pardoseala și zugrăveala.',
+    'Ce este un toc reglabil și când se folosește? | O ramă care se adaptează grosimii peretelui. Se folosește în special la renovări, când peretele are grosime variabilă; discută cu montatorul ce variantă se potrivește.',
+    'Pot monta singur o ușă de interior? | La uși simple, cu experiență și unelte, uneori da. Ușile grele, cu toc mare sau în pereți inegali se montează mai bine de meșter, pentru că aliniamentul și garnitura contează.',
+    'De ce depinde costul montajului? | De tipul ușii (batantă sau culisantă), de starea golului, de dacă se montează toc nou, de numărul de uși, de finisaje cum sunt ornamentele și de eventualele reparații la pereți. Vezi paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Uși de interior: cum alegi și ce verifici la montaj', subtitle: 'Materiale, ușa de baie, măsurători, ordinea lucrării și oferta de montaj. Dacă preferi să o facă un meșter, ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Materiale', value: 'Lemn, MDF, laminat, sticlă' },
+      { label: 'La baie', value: 'Material rezistent la umiditate' },
+      { label: 'Măsurătoare', value: 'De preferat, făcută de montator' },
+      { label: 'Oferta', value: 'Ușă, toc, montaj, accesorii' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Ușile de interior sunt printre cele mai vizibile detalii ale unei locuințe, dar și cele pe care le simți zilnic: se închid bine, nu scârțâie, nu se umflă. Multe căutări sunt de produs; aici ne concentrăm pe ce contează înainte să cumperi: unde montezi, ce material alegi, cine măsoară și ce include oferta de montaj.',
+      'Ușile de intrare, de exterior și cele de garaj au paginile lor, iar ușile termopan sunt tratate la geamuri; le găsești mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri și materiale', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Uși pline din lemn', text: 'Rezistente și durabile, mai sensibile la variațiile de umiditate; se întrețin periodic.' },
+      { title: 'Uși din MDF sau pe structură ușoară', text: 'Mai ușoare, cu finisaje variate; comportamentul diferă mult după calitatea miezului și a canturilor.' },
+      { title: 'Uși albe', text: 'Vopsite sau cu folie; se ține cont de cum se curăță și cum rezistă la lovituri și umiditate.' },
+      { title: 'Uși cu sticlă sau culisante', text: 'Aduc lumină sau economisesc spațiu; cer un mecanism montat precis și un perete potrivit.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Ușa de baie și alte spații umede', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Baia și bucătăria expun ușa la abur și la stropi. Alege o ușă făcută pentru asemenea spații, cu canturi etanșate și, la nevoie, cu grilă de ventilare, apoi cere să fie montată cu un prag și cu un spațiu corect pentru aer. O ușă obișnuită se poate deforma în câteva sezoane.',
+      'La renovare, verifică dacă golul este drept și dacă peretele este suficient de solid pentru toc și balamale.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea lucrării', items: [
+      { title: 'Alegerea și măsurătoarea', text: 'Decizi tipul ușii și sensul de deschidere; măsurătoarea se face pe loc, la fiecare gol.' },
+      { title: 'Pregătirea golului', text: 'Golul trebuie să fie drept, curat și potrivit pentru toc; se repară ce e neregulat.' },
+      { title: 'Montajul tocului', text: 'Se fixează aliniat, pe verticală și în plan, apoi se umple spațiul cu materialul prevăzut.' },
+      { title: 'Montajul canatului', text: 'Se prind balamalele, se reglează jocurile și se verifică închiderea.' },
+      { title: 'Accesorii și ornamente', text: 'Se montează mânerele, broasca și ornamentele, apoi se curăță.' },
+      { title: 'Verificare', text: 'Ușa se deschide liber, se închide fără frecări și nu are goluri vizibile.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Măsurarea din ochi', text: 'Un gol măsurat greșit duce la uși care nu se potrivesc sau la adaptări costisitoare.' },
+      { title: 'Montajul înaintea finisajelor', text: 'Praful, apa și loviturile pot strica ușa nouă.' },
+      { title: 'Ușa obișnuită la baie', text: 'Se umflă și se deformează; alege material pentru spații umede.' },
+      { title: 'Spumă în exces', text: 'Poate deforma tocul; folosește cantitatea și tehnica recomandate.' },
+      { title: 'Oferta doar pe ușă', text: 'Montajul, tocul, accesoriile și deplasarea pot fi separate; întreabă ce e inclus.' },
+      { title: 'Golul inegal ignorat', text: 'Dacă peretele nu e drept, ușa nu se așază corect.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul montajului depinde de tipul ușii (batantă sau culisantă), de numărul de uși, de dacă se schimbă și tocul, de starea golului și a pereților, de ornamente și de accesul în locuință. Prețul ușii se adaugă separat, în funcție de material și finisaj.',
+      'Cere oferte care despart ușa, tocul și montajul și spun ce accesorii sunt incluse. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce intră la fiecare ofertă: ușa, tocul, balamalele, broasca, ornamentele, montajul și măsurătoarea. Verifică dacă eventualele reparații ale golului sunt incluse.',
+      'Cere informații despre garanția la montaj și despre ce se întâmplă dacă ușa nu se potrivește după comandă.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi un montator', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege un meșter care măsoară pe loc, îți explică ce lucrări pregătitoare sunt necesare și lucrează curat. Cere lucrări făcute și referințe, iar pentru mai multe uși stabilește în scris termenul și plata.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre uși de interior' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru uși și tâmplărie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la tâmplărie și dulgherie' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți un montator de uși de interior?', text: 'Spune-ne câte uși ai și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

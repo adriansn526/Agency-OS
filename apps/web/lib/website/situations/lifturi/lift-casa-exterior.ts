@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const liftCasaExterior: SituationContent = {
+  slug: 'lifturi--lift-casa-exterior',
+  categorie: 'lifturi',
+  title: 'Lift pentru casă, interior sau exterior',
+  seoTitle: 'Lift pentru casă: interior sau exterior, ce să verifici',
+  seoDescription: 'Cum montezi un lift într-o casă, interior sau exterior: ce tipuri există, ce implică lucrarea, cine o execută, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce presupune montarea unui lift de casă, în interior sau pe exterior, cine îl poate instala și ce să întrebi în oferte.',
+  sinonime: ['lift pentru casa', 'lift casa', 'lift exterior', 'lift interior casa', 'mini lift casa', 'lift casa 1 etaj pret', 'lift pentru scari', 'lift exterior pret', 'lift pentru casă', 'lift casă', 'lift interior casă', 'mini lift casă', 'lift casă 1 etaj preț', 'lift pentru scări', 'lift exterior preț'],
+  intrebari: [
+    'Se poate monta un lift într-o casă existentă? | De cele mai multe ori da, dar depinde de structura casei și de spațiul disponibil. Poate fi un lift interior, într-un gol de scară sau într-un spațiu amenajat, ori un lift exterior, atașat fațadei. O firmă de specialitate evaluează clădirea înainte de ofertă.',
+    'Ce diferență este între lift interior și exterior? | Cel interior ocupă spațiu din casă și cere intervenții în planșee. Cel exterior se montează pe lângă clădire, cu o structură proprie, și ocupă teren, dar afectează mai puțin interiorul. Alegerea depinde de spațiu, de acces și de aspectul dorit.',
+    'Ce este un lift pentru scări? | O soluție diferită, în care un scaun sau o platformă se deplasează pe o șină de-a lungul scării, fără a construi un puț de lift. Se alege când scara permite și când nevoia este de deplasare ocazională. Firma recomandă varianta potrivită.',
+    'Am nevoie de autorizație pentru un lift de casă? | Depinde de tipul liftului, de intervențiile la structură, de exteriorul clădirii și de zona în care te afli. Întreabă la primărie înainte de comandă. Verifică și condițiile de punere în funcțiune și verificare ale liftului, care se stabilesc prin reglementările în vigoare.',
+    'Cine montează și verifică liftul? | Montajul, punerea în funcțiune și verificările periodice se fac de personal și firme autorizate pentru acest domeniu. Nu este o lucrare pentru montaj pe cont propriu. Cere firmei documentele de autorizare și întreabă cine face verificările ulterioare.',
+    'Ce întreținere cere un lift de casă? | Un lift are nevoie de control și service periodice, făcute de o firmă autorizată, conform instrucțiunilor producătorului și reglementărilor. Cere un contract de service înainte de montaj și întreabă cum se intervine în caz de avarie.',
+    'De ce depinde costul? | De tipul liftului, de numărul de niveluri, de intervențiile în structură sau pe fațadă, de finisaje, de siguranță și accesibilitate, de montaj și de service. Cere oferte detaliate și vezi paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Lift pentru casă: interior sau exterior, ce să verifici în ofertă', subtitle: 'Ce tipuri există, ce implică montajul, cine îl poate executa și ce să întrebi. Dacă vrei oferte, ceri gratuit de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Interior, exterior, pentru scări' },
+      { label: 'Cine montează', value: 'Doar personal autorizat' },
+      { label: 'Autorizare', value: 'Întreabă la primărie' },
+      { label: 'După montaj', value: 'Service și verificări periodice' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un lift în casă răspunde unei nevoi reale: persoane în vârstă, cu dizabilități sau cu probleme de mobilitate, case cu mai multe niveluri, bagaje sau mobilier greu. Montarea lui într-o clădire existentă cere însă evaluare, intervenții la structură și lucrări făcute de personal autorizat.',
+      'Pagina te ajută să înțelegi variantele și să pui întrebările potrivite firmelor. Pentru liftul de bloc sau pentru persoane cu dizabilități într-un imobil cu mai mulți proprietari, vezi pagina dedicată.',
+    ) }),
+    node('what-h', 'heading', { text: 'Tipuri de soluții', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Lift interior', text: 'Se montează într-un gol de scară sau într-un spațiu rezervat. Cere intervenții în planșee și un loc potrivit pentru puț.' },
+      { title: 'Lift exterior', text: 'Se atașează clădirii cu structură proprie. Păstrează interiorul, dar are nevoie de fundație și de integrare în fațadă.' },
+      { title: 'Lift pentru scări', text: 'Un scaun sau o platformă pe șină, montat pe scara existentă, fără puț propriu.' },
+      { title: 'Platformă de acces', text: 'Pentru diferențe mici de nivel, uneori mai potrivită decât un lift complet.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Ce trebuie evaluat înainte', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Prima întrebare este cine îl folosește și de câte ori: o persoană cu mobilitate redusă, o familie, un spațiu comercial. De aici rezultă tipul liftului, accesul din fiecare nivel și cerințele de siguranță.',
+      'Urmează evaluarea clădirii: structura planșeelor, spațiul pentru puț, locul de ancorare, alimentarea electrică și evacuarea în caz de avarie. Lucrările la structură cer un specialist, iar instalația electrică se face de personal autorizat.',
+      'Verifică dacă lucrarea cere acte la primărie și ce condiții de punere în funcțiune și de verificare se aplică. Regulile depind de tipul liftului și de situație, deci întreabă autoritatea competentă și firma.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Evaluarea la fața locului', text: 'Firma vede casa, nevoile utilizatorilor și variantele posibile.' },
+      { title: 'Soluția și actele', text: 'Se alege tipul de lift, se stabilesc intervențiile și se clarifică ce acte sunt necesare.' },
+      { title: 'Pregătirea structurii', text: 'Fundație, puț sau structură exterioară, alimentare electrică, făcute de specialiști.' },
+      { title: 'Montaj', text: 'Instalarea liftului de către personal autorizat, cu respectarea instrucțiunilor producătorului.' },
+      { title: 'Punere în funcțiune și verificare', text: 'Probe și verificări prevăzute de reglementări, cu predarea documentelor.' },
+      { title: 'Service', text: 'Contract de întreținere și verificări periodice.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegerea după aspect', text: 'Spațiul, accesul și nevoile reale decid tipul liftului, nu doar designul.' },
+      { title: 'Lipsa unui contract de service', text: 'Fără întreținere, un lift devine nesigur și greu de reparat.' },
+      { title: 'Montaj de către persoane neautorizate', text: 'Este o lucrare cu risc, iar documentele lipsă pot crea probleme la punere în funcțiune.' },
+      { title: 'Ignorarea actelor', text: 'Unele lucrări cer acte; verifici la primărie înainte de comandă.' },
+      { title: 'Neglijarea evacuării în caz de avarie', text: 'Trebuie știut cum ieși din lift și cum se intervine.' },
+      { title: 'Ofertă fără detalii', text: 'Comparabilă doar dacă include structura, finisajele, montajul și service-ul.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul liftului, de numărul de niveluri, de intervențiile în structură sau pe fațadă, de alimentarea electrică, de finisaje, de accesibilitate și de contractul de service. Un lift exterior și unul interior pot avea costuri foarte diferite, în funcție de lucrările pregătitoare.',
+      'Cere oferte care separă lift, structură, montaj și service. Pentru ordin de mărime, vezi paginile de preț.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere dovada autorizării pentru montaj și service și lucrări similare pe care le poți vedea. Întreabă cine răspunde de verificările după montaj și ce documente primești.',
+      'Cere ofertă scrisă, cu termene, condiții de plată și detalii despre service, și compară variantele pe aceleași criterii.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre liftul de casă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru lifturi' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la lifturi' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte pentru un lift de casă?', text: 'Descrie casa și nevoia și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

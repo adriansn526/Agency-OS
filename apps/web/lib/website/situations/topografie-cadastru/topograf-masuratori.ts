@@ -1,0 +1,75 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const topografMasuratori: SituationContent = {
+  slug: 'topografie-cadastru--topograf-masuratori',
+  categorie: 'topografie-cadastru',
+  title: 'Topograf: măsurători și plan de situație',
+  seoTitle: 'Topograf: măsurători, ridicare topografică, plan',
+  seoDescription: 'Ce face un topograf: măsurători pe teren, ridicare topografică și plan de situație. Când ai nevoie, ce primești, de ce depinde costul și cum alegi specialistul.',
+  summary: 'Ce face un topograf, ce primești în urma măsurătorilor, când ai nevoie de plan de situație și cum alegi și compari ofertele.',
+  sinonime: ['topograf', 'topograf pret', 'geodezie', 'plan de situatie', 'masuratori topografice', 'ridicare topografica', 'topograf preț', 'plan de situație', 'măsurători topografice', 'ridicare topografică'],
+  intrebari: [
+    'Ce face un topograf? | Măsoară terenul și construcțiile cu aparatură specializată și întocmește planuri: poziția limitelor, a clădirilor, diferențele de nivel și alte detalii. Rezultatul servește proiectării, autorizării, cadastrului și execuției lucrărilor.',
+    'Când am nevoie de topograf? | Înainte de proiectare sau de construcție, la dezmembrări și alipiri, la intabulare, la litigii de limite, la trasarea construcției pe teren și când un act sau o instituție cere plan cu măsurători actualizate.',
+    'Ce este ridicarea topografică? | Măsurarea detaliată a terenului: limite, construcții, copaci, drumuri, utilități vizibile și relieful. Rezultă un plan cu coordonate și cote, folosit de proiectant sau de constructor.',
+    'Ce este planul de situație? | Un plan care arată poziția terenului și a construcției în raport cu limitele și vecinătățile. Unele proceduri cer un plan cu anumite conținuturi sau semnat de persoană autorizată; verifică la instituția care îl cere.',
+    'Am nevoie de topograf autorizat? | Pentru documentații care merg la OCPI sau la alte instituții, se cere de regulă o persoană autorizată în domeniu. Pentru o măsurătoare informativă, e posibil să nu fie nevoie. Întreabă instituția pentru care e planul.',
+    'Cum se desfășoară lucrarea? | Se stabilește scopul, se verifică actele, topograful merge pe teren, face măsurătorile, prelucrează datele și predă planul. Accesul în teren și prezența vecinilor la stabilirea limitelor ușurează lucrarea.',
+    'De ce depinde costul? | De suprafață, relief, vegetație și acces, de numărul de puncte și detalii, de scopul planului (informativ sau pentru instituții) și de documentele care trebuie întocmite. Cere ofertă scrisă și compară pe conținut.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Topograf: măsurători, ridicare topografică și plan de situație', subtitle: 'Ce face, când ai nevoie de el și cum compari ofertele. Cerințele instituțiilor variază; aici găsești întrebările corecte. Poți cere oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Ce face', value: 'Măsoară și întocmește planuri' },
+      { label: 'Când', value: 'Înainte de proiect, cadastru sau construcție' },
+      { label: 'Pentru instituții', value: 'Cere persoană autorizată' },
+      { label: 'Oferta', value: 'Scop, livrabile, acces în teren' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Topograful dă măsurători în care proiectantul, constructorul și instituțiile pot avea încredere: limite, suprafețe, cote și poziția construcțiilor. O lucrare începută fără măsurători corecte poate produce greșeli de poziționare, neînțelegeri cu vecinii sau refaceri.',
+      'Pagina explică ce primești și cum alegi. Documentația pentru înscrierea în cartea funciară are pagina ei, la care trimitem mai jos; cerințele exacte ale fiecărei instituții se verifică la sursă.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poți primi de la un topograf', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Ridicare topografică', text: 'Plan detaliat al terenului, cu limite, construcții, cote și detalii utile proiectării.' },
+      { title: 'Plan de situație', text: 'Plan care arată poziția terenului și a construcției în raport cu limitele și vecinii, folosit în dosare.' },
+      { title: 'Trasarea pe teren', text: 'Marcarea poziției construcției sau a limitelor, înainte de începerea lucrărilor.' },
+      { title: 'Urmărirea execuției', text: 'Verificări de poziție și cote pe parcursul lucrării, când proiectul o cere.' },
+    ] }),
+    node('steps-h', 'heading', { text: 'Cum decurge o lucrare', level: 'h2' }),
+    node('steps', 'steps', { title: 'Etapele unei lucrări topografice', items: [
+      { title: 'Stabilirea scopului', text: 'Spui pentru ce ai nevoie de plan: proiect, cadastru, litigiu sau trasare. Scopul decide ce se măsoară și ce documente rezultă.' },
+      { title: 'Acte și accesul în teren', text: 'Pregătești actele terenului și accesul. La limite, anunți vecinii.' },
+      { title: 'Măsurători pe teren', text: 'Topograful ridică limitele și detaliile cerute.' },
+      { title: 'Prelucrare și plan', text: 'Datele se prelucrează și se întocmește planul în forma cerută.' },
+      { title: 'Predare și explicații', text: 'Primești planul și explicații despre ce arată. Dacă merge la instituții, verifică formatul cerut.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Plan făcut pentru alt scop', text: 'Un plan informativ nu înlocuiește un plan pentru instituții.' },
+      { title: 'Lipsa acordului vecinilor la limite', text: 'Limitele contestate întârzie procedura. Anunță vecinii din timp.' },
+      { title: 'Teren neîngrijit sau inaccesibil', text: 'Vegetația și accesul influențează timpul de lucru și, deci, oferta.' },
+      { title: 'Specialist neautorizat', text: 'Pentru documentațiile oficiale, cere dovada autorizării.' },
+      { title: 'Nespunerea ce livrabile vrei', text: 'Cere clar ce plan, ce format și cu ce conținut.' },
+      { title: 'Compararea ofertelor fără scop comun', text: 'Cele două oferte trebuie să acopere același lucru.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul depinde de suprafață, de relief și vegetație, de accesul în teren, de numărul de detalii de măsurat, de scopul planului și de dacă documentația merge la instituții. Un teren mic și deschis diferă mult de unul mare, în pantă sau cu construcții.',
+      'Cere ofertă scrisă, cu scopul, livrabilele și ce rămâne în sarcina ta (acces, anunțarea vecinilor, taxe). Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi topograful', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă ce autorizări are pentru scopul tău, ce aparatură folosește și ce lucrări similare a făcut. Cere un exemplu de plan predat anterior, cu datele personale acoperite.',
+      'Stabilește în scris scopul planului, formatul, termenul de predare și ce se întâmplă dacă instituția cere completări.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre topograf și măsurători' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru topografie și cadastru' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la topografie și cadastru' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de măsurători sau de un plan?', text: 'Descrie terenul și scopul și primești oferte de la topografi din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

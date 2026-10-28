@@ -1,0 +1,86 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const caseModulareLaCheie: SituationContent = {
+  slug: 'case-modulare--case-modulare-la-cheie',
+  categorie: 'case-modulare',
+  title: 'Case modulare la cheie',
+  seoTitle: 'Case modulare la cheie: ce include oferta și ce verifici',
+  seoDescription: 'Case modulare la cheie: ce înseamnă „la cheie”, ce rămâne separat, ce acte și lucrări de teren trebuie lămurite, de ce depinde costul și cum compari ofertele.',
+  summary: 'Ce înseamnă o casă modulară la cheie, ce poate rămâne în afara ofertei, ce lucrări de teren și ce acte trebuie lămurite și cum compari ofertele.',
+  sinonime: ['case modulare', 'casa modulara', 'case modulare la cheie', 'casa modulare la cheie', 'case modulare pret', 'casa modulara pret', 'case modulare ieftine', 'casa mica', 'casă modulară', 'casă modulară preț', 'case modulare preț', 'casă mică'],
+  intrebari: [
+    'Ce este o casă modulară? | O casă construită din module prefabricate în fabrică sau atelier, aduse apoi pe teren și asamblate. Modulele pot fi din lemn, metal sau alte structuri ușoare, iar cât din casă este gata înainte de livrare diferă de la un producător la altul.',
+    'Ce înseamnă „la cheie” la o casă modulară? | Nu există o definiție unică. Poate însemna doar casa gata de locuit, fără fundație și racorduri, sau tot ansamblul, inclusiv terenul pregătit și utilitățile. Cere în scris lista a ceea ce include și a ceea ce nu include prețul.',
+    'Am nevoie de autorizație de construire pentru o casă modulară? | De regulă, o locuință nouă cere acte, indiferent cum e construită, dar regulile concrete depind de teren, de localitate și de proiect. Întreabă la primărie ce documente se cer înainte de a comanda.',
+    'Ce se face pe teren înainte de livrare? | Fundația sau reazemul, drumul de acces, racordurile pentru apă, curent și canalizare. Acestea cer proiect și lucrări distincte de modulele propriu-zise și trebuie coordonate cu data livrării.',
+    'Este o casă modulară mai ieftină? | Nu prin definiție. Producția în fabrică poate reduce unele costuri, dar adaugă transportul, ridicarea cu macara și lucrările de teren. Compară ofertele pe conținut, nu pe titlul „modulară”.',
+    'Cât durează să primesc casa? | Depinde de producător, de proiect, de acte și de pregătirea terenului. Nu te baza pe un termen promis verbal: cere în contract etapele, datele și ce se întâmplă în caz de întârziere.',
+    'Pot modifica proiectul unei case modulare? | Uneori, dacă producătorul o permite și dacă modificările nu afectează structura. Orice schimbare față de modelul de bază se discută înainte de contract și se reflectă în proiect și în ofertă.',
+    'De ce depinde costul unei case modulare? | De suprafață și de număr de module, de structură și izolație, de finisaje și instalații, de transport și montaj, de lucrările de teren și de racorduri. Paginile de preț de mai jos explică factorii.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Case modulare la cheie: ce include de fapt oferta', subtitle: 'Ce înseamnă „la cheie”, ce se face pe teren, ce acte trebuie lămurite și cum compari ofertele. Ceri oferte gratuite de la firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Atenție la', value: '„La cheie” nu are un sens unic' },
+      { label: 'Separat de casă', value: 'Fundație, acces, racorduri' },
+      { label: 'Acte', value: 'Se lămuresc la primărie' },
+      { label: 'Contract', value: 'Etape, specificații, garanție' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Casa modulară se produce în module într-un atelier sau fabrică și se asamblează pe teren. Ideea atrage pentru că o parte din lucru se mută din șantier în producție, dar casa trebuie în continuare să stea pe o fundație, să fie racordată la utilități și să aibă actele în ordine.',
+      'Cuvintele „la cheie” sunt folosite în multe feluri de vânzători. Pagina te învață să le citești corect: ce ar trebui să includă o ofertă completă, ce rămâne uneori pe seama ta și cum compari două propuneri. Containerele și casele din lemn sau metal au paginile lor, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poate însemna „la cheie”', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Doar casa, livrată și montată', text: 'Modulele ajung pe teren și sunt asamblate; fundația și racordurile le aranjezi separat.' },
+      { title: 'Casa plus lucrările de teren', text: 'Oferta cuprinde și fundația sau reazemul, accesul și racordurile la utilități.' },
+      { title: 'Casa plus finisaje interioare', text: 'Pardoseli, uși, băi și bucătărie incluse, nu doar structura și închiderile.' },
+      { title: 'Casa plus mobilier și dotări', text: 'Rar și foarte variabil; cere lista exactă, cu fiecare dotare scrisă în contract.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Pentru cine se potrivește', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Se potrivește celor care vor un proiect definit dinainte, cu mai puține decizii pe șantier, și au un teren cu acces pentru transport. Dacă terenul e dificil, cu pantă sau cu utilități departe, lucrările pregătitoare se pot apropia ca importanță de casa propriu-zisă.',
+      'O casă mică nu e automat o soluție simplă: și o locuință de dimensiuni reduse cere acte, fundație și racorduri, iar bucătăria și baia concentrează instalații pe un spațiu restrâns.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea pașilor', items: [
+      { title: 'Verifică terenul și actele', text: 'Întreabă la primărie ce se permite pe teren și ce documente se cer pentru o locuință nouă.' },
+      { title: 'Alege modelul și producătorul', text: 'Cere planurile, descrierea structurii, a izolației și lista finisajelor.' },
+      { title: 'Cere oferta detaliată', text: 'Cu liste separate: modulele, transportul, montajul, lucrările de teren, racordurile și finisajele rămase.' },
+      { title: 'Încheie contractul', text: 'Cu etape, specificații, termene, plăți pe stadii de execuție și garanția.' },
+      { title: 'Pregătirea terenului', text: 'Fundația sau reazemul, drumul și racordurile se fac înainte de sosirea modulelor, după proiect.' },
+      { title: 'Livrare, montaj și recepție', text: 'Se verifică îmbinările, etanșeitatea, ușile, ferestrele și instalațiile, apoi se predau documentele casei.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Compararea după titlu', text: 'Două oferte „la cheie” pot include lucruri foarte diferite; compară listele, nu titlurile.' },
+      { title: 'Uitarea terenului', text: 'Fundația, accesul și racordurile nu sunt neapărat în prețul casei.' },
+      { title: 'Termene crezute pe cuvânt', text: 'Un termen fără etape și fără consecințe scrise nu te protejează.' },
+      { title: 'Plata prea mare la început', text: 'Plățile se leagă de etape executate, nu de promisiuni.' },
+      { title: 'Neglijarea actelor', text: 'Comanda dinaintea lămuririi autorizării poate bloca lucrarea.' },
+      { title: 'Cumpărarea după preț', text: 'Cea mai mică ofertă lasă adesea deoparte izolația, finisajele sau lucrările de teren.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafață și de numărul de module, de structură și izolație, de finisaje și instalații, de transport și ridicare, de lucrările de teren și de racorduri. Se adaugă proiectul și actele, când nu sunt incluse în ofertă.',
+      'O casă mică poate ieși mai costisitoare pe unitate de suprafață decât una mai mare, pentru că bucătăria, baia și instalațiile rămân la fel de complexe. Pentru ordin de mărime, vezi paginile de preț de mai jos, nu o cifră din reclamă.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Pune ofertele alăturate pe aceleași rubrici: structura, izolația, ferestrele și ușile, instalațiile, finisajele, transportul, montajul, lucrările de teren, actele și garanția. Ce lipsește dintr-o ofertă e adesea costul ei ascuns.',
+      'Cere să vezi o casă deja livrată sau fotografii din fabrică și din montaj, și întreabă ce se întâmplă dacă apar defecte după predare.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi o firmă', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Preferă o firmă care răspunde clar la întrebări despre acte, teren și garanție și nu evită detaliile. Cere contract cu anexă de specificații și referințe de la clienți care au locuit deja în casă.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre case modulare' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru case modulare și case la cheie' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la case modulare' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei oferte pentru o casă modulară?', text: 'Spune-ne ce casă și ce teren ai și primești oferte comparabile de la firme verificate, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

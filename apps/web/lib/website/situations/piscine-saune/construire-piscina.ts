@@ -1,0 +1,88 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const construirePiscina: SituationContent = {
+  slug: 'piscine-saune--construire-piscina',
+  categorie: 'piscine-saune',
+  title: 'Construire piscină: beton, prefabricată, interioară',
+  seoTitle: 'Construire piscină: beton, prefabricată, interioară',
+  seoDescription: 'Cum se construiește o piscină în curte sau în casă: soluții din beton sau prefabricate, ordinea lucrării, avize, greșeli frecvente și de ce depinde costul.',
+  summary: 'Ce tipuri de piscină se construiesc în curte sau în interior, în ce ordine se lucrează, ce întrebi la primărie și cum compari ofertele constructorilor.',
+  sinonime: ['piscina interioara', 'piscina dreptunghiulara', 'piscina curte', 'piscina supraterana', 'scara piscina', 'piscina mare', 'piscină interioară', 'piscină dreptunghiulară', 'piscină curte', 'piscină supraterană', 'scară piscină', 'piscină mare'],
+  intrebari: [
+    'Ce tipuri de piscină se pot construi? | În linii mari: piscine din beton armat, finisate cu placare, liner sau alt strat de etanșare; piscine prefabricate (carcasă gata făcută, montată pe un pat pregătit); piscine îngropate sau supraterane, în curte sau într-o încăpere de casă. Alegerea depinde de teren, de spațiul disponibil și de cât vrei să personalizezi forma.',
+    'Ce diferență este între piscina îngropată și cea supraterană? | Cea îngropată cere săpătură și lucrări de sprijinire a terenului; cea supraterană se sprijină pe o placă sau pe un teren nivelat, iar pereții rămân vizibili. Ambele au nevoie de o fundație potrivită terenului și de un sistem de circulare a apei, deci nu sunt „montaj simplu”.',
+    'Am nevoie de autorizație pentru o piscină? | Depinde de tipul piscinei, de amplasare și de regulile locale. Unele piscine se tratează ca lucrări de construcție, altele nu. Nu există un răspuns valabil peste tot: întreabă la primăria din localitate, înainte să comanzi sau să începi lucrarea, ce acte cere pentru cazul tău.',
+    'Cine proiectează o piscină din beton? | Un proiectant sau un inginer, pe baza studiului terenului și a încărcărilor. Pereții și radierul se dimensionează prin calcul, mai ales dacă apa subterană este aproape de suprafață sau terenul este în pantă. Constructorul execută; soluția trebuie stabilită înainte de săpătură.',
+    'Ce instalații are o piscină? | Circuitul de apă (aspirație, retur, filtrare), eventual încălzire, iluminat subacvatic și, după caz, acoperire sau sistem de curățare. Instalația electrică de lângă apă are cerințe speciale și o execută doar un electrician autorizat; detaliile le stabilește proiectantul instalației.',
+    'Se poate construi o piscină în interiorul casei? | Da, dar cere cele mai multe verificări: structura planșeului sau a fundației, ventilația și dezumidificarea, protecția finisajelor și a structurii împotriva umezelii. Întreabă un proiectant înainte, pentru că umiditatea poate deteriora tot spațiul din jur.',
+    'Care este diferența între construire și întreținere? | Construirea înseamnă săpătura, structura, etanșarea și finisajele. Încălzirea, filtrarea și curățarea de după sunt alte lucrări, tratate pe pagina despre încălzirea și întreținerea piscinei.',
+    'De ce depinde costul unei piscine? | De tip (beton sau prefabricată), de formă și mărime, de teren și de apa subterană, de finisaj, de echipamentele de circulare și de accesul utilajelor. Cere o ofertă detaliată, în care structura, echipamentele și finisajele sunt separate.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Construire piscină: cum alegi soluția și ce verifici în ofertă', subtitle: 'Beton sau prefabricată, în curte sau în casă: ce implică lucrarea, în ce ordine se face și de ce depinde costul. Descrie proiectul și primești oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Soluții', value: 'Beton armat sau prefabricată' },
+      { label: 'Primul pas', value: 'Studiul terenului și proiectul' },
+      { label: 'Acte', value: 'Întreabă la primărie' },
+      { label: 'Oferta', value: 'Structură, echipamente, finisaj separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O piscină este o lucrare mai complexă decât pare: pe lângă bazinul în sine, include fundația, etanșarea, circuitul de apă, instalația electrică și finisajele din jur. Greșelile de la început se corectează greu, pentru că bazinul se vede abia când e gata.',
+      'Pagina te ajută să înțelegi tipurile de piscină care se construiesc în curte sau în interior, ordinea lucrării și ce să compari în oferte. Piscinele gonflabile sau cele de unică folosință nu fac obiectul acestei pagini; ne ocupăm de lucrările executate de firme.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de piscină', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Piscină din beton armat', text: 'Se toarnă pe loc, poate avea forme dreptunghiulare sau libere. Cere cofraj, armare, beton și un strat final de etanșare și finisaj.' },
+      { title: 'Piscină prefabricată', text: 'Carcasa vine gata făcută și se montează pe un pat pregătit. Forma este limitată la modelele existente, iar montajul cere în continuare terasament și instalații.' },
+      { title: 'Piscină îngropată sau supraterană', text: 'Cea îngropată cere săpătură și sprijinirea terenului; cea supraterană are pereții la vedere și o fundație plană sub ea.' },
+      { title: 'Piscină interioară', text: 'Se face într-o încăpere dedicată, cu ventilație și dezumidificare. Cere verificarea structurii și protecția finisajelor împotriva umezelii.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Elementele care o fac să funcționeze', level: 'h2' }),
+    node('where', 'cards', { columns: '2', items: [
+      { title: 'Structura și etanșarea', text: 'Pereții, radierul și stratul care oprește pierderile de apă. Orice defect de aici se remediază greu după umplere.' },
+      { title: 'Circuitul de apă', text: 'Aspirație, retur, filtrare și, după caz, încălzire. Se dimensionează odată cu bazinul, nu după construcție.' },
+      { title: 'Scara, treptele și marginile', text: 'Accesul în apă se stabilește din proiect, cu finisaje care nu alunecă. Scara piscinei este o parte din structură sau o piesă separată, în funcție de soluție.' },
+      { title: 'Zona din jur', text: 'Dalaj sau pavaj, scurgerea apei de lângă bazin, acces și gard sau acoperire pentru siguranță, mai ales dacă sunt copii.' },
+    ] }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Studiul terenului și proiectul', text: 'Se verifică terenul, apa subterană și locul pentru instalații. Se stabilesc forma, adâncimea și soluția constructivă.' },
+      { title: 'Acte și întrebări la primărie', text: 'Se clarifică ce acte sunt necesare pentru amplasarea și tipul ales, înainte de a comanda materialele.' },
+      { title: 'Săpătura și terasamentul', text: 'Se sapă, se sprijină terenul acolo unde e nevoie și se pregătește patul de așezare.' },
+      { title: 'Structura bazinului', text: 'Armare și turnare la piscina din beton, sau montarea carcasei la cea prefabricată.' },
+      { title: 'Instalațiile', text: 'Conductele, piesele de aspirație și retur și cablurile pentru iluminat sau echipamente, executate de persoane autorizate.' },
+      { title: 'Etanșarea și finisajele', text: 'Stratul de etanșare, placarea sau linerul, apoi umplerea și proba de funcționare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Lipsa studiului de teren', text: 'Apa subterană sau un teren instabil poate ridica sau deforma bazinul.' },
+      { title: 'Începerea fără întrebări la primărie', text: 'Pot apărea oprirea lucrării sau cerințe suplimentare, după ce banii sunt cheltuiți.' },
+      { title: 'Instalații improvizate', text: 'Circuitul de apă prost dimensionat duce la apă murdară, iar instalația electrică făcută de neautorizați este periculoasă lângă apă.' },
+      { title: 'Echipamente alese înaintea bazinului', text: 'Filtrul și pompa se potrivesc volumului, deci se aleg după proiect.' },
+      { title: 'Finisaj fără pregătire', text: 'Un finisaj pus pe un suport neuscat sau neplan se desprinde.' },
+      { title: 'Siguranța uitată', text: 'Gard, acoperire sau alarmă pentru copii se gândesc la proiectare, nu după.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul piscinei (beton sau prefabricată), de formă și dimensiuni, de teren și de prezența apei subterane, de volumul de săpătură și de accesul utilajelor. Contează apoi finisajul ales, echipamentele de circulare și filtrare și dacă oferta include zona din jur.',
+      'Pentru ordin de mărime, vezi paginile de preț de mai jos și cere oferte care separă structura, instalațiile, echipamentele și finisajele.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară oferte care descriu același lucru: soluția structurală, ce strat de etanșare se folosește, ce echipamente intră, ce lucrări rămân în sarcina ta (săpătură, branșamente, alimentarea cu apă) și ce este inclus în preț. Întreabă cine răspunde de proiect și de instalația electrică.',
+      'O ofertă care nu spune cum se face etanșarea sau cum se tratează terenul este, de obicei, incompletă.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea sau despre care poți vorbi cu proprietarii, mai ales după un sezon de folosire. Întreabă cine execută instalațiile și cine le semnează, ce garanții se dau în scris și cum se rezolvă o pierdere de apă apărută după umplere.',
+      'Pentru partea electrică și pentru orice aviz, nu te baza pe promisiuni verbale: cere să știi cine răspunde și în ce formă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre construirea unei piscine' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru piscine și lucrări speciale' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la piscine, saune și spa' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca piscina să o construiască o firmă?', text: 'Descrie terenul și ce ai în minte și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

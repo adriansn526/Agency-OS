@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const scariMetaliceBalustrade: SituationContent = {
+  slug: 'structuri-metalice-fier-forjat--scari-metalice-balustrade',
+  categorie: 'structuri-metalice-fier-forjat',
+  title: 'Scări metalice și balustrade (inox, sticlă)',
+  seoTitle: 'Scări metalice și balustrade: inox, sticlă, oțel',
+  seoDescription: 'Scări metalice și balustrade din inox sau sticlă: cine le proiectează, materiale, ordinea lucrării, de ce depinde costul și cum compari ofertele atelierelor.',
+  summary: 'Cum alegi o scară metalică sau o balustradă din inox ori sticlă, cine stabilește siguranța, în ce ordine se lucrează și ce compari în oferte.',
+  sinonime: ['balustrada scara interioara', 'balustrada scara interior', 'balustrada sticla', 'balustrada inox', 'scara metalica', 'scari metalice', 'scari interioare', 'scara interioara', 'scara exterioara', 'balustradă scară interioară', 'balustradă scară interior', 'balustradă sticlă', 'balustradă inox', 'scară metalică', 'scări metalice', 'scări interioare', 'scară interioară', 'scară exterioară'],
+  intrebari: [
+    'Ce este mai important la o scară sau o balustradă? | Siguranța. O scară se calculează și se execută astfel încât să reziste la folosire zilnică, iar o balustradă trebuie să țină la sprijinire și la împingere. Soluția și dimensiunile le stabilește proiectantul sau producătorul, nu se aleg după aspect.',
+    'Din ce materiale se fac balustradele? | Cel mai des din oțel vopsit, din inox, din sticlă sau din combinații între acestea, uneori cu mână curentă din lemn. Fiecare are un aspect, o întreținere și un mod de prindere diferite, iar prinderea în beton sau în trepte contează mai mult decât materialul.',
+    'Ce tip de sticlă se folosește la balustrade? | Se folosește sticlă securizată sau stratificată, de tip destinat acestei utilizări. Cere în ofertă tipul exact și ce document îl însoțește, iar tipul îl confirmă producătorul sau proiectantul pentru locul respectiv.',
+    'Se poate monta o scară metalică într-o casă existentă? | De regulă da, dar măsurătorile trebuie făcute la fața locului, iar planșeul sau structura trebuie să poată prelua sarcinile. Dacă se taie un gol în planșeu, cere avizul unui inginer constructor înainte de începere.',
+    'Scara exterioară are cerințe diferite? | Da: contează protecția la coroziune, scurgerea apei și aderența treptelor. Cere finisajul anticoroziv folosit și modul de protejare a îmbinărilor sudate.',
+    'Cine face sudura și montajul? | Personal calificat în sudură și în montaj. Sudura portantă nu este o lucrare pentru amatori, iar un atelier serios îți poate explica cine execută și cine verifică.',
+    'De ce depinde costul? | De tipul scării (dreaptă, în L, în spirală, cu un lung de trepte), de materiale, de finisaj, de sticlă și feronerie, de dificultatea montajului și de pregătirea golului. Cere oferte detaliate și vezi paginile de preț de mai jos.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Scări metalice și balustrade: ce să știi înainte să comanzi', subtitle: 'Materiale, siguranță, ordinea lucrării și de ce depinde costul. Ceri oferte gratuite de la ateliere și firme verificate.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Siguranța', value: 'O stabilește proiectantul' },
+      { label: 'Materiale', value: 'Oțel, inox, sticlă' },
+      { label: 'Execuția', value: 'Personal calificat în sudură' },
+      { label: 'Oferta', value: 'Detaliată, pe componente' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'O scară metalică sau o balustradă se folosește zilnic și se vede de fiecare dată când intri în casă. De aceea contează și aspectul, dar mai ales faptul că ține: la urcat, la sprijinit și la mutat mobila.',
+      'Pagina te ajută să pornești cu întrebările potrivite: ce materiale există, cine răspunde de siguranță, cum se lucrează și ce să compari în oferte. Dimensiunile și soluția constructivă nu apar aici, pentru că le stabilește proiectantul sau producătorul pentru casa ta.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poți comanda', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Scară interioară', text: 'Între etaje sau la mansardă, cu trepte din lemn, beton, metal sau sticlă. Se adaptează spațiului disponibil și golului din planșeu.' },
+      { title: 'Scară exterioară', text: 'La intrare, la terasă sau la acces tehnic. Cere protecție anticorozivă îngrijită și trepte cu aderență bună.' },
+      { title: 'Balustradă din inox', text: 'Stâlpi, bare sau cabluri din inox. Aspect curat și întreținere simplă, dar prinderea trebuie făcută corect.' },
+      { title: 'Balustradă din sticlă', text: 'Panouri prinse în profile sau cu elemente punctuale. Sticla trebuie să fie de tipul prevăzut pentru această folosire.' },
+    ] }),
+    node('mat-h', 'heading', { text: 'Materiale și soluții', level: 'h2' }),
+    node('mat', 'text', { body: para(
+      'Oțelul vopsit sau zincat este o soluție frecventă la structura scării, iar inoxul se alege des pentru balustrade, pentru aspect și rezistență la umezeală. Sticla aduce lumină, dar cere prinderi precise și un tip adecvat. Mâna curentă poate fi metalică sau din lemn.',
+      'La scara exterioară contează tratamentul împotriva coroziunii, iar la cea interioară contează zgomotul și vibrația la mers. Un atelier bun te întreabă cum folosești scara și te ghidează spre soluția potrivită, nu spre ce are pe stoc.',
+      'Siguranța și dimensionarea le stabilește proiectantul sau producătorul sistemului. Nu cere oferte pe baza unui desen găsit online, fără verificare.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Relevee la fața locului', text: 'Se măsoară golul, înălțimea dintre niveluri și starea finisajelor, apoi se discută accesul pentru montaj.' },
+      { title: 'Proiect sau desen de execuție', text: 'Atelierul sau proiectantul stabilește soluția, îmbinările și prinderile, pe care le primești spre aprobare.' },
+      { title: 'Fabricație în atelier', text: 'Piesele se taie, se sudează și se tratează în atelier, unde condițiile sunt mai bune decât pe șantier.' },
+      { title: 'Montaj și ancorare', text: 'Scara sau balustrada se aduce, se aliniază și se fixează în structură, cu elemente de prindere potrivite.' },
+      { title: 'Finisaje și verificare', text: 'Se retușează protecția, se montează mâna curentă și se verifică rigiditatea și lipsa vibrațiilor.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Alegere după aspect', text: 'O balustradă frumoasă, dar prinsă slab sau cu spații nepotrivite poate fi periculoasă, mai ales cu copii în casă.' },
+      { title: 'Măsurători făcute prea devreme', text: 'Dacă finisajele de pardoseală se schimbă după comandă, scara nu mai ajunge exact la nivel.' },
+      { title: 'Prindere în materiale nepotrivite', text: 'Ancorele puse în zidărie slabă sau în beton prea aproape de margine cedează în timp.' },
+      { title: 'Sticlă fără documente', text: 'Cere tipul de sticlă și documentul care îl însoțește, nu doar o promisiune.' },
+      { title: 'Protecție anticorozivă omisă', text: 'Zonele sudate nelucrate ruginesc, iar la exterior apar rapid.' },
+      { title: 'Ofertă fără componente', text: 'O sumă globală nu spune ce material, ce finisaj și ce montaj intră în preț.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Prețul se schimbă cu tipul scării (dreaptă, în L, cu pod, în spirală), cu materialele alese, cu finisajul, cu sticla și feroneria, cu lungimea balustradei și cu dificultatea montajului. Scările din beton sau cu trepte groase de lemn cântăresc mai mult și cer o structură mai solidă.',
+      'Compară ofertele pe componente: structură, trepte, balustradă, finisaj, transport și montaj. Pentru repere, vezi paginile de preț de mai jos. Fără sume inventate, cere oferte scrise.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma sau atelierul', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere lucrări similare pe care le poți vedea și întreabă cine face sudura, cine calculează și cine montează. Un atelier care lucrează fără desen de execuție sau fără să măsoare la fața locului merită ocolit.',
+      'Cere oferta în scris, cu materiale, finisaj, termen și condiții de plată, și stabilește cine se ocupă de eventualele retușuri după montaj. La balustrade din sticlă întreabă ce tip de sticlă folosesc și de unde provine documentul.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre scări și balustrade' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru structuri metalice' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la structuri metalice' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca scara sau balustrada să o facă un atelier?', text: 'Descrie spațiul și materialul dorit și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

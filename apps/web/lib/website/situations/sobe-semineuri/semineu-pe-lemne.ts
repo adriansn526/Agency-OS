@@ -1,0 +1,81 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const semineuPeLemne: SituationContent = {
+  slug: 'sobe-semineuri--semineu-pe-lemne',
+  categorie: 'sobe-semineuri',
+  title: 'Șemineu pe lemne: montaj și coș de fum',
+  seoTitle: 'Șemineu pe lemne: montaj, insert și coș de fum',
+  seoDescription: 'Cum se montează un șemineu pe lemne: tipuri (deschis, cu insert, termosemineu), coșul de fum, siguranță, cine execută lucrarea și de ce depinde costul.',
+  summary: 'Ce tipuri de șemineu pe lemne există, ce cere montajul și coșul de fum, ce face personalul autorizat și cum compari ofertele pentru montaj.',
+  sinonime: ['semineu pe lemne', 'seminee pe lemne', 'semineuri pe lemne', 'semineu pe lemn', 'semineu', 'termosemineu pe lemne', 'semineu decorativ', 'semineu cu insert', 'montaj semineu', 'cos de fum', 'șemineu pe lemne', 'șeminee pe lemne', 'șemineuri pe lemne', 'șemineu pe lemn', 'șemineu', 'termoșemineu pe lemne', 'șemineu decorativ', 'șemineu cu insert', 'montaj șemineu', 'coș de fum'],
+  intrebari: [
+    'Ce tipuri de șemineu pe lemne există? | Șemineul deschis, cu focar zidit, cu aspect clasic și randament mic; șemineul cu insert, adică un focar metalic închis, montat într-un cămin; termoșemineul, care încălzește și un circuit de apă pentru calorifere; și varianta decorativă, fără foc real. Fiecare cere alt montaj și alt coș.',
+    'Ce rol are coșul de fum? | Evacuează fumul și gazele de ardere în afara casei și creează tirajul care întreține focul. Un coș nepotrivit sau neverificat poate duce la fum în casă, depuneri sau pericol de incendiu. Subiectul este critic pentru siguranță.',
+    'Cine poate verifica sau executa coșul de fum? | Lucrările la coșul de fum, la tiraj și la evacuarea gazelor le face personal autorizat, nu proprietarul pe cont propriu. Înainte de montaj, firma verifică coșul existent sau propune unul nou, iar verificările periodice se fac tot de specialiști.',
+    'Pot monta un șemineu într-o casă fără coș? | Se poate, dar cere realizarea unui coș potrivit, cu soluție stabilită de un specialist. Nu se leagă un șemineu la un conduct improvizat sau la un coș folosit de alt aparat fără verificare.',
+    'Ce diferență este între șemineu deschis și cu insert? | Cel deschis dă atmosferă, dar o mare parte din căldură pleacă pe coș. Insertul are ușă închisă și controlează mai bine arderea și căldura. Alegerea depinde de ce vrei: decor sau încălzire.',
+    'Ce distanțe față de materiale combustibile trebuie respectate? | Depind de aparat și de materialele din jur și sunt precizate de producător și de specialistul care face montajul. Nu le stabili din ochi: cere ca firma să le respecte și să le menționeze în ofertă.',
+    'Am nevoie de aprobări pentru un șemineu? | Depinde de casă, de dacă modifici coșul sau structura și de regulile locale. Întreabă la primărie și, în bloc, la asociație, înainte să începi. La clădiri protejate sau comune pot exista restricții.',
+    'De ce depinde costul montajului? | De tipul șemineului, de starea și lungimea coșului, de lucrările de zidărie și de finisaj, de protecția pardoselii și a pereților și de accesul în casă. Cere o ofertă care separă aparatul, coșul și finisajul.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Șemineu pe lemne: cum alegi, cine montează și ce faci cu coșul', subtitle: 'Tipuri de șemineu, cerințe de siguranță și de coș de fum, plus ce compari în ofertă. Descrie ce vrei să montezi și primești oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Deschis, cu insert, termoșemineu' },
+      { label: 'Coșul de fum', value: 'Verificat de personal autorizat' },
+      { label: 'Siguranță', value: 'Distanțe față de materiale combustibile' },
+      { label: 'Oferta', value: 'Aparat, coș și finisaj separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Un șemineu pe lemne schimbă aspectul și atmosfera unei încăperi, iar unele modele pot încălzi și casa. Dar montajul nu se rezumă la așezarea aparatului: coșul de fum, tirajul și protecția materialelor din jur sunt, de fapt, partea care decide siguranța.',
+      'Pagina explică tipurile de șemineu, ce implică montajul și ce întrebi o firmă. Sobele din teracotă și cele pe lemne sau peleți au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('types-h', 'heading', { text: 'Tipuri de șemineu', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Șemineu deschis', text: 'Focar zidit, cu flacăra vizibilă. Are un aspect clasic, dar transmite puțină căldură în cameră în raport cu lemnul ars.' },
+      { title: 'Șemineu cu insert', text: 'Un focar metalic închis, montat într-un cămin. Controlează mai bine arderea și transmite mai multă căldură.' },
+      { title: 'Termoșemineu', text: 'Încălzește și apa unui circuit către calorifere. Cere racordare hidraulică și siguranțe specifice, făcute de specialiști.' },
+      { title: 'Șemineu decorativ', text: 'Pentru aspect, fără foc real sau cu surse alternative. Nu cere coș, dar nici nu încălzește casa prin ardere.' },
+    ] }),
+    node('flue-h', 'heading', { text: 'Coșul de fum: partea care decide siguranța', level: 'h2' }),
+    node('flue', 'text', { body: para(
+      'Coșul evacuează fumul și gazele de ardere și întreține tirajul. Dacă este nepotrivit, murdărit sau deteriorat, pot apărea fum în casă, depuneri inflamabile și, în cel mai rău caz, monoxid de carbon în încăpere. De aceea verificarea coșului, stabilirea tirajului și evacuarea gazelor sunt lucrări pentru personal autorizat.',
+      'Nu lega singur aparatul la un coș existent și nu improviza prelungiri sau tuburi. Cere ca firma să verifice coșul înainte de montaj și să spună în scris ce se păstrează și ce se schimbă. Distanțele față de lemn, tavan sau alte materiale combustibile le dă producătorul aparatului și le respectă montatorul.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea tipului și a locului', text: 'Stabilești dacă vrei decor sau încălzire și unde poate ajunge coșul în structura casei.' },
+      { title: 'Verificarea coșului', text: 'Personalul autorizat verifică un coș existent sau stabilește soluția pentru unul nou.' },
+      { title: 'Pregătirea locului', text: 'Protecția pardoselii și a pereților, zidăria căminului și, după caz, trecerea prin planșeu sau acoperiș.' },
+      { title: 'Montajul aparatului', text: 'Se așază și se racordează conform instrucțiunilor producătorului, cu distanțele de siguranță cerute.' },
+      { title: 'Finisajele', text: 'Placări, tencuieli sau elemente decorative potrivite zonei din jurul focarului.' },
+      { title: 'Prima aprindere și instruire', text: 'Se verifică tirajul și primești indicații despre folosire, lemn potrivit și curățare.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Coș neverificat', text: 'Un coș vechi sau murdărit poate fi un pericol de incendiu și de intoxicare.' },
+      { title: 'Distanțe ignorate', text: 'Lemnul sau materialele izolante din apropiere se pot aprinde în timp.' },
+      { title: 'Montaj pe cont propriu', text: 'Racordarea la coș și evacuarea gazelor nu se fac din tutoriale.' },
+      { title: 'Lemn nepotrivit', text: 'Lemnul umed produce mai mult fum și depuneri.' },
+      { title: 'Șemineu ales pentru decor, folosit pentru încălzire', text: 'Un model deschis nu va încălzi casa cum ai crede.' },
+      { title: 'Ofertă fără coș', text: 'O ofertă care nu menționează coșul nu este completă.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul șemineului, de starea coșului existent sau de realizarea unuia nou, de lucrările de zidărie și de finisaj și de protecțiile necesare. Contează și accesul în casă, înălțimea la care se lucrează și dacă se racordează un circuit de apă.',
+      'Cere oferte care separă aparatul, coșul și finisajele, ca să le poți compara. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă cine verifică coșul și dacă are calificarea necesară, ce garanție se dă pentru manoperă și ce documente primești la final. Cere lucrări similare pe care le poți vedea.',
+      'Compară oferte care descriu același aparat, aceeași soluție de coș și același finisaj. Diferențele mari de preț ascund de obicei lucrări lăsate pe dinafară.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre șemineul pe lemne' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru sobe, șeminee și coșuri' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la șeminee și sobe' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca montajul să-l facă o firmă?', text: 'Descrie casa și ce șemineu ai în vedere și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

@@ -1,0 +1,80 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const sobeLemnePelet: SituationContent = {
+  slug: 'sobe-semineuri--sobe-lemne-pelet',
+  categorie: 'sobe-semineuri',
+  title: 'Sobă pe lemne sau pe peleți',
+  seoTitle: 'Sobă pe lemne sau pe peleți: montaj și alegere',
+  seoDescription: 'Cum alegi și cum se montează o sobă pe lemne sau pe peleți: diferențe, cerințe de coș de fum, siguranță, cine execută lucrarea și de ce depinde costul.',
+  summary: 'Ce diferențe sunt între soba pe lemne și cea pe peleți, ce cere montajul și coșul de fum și ce să compari în ofertele firmelor care le montează.',
+  sinonime: ['soba pe lemne', 'sobita pe lemne', 'sobite pe lemne', 'soba pe pelet', 'semineu pe peleti', 'sobă pe lemne', 'sobiță pe lemne', 'sobițe pe lemne', 'sobă pe pelet', 'șemineu pe peleți'],
+  intrebari: [
+    'Care este diferența dintre soba pe lemne și cea pe peleți? | Soba pe lemne se alimentează manual cu lemne, iar cea pe peleți are un rezervor și un sistem care aduce combustibilul la ardere, de regulă cu alimentare electrică și posibilitate de programare. Ele se comportă diferit în exploatare, la întreținere și la cerințele de montaj.',
+    'Ce înseamnă „șemineu pe peleți”? | Termenul desemnează, de regulă, un aparat pe peleți cu aspect de șemineu. Funcționează ca soba pe peleți, cu aceleași cerințe de coș și de siguranță.',
+    'Care este diferența dintre sobă și șemineu? | Soba are focar închis și încălzește prin corpul ei metalic sau căptușit; șemineul clasic are focar deschis, iar varianta cu insert este un focar închis într-un cămin. Pentru montaj, ambele cer coș și siguranță, tratate pe pagina despre șemineu.',
+    'Cine montează o sobă și coșul ei? | Montajul, racordarea la coș, tirajul și evacuarea gazelor, inclusiv a monoxidului de carbon, sunt lucrări pentru personal autorizat. Coșul se verifică înainte, iar distanțele față de materialele combustibile se respectă conform indicațiilor producătorului și ale specialistului.',
+    'Ce coș cere o sobă pe peleți? | Soba pe peleți are cerințe proprii de evacuare a fumului și de aer pentru ardere, diferite de ale celei pe lemne. Soluția o stabilește firma de montaj, după instrucțiunile producătorului aparatului; nu folosi coșul de la alt aparat fără verificare.',
+    'Pot folosi o sobă fără coș? | Nu, o sobă pe combustibil solid cere evacuarea gazelor în afara casei, printr-un sistem verificat. Variantele fără evacuare nu sunt o soluție pentru arderea lemnului sau a peleților.',
+    'Ce întreținere cer? | Curățarea periodică a focarului și a coșului, verificarea garniturilor și, la cele pe peleți, a sistemului de alimentare. Lucrările la coș le face personalul autorizat; cele curente le face proprietarul după instrucțiunile aparatului.',
+    'De ce depinde costul? | De tipul de sobă, de lucrările la coș (verificare, tubulatură, prelungiri), de protecțiile pentru pardoseală și pereți, de accesul în casă și de racordurile electrice la cea pe peleți. Cere ofertă care separă aparatul, coșul și manopera.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Sobă pe lemne sau pe peleți: cum alegi și cine o montează', subtitle: 'Diferențele dintre cele două tipuri, cerințele de coș și de siguranță și ce compari în ofertă. Descrie casa și primești oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Tipuri', value: 'Pe lemne sau pe peleți' },
+      { label: 'Alimentare', value: 'Manuală sau automată' },
+      { label: 'Coșul de fum', value: 'Verificat de personal autorizat' },
+      { label: 'Oferta', value: 'Aparat, coș și manoperă separate' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Soba pe lemne și soba pe peleți încălzesc o încăpere sau o casă, dar se comportă diferit: prima se alimentează manual, a doua are un sistem care aduce combustibilul la ardere. Alegerea ține de cât vrei să te ocupi de ea, de combustibilul pe care îl ai la îndemână și de coșul disponibil.',
+      'Pagina compară cele două tipuri, explică ce cere montajul și ce întrebi o firmă. Șemineele și sobele zidite din teracotă au pagini separate, la care trimitem mai jos.',
+    ) }),
+    node('types-h', 'heading', { text: 'Cum se deosebesc', level: 'h2' }),
+    node('types', 'cards', { columns: '2', items: [
+      { title: 'Sobă pe lemne', text: 'Se alimentează manual, cu lemne uscate. Dă căldură rapid și funcționează și fără curent, dar cere atenție la ardere și la curățare.' },
+      { title: 'Sobă pe peleți', text: 'Are rezervor și sistem automat de alimentare, de regulă cu alimentare electrică și posibilitate de programare. Cere spațiu pentru depozitarea combustibilului.' },
+      { title: 'Sobiță mică', text: 'Pentru camere mici sau case de vacanță. Cerințele de coș și de siguranță rămân aceleași ca la un aparat mare.' },
+      { title: 'Aspect de șemineu', text: 'Unele aparate arată ca un șemineu, dar sunt tratate ca sobă: focar închis, coș dedicat și aceleași reguli de siguranță.' },
+    ] }),
+    node('flue-h', 'heading', { text: 'Coșul de fum și siguranța', level: 'h2' }),
+    node('flue', 'text', { body: para(
+      'Coșul de fum, tirajul și evacuarea gazelor de ardere sunt partea care decide siguranța. Un coș nepotrivit sau murdărit poate duce la fum în casă, la depuneri și la monoxid de carbon în încăpere. De aceea verificarea și racordarea le face personal autorizat, nu proprietarul pe cont propriu.',
+      'Distanțele față de lemn, perdele sau alte materiale combustibile sunt cele indicate de producător și respectate de montator. Soba pe peleți mai are nevoie de aer pentru ardere și de o alimentare electrică corectă, pe care o execută un electrician autorizat.',
+    ) }),
+    node('steps', 'steps', { title: 'În ce ordine se lucrează', items: [
+      { title: 'Alegerea tipului și a locului', text: 'Stabilești combustibilul, încăperea și unde poate ajunge coșul. Se verifică și suportul pentru aparat.' },
+      { title: 'Verificarea coșului', text: 'Personalul autorizat verifică un coș existent sau propune o soluție nouă.' },
+      { title: 'Protecția spațiului', text: 'Pardoseală și pereți protejați față de căldură, după indicațiile producătorului.' },
+      { title: 'Montajul și racordarea', text: 'Aparatul se așază și se racordează la coș; la peleți se adaugă alimentarea electrică.' },
+      { title: 'Prima aprindere', text: 'Se verifică tirajul și funcționarea, iar montatorul explică folosirea și curățarea.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Racordare la coș neverificat', text: 'Fum în casă și risc de intoxicare.' },
+      { title: 'Montaj pe cont propriu', text: 'Greșelile de tiraj și de distanțe se văd abia când apare o problemă.' },
+      { title: 'Combustibil nepotrivit', text: 'Lemn umed sau peleți de calitate slabă dau mai multă funingine și depuneri.' },
+      { title: 'Alegere fără coș clarificat', text: 'Nu poți cumpăra un aparat înainte să știi cum evacuezi fumul.' },
+      { title: 'Protecții uitate', text: 'Pardoseala și peretele din spate se degradează sau se încălzesc periculos.' },
+      { title: 'Comparare doar după aparat', text: 'Coșul și montajul pot cântări mult în ofertă.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de tipul de sobă, de lucrările la coș (verificare, tubulatură, prelungiri), de protecțiile pentru pardoseală și pereți, de accesul în casă și, la peleți, de racordul electric. Contează și dacă lucrarea cere trecerea prin planșeu sau acoperiș.',
+      'Cere oferte care despart aparatul de coș și de manoperă. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi firma', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Întreabă cine verifică și racordează coșul, ce garanție se dă în scris și ce documente primești. Cere lucrări similare și, la peleți, întreabă cine face partea electrică.',
+      'Compară oferte cu același aparat și aceeași soluție de coș. O ofertă care nu spune nimic despre coș este, de obicei, incompletă.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre sobele pe lemne și pe peleți' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru sobe, șeminee și coșuri' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la șeminee și sobe' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Vrei ca soba să o monteze o firmă?', text: 'Spune ce aparat ai în vedere și unde și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

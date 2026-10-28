@@ -1,0 +1,83 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const expertizaTehnicaConstructii: SituationContent = {
+  slug: 'expertiza-tehnica--expertiza-tehnica-constructii',
+  categorie: 'expertiza-tehnica',
+  title: 'Expertiză tehnică pentru construcții',
+  seoTitle: 'Expertiză tehnică construcții: când e nevoie, cum alegi',
+  seoDescription: 'Ce este expertiza tehnică a unei construcții, când se cere, cine o poate face, ce conține raportul, de ce depinde costul și cum compari ofertele experților.',
+  summary: 'Ce este o expertiză tehnică, când se cere, cine o semnează, ce primești în raport și ce să întrebi un expert înainte de ofertă.',
+  sinonime: ['expertiza tehnica', 'expertiza tehnica constructii', 'expertiza tehnica constructii pret', 'pret expertiza tehnica intrare in legalitate', 'expert tehnic constructii', 'expertiza tehnica mlpat', 'expert mlpat', 'expert tehnic', 'expertiză tehnică', 'expertiză tehnică construcții', 'expertiză tehnică construcții preț', 'preț expertiză tehnică intrare în legalitate', 'expert tehnic construcții'],
+  intrebari: [
+    'Ce este o expertiză tehnică? | Este o analiză făcută de un specialist asupra unei construcții sau a unei părți din ea: starea structurii, cauzele unor degradări, conformitatea cu proiectul sau cu regulile aplicabile. Rezultatul este un raport scris, cu concluzii și, după caz, soluții.',
+    'Cine poate face expertiza tehnică? | Un expert tehnic atestat de ministerul de resort, cunoscut în practică după vechea denumire MLPAT. Atestarea se face pe domenii de activitate, deci verifică în ce domeniu este atestat expertul și dacă acel domeniu se potrivește lucrării tale.',
+    'Când am nevoie de expertiză tehnică? | De exemplu când apar fisuri sau deformări, înainte de o modificare structurală, după un incendiu sau un seism, într-un litigiu cu constructorul sau când autoritatea ori banca o cere pentru un dosar. Dacă nu ești sigur, întreabă la primărie sau la instituția care cere documentul.',
+    'Expertiza este același lucru cu o verificare a proiectului sau cu un audit energetic? | Nu. Verificarea proiectului o fac verificatori atestați în faza de proiectare, iar auditul energetic are alt scop și alt specialist. Expertiza tehnică analizează o construcție existentă sau o situație concretă.',
+    'Ce conține raportul de expertiză? | De regulă: descrierea construcției, documentele analizate, constatările din teren, concluziile și, unde este cazul, măsurile recomandate. Un raport care spune doar „corespunde” fără constatări detaliate este greu de folosit în fața unei autorități.',
+    'Mă ajută expertiza la intrarea în legalitate? | Poate face parte din dosar, dacă autoritatea o cere pentru situația ta. Ce se cere concret depinde de caz și de primărie, deci stabilește lista documentelor înainte de a comanda expertiza.',
+    'De ce depinde costul expertizei? | De tipul și mărimea construcției, de documentația existentă, de câte vizite și investigații sunt necesare, de domeniul în care se face expertiza și de scopul raportului. Cere o ofertă scrisă care spune ce intră în ea. Pentru repere vezi paginile de preț.',
+    'Pot folosi expertiza făcută de altcineva? | Uneori, dacă destinatarul o acceptă și dacă situația nu s-a schimbat. Întreabă instituția sau banca dacă acceptă un raport mai vechi sau cere unul nou.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Expertiză tehnică pentru construcții: cum alegi expertul', subtitle: 'Ce este, când se cere și ce trebuie să conțină raportul. Descrie situația și primești oferte de la specialiști, fără obligații.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine o face', value: 'Expert tehnic atestat' },
+      { label: 'Rezultat', value: 'Raport scris cu concluzii' },
+      { label: 'Primul pas', value: 'Clarifici cine cere raportul' },
+      { label: 'Oferta', value: 'Scop, vizite și conținut scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Expertiza tehnică răspunde unei întrebări concrete despre o construcție: este stabilă, de ce s-a degradat, se poate modifica, corespunde documentelor? Răspunsul vine de la un expert tehnic atestat, într-un raport pe care îl poți depune la o autoritate, la bancă sau în instanță.',
+      'Pagina te ajută să formulezi corect nevoia, să înțelegi ce primești și să compari ofertele. Nu înlocuiește expertul: concluziile le dă doar el, după ce vede construcția.',
+    ) }),
+    node('when-h', 'heading', { text: 'Când se face o expertiză', level: 'h2' }),
+    node('when', 'cards', { columns: '2', items: [
+      { title: 'Fisuri, tasări, deformări', text: 'Când apar semne de mișcare la ziduri, planșee sau fundație și vrei să știi dacă sunt periculoase și ce se poate face.' },
+      { title: 'Modificări la o construcție existentă', text: 'Înainte de a desființa un perete, de a adăuga un etaj sau de a schimba destinația, pentru a afla ce permite structura.' },
+      { title: 'După un eveniment', text: 'După incendiu, inundație sau seism, pentru a stabili dacă clădirea mai poate fi folosită și ce trebuie consolidat.' },
+      { title: 'Acte, bancă, litigii', text: 'Când o autoritate, o bancă sau o instanță cere un raport despre starea sau conformitatea construcției.' },
+      { title: 'Cumpărare sau vânzare', text: 'Pentru o părere independentă despre starea unei case sau a unui apartament, înainte de a semna.' },
+      { title: 'Lucrări executate necorespunzător', text: 'Când ai o dispută cu constructorul și ai nevoie de o constatare făcută de un terț.' },
+    ] }),
+    node('who-h', 'heading', { text: 'Cine face expertiza și ce verifici la expert', level: 'h2' }),
+    node('who', 'text', { body: para(
+      'Expertiza tehnică se face de un expert tehnic atestat de ministerul de resort, numit în practică și „expert MLPAT”. Atestarea este pe domenii, deci primul lucru de verificat este dacă domeniul expertului corespunde construcției tale și scopului raportului.',
+      'Cere să vezi atestatul și întreabă ce lucrări asemănătoare a făcut. Un expert serios îți spune de la început ce date îi trebuie, ce va măsura și ce nu poate afirma fără investigații suplimentare.',
+      'Expertul nu trebuie să aibă interes în lucrare: dacă firma care execută reparațiile și cea care face expertiza sunt aceeași, poate apărea un conflict de interese. Pentru un raport care convinge o autoritate sau o instanță, independența contează.',
+    ) }),
+    node('steps', 'steps', { title: 'Cum decurge o expertiză', items: [
+      { title: 'Clarifici scopul', text: 'Spui exact cui îi trebuie raportul și ce întrebare trebuie să lămurească. De aici depinde conținutul și domeniul expertului.' },
+      { title: 'Documentele existente', text: 'Aduni ce ai: proiect, autorizație, acte de proprietate, relevee, rapoarte mai vechi. Lipsa lor nu blochează lucrarea, dar o poate extinde.' },
+      { title: 'Vizita și constatările', text: 'Expertul vede construcția, măsoară, fotografiază și, dacă e nevoie, cere investigații sau încercări suplimentare.' },
+      { title: 'Analiza', text: 'Se compară ce s-a găsit cu documentele și cu regulile aplicabile și se stabilesc cauzele sau neconformitățile.' },
+      { title: 'Raportul', text: 'Primești raportul scris, semnat și ștampilat, cu concluzii și măsuri recomandate. Citește-l împreună cu expertul și cere lămuriri.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Comanzi expertiza înainte să știi cine o cere', text: 'Instituția poate cere un anumit domeniu sau o anumită formă; un raport greșit trebuie refăcut pe banii tăi.' },
+      { title: 'Alegi doar după cel mai mic preț', text: 'O ofertă fără vizită în teren și fără detalii despre investigații produce un raport subțire.' },
+      { title: 'Confunzi expertiza cu alte documente', text: 'Verificarea de proiect, auditul energetic și recepția sunt alte activități, cu alți specialiști.' },
+      { title: 'Ascunzi informații expertului', text: 'Modificările făcute fără acte sau reparațiile vechi trebuie spuse; altfel concluziile pot fi greșite.' },
+      { title: 'Pornești lucrările înainte de raport', text: 'Dacă expertul recomandă consolidări, devizul și proiectul se fac pe baza lui, nu invers.' },
+      { title: 'Nu ceri nimic în scris', text: 'Fără o ofertă care spune ce intră în expertiză, apar costuri suplimentare la fiecare vizită sau măsurătoare.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul unei expertize depinde de tipul și complexitatea construcției, de cât de bună este documentația existentă, de numărul vizitelor, de investigațiile sau încercările necesare, de domeniul de atestare cerut și de scopul raportului. O expertiză pentru o fisură locală nu se compară cu una pentru o clădire întreagă sau pentru un litigiu.',
+      'Pentru a compara ofertele, cere să fie scris ce include prețul: deplasările, măsurătorile, eventualele investigații făcute de terți și numărul de exemplare ale raportului. Ordinele de mărime le găsești în paginile de preț de mai jos.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum compari ofertele și alegi expertul', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Cere cel puțin două oferte și compară-le pe aceleași criterii: domeniul de atestare, ce se verifică, câte vizite sunt incluse, ce se întâmplă dacă apar investigații în plus și în ce interval este gata raportul.',
+      'Întreabă dacă expertul acceptă să explice raportul în fața autorității sau a băncii, dacă va fi nevoie. Pe IntraConstruct vezi specialiștii verificați și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre expertiza tehnică' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru expertiză tehnică' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la expertiză tehnică' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Ai nevoie de un expert tehnic?', text: 'Descrie construcția și scopul raportului și primești oferte de la specialiști verificați din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}

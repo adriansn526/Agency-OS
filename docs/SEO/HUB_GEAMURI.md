@@ -28,3 +28,14 @@ Niciunul în acest val: toate grupurile de mai sus au intenție „cine o face �
 - Gruparea s-a făcut manual din lista de idei, pe subiect și intenție, dar nu am verificat SERP-ul termen cu termen (nu am rulat SERP DataForSEO pentru aceste categorii). Pe termenii de produs (plasă gard, șapă autonivelantă, pavele) primele rezultate sunt probabil retaileri; nu am măsurat.
 - Excluse: termenii de cumpărare de produse (Dedeman, Leroy Merlin, Bilka, Hornbach, kituri, spray-uri), termenii sub ~20 de căutări pe lună, termenii care aparțin altor categorii (ex. centrale termice, încălzire în pardoseală, hidroizolații).
 - Nu s-au verificat poziții sau trafic în Search Console pentru aceste pagini.
+
+## Valul 3 (27.10.2026): situații adăugate după analiza gapurilor față de Daibau
+
+| # | Pagină (slug) | Termen principal (volum) | Termeni |
+|---|---|---|---|
+| 1 | **Plase de țânțari (rulou, plisse, magnetice)** (`plase-tantari`) | plase tantari (8100) | 11 variante |
+
+Termeni serviți:
+- `plase-tantari`: plase tantari; plasa tantari; plasa tantar; plasa de tantari; plase de tantari; plasa tantari rulou; plase tantari plisse; plasa tantari usa; plasa insecte; plase insecte; plasa tantari magnetica
+
+Sursele și limitele sunt cele din PLAN_SITUATII_VAL3.md (volume DataForSEO, gapuri din exportul daibau_ro_keywords.csv).

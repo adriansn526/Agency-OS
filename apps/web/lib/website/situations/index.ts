@@ -65,6 +65,58 @@ import { inchidereTerasaBalcon } from './terase-pergole-foisoare/inchidere-teras
 import { pergolaLemnAluminiu } from './terase-pergole-foisoare/pergola-lemn-aluminiu'
 import { pergolaRetractabilaBioclimatica } from './terase-pergole-foisoare/pergola-retractabila-bioclimatica'
 import { terasaLemnWpc } from './terase-pergole-foisoare/terasa-lemn-wpc'
+import { construirePiscina } from './piscine-saune/construire-piscina'
+import { incalzireIntretinerePiscina } from './piscine-saune/incalzire-intretinere-piscina'
+import { saunaJacuzzi } from './piscine-saune/sauna-jacuzzi'
+import { semineuPeLemne } from './sobe-semineuri/semineu-pe-lemne'
+import { sobaTeracota } from './sobe-semineuri/soba-teracota'
+import { sobeLemnePelet } from './sobe-semineuri/sobe-lemne-pelet'
+import { scariMetaliceBalustrade } from './structuri-metalice-fier-forjat/scari-metalice-balustrade'
+import { haleConstructiiMetalice } from './structuri-metalice-fier-forjat/hale-constructii-metalice'
+import { marchizeCopertine } from './structuri-metalice-fier-forjat/marchize-copertine'
+import { usiMetalice } from './structuri-metalice-fier-forjat/usi-metalice'
+import { amenajareGradinaCurte } from './amenajari-gradini/amenajare-gradina-curte'
+import { gazonIrigatii } from './amenajari-gradini/gazon-irigatii'
+import { gardViu } from './amenajari-gradini/gard-viu'
+import { seraSolarii } from './sere/sera-solarii'
+import { liftCasaExterior } from './lifturi/lift-casa-exterior'
+import { liftBlocDizabilitati } from './lifturi/lift-bloc-dizabilitati'
+import { alpinismUtilitar } from './lucru-la-inaltime/alpinism-utilitar'
+import { inchiriereSchela } from './inchirieri-utilaje-schele/inchiriere-schela'
+import { inchiriereBuldoexcavatorMiniexcavator } from './inchirieri-utilaje-schele/inchiriere-buldoexcavator-miniexcavator'
+import { evaluareImobilRaport } from './evaluare-imobiliara/evaluare-imobil-raport'
+import { containereLocuit } from './case-modulare/containere-locuit'
+import { caseModulareLaCheie } from './case-modulare/case-modulare-la-cheie'
+import { caseStructuraMetalicaLemn } from './case-modulare/case-structura-metalica-lemn'
+import { proiectCasa } from './proiectare-arhitectura/proiect-casa'
+import { designInterior } from './proiectare-arhitectura/design-interior'
+import { usiInterior } from './tamplarie-dulgherie/usi-interior'
+import { usiExteriorIntrare } from './tamplarie-dulgherie/usi-exterior-intrare'
+import { usiGaraj } from './tamplarie-dulgherie/usi-garaj'
+import { firmaConstructiiManopera } from './constructii-cladiri/firma-constructii-manopera'
+import { bransamentGazeApaCanalizare } from './retele-bransamente-gaze/bransament-gaze-apa-canalizare'
+import { revizieVerificareInstalatieGaze } from './instalatii-gaze/revizie-verificare-instalatie-gaze'
+import { detectorGaze } from './instalatii-gaze/detector-gaze'
+import { instalatorAutorizatGazeAnre } from './instalatii-gaze/instalator-autorizat-gaze-anre'
+import { forajPutApa } from './foraj-sondaj/foraj-put-apa'
+import { studiuGeotehnic } from './foraj-sondaj/studiu-geotehnic'
+import { renovareBaie } from './renovari-amenajari-interioare/renovare-baie'
+import { renovareApartament } from './renovari-amenajari-interioare/renovare-apartament'
+import { piatraDecorativaTravertin } from './pardoseli-placari/piatra-decorativa-travertin'
+import { linoleumMochetaVinil } from './pardoseli-placari/linoleum-mocheta-vinil'
+import { certificatUrbanism } from './autorizari-avize/certificat-urbanism'
+import { autorizatieConstruire } from './autorizari-avize/autorizatie-construire'
+import { autorizareIsu } from './autorizari-avize/autorizare-isu'
+import { cadastruIntabulare } from './topografie-cadastru/cadastru-intabulare'
+import { topografMasuratori } from './topografie-cadastru/topograf-masuratori'
+import { certificatEnergetic } from './audit-certificat-energetic/certificat-energetic'
+import { camereSupraveghere } from './securitate-automatizari/camere-supraveghere'
+import { interfonVideointerfon } from './securitate-automatizari/interfon-videointerfon'
+import { alarmaSmartHome } from './securitate-automatizari/alarma-smart-home'
+import { demolareCasaConstructii } from './demolari/demolare-casa-constructii'
+import { expertizaTehnicaConstructii } from './expertiza-tehnica/expertiza-tehnica-constructii'
+import { diriginteSantierAutorizat } from './diriginte-santier/diriginte-santier-autorizat'
+import { plaseTantari } from './geamuri/plase-tantari'
 
 export interface SituationContent {
   /** `<categorie>--<situație>` */
@@ -157,5 +209,57 @@ export const SITUATIONS: SituationContent[] = [
   inchidereTerasaBalcon,
   pergolaLemnAluminiu,
   pergolaRetractabilaBioclimatica,
-  terasaLemnWpc,
+  terasaLemnWpc,  // wave 3 (docs/SEO/PLAN_SITUATII_VAL3.md)
+  construirePiscina,
+  incalzireIntretinerePiscina,
+  saunaJacuzzi,
+  semineuPeLemne,
+  sobaTeracota,
+  sobeLemnePelet,
+  scariMetaliceBalustrade,
+  haleConstructiiMetalice,
+  marchizeCopertine,
+  usiMetalice,
+  amenajareGradinaCurte,
+  gazonIrigatii,
+  gardViu,
+  seraSolarii,
+  liftCasaExterior,
+  liftBlocDizabilitati,
+  alpinismUtilitar,
+  inchiriereSchela,
+  inchiriereBuldoexcavatorMiniexcavator,
+  evaluareImobilRaport,
+  containereLocuit,
+  caseModulareLaCheie,
+  caseStructuraMetalicaLemn,
+  proiectCasa,
+  designInterior,
+  usiInterior,
+  usiExteriorIntrare,
+  usiGaraj,
+  firmaConstructiiManopera,
+  bransamentGazeApaCanalizare,
+  revizieVerificareInstalatieGaze,
+  detectorGaze,
+  instalatorAutorizatGazeAnre,
+  forajPutApa,
+  studiuGeotehnic,
+  renovareBaie,
+  renovareApartament,
+  piatraDecorativaTravertin,
+  linoleumMochetaVinil,
+  certificatUrbanism,
+  autorizatieConstruire,
+  autorizareIsu,
+  cadastruIntabulare,
+  topografMasuratori,
+  certificatEnergetic,
+  camereSupraveghere,
+  interfonVideointerfon,
+  alarmaSmartHome,
+  demolareCasaConstructii,
+  expertizaTehnicaConstructii,
+  diriginteSantierAutorizat,
+  plaseTantari,
 ]

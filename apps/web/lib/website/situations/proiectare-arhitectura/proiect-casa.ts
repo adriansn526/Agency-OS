@@ -1,0 +1,85 @@
+import type { SituationContent } from '../index'
+import { node, para } from '../../services/types'
+
+export const proiectCasa: SituationContent = {
+  slug: 'proiectare-arhitectura--proiect-casa',
+  categorie: 'proiectare-arhitectura',
+  title: 'Proiect de casă: parter, mansardă, etaj',
+  seoTitle: 'Proiect de casă: parter, mansardă, etaj și ce primești',
+  seoDescription: 'Proiect de casă: cine îl face, ce conține, proiect-tip sau personalizat, parter, mansardă sau etaj, drepturi de autor, de ce depinde costul, cum alegi proiectantul.',
+  summary: 'Cine face un proiect de casă, ce conține, diferența dintre proiectul-tip și cel personalizat, parter, mansardă sau etaj și cum alegi proiectantul.',
+  sinonime: ['proiect casa', 'proiecte case', 'proiectare casa', 'proiecte casa', 'proiect casa cu mansarda', 'proiect casa parter', 'proiecte case parter', 'proiect casa simpla', 'proiect case mici', 'proiect casa cu etaj', 'modele de case', 'proiect casă', 'proiecte case', 'proiectare casă', 'proiecte casă', 'proiect casă cu mansardă', 'proiect casă parter', 'proiecte case parter', 'proiect casă simplă', 'proiect case mici', 'proiect casă cu etaj'],
+  intrebari: [
+    'Cine poate face proiectul unei case? | Un arhitect sau un proiectant autorizat, iar pentru structură și instalații intervin specialiști ai fiecărui domeniu. Documentația care se depune pentru autorizare trebuie semnată și ștampilată de persoanele care au dreptul legal să o facă.',
+    'Ce conține un proiect de casă? | De regulă, partea de arhitectură (planuri, fațade, secțiuni), partea de structură, instalațiile (electrice, sanitare, termice) și, pentru autorizare, documentele cerute de primărie. Ce anume e inclus se stabilește în contractul cu proiectantul.',
+    'Care este diferența dintre un proiect-tip și un proiect personalizat? | Proiectul-tip este un model gata făcut, care trebuie adaptat terenului și cerințelor locale. Cel personalizat pornește de la nevoile tale, de la teren și de la regulile zonei. Cere să știi ce adaptări sunt incluse și ce se plătește separat.',
+    'Pot folosi un model de casă văzut pe internet? | Modelele sunt protejate de drepturi de autor. Pentru a-l construi ai nevoie de acordul autorului sau al firmei care îl deține și de adaptarea la terenul tău. Nu copia planuri fără acord.',
+    'Cum aleg între parter, mansardă și etaj? | Depinde de suprafața terenului, de regulile urbanistice, de buget, de număr de persoane și de felul în care vrei să locuiești. Parterul simplifică circulația și scările, mansarda și etajul folosesc mai bine terenul mic, dar adaugă scară și structură mai complexă.',
+    'Ce acte sunt necesare înainte de proiect? | De obicei, actele terenului și un certificat de urbanism, care arată ce se poate construi acolo. Detaliile depind de localitate, de aceea întreabă la primărie ce documente se cer.',
+    'De ce depinde costul proiectului? | De suprafață și complexitate, de cât de personalizat este, de ce părți cuprinde (arhitectură, structură, instalații), de nevoia de studii pe teren și de serviciile de după proiect, cum ar fi asistența tehnică. Cere oferta pe etape.',
+  ],
+  blocks: [
+    node('hero', 'hero', { title: 'Proiect de casă: ce primești și cum alegi proiectantul', subtitle: 'Parter, mansardă sau etaj, proiect-tip sau personalizat: ce conține proiectul și ce întrebi înainte să semnezi. Ceri oferte gratuite.', buttonLabel: 'Cere oferte gratuite', checks: ['Gratuit', 'Fără obligații'], bg: 'dark' }),
+    node('facts', 'facts', { items: [
+      { label: 'Cine îl semnează', value: 'Proiectant sau arhitect autorizat' },
+      { label: 'Primul pas', value: 'Certificat de urbanism, teren' },
+      { label: 'Atenție', value: 'Drepturile de autor ale modelului' },
+      { label: 'Oferta', value: 'Pe etape, cu livrabile scrise' },
+    ] }),
+    node('intro', 'text', { body: para(
+      'Proiectul este documentul după care se obține autorizația și după care se construiește casa. Căutările de „proiecte de case” aduc multe modele; între o imagine frumoasă și un proiect gata de construit există însă pași: adaptarea la teren, partea de structură și instalații și actele cerute de primărie.',
+      'Pagina explică ce primești de la un proiectant, cum diferă un proiect-tip de unul personalizat, ce schimbă parterul, mansarda sau etajul și ce întrebi la ofertă. Designul interior are pagina lui, la care trimitem mai jos.',
+    ) }),
+    node('what-h', 'heading', { text: 'Ce poate conține un proiect', level: 'h2' }),
+    node('what', 'cards', { columns: '2', items: [
+      { title: 'Arhitectură', text: 'Planuri, fațade și secțiuni: cum sunt împărțite camerele, cum arată casa, cum se așază pe teren.' },
+      { title: 'Structură', text: 'Fundația, pereții portanți, planșeele și acoperișul, calculate de un inginer constructor.' },
+      { title: 'Instalații', text: 'Electrice, sanitare, termice și de ventilare, proiectate de specialiști ai fiecărui domeniu.' },
+      { title: 'Documentația pentru autorizare', text: 'Actele și planșele cerute de primărie; conținutul exact se află de la instituție.' },
+    ] }),
+    node('where-h', 'heading', { text: 'Parter, mansardă sau etaj', level: 'h2' }),
+    node('where', 'text', { body: para(
+      'Casa cu parter este simplă ca circulație și accesibilă, dar ocupă mai mult din teren. Mansarda folosește spațiul de sub acoperiș, cu fațade mai joase și tavane înclinate. Etajul adaugă o scară și o structură mai complexă, în schimbul unei suprafețe mai mari pe același teren.',
+      'O casă mică sau simplă nu înseamnă proiect mai ieftin sau mai scurt automat: și aici trebuie structură, instalații și acte. Regulile zonei (retrageri, înălțime, procent de ocupare) pot limita variantele, de aceea pornește de la ce permite certificatul de urbanism.',
+    ) }),
+    node('steps-h', 'steps', { title: 'Ordinea pașilor', items: [
+      { title: 'Teren și certificat de urbanism', text: 'Afli ce se poate construi pe teren și ce condiții impune zona, de la primărie.' },
+      { title: 'Temă de proiectare', text: 'Descrii nevoile: număr de camere, mod de viață, buget, preferințe pentru parter, mansardă sau etaj.' },
+      { title: 'Schițe și variante', text: 'Proiectantul propune soluții de plan și volum; alegi una și o ajustezi.' },
+      { title: 'Proiect tehnic', text: 'Se detaliază structura și instalațiile, de către specialiști ai fiecărui domeniu.' },
+      { title: 'Documentația pentru autorizare', text: 'Se întocmește dosarul și se depune, iar proiectantul răspunde la observațiile primite.' },
+      { title: 'Asistență la execuție', text: 'Proiectantul poate urmări lucrarea și clarifica detaliile; stabilește de la început dacă serviciul e inclus.' },
+    ] }),
+    node('mist-h', 'heading', { text: 'Greșeli frecvente', level: 'h2' }),
+    node('mist', 'cards', { columns: '2', items: [
+      { title: 'Proiect ales înainte de teren', text: 'Un model frumos poate să nu încapă sau să nu respecte regulile zonei.' },
+      { title: 'Copierea unui model', text: 'Modelele au autori; folosirea fără acord poate crea probleme.' },
+      { title: 'Ofertă care nu spune ce include', text: 'Fără listă de livrabile, nu știi dacă structura și instalațiile sunt în preț.' },
+      { title: 'Lipsa studiului de teren', text: 'Fundația se stabilește în funcție de teren; decizia fără date duce la surprize.' },
+      { title: 'Camere mari, instalații uitate', text: 'Poziția băii și a bucătăriei influențează mult traseele; gândește-le din start.' },
+      { title: 'Modificări după autorizare', text: 'Schimbările importante cer, de regulă, acte noi; discută-le înainte.' },
+    ] }),
+    node('cost-h', 'heading', { text: 'De ce depinde costul', level: 'h2' }),
+    node('cost', 'text', { body: para(
+      'Costul depinde de suprafața și complexitatea casei, de cât de personalizat e proiectul, de părțile incluse (arhitectură, structură, instalații), de studiile de teren și de serviciile suplimentare, cum ar fi asistența tehnică sau randările.',
+      'Un proiect-tip adaptat poate fi mai simplu decât unul personalizat, dar adaptarea are și ea un cost. Cere oferta pe etape, cu livrabilele numite. Pentru ordin de mărime, vezi paginile de preț de mai jos.',
+    ) }),
+    node('compare-h', 'heading', { text: 'Cum compari ofertele', level: 'h2' }),
+    node('compare', 'text', { body: para(
+      'Compară ce primești la fiecare etapă: schițe, proiect tehnic, dosar de autorizare, asistență la execuție. Verifică dacă prețul include structura și instalațiile sau doar arhitectura, câte variante de plan sunt incluse și cum se tratează modificările cerute de tine.',
+      'Cere să vezi lucrări anterioare, de dimensiuni apropiate, și întreabă cine semnează fiecare parte a proiectului.',
+    ) }),
+    node('choose-h', 'heading', { text: 'Cum alegi proiectantul', level: 'h2' }),
+    node('choose', 'text', { body: para(
+      'Alege un proiectant sau un birou de arhitectură care are dreptul să semneze documentația, îți explică etapele și răspunde clar la întrebările despre acte. Cere contract scris, cu etape, livrabile și drepturile asupra proiectului.',
+      'Pe IntraConstruct vezi firmele verificate și recenziile clienților.',
+    ) }),
+    node('faq', 'faq_list', { title: 'Întrebări frecvente despre proiectul de casă' }),
+    node('prices', 'price_links', { title: 'Prețuri pentru proiectare și construcții' }),
+    node('situation-links', 'situation_links', { title: 'Alte situații la proiectare și arhitectură' }),
+    node('guides', 'guide_links', { title: 'Ghiduri utile' }),
+    node('firms', 'firms_list', { title: 'Firme care fac această lucrare', limit: '6' }),
+    node('cta', 'request_cta', { title: 'Cauți un proiectant pentru casa ta?', text: 'Descrie terenul și ce casă îți dorești și primești oferte de la firme verificate din zona ta, fără obligații.', buttonLabel: 'Cere oferte gratuite' }),
+    node('form', 'request_form', {}),
+  ],
+}
