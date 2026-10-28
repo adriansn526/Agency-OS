@@ -39,3 +39,9 @@ test('a page that already has blocks needs --force even with --only; an unknown 
   assert.ok(bad.problems.some((x) => x.includes('nu-exista')))
   await assert.rejects(() => S.applyServices(bad), /Conținut invalid/)
 })
+test('a pillar of a category that this same run creates is not a problem; a pillar of a category that is missing and not created is', { skip }, async () => {
+  const p = await S.planServices('bl', false)
+  assert.ok(p.categoriesToCreate.some((c) => c.slug === 'piscine-saune')); assert.ok(p.pagesToWrite.some((c) => c.slug === 'piscine-saune'))
+  assert.ok(!p.problems.some((x) => x.startsWith('piscine-saune:')), 'the new category is created before its page is written')
+  assert.ok(p.problems.some((x) => x.startsWith('climatizare:')), 'a missing category that is not created stays a problem')
+})

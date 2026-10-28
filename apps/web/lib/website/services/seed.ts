@@ -63,7 +63,7 @@ export async function planServices(lineSlug: string, force = false, only?: strin
     reroutes: only ? [] : reroutes,
     pagesToWrite, pagesSkipped: SERVICE_CONTENT.filter((c) => inScope(c) && !pagesToWrite.includes(c)).map((c) => c.slug),
     missingGroups: only ? [] : NEW_CATEGORIES.map((c) => c.group).filter((g) => !groups.has(g)),
-    problems: [...unknownOnly.map((s) => `--only: „${s}” nu este o pagină scrisă`), ...SERVICE_CONTENT.filter(inScope).flatMap(validateContent), ...SERVICE_CONTENT.filter((c) => inScope(c) && !bySlug.has(c.slug)).map((c) => `${c.slug}: categoria nu există în glosar`)],
+    problems: [...unknownOnly.map((s) => `--only: „${s}” nu este o pagină scrisă`), ...SERVICE_CONTENT.filter(inScope).flatMap(validateContent), ...SERVICE_CONTENT.filter((c) => inScope(c) && !bySlug.has(c.slug) && !newCats.some((n) => n.slug === c.slug)).map((c) => `${c.slug}: categoria nu există în glosar`)],
   }
 }
 
