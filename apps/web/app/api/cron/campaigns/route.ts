@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
           if (!withinSendingWindow(now, await loadSendingWindow(campaign.businessLineId))) { results.push({ id: campaign.id, name: campaign.name, sent: 0, status: 'waiting for the sending window' }); continue }
           const channel = await db.websiteChannel.findUnique({ where: { businessLineId: campaign.businessLineId }, select: { siteUrl: true } })
           const siteUrl = channel?.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || 'https://intraconstruct.ro'
-          const r = await dispatchEmails(pendingLeads.slice(0, 50) as any, { campaignId: campaign.id, lineSlug: (campaign as any).businessLine?.slug, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(siteUrl, e) }, undefined, now)
+          const r = await dispatchEmails(pendingLeads.slice(0, 50) as any, { campaignId: campaign.id, lineSlug: (campaign as any).businessLine?.slug, brandName: (campaign as any).businessLine?.name, subject: campaign.template?.subject ?? null, unsubscribeUrl: (e) => unsubscribeUrl(siteUrl, e) }, undefined, now)
           sentCount += r.sent
         }
 

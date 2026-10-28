@@ -1,7 +1,7 @@
 /** Run with: npx tsx --test lib/website/storefront/__tests__/storefront.test.ts */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { generateWebsiteKey, hashWebsiteKey, keyMatches, parseStoredKeys, WEBSITE_KEY_RE } from '../keys'
+import { findMatchingKey, generateWebsiteKey, hashWebsiteKey, keyMatches, parseStoredKeys, WEBSITE_KEY_RE } from '../keys'
 import { parseListQuery } from '../query'
 import { serializeDetail, serializeListItem } from '../serialize'
 import { WebsiteInputError } from '../auth'
@@ -17,6 +17,19 @@ test('generated keys have the ws_ prefix, match their hash and nothing else', ()
   assert.equal(keyMatches([a.stored], a.key), true)
   assert.equal(keyMatches([a.stored], b.key), false)
   assert.equal(keyMatches([], a.key), false)
+})
+
+test('one key per site: the matching key carries its brand and site, a plain key carries neither', () => {
+  const top = generateWebsiteKey('TopDoctori', { brand: 'topdoctori', brandName: 'TopDoctori', siteUrl: 'https://topdoctori.ro' })
+  const chir = generateWebsiteKey('DoctorChirurg', { brand: 'doctorchirurg', siteUrl: 'https://doctorchirurg.ro' })
+  const plain = generateWebsiteKey('Plain')
+  const stored = [top.stored, chir.stored, plain.stored]
+  assert.equal(findMatchingKey(stored, chir.key)?.siteUrl, 'https://doctorchirurg.ro')
+  assert.equal(findMatchingKey(stored, top.key)?.brand, 'topdoctori')
+  assert.equal(findMatchingKey(stored, top.key)?.brandName, 'TopDoctori')
+  assert.equal(findMatchingKey(stored, plain.key)?.brand, undefined)
+  assert.equal(findMatchingKey(stored, 'ws_unknown'), null)
+  assert.equal(parseStoredKeys(JSON.parse(JSON.stringify(stored)))[0]?.siteUrl, 'https://topdoctori.ro')
 })
 
 test('the stored record never contains the plain key', () => {

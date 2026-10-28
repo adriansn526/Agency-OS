@@ -5,9 +5,12 @@ import { AdminError } from '../admin/errors'
 
 const DOMAIN_RE = /^(?=.{4,253}$)(?!-)([a-z0-9-]{1,63}(?<!-)\.)+[a-z]{2,24}$/
 
+/** The platform's own sites cannot be claimed as a partner's domain. */
+const RESERVED = /(^|\.)(intraconstruct|topdoctori|doctorchirurg|omniamed)\.ro$/
+
 export function parseDomain(raw: unknown): string | null {
   const v = String(raw ?? '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '')
-  return DOMAIN_RE.test(v) && !/(^|\.)intraconstruct\.ro$/.test(v) ? v : null
+  return DOMAIN_RE.test(v) && !RESERVED.test(v) ? v : null
 }
 
 export const domainRequestInput = z.object({ domain: z.unknown(), note: z.string().trim().max(500).optional() })
