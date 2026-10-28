@@ -1,5 +1,6 @@
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
+import { getTaxonomy } from '../glossary/live'
 import { activeCmr, CMR_KEY, decodeCmr } from '../verification/cmr-data'
 import { endorseInput, isCounted, MONTHLY_LIMIT, sharesClinic, visibilityInput, WINDOW_DAYS } from './rules'
 
@@ -21,6 +22,11 @@ export async function endorse(endorser: Doctor, raw: unknown, now = new Date()) 
   const target = await db.websiteEntry.findFirst({ where: { businessLineId: me.businessLineId, slug: input.slug, status: 'published', collection: { key: 'companii' } }, select: { id: true, title: true, data: true } })
   if (!target) throw new AdminError('Medicul nu există', 404)
 
+  // "for" must be something the colleague really lists on the profile
+  const listed = new Set(((target.data as { servicii?: unknown } | null)?.servicii as string[] | undefined) ?? [])
+  const notListed = (input.servicii ?? []).filter((s) => !listed.has(s))
+  if (notListed.length) throw new AdminError('Poți recomanda doar pentru ce face colegul, conform profilului lui', 422, notListed)
+
   const existing = await db.websiteEndorsement.findUnique({ where: { endorserId_endorseeId: { endorserId: me.id, endorseeId: target.id } } })
   if (existing?.status === 'removed') throw new AdminError('Această recomandare a fost scoasă de echipă', 403)
   const isNew = !existing || existing.status !== 'active'
@@ -29,14 +35,14 @@ export async function endorse(endorser: Doctor, raw: unknown, now = new Date()) 
     if (recent >= MONTHLY_LIMIT) throw new AdminError(`Poți face cel mult ${MONTHLY_LIMIT} recomandări noi la 30 de zile`, 429)
   }
 
-  const data = { note: input.note || null, ...(input.showName !== undefined ? { showName: input.showName } : {}), sameClinic: sharesClinic(me.data, target.data), status: 'active', ...(isNew ? { endorsedAt: now } : {}) }
+  const data = { note: input.note || null, ...(input.showName !== undefined ? { showName: input.showName } : {}), ...(input.servicii !== undefined ? { forServicii: input.servicii } : {}), sameClinic: sharesClinic(me.data, target.data), status: 'active', ...(isNew ? { endorsedAt: now } : {}) }
   const row = await db.websiteEndorsement.upsert({
     where: { endorserId_endorseeId: { endorserId: me.id, endorseeId: target.id } },
     create: { businessLineId: me.businessLineId, endorserId: me.id, endorseeId: target.id, ...data, showName: input.showName ?? false, endorsedAt: now },
     update: data,
   })
   await audit(me, isNew ? 'endorsement_created' : 'endorsement_updated', { endorsee: target.id, endorseeTitle: target.title })
-  return { id: row.id, endorsee: { slug: input.slug, title: target.title }, note: row.note, showName: row.showName, counted: !row.sameClinic }
+  return { id: row.id, endorsee: { slug: input.slug, title: target.title }, note: row.note, showName: row.showName, servicii: input.servicii ?? ((row.forServicii as string[] | null) ?? []), counted: !row.sameClinic }
 }
 
 export async function withdraw(endorser: Doctor, id: string) {
@@ -65,13 +71,13 @@ export async function listMine(me: Doctor, now = new Date()) {
   const since = new Date(now.getTime() - WINDOW_DAYS * DAY)
   const used = await db.websiteEndorsement.count({ where: { endorserId: me.id, endorsedAt: { gt: since } } })
   return {
-    given: given.map((g) => ({ id: g.id, slug: g.endorsee.slug, title: g.endorsee.title, note: g.note, showName: g.showName, counted: !g.sameClinic })),
+    given: given.map((g) => ({ id: g.id, slug: g.endorsee.slug, title: g.endorsee.title, note: g.note, showName: g.showName, servicii: (g.forServicii as string[] | null) ?? [], counted: !g.sameClinic })),
     received: { total: receivedRows, counted: summary?.count ?? 0 },
     limit: { used, max: MONTHLY_LIMIT, windowDays: WINDOW_DAYS },
   }
 }
 
-export interface EndorsementSummary { count: number; items: { slug: string; title: string; specialty: string | null; note: string | null }[] }
+export interface EndorsementSummary { count: number; items: { slug: string; title: string; specialty: string | null; note: string | null; servicii: { slug: string; title: string }[] }[] }
 
 /** Public summary per endorsee: the counted endorsements and, of those, the ones whose author agreed to be named. */
 export async function summaries(lineId: string, endorseeIds: string[], now = new Date()): Promise<Map<string, EndorsementSummary>> {
@@ -80,15 +86,21 @@ export async function summaries(lineId: string, endorseeIds: string[], now = new
   const rows = await db.websiteEndorsement.findMany({
     where: { businessLineId: lineId, endorseeId: { in: endorseeIds }, status: 'active', endorser: { status: 'published' } },
     orderBy: { endorsedAt: 'desc' },
-    include: { endorser: { select: { slug: true, title: true, data: true } } },
+    include: { endorser: { select: { slug: true, title: true, data: true } }, endorsee: { select: { data: true } } },
   })
+  const tax = await getTaxonomy(lineId)
   const back = await db.websiteEndorsement.findMany({ where: { businessLineId: lineId, endorserId: { in: endorseeIds }, status: 'active' }, select: { endorserId: true, endorseeId: true } })
   const backSet = new Set(back.map((b) => `${b.endorserId}>${b.endorseeId}`))
   for (const r of rows) {
     if (!isCounted({ endorserId: r.endorserId, endorseeId: r.endorseeId, sameClinic: r.sameClinic, endorserCmrActive: cmrActive(r.endorser.data, now) }, backSet)) continue
     const s = out.get(r.endorseeId) ?? { count: 0, items: [] }
     s.count++
-    if (r.showName) s.items.push({ slug: r.endorser.slug, title: r.endorser.title, specialty: String((r.endorser.data as { specializare?: unknown } | null)?.specializare ?? '') || null, note: r.note })
+    if (r.showName) {
+      // only areas the colleague still lists, with their titles
+      const listed = new Set(((r.endorsee.data as { servicii?: unknown } | null)?.servicii as string[] | undefined) ?? [])
+      const servicii = ((r.forServicii as string[] | null) ?? []).filter((x) => listed.has(x)).map((x) => ({ slug: x, title: tax.categories.find((c) => c.slug === x)?.title ?? x }))
+      s.items.push({ slug: r.endorser.slug, title: r.endorser.title, specialty: String((r.endorser.data as { specializare?: unknown } | null)?.specializare ?? '') || null, note: r.note, servicii })
+    }
     out.set(r.endorseeId, s)
   }
   return out

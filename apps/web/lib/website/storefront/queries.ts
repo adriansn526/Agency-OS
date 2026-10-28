@@ -38,6 +38,12 @@ const ORDER: Record<string, Prisma.WebsiteEntryOrderByWithRelationInput[]> = {
 
 /** Doctor endorsements only exist for collections that declare `cod_parafa` (the medical line); a database without the table yet answers "none" instead of failing the listing. */
 const hasEndorsements = (c: { key: string; fields: unknown }) => c.key === 'companii' && Array.isArray(c.fields) && (c.fields as { key?: string }[]).some((f) => f.key === 'cod_parafa')
+/** The team can switch the public display of endorsements off at once (WebsiteChannel.config.endorsementsPublic; off unless true). */
+async function endorsementsPublic(ctx: WebsiteContext) {
+  const c = await db.websiteChannel.findUnique({ where: { id: ctx.channelId }, select: { config: true } })
+  return (c?.config as { endorsementsPublic?: unknown } | null)?.endorsementsPublic === true
+}
+
 async function endorsementSummaries(lineId: string, ids: string[]) {
   try { return await summaries(lineId, ids) } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2021') return new Map<string, Awaited<ReturnType<typeof summaries>> extends Map<string, infer V> ? V : never>()
@@ -77,7 +83,6 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
     db.websiteEntry.count({ where }),
     db.websiteEntry.findMany({ where, orderBy: ORDER[q.sort], skip: (q.page - 1) * q.limit, take: q.limit, include: { parent: { select: PARENT_SELECT }, _count: { select: { foundingSlots: true } } } }),
   ])
-  const endo = hasEndorsements(collection) ? await endorsementSummaries(ctx.businessLineId, rows.map((r) => r.id)) : null
   // `facet=county`: number of published entries per county for the same filters (without the county filter itself)
   let facets: { county: { value: string; count: number }[] } | undefined
   if (sp.get('facet') === 'county') {
@@ -88,7 +93,7 @@ export async function listEntries(ctx: WebsiteContext, sp: URLSearchParams) {
   return {
     collection: serializeCollection(collection),
     total, page: q.page, limit: q.limit, pages: Math.max(1, Math.ceil(total / q.limit)),
-    items: rows.map((e) => ({ ...serializeListItem(e, collection.key, tax.categories), ...(endo ? { endorsementCount: endo.get(e.id)?.count ?? 0 } : {}) })),
+    items: rows.map((e) => serializeListItem(e, collection.key, tax.categories)),
     ...(facets ? { facets } : {}),
   }
 }
@@ -109,8 +114,10 @@ export async function getEntry(ctx: WebsiteContext, collectionKey: string, slug:
   if (!entry) return null
   const detail = serializeDetail(entry, collection.key, entry.media, entry.reviews, (await getTaxonomy(ctx.businessLineId)).categories)
   if (!hasEndorsements(collection)) return detail
-  const e = (await endorsementSummaries(ctx.businessLineId, [entry.id])).get(entry.id)
-  return { ...detail, endorsements: e ?? { count: 0, items: [] } }
+  // names only (no counts, no ranking), and only while the line's switch is on
+  const on = await endorsementsPublic(ctx)
+  const e = on ? (await endorsementSummaries(ctx.businessLineId, [entry.id])).get(entry.id) : undefined
+  return { ...detail, endorsements: { items: e?.items ?? [] } }
 }
 
 /** Slugs and last-modified dates of everything published, for the site's sitemap. */

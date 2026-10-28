@@ -95,6 +95,13 @@ export function OverviewTab({ lineId, overview, reload }: { lineId: string; over
             <p className="text-xs text-muted-foreground mt-1">Ora României. În afara ferestrei, butonul „Trimite SMS” e blocat și campaniile de email așteaptă următoarea rulare. Prospectarea în afara programului obișnuit poate deranja și are riscuri juridice.</p>
           </div>
           <div>
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <input type="checkbox" checked={!!channel.endorsementsPublic} disabled={busy === "endorse"} onChange={(e) => run("endorse", () => api(`/api/website/channel?${q}`, "PATCH", { endorsementsPublic: e.target.checked }), e.target.checked ? "Recomandările apar pe site" : "Recomandările au fost ascunse")} />
+              Afișează pe site „Recomandat de colegi”
+            </label>
+            <p className="text-xs text-muted-foreground mt-1">Doar numele medicilor care au acceptat să fie numiți, fără numere și fără clasament. Debifează ca să ascunzi imediat toate recomandările (de exemplu la o solicitare a colegiului).</p>
+          </div>
+          <div>
             <label className={labelCls} htmlFor="legal-email">Email de contact în documentele juridice</label>
             <div className="flex items-center gap-2">
               <input id="legal-email" type="email" className={inputCls} placeholder="parteneri@intraconstruct.ro" value={legalEmail} onChange={(e) => setLegalEmail(e.target.value)} />
