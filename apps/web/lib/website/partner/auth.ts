@@ -81,8 +81,8 @@ export async function requestLogin(lineId: string, rawIdentifier: unknown, o: { 
     const list = links.map((l) => `<li><a href="${l.url}">${escapeHtml(l.title)}</a></li>`).join('')
     await o.notifier.email(
       id.value, `Intră în profilul tău ${brand}`,
-      `<p>Bună ziua,</p><p>Apăsați pe link pentru a intra în profilul firmei (valabil 30 de minute, o singură dată):</p><ul>${list}</ul><p>Dacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.</p>`,
-      `Bună ziua,\n\nIntrați în profilul firmei (link valabil 30 de minute, o singură dată):\n${links.map((l) => `${l.title}: ${l.url}`).join('\n')}\n\nDacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.`,
+      `<p>Bună ziua,</p><p>Apăsați pe link pentru a intra în profilul tău (valabil 30 de minute, o singură dată):</p><ul>${list}</ul><p>Dacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.</p>`,
+      `Bună ziua,\n\nIntrați în profilul tău (link valabil 30 de minute, o singură dată):\n${links.map((l) => `${l.title}: ${l.url}`).join('\n')}\n\nDacă nu ați cerut dumneavoastră acest mesaj, îl puteți ignora.`,
     )
     return
   }
