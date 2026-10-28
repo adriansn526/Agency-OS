@@ -29,10 +29,10 @@ const COLLECTIONS: { key: string; name: string; namePlural: string; kind: string
       { key: 'tip', type: 'select', label: 'Tip', options: ['medic', 'clinica'], filterable: true },
       { key: 'specializare', type: 'text', label: 'Specialitate principală', filterable: true },
       { key: 'servicii', type: 'list', label: 'Specialități și afecțiuni tratate (categorii)', filterable: true },
-      { key: 'clinici', type: 'list', label: 'Clinici și cabinete' },
+      { key: 'clinici', type: 'list', label: 'Clinici și cabinete (Nume | Oraș sau adresă)' },
       { key: 'tarif_consultatie', type: 'number', label: 'Tarif consultație (RON)' },
       { key: 'limbi', type: 'list', label: 'Limbi vorbite' },
-      { key: 'consult_online', type: 'select', label: 'Consult online', options: ['da', 'nu'], filterable: true },
+      { key: 'consult_online', type: 'select', label: 'e-Consultanță (consult online)', options: ['da', 'nu'], filterable: true },
       { key: 'program', type: 'text', label: 'Program de lucru' },
       { key: 'certificari', type: 'list', label: 'Competențe și atestate' },
       { key: 'experienta_ani', type: 'number', label: 'Ani de experiență' },
@@ -93,10 +93,14 @@ async function main() {
     }
     // an existing collection keeps what the team edited; only fields it does not have yet are added
     const have = (Array.isArray(existing.fields) ? existing.fields : []) as { key: string }[]
+    // labels that were made clearer after the first setup (only the label; type, options and the team's edits stay)
+    const relabel = new Map(c.fields.filter((f) => ['consult_online', 'clinici'].includes(f.key)).map((f) => [f.key, f.label]))
+    const relabeled = have.map((h) => (relabel.has(h.key) && (h as { label?: string }).label !== relabel.get(h.key) ? { ...h, label: relabel.get(h.key) } : h))
+    const changed = relabeled.filter((h, i) => h !== have[i]).length
     const missing = c.fields.filter((f) => !have.some((h) => h.key === f.key))
-    if (missing.length) {
-      await db.websiteCollection.update({ where: { id: existing.id }, data: { fields: [...have, ...missing] as never } })
-      console.log(`${c.key}: câmpuri adăugate: ${missing.map((m) => m.key).join(', ')}`)
+    if (missing.length || changed) {
+      await db.websiteCollection.update({ where: { id: existing.id }, data: { fields: [...relabeled, ...missing] as never } })
+      console.log(`${c.key}: câmpuri adăugate: ${missing.map((m) => m.key).join(', ') || '-'}; etichete actualizate: ${changed}`)
     }
   }
   console.log(`Canal gata (${keys.length} chei), ${COLLECTIONS.length} colecții`)
