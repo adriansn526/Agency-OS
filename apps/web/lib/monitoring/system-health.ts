@@ -34,6 +34,7 @@ export interface SSLCertStatus {
   daysRemaining: number
   isExpiring: boolean  // < 14 days
   isExpired: boolean
+  checkFailed?: boolean // couldn't fetch the cert (DNS/connection), expiry unknown
   error?: string
 }
 
@@ -148,8 +149,9 @@ export async function checkSSL(domains: string[]): Promise<SSLCertStatus[]> {
         domain,
         validUntil: 'Unknown',
         daysRemaining: -1,
-        isExpiring: true,
-        isExpired: true,
+        isExpiring: false,
+        isExpired: false,
+        checkFailed: true,
         error: err.message,
       }
     }
