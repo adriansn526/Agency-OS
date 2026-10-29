@@ -1951,6 +1951,8 @@ model WebsiteEntry {
   foundingSlots    WebsiteFoundingSlot[]
   endorsementsGiven    WebsiteEndorsement[] @relation("EndorsementGiver")
   endorsementsReceived WebsiteEndorsement[] @relation("EndorsementReceiver")
+  invitesSent          WebsiteEndorsementInvite[] @relation("InviteInviter")
+  invitesReceived      WebsiteEndorsementInvite[] @relation("InviteInvitee")
   /// gratuit | abonament (abonament: direct requests arrive with full contact data, no per-request fee)
   plan             String            @default("gratuit")
   planUntil        DateTime?
@@ -2147,6 +2149,38 @@ model WebsiteEndorsement {
   @@index([endorseeId, status])
   @@index([endorserId, endorsedAt])
   @@index([businessLineId, status])
+}
+
+/// Invitation to recommend a colleague who has no profile yet. DDL (manual, additive): packages/db/prisma/sql/website_endorsement_invites.sql
+model WebsiteEndorsementInvite {
+  id                  String        @id @default(cuid())
+  businessLineId      String
+  inviterId           String
+  /// sha256 of the code in the link; the plain code is shown once
+  codeHash            String        @unique
+  /// As typed by the inviter, only for the greeting
+  inviteeName         String?
+  /// Taxonomy slugs the colleague is recommended for
+  forServicii         Json          @default("[]")
+  note                String?
+  showName            Boolean       @default(true)
+  /// sent | registered | confirmed | rejected | revoked (expired is derived from expiresAt)
+  status              String        @default("sent")
+  inviteeEntryId      String?
+  endorsementId       String?
+  expiresAt           DateTime
+  openedAt            DateTime?
+  registeredAt        DateTime?
+  confirmedAt         DateTime?
+  publishedNotifiedAt DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @default(now()) @updatedAt
+  inviter             WebsiteEntry  @relation("InviteInviter", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee             WebsiteEntry? @relation("InviteInvitee", fields: [inviteeEntryId], references: [id], onDelete: SetNull)
+
+  @@index([inviterId, createdAt])
+  @@index([businessLineId, status])
+  @@index([inviteeEntryId])
 }
 
 model WebsiteRequest {

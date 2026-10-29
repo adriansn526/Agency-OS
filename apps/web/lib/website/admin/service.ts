@@ -13,6 +13,7 @@ import { validityDays } from '../preview/service'
 import { entryObjectUrls, removeObjects } from '../media/service'
 import { invalidateTaxonomy } from '../glossary/live'
 import { assertServiceEntry, assertServiceRemovable } from '../glossary/validate'
+import { notifyPublished } from '../endorsements/invites'
 import { generateWebsiteKey, parseStoredKeys } from '../storefront/keys'
 import { invalidateWebsiteKeyCache } from '../storefront/auth'
 
@@ -238,7 +239,10 @@ export async function updateEntry(lineId: string, id: string, raw: unknown) {
       data: { ...rest, ...(data !== undefined ? { data } : {}), ...(status === 'published' && !existing.publishedAt ? { publishedAt: new Date() } : {}) },
     })
     if (isService) invalidateTaxonomy(lineId)
-    if (saved.status === 'published' && existing.status !== 'published') await onProfilePublished(saved.leadId)
+    if (saved.status === 'published' && existing.status !== 'published') {
+      await onProfilePublished(saved.leadId)
+      await notifyInviters(lineId, saved.id)
+    }
     return saved
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') throw new AdminError('Slug-ul este deja folosit în această colecție', 409)
@@ -338,4 +342,12 @@ export async function deleteReview(lineId: string, id: string) {
     await recomputeRating(tx, r.entryId)
   })
   return { deleted: id }
+}
+
+/** Tells the colleagues who invited this doctor (and were confirmed) that the profile is now public; uses the first site of the line. */
+async function notifyInviters(lineId: string, entryId: string) {
+  const channel = await db.websiteChannel.findUnique({ where: { businessLineId: lineId }, select: { siteUrl: true, apiKeys: true } })
+  if (!channel) return
+  const key = parseStoredKeys(channel.apiKeys).find((k) => k.siteUrl && k.brandName)
+  await notifyPublished(entryId, { siteUrl: key?.siteUrl ?? channel.siteUrl ?? '', brandName: key?.brandName ?? 'platforma' })
 }

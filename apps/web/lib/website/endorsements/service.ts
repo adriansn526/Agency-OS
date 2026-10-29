@@ -1,3 +1,4 @@
+import { listInvites } from './invites'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { getTaxonomy } from '../glossary/live'
@@ -69,8 +70,14 @@ export async function listMine(me: Doctor, now = new Date()) {
   ])
   const summary = (await summaries(me.businessLineId, [me.id], now)).get(me.id)
   const since = new Date(now.getTime() - WINDOW_DAYS * DAY)
-  const used = await db.websiteEndorsement.count({ where: { endorserId: me.id, endorsedAt: { gt: since } } })
+  const [usedE, usedI, invites] = await Promise.all([
+    db.websiteEndorsement.count({ where: { endorserId: me.id, endorsedAt: { gt: since } } }),
+    db.websiteEndorsementInvite.count({ where: { inviterId: me.id, createdAt: { gt: since }, status: { not: 'revoked' } } }),
+    listInvites(me, now),
+  ])
+  const used = usedE + usedI
   return {
+    invites,
     given: given.map((g) => ({ id: g.id, slug: g.endorsee.slug, title: g.endorsee.title, note: g.note, showName: g.showName, servicii: (g.forServicii as string[] | null) ?? [], counted: !g.sameClinic })),
     received: { total: receivedRows, counted: summary?.count ?? 0 },
     limit: { used, max: MONTHLY_LIMIT, windowDays: WINDOW_DAYS },
