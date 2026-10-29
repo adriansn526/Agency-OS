@@ -67,7 +67,9 @@ export async function GET(req: Request) {
 
     // ── SSL alerts ──
     for (const cert of report.ssl) {
-      if (cert.isExpired) {
+      if (cert.checkFailed) {
+        alerts.push(`🟠 *SSL CHECK EȘUAT* — ${cert.domain}\n⚠️ Nu s-a putut obține certificatul (DNS/conexiune). Verifică domeniul.`)
+      } else if (cert.isExpired) {
         alerts.push(`🔴 *SSL EXPIRAT* — ${cert.domain}\n⚠️ Certificatul a expirat!`)
       } else if (cert.isExpiring) {
         alerts.push(`🟡 *SSL EXPIRING* — ${cert.domain}\n📅 Expiră în ${cert.daysRemaining} zile (${cert.validUntil})`)

@@ -75,7 +75,7 @@ interface MonitoringData {
   system?: {
     disk: { filesystem: string; size: string; used: string; available: string; usedPercent: number }
     ram: { totalGb: number; usedGb: number; availableGb: number; usedPercent: number; swapUsedPercent: number }
-    ssl: Array<{ domain: string; validUntil: string; daysRemaining: number; isExpiring: boolean; isExpired: boolean; error?: string }>
+    ssl: Array<{ domain: string; validUntil: string; daysRemaining: number; isExpiring: boolean; isExpired: boolean; checkFailed?: boolean; error?: string }>
     docker: { total: number; running: number; unhealthy: Array<{ name: string; status: string; isHealthy: boolean }> }
     pm2: Array<{ name: string; id: number; status: string; restarts: number; memory: string; cpu: string; uptime: string }>
     email: { smtpResponsive: boolean; imapResponsive: boolean; webmailResponsive: boolean; mailcowApiResponsive: boolean; queueSize: number }
@@ -867,21 +867,21 @@ function SystemTab({ system }: { system: MonitoringData["system"] }) {
           {system.ssl.map(cert => (
             <div key={cert.domain} className={cn(
               "px-4 py-2.5 flex items-center justify-between",
-              cert.isExpired && "bg-red-500/5",
+              (cert.isExpired || cert.checkFailed) && "bg-red-500/5",
               cert.isExpiring && !cert.isExpired && "bg-amber-500/5"
             )}>
               <div className="flex items-center gap-2">
                 <div className={cn("w-2 h-2 rounded-full",
-                  cert.isExpired ? "bg-red-400" : cert.isExpiring ? "bg-amber-400 animate-pulse" : "bg-emerald-400"
+                  cert.isExpired || cert.checkFailed ? "bg-red-400" : cert.isExpiring ? "bg-amber-400 animate-pulse" : "bg-emerald-400"
                 )} />
                 <span className="text-xs font-medium text-foreground">{cert.domain}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] text-muted-foreground">{cert.validUntil}</span>
                 <span className={cn("text-xs font-semibold tabular-nums",
-                  cert.isExpired ? "text-red-400" : cert.daysRemaining < 14 ? "text-amber-400" : cert.daysRemaining < 30 ? "text-blue-400" : "text-emerald-400"
+                  cert.isExpired || cert.checkFailed ? "text-red-400" : cert.daysRemaining < 14 ? "text-amber-400" : cert.daysRemaining < 30 ? "text-blue-400" : "text-emerald-400"
                 )}>
-                  {cert.isExpired ? "EXPIRAT" : `${cert.daysRemaining}d`}
+                  {cert.checkFailed ? "EROARE" : cert.isExpired ? "EXPIRAT" : `${cert.daysRemaining}d`}
                 </span>
               </div>
             </div>
