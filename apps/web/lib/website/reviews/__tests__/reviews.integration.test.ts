@@ -28,14 +28,19 @@ before(async () => {
 after(async () => { if (db) await db.$disconnect() })
 
 test('a doctor sees only the articles of their own specialty (or related procedure)', { skip }, async () => {
-  assert.deepEqual((await R.listArticles(me('a'), NOW)).map((x) => x.slug), ['chirurgie-generala--hernie'])
-  assert.deepEqual((await R.listArticles(me('derm'), NOW)).map((x) => x.slug), ['dermatologie--acnee'])
-  assert.deepEqual((await R.listArticles(me('proc'), NOW)).map((x) => x.slug), ['chirurgie-generala--hernie'], 'a related procedure counts')
+  assert.deepEqual((await R.listArticles(me('a'), NOW)).items.map((x) => x.slug), ['chirurgie-generala--hernie'])
+  assert.deepEqual((await R.listArticles(me('derm'), NOW)).items.map((x) => x.slug), ['dermatologie--acnee'])
+  assert.deepEqual((await R.listArticles(me('proc'), NOW)).items.map((x) => x.slug), ['chirurgie-generala--hernie'], 'a related procedure counts')
 })
 
-test('an unverified or unpublished doctor cannot review', { skip }, async () => {
-  await assert.rejects(R.listArticles(me('nocmr'), NOW), /Registrul CMR/)
-  await assert.rejects(R.listArticles(me('draft'), NOW), /publicat/)
+test('an unverified or unpublished doctor can read the articles of their specialty but not confirm', { skip }, async () => {
+  const noCmr = await R.listArticles(me('nocmr'), NOW)
+  assert.deepEqual([noCmr.items.length, noCmr.canReview, /Registrul CMR/.test(noCmr.reason ?? '')], [1, false, true])
+  const draft = await R.listArticles(me('draft'), NOW)
+  assert.deepEqual([draft.canReview, /publicat/.test(draft.reason ?? '')], [false, true])
+  assert.equal((await R.listArticles(me('a'), NOW)).canReview, true)
+  await assert.rejects(R.answerArticle(me('nocmr'), 'hernie', { action: 'confirm' }, NOW), /Registrul CMR/)
+  await assert.rejects(R.answerArticle(me('draft'), 'hernie', { action: 'suggest', note: 'o sugestie destul de lunga' }, NOW), /publicat/)
   await assert.rejects(R.answerArticle(me('derm'), 'hernie', { action: 'confirm' }, NOW), /nu există|specialitatea/)
 })
 
@@ -46,7 +51,7 @@ test('confirming puts the doctor on the article; a second doctor is added; confi
   const d = (await db.websiteEntry.findUnique({ where: { id: 'hernie' } })).data
   assert.deepEqual(d.revizuiri, ['b|2026-11-05', 'a|2026-12-01'])
   assert.equal((await db.websiteEntry.findUnique({ where: { id: 'hernie' } })).status, 'draft', 'a review never publishes by itself')
-  const mine = (await R.listArticles(me('a'), NOW))[0]!
+  const mine = (await R.listArticles(me('a'), NOW)).items[0]!
   assert.equal(mine.mine, '2026-12-01'); assert.deepEqual(mine.reviews, [{ title: 'Dr b', date: '2026-11-05' }])
   assert.ok(await db.activity.findFirst({ where: { action: 'article_review_confirmed', entityId: 'hernie' } }))
 })
