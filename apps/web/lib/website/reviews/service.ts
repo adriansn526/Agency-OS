@@ -25,10 +25,26 @@ const day = (d: Date) => d.toISOString().slice(0, 10)
 
 export const parseReviews = (v: unknown) => list(v).map((s) => { const [slug = '', date = ''] = s.split('|'); return { slug: slug.trim(), date: date.trim() } }).filter((r) => r.slug && /^\d{4}-\d{2}-\d{2}$/.test(r.date))
 
-async function reviewer(doc: Doctor, now: Date) {
+const NOT_PUBLISHED = 'Profilul tău trebuie să fie publicat ca să poți revizui articole'
+const NOT_VERIFIED = 'Poți confirma revizuirea după ce echipa a verificat dreptul tău de practică în Registrul CMR'
+
+/** Why this doctor cannot confirm yet (null = can). Reading the articles of their specialty never needs it. */
+function blocker(me: { status: string; data: unknown }, now: Date): string | null {
+  if (me.status !== 'published') return NOT_PUBLISHED
+  if (!activeCmr(decodeCmr((me.data as Data | null)?.[CMR_KEY]), now).length) return NOT_VERIFIED
+  return null
+}
+
+async function loadMe(doc: Doctor) {
   const me = await db.websiteEntry.findUnique({ where: { id: doc.id }, select: { id: true, slug: true, title: true, status: true, businessLineId: true, data: true } })
-  if (!me || me.status !== 'published') throw new AdminError('Profilul tău trebuie să fie publicat ca să poți revizui articole', 403)
-  if (!activeCmr(decodeCmr((me.data as Data | null)?.[CMR_KEY]), now).length) throw new AdminError('Poți revizui articole după ce echipa a verificat dreptul tău de practică în Registrul CMR', 403)
+  if (!me) throw new AdminError('Profilul nu există', 404)
+  return me
+}
+
+async function reviewer(doc: Doctor, now: Date) {
+  const me = await loadMe(doc)
+  const why = blocker(me, now)
+  if (why) throw new AdminError(why, 403)
   return me
 }
 
@@ -46,12 +62,14 @@ async function articles(lineId: string) {
   })
 }
 
+/** Every logged-in doctor reads the articles of their specialty; `canReview`/`reason` tell whether confirming, suggesting and withdrawing are open to them yet. */
 export async function listArticles(doc: Doctor, now = new Date()) {
-  const me = await reviewer(doc, now)
+  const me = await loadMe(doc)
+  const reason = blocker(me, now)
   const rows = (await articles(me.businessLineId)).filter((a) => sameField(me.data, a.data as Data))
   const slugs = [...new Set(rows.flatMap((a) => parseReviews((a.data as Data)[REVIEWS_KEY]).map((r) => r.slug)))]
   const names = new Map((await db.websiteEntry.findMany({ where: { businessLineId: me.businessLineId, slug: { in: slugs } }, select: { slug: true, title: true } })).map((e) => [e.slug, e.title]))
-  return rows.map((a) => {
+  const items = rows.map((a) => {
     const d = a.data as Data
     const reviews = parseReviews(d[REVIEWS_KEY])
     return {
@@ -61,6 +79,7 @@ export async function listArticles(doc: Doctor, now = new Date()) {
       mine: reviews.find((r) => r.slug === me.slug)?.date ?? null,
     }
   })
+  return { items, canReview: reason === null, reason }
 }
 
 /** confirm | withdraw | suggest on one article; the article's data is changed under a row lock so two doctors answering at once do not overwrite each other. */
