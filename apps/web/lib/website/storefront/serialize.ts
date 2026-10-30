@@ -37,6 +37,7 @@ function withCmr(data: unknown, collectionKey: string) {
   const raw = d[CMR_KEY]
   delete d[CMR_KEY]
   delete d[PENDING_KEY]
+  delete d.sugestii_medici // suggestions from reviewing doctors are for the team only
   if (collectionKey !== 'companii') return { data: d }
   const v = activeCmr(decodeCmr(raw))[0]
   return { data: d, cmr: v ? { verifiedAt: v.verifiedAt, practiceUntil: v.practiceUntil, specialities: v.specialities } : null }

@@ -61,6 +61,8 @@ const COLLECTIONS: { key: string; name: string; namePlural: string; kind: string
       { key: 'medic_recenzor', type: 'text', label: 'Afecțiune: medic recenzor (nume, specialitate)' },
       { key: 'data_revizuirii', type: 'text', label: 'Afecțiune: data revizuirii (AAAA-LL-ZZ)' },
       { key: 'surse', type: 'list', label: 'Afecțiune: surse' },
+      { key: 'revizuiri', type: 'list', label: 'Afecțiune: revizuită de medici (slug | AAAA-LL-ZZ), pus automat când un medic confirmă' },
+      { key: 'sugestii_medici', type: 'list', label: 'Afecțiune: sugestii de modificare de la medici (slug | data | text), doar pentru echipă' },
     ],
   },
   { key: 'ghiduri', name: 'Articol', namePlural: 'Articole și ghiduri', kind: 'article', sortOrder: 2, fields: [{ key: 'autor_medic', type: 'text', label: 'Medic recenzor' }, { key: 'data_revizuirii', type: 'text', label: 'Data revizuirii (AAAA-LL-ZZ)' }, { key: 'surse', type: 'list', label: 'Surse' }, { key: 'brand', type: 'select', label: 'Publicat pe', options: ['omniamed', 'topdoctori', 'doctorchirurg'], filterable: true }] },
