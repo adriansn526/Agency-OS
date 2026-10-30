@@ -6,7 +6,7 @@
  * link goes to the email given, which proves it). The recommender is told by email and confirms it is the colleague meant; only then the
  * recommendation is attached to that profile. It shows publicly only once the profile is verified and published, under the usual rules.
  */
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { sendRawEmail } from '../../email'
@@ -143,6 +143,63 @@ export async function lookupInvite(lineId: string, code: string, now = new Date(
 const slugify = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 100)
 const withDoctorTitle = (n: string) => (/^dr\.?\s/i.test(n) ? n : `Dr. ${n}`)
 
+type RegisterInput = z.infer<typeof registerInput>
+
+/**
+ * Creates the private profile (status preview, partner access) and its CRM lead for a doctor who asked for one, or finds the profile that already has this
+ * email/phone. Used by the personal invitation link and by the public sign-up form, so both behave the same.
+ */
+async function provisionProfile(lineId: string, input: RegisterInput, o: { source: 'invitatie' | 'formular'; externalId: string; invitedBy?: string; forbidEntryId?: string }) {
+  const phone = nationalPhone(input.phone) ?? input.phone
+  const digits = phone.replace(/\D/g, '')
+  const existing = await db.websiteEntry.findFirst({ where: { businessLineId: lineId, collection: { key: 'companii' }, OR: [{ email: { equals: input.email, mode: 'insensitive' } }, ...(digits.length >= 9 ? [{ phone: { contains: digits.slice(-9) } }] : [])] }, select: { id: true, title: true, partnerAccess: true, email: true } })
+  if (existing && existing.id === o.forbidEntryId) throw new AdminError('Nu te poți invita singur', 422)
+  if (existing) return { entry: existing, existing: true }
+  const col = await db.websiteCollection.findUniqueOrThrow({ where: { businessLineId_key: { businessLineId: lineId, key: 'companii' } }, select: { id: true } })
+  const title = withDoctorTitle(input.name)
+  const base = slugify(title) || 'medic'
+  let slug = base
+  for (let n = 2; await db.websiteEntry.findFirst({ where: { businessLineId: lineId, collectionId: col.id, slug }, select: { id: true } }); n++) slug = `${base}-${n}`
+  const lead = await db.lead.create({ data: { businessLineId: lineId, entityType: 'medici', status: 'prospect', companyName: title, contactPerson: title, email: input.email, phone, city: input.city, source: o.source, externalSource: o.source, externalId: o.externalId, customFields: { ...(o.invitedBy ? { invitedBy: o.invitedBy } : {}), ...(input.parafa ? { cod_parafa: input.parafa } : {}) } } })
+  const entry = await db.websiteEntry.create({ data: { businessLineId: lineId, collectionId: col.id, slug, title, status: 'preview', partnerAccess: true, city: input.city, email: input.email, phone, leadId: lead.id, externalSource: o.source, externalId: o.externalId, data: { specializare: input.specialty, ...(input.parafa ? { cod_parafa: input.parafa } : {}) } as Prisma.InputJsonValue } })
+  return { entry, existing: false }
+}
+
+/** The login link goes to the email given: that is the proof of who owns the profile. */
+async function sendLoginLink(lineId: string, line: { slug: string }, entry: { partnerAccess: boolean }, email: string, o: { siteUrl: string; brandName: string; mailer: Mailer; now: Date }) {
+  if (!entry.partnerAccess) return
+  const notifier: Notifier = { email: (to, subject, html, text) => o.mailer(to, subject, html, text, line), sms: async () => undefined }
+  await requestLogin(lineId, email, { notifier, siteUrl: o.siteUrl, brandName: o.brandName, now: o.now }).catch((e) => console.error('[signup] login link', e instanceof Error ? e.message : e))
+}
+
+const SIGNUPS_PER_HOUR = 30
+
+/**
+ * A doctor asks for a profile through the public form (no invitation): a private profile and a CRM lead are created, the login link goes to the email given
+ * and the team is alerted. The answer is the same whether or not a profile with that email/phone already existed. A line-wide cap keeps a bot from flooding it.
+ */
+export async function signupDoctor(lineId: string, raw: unknown, o: { siteUrl: string; brandName: string; invitedBy?: string; mailer?: Mailer; alert?: (text: string) => Promise<unknown>; now?: Date }) {
+  const now = o.now ?? new Date()
+  const mailer = o.mailer ?? defaultMailer
+  const input = registerInput.parse(raw)
+  const recent = await db.websiteEntry.count({ where: { businessLineId: lineId, externalSource: 'formular', createdAt: { gt: new Date(now.getTime() - 3_600_000) } } })
+  if (recent >= SIGNUPS_PER_HOUR) throw new AdminError('Prea multe cereri în ultima oră. Încearcă din nou mai târziu.', 429)
+  const line = await db.businessLine.findUniqueOrThrow({ where: { id: lineId }, select: { slug: true } })
+  let invitedBy: string | undefined
+  if (o.invitedBy && /^[a-z0-9][a-z0-9-]{0,118}$/.test(o.invitedBy)) {
+    const who = await db.websiteEntry.findFirst({ where: { businessLineId: lineId, collection: { key: 'companii' }, slug: o.invitedBy, status: 'published' }, select: { slug: true } })
+    invitedBy = who?.slug
+  }
+  const { entry, existing } = await provisionProfile(lineId, input, { source: 'formular', externalId: randomUUID(), invitedBy })
+  await audit(lineId, entry, 'doctor_signup', { existingProfile: existing, invitedBy: invitedBy ?? null })
+  await sendLoginLink(lineId, line, entry, input.email, { siteUrl: o.siteUrl, brandName: o.brandName, mailer, now })
+  if (!existing) {
+    const alert = o.alert ?? (async (text: string) => { const { sendTelegramAlert } = await import('../../notifications/telegram'); await sendTelegramAlert(text) })
+    await alert(`🩺 *Medic nou pe ${o.brandName}*\n👤 ${entry.title}\n📋 ${input.specialty}${input.city ? ` · ${input.city}` : ''}\n📧 ${input.email}\n📱 ${input.phone}${invitedBy ? `\n🤝 Invitat de ${invitedBy}` : ''}\nProfil privat creat; verifică CMR și publică.`).catch(() => undefined)
+  }
+  return { ok: true }
+}
+
 /**
  * The colleague asks for a profile through the link. Always answers the same way (no hint whether a profile with that email already existed).
  * A new private profile (status preview) and a CRM lead are created, or the invitation is attached to the profile that already has this email/phone.
@@ -162,32 +219,12 @@ export async function registerInvitee(lineId: string, code: string, raw: unknown
   if (claimed.count !== 1) throw new AdminError('Invitația nu mai este valabilă', 409)
 
   try {
-    const phone = nationalPhone(input.phone) ?? input.phone
-    const digits = phone.replace(/\D/g, '')
-    const existing = await db.websiteEntry.findFirst({ where: { businessLineId: lineId, collection: { key: 'companii' }, OR: [{ email: { equals: input.email, mode: 'insensitive' } }, ...(digits.length >= 9 ? [{ phone: { contains: digits.slice(-9) } }] : [])] }, select: { id: true, title: true, partnerAccess: true, email: true } })
-    if (existing && existing.id === inv.inviter.id) throw new AdminError('Nu te poți invita singur', 422)
-
-    let entry: { id: string; title: string; partnerAccess: boolean }
-    if (existing) {
-      entry = existing
-    } else {
-      const col = await db.websiteCollection.findUniqueOrThrow({ where: { businessLineId_key: { businessLineId: lineId, key: 'companii' } }, select: { id: true } })
-      const title = withDoctorTitle(input.name)
-      const base = slugify(title) || 'medic'
-      let slug = base
-      for (let n = 2; await db.websiteEntry.findFirst({ where: { businessLineId: lineId, collectionId: col.id, slug }, select: { id: true } }); n++) slug = `${base}-${n}`
-      const lead = await db.lead.create({ data: { businessLineId: lineId, entityType: 'medici', status: 'prospect', companyName: title, contactPerson: title, email: input.email, phone, city: input.city, source: 'invitatie', externalSource: 'invite', externalId: inv.id, customFields: { invitedBy: inv.inviter.slug, ...(input.parafa ? { cod_parafa: input.parafa } : {}) } } })
-      const created = await db.websiteEntry.create({ data: { businessLineId: lineId, collectionId: col.id, slug, title, status: 'preview', partnerAccess: true, city: input.city, email: input.email, phone, leadId: lead.id, externalSource: 'invite', externalId: inv.id, data: { specializare: input.specialty, ...(input.parafa ? { cod_parafa: input.parafa } : {}) } as Prisma.InputJsonValue } })
-      entry = created
-    }
+    const { entry, existing } = await provisionProfile(lineId, input, { source: 'invitatie', externalId: inv.id, invitedBy: inv.inviter.slug, forbidEntryId: inv.inviter.id })
     await db.websiteEndorsementInvite.update({ where: { id: inv.id }, data: { inviteeEntryId: entry.id } })
     await audit(lineId, entry, 'endorsement_invite_registered', { inviteId: inv.id, invitedBy: inv.inviter.slug, existingProfile: !!existing })
 
     // the login link goes to the email given (that is the proof of who owns the profile); then the recommender is told
-    if (entry.partnerAccess) {
-      const notifier: Notifier = { email: (to, subject, html, text) => mailer(to, subject, html, text, line), sms: async () => undefined }
-      await requestLogin(lineId, input.email, { notifier, siteUrl: o.siteUrl, brandName: o.brandName, now }).catch((e) => console.error('[invite] login link', e instanceof Error ? e.message : e))
-    }
+    await sendLoginLink(lineId, line, entry, input.email, { siteUrl: o.siteUrl, brandName: o.brandName, mailer, now })
     if (inv.inviter.email) {
       const body = `Bună ziua,\n\n${entry.title} (${input.specialty}${input.city ? `, ${input.city}` : ''}) și-a creat un cont pe ${o.brandName} după invitația ta.\n\nIntră în contul tău ca să confirmi că este colegul pe care l-ai invitat; abia după aceea recomandarea se atașează profilului lui:\n${o.siteUrl.replace(/\/$/, '')}/cont`
       await mailer(inv.inviter.email, `${entry.title} și-a creat contul pe ${o.brandName}`, paragraphs(body), body, line).catch((e) => console.error('[invite] notify inviter', e instanceof Error ? e.message : e))

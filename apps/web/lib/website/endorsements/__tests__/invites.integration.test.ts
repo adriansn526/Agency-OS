@@ -104,3 +104,32 @@ test('expired invitations are refused; the name is hidden when the inviter prefe
   for (let i = 0; i < 6; i++) await I.createInvite(me('a'), {}, NOW) // 1 earlier endorsement-free total: 3 + 1 + 6 non-revoked ≤ 10
   await assert.rejects(I.createInvite(me('a'), {}, NOW), /cel mult 10/)
 })
+
+test('public sign-up: private profile + lead + login link + team alert; repeating with the same email changes nothing', { skip }, async () => {
+  const alerts: string[] = []
+  const o = { ...opts, alert: async (t: string) => { alerts.push(t) } }
+  mails.length = 0
+  const before_ = await db.websiteEntry.count()
+  assert.deepEqual(await I.signupDoctor('bl', form({ name: 'Maria Ionescu', email: 'Maria@Example.com', phone: '0733 444 555' }), { ...o, invitedBy: 'a' }), { ok: true })
+  const e = await db.websiteEntry.findFirst({ where: { email: 'maria@example.com' } })
+  assert.deepEqual([e.status, e.partnerAccess, e.title, e.externalSource], ['preview', true, 'Dr. Maria Ionescu', 'formular'])
+  const lead = await db.lead.findUnique({ where: { id: e.leadId } })
+  assert.deepEqual([lead.entityType, lead.source, lead.customFields.invitedBy], ['medici', 'formular', 'a'])
+  assert.ok(mails.some((m) => m.to === 'maria@example.com' && /\/cont\/verifica\?token=pl_/.test(m.text)), 'login link to the doctor')
+  assert.equal(alerts.length, 1)
+  // same email again: no new profile, no second alert, the answer is the same
+  assert.deepEqual(await I.signupDoctor('bl', form({ name: 'Altcineva', email: 'maria@example.com' }), o), { ok: true })
+  assert.equal(await db.websiteEntry.count(), before_ + 1); assert.equal(alerts.length, 1)
+  // an unknown inviter is ignored, not trusted
+  await I.signupDoctor('bl', form({ name: 'Radu Pop', email: 'radu@example.com', phone: '0744 000 111' }), { ...o, invitedBy: 'inexistent' })
+  const lead2 = await db.lead.findFirst({ where: { email: 'radu@example.com' } })
+  assert.equal(lead2.customFields.invitedBy, undefined)
+  await assert.rejects(I.signupDoctor('bl', form({ consent: false, email: 'x@example.com' }), o))
+})
+
+test('public sign-up is capped per hour for the whole line', { skip }, async () => {
+  const o = { ...opts, alert: async () => undefined }
+  const made = await db.websiteEntry.count({ where: { externalSource: 'formular' } })
+  for (let i = 0; i < 30 - made; i++) await I.signupDoctor('bl', form({ name: `Medic Test ${i}`, email: `t${i}@example.com`, phone: `07${String(10_000_000 + i)}` }), o)
+  await assert.rejects(I.signupDoctor('bl', form({ email: 'prea@example.com', phone: '0799999999' }), o), /Prea multe/)
+})
