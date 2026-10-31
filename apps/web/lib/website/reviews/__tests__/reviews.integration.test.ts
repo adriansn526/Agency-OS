@@ -91,3 +91,25 @@ test('the reviewing doctor corrects the text while confirming; old values are lo
   assert.deepEqual(log.details.changes.simptome, { before: ['a', 'b'], after: ['a', 'b', 'c'] })
   assert.equal(log.details.changes.summary.before, 'vechi')
 })
+
+test('the article body as blocks: old text shows as one block; edits accept only files uploaded for this article; changes are logged', { skip }, async () => {
+  await db.websiteEntry.update({ where: { id: 'hernie' }, data: { body: 'Text vechi al articolului', data: { tip: 'situatie', parinte: 'chirurgie-generala', proceduri_legate: [] } } })
+  assert.deepEqual((await R.listArticles(me('a'), NOW)).items[0]!.blocks, [{ k: 'long', x: 'Text vechi al articolului' }])
+  await db.websiteMedia.create({ data: { entryId: 'hernie', kind: 'image', storageKey: 'h1', url: 'https://cdn.test/art-1.webp', alt: 'cazuistica', mimeType: 'image/webp', sizeBytes: 10, width: 10, height: 10, sortOrder: 0 } })
+  const blocks = [{ k: 'h2', x: 'Ce este' }, { k: 'long', x: 'Text nou, scris de medic.' }, { k: 'img', u: 'https://cdn.test/art-1.webp', a: 'schemă', c: 'Anatomie' }]
+  await assert.rejects(R.answerArticle(me('a'), 'hernie', { action: 'confirm', edits: { continut: [{ k: 'img', u: 'https://evil.test/x.png' }] } }, NOW), /necunoscut/)
+  await assert.rejects(R.answerArticle(me('a'), 'hernie', { action: 'confirm', edits: { continut: [{ k: 'script', x: 'abc' }] as never } }, NOW))
+  assert.equal((await db.websiteEntry.findUnique({ where: { id: 'hernie' } })).data.continut, undefined, 'a refused edit changes nothing')
+  const out = await R.answerArticle(me('a'), 'hernie', { action: 'confirm', edits: { continut: blocks as never } }, NOW) as { edited: string[] }
+  assert.deepEqual(out.edited, ['continut'])
+  const row = await db.websiteEntry.findUnique({ where: { id: 'hernie' } })
+  assert.deepEqual(JSON.parse(row.data.continut), blocks)
+  assert.deepEqual((await R.listArticles(me('a'), NOW)).items[0]!.blocks, blocks)
+  assert.equal(R.articleFilesInUse(row.data).includes('https://cdn.test/art-1.webp'), true)
+  const log = await db.activity.findFirst({ where: { action: 'article_review_confirmed', entityId: 'hernie' }, orderBy: { createdAt: 'desc' } })
+  assert.deepEqual(log.details.edited, ['continut'])
+  // access for uploads: same rules as reviewing
+  assert.equal((await R.articleAccess(me('a'), 'hernie', NOW)).article.id, 'hernie')
+  await assert.rejects(R.articleAccess(me('derm'), 'hernie', NOW), /nu există|specialitatea/)
+  await assert.rejects(R.articleAccess(me('nocmr'), 'hernie', NOW), /Registrul CMR/)
+})

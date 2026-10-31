@@ -13,6 +13,7 @@ import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
 import { AdminError } from '../admin/errors'
 import { activeCmr, CMR_KEY, decodeCmr } from '../verification/cmr-data'
+import { blocksInput, blockImageUrls, blockVideoFiles, filesInArticleBody, type Block } from '../partner/cazuistica'
 
 export const REVIEWS_KEY = 'revizuiri'
 export const SUGGESTIONS_KEY = 'sugestii_medici'
@@ -25,6 +26,8 @@ const qa = lines(20).refine((l) => l.every((x) => { const p = x.split('|').map((
 export const editsInput = z.object({
   summary: z.string().trim().max(500), body: z.string().trim().max(20_000),
   simptome: lines(30), semne_alarma: lines(30), tratament: lines(30), intrebari: qa,
+  /** the body ("Ce este") as content blocks; replaces `body` on the page */
+  continut: blocksInput,
 }).partial().strict()
 export type Edits = z.infer<typeof editsInput>
 const action = z.union([z.object({ action: z.literal('confirm'), edits: editsInput.optional() }), z.object({ action: z.literal('withdraw') }), suggestionInput])
@@ -65,6 +68,24 @@ export function sameField(doctorData: unknown, article: Data) {
   return [article.parinte, ...list(article.proceduri_legate)].some((s) => typeof s === 'string' && mine.has(s))
 }
 
+/** The article body as blocks: the stored `continut`, or the old plain text as one text block. */
+export function bodyBlocks(raw: unknown, body: string | null): Block[] {
+  if (typeof raw === 'string' && raw.trim().startsWith('[')) { try { const r = blocksInput.safeParse(JSON.parse(raw)); if (r.success) return r.data } catch { /* fall back to the plain text */ } }
+  return body?.trim() ? [{ k: 'long', x: body.trim() }] : []
+}
+
+/** Whether this doctor may work on this article's files and text (verified, same specialty), for uploads made from the editor. */
+export async function articleAccess(doc: Doctor, articleId: string, now = new Date()) {
+  const me = await reviewer(doc, now)
+  const a = await db.websiteEntry.findFirst({ where: { id: articleId, businessLineId: me.businessLineId, collection: { key: 'servicii' } }, select: { id: true, data: true, status: true } })
+  const d = (a?.data ?? {}) as Data
+  if (!a || d.tip !== 'situatie' || !['draft', 'preview', 'published'].includes(a.status) || !sameField(me.data, d)) throw new AdminError('Articolul nu există sau nu este din specialitatea ta', 404)
+  return { me, article: a }
+}
+
+/** Files the article body still points at: they must not be deleted from under it. */
+export const articleFilesInUse = (data: unknown) => filesInArticleBody(((data ?? {}) as Data).continut)
+
 async function articles(lineId: string) {
   return db.websiteEntry.findMany({
     where: { businessLineId: lineId, collection: { key: 'servicii' }, status: { in: ['draft', 'preview', 'published'] }, data: { path: ['tip'], equals: 'situatie' } },
@@ -84,7 +105,7 @@ export async function listArticles(doc: Doctor, now = new Date()) {
     const d = a.data as Data
     const reviews = parseReviews(d[REVIEWS_KEY])
     return {
-      id: a.id, slug: a.slug, title: a.title, status: a.status, summary: a.summary, body: a.body,
+      id: a.id, slug: a.slug, title: a.title, status: a.status, summary: a.summary, body: a.body, blocks: bodyBlocks(d.continut, a.body),
       simptome: list(d.simptome), semne_alarma: list(d.semne_alarma), tratament: list(d.tratament), intrebari: list(d.intrebari),
       reviews: reviews.filter((r) => r.slug !== me.slug).map((r) => ({ title: names.get(r.slug) ?? null, date: r.date })),
       mine: reviews.find((r) => r.slug === me.slug)?.date ?? null,
@@ -125,6 +146,15 @@ export async function answerArticle(doc: Doctor, articleId: string, raw: unknown
     let summary = a.summary, body = a.body
     for (const [k, v] of Object.entries(input.edits ?? {})) {
       if (v === undefined) continue
+      if (k === 'continut') {
+        // images and uploaded videos in the body must be files uploaded for THIS article from the editor
+        const blocks = v as Block[]
+        const own = new Set((await tx.websiteMedia.findMany({ where: { entryId: a.id, OR: [{ kind: 'image' }, { kind: 'file', alt: { in: ['cazuistica-video', 'cazuistica-poster'] } }] }, select: { url: true } })).map((m) => m.url))
+        if ([...blockImageUrls(blocks), ...blockVideoFiles(blocks)].some((u) => !own.has(u))) throw new AdminError('Imagine sau video necunoscut: încarcă fișierele din editor', 422)
+        const next = JSON.stringify(blocks), prev = typeof d.continut === 'string' ? d.continut : JSON.stringify(bodyBlocks(undefined, a.body))
+        if (next !== prev) { changed.continut = { before: prev, after: next }; d.continut = next }
+        continue
+      }
       if (k === 'summary' || k === 'body') {
         const next = v as string, prev = (k === 'summary' ? a.summary : a.body) ?? ''
         if (next !== prev.trim()) { changed[k] = { before: prev, after: next }; if (k === 'summary') summary = next || null; else body = next || null }

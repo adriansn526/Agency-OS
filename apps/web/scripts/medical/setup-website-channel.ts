@@ -62,6 +62,7 @@ const COLLECTIONS: { key: string; name: string; namePlural: string; kind: string
       { key: 'medic_recenzor', type: 'text', label: 'Afecțiune: medic recenzor (nume, specialitate)' },
       { key: 'data_revizuirii', type: 'text', label: 'Afecțiune: data revizuirii (AAAA-LL-ZZ)' },
       { key: 'surse', type: 'list', label: 'Afecțiune: surse' },
+      { key: 'continut', type: 'text', label: 'Afecțiune: corpul articolului (blocuri, JSON), pus de editorul medicului' },
       { key: 'revizuiri', type: 'list', label: 'Afecțiune: revizuită de medici (slug | AAAA-LL-ZZ), pus automat când un medic confirmă' },
       { key: 'sugestii_medici', type: 'list', label: 'Afecțiune: sugestii de modificare de la medici (slug | data | text), doar pentru echipă' },
     ],

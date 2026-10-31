@@ -40,6 +40,9 @@ const block = z.union([
   z.object({ k: z.literal('vid'), u: video, p: opt(500), c: opt(200) }).strict(),
 ])
 
+/** The blocks of an article body ("Ce este") or of a case. */
+export const blocksInput = z.array(block).min(1).max(40)
+
 export const caseV2 = z.object({ v: z.literal(2), t: z.string().trim().min(3).max(120), b: z.array(block).min(1).max(40) }).strict()
 export type Case = z.infer<typeof caseV2>
 export type Block = Case['b'][number]
@@ -67,15 +70,21 @@ export function canonicalCase(raw: string): { ok: true; value: string; case: Cas
 }
 
 /** Addresses of uploaded videos (and their posters): any video that is not a YouTube/Vimeo link. */
-export function caseVideoFiles(c: Case | null): string[] {
-  if (!c) return []
-  return c.b.flatMap((b) => (b.k === 'vid' && !normalizeVideoUrl(b.u) ? [b.u, ...(b.p ? [b.p] : [])] : []))
+export function blockVideoFiles(b: Block[]): string[] {
+  return b.flatMap((x) => (x.k === 'vid' && !normalizeVideoUrl(x.u) ? [x.u, ...(x.p ? [x.p] : [])] : []))
 }
+export const caseVideoFiles = (c: Case | null): string[] => (c ? blockVideoFiles(c.b) : [])
 
-/** Every image address a case uses. */
-export function caseImageUrls(c: Case | null): string[] {
-  if (!c) return []
-  return c.b.flatMap((b) => (b.k === 'img' ? [b.u] : b.k === 'gal' ? b.g.map((x) => x.u) : []))
+/** Every image address a list of blocks uses. */
+export function blockImageUrls(b: Block[]): string[] {
+  return b.flatMap((x) => (x.k === 'img' ? [x.u] : x.k === 'gal' ? x.g.map((y) => y.u) : []))
+}
+export const caseImageUrls = (c: Case | null): string[] => (c ? blockImageUrls(c.b) : [])
+
+/** Every file address (images, uploaded videos and posters) of an article body stored as JSON in `continut`. */
+export function filesInArticleBody(raw: unknown): string[] {
+  if (typeof raw !== 'string' || !raw.trim().startsWith('[')) return []
+  try { const r = blocksInput.safeParse(JSON.parse(raw)); return r.success ? [...blockImageUrls(r.data), ...blockVideoFiles(r.data)] : [] } catch { return [] }
 }
 
 /** Image and uploaded-video addresses used by the entries of a `cazuistica` list (live or proposed). */
