@@ -6,6 +6,7 @@ import { normalizeWebsite } from '../admin/url'
 import { getTaxonomy, unknownCategories, type LiveTaxonomy } from '../glossary/live'
 import { nationalPhone } from '../../prospectare/import-mapping'
 import { THEME_PRESETS } from '../theme'
+import { canonicalCase, caseImageUrls, urlsInList } from './cazuistica'
 
 /** Medical claims proposed by the doctor wait here for the team (data key, JSON text); the public profile keeps showing the checked values. */
 export const PENDING_KEY = 'modificari_asteptare'
@@ -53,8 +54,8 @@ export const profilePatch = z.object({
   // medical lines: medical claims that the team checks before they show (specialty, procedures, sub-specialities, parafa code)
   specializare: text(120),
   subspecializari: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
-  /** anonymised special cases, "Titlu | Descriere"; the team reads them before they show */
-  cazuistica: z.array(z.string().trim().min(10).max(2200).refine((s) => { const i = s.indexOf('|'); return i > 2 && i <= 120 && s.slice(i + 1).trim().length >= 20 }, 'Format: Titlu (max. 120 caractere) | Descriere (min. 20 caractere)')).max(12).optional(),
+  /** anonymised special cases: a JSON case (title + blocks) or an older "Titlu | Descriere"; the team reads them before they show */
+  cazuistica: z.array(z.string().trim().min(10).max(24_000).transform((v, ctx) => { const r = canonicalCase(v); if (!r.ok) { ctx.addIssue({ code: 'custom', message: r.message }); return z.NEVER } return r.value })).max(12).optional(),
   cod_parafa: z.string().trim().regex(/^[A-Za-z0-9]{4,10}$/, 'Codul de parafă are 4–10 litere și cifre').nullish().transform((v) => v ?? null),
   /** colour theme: a preset key and/or a custom #rrggbb accent (null clears) */
   tema: z.enum(THEME_PRESETS as [string, ...string[]]).nullish().transform((v) => v ?? null),
@@ -103,6 +104,12 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   if (p.servicii) {
     const bad = unknownCategories(await getTaxonomy(entry.businessLineId), p.servicii)
     if (bad.length) throw new AdminError('Date invalide', 422, [`servicii: categorie necunoscută (${bad.join(', ')})`])
+  }
+  if (p.cazuistica) {
+    // images in a case must be ones this doctor uploaded to their own profile
+    const own = new Set(entry.media.filter((m) => m.kind === 'image').map((m) => m.url))
+    const foreign = p.cazuistica.flatMap((c) => { const r = canonicalCase(c); return r.ok ? caseImageUrls(r.case) : [] }).filter((u) => !own.has(u))
+    if (foreign.length) throw new AdminError('Date invalide', 422, ['cazuistica: imagine necunoscută (încarcă imaginile din editor)'])
   }
   const d = { ...((entry.data ?? {}) as Record<string, unknown>) }
   const column: Prisma.WebsiteEntryUpdateInput = {}
@@ -163,4 +170,10 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
     } }),
   ])
   return { changed }
+}
+
+/** Images that a live or proposed case still points at: they must not be deleted from under it. */
+export function caseImagesInUse(data: unknown): string[] {
+  const d = (data ?? {}) as Record<string, unknown>
+  return [...urlsInList(d.cazuistica), ...urlsInList(parsePending(d[PENDING_KEY])?.cazuistica)]
 }
