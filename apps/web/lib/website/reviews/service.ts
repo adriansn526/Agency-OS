@@ -5,6 +5,9 @@
  * as `slug|AAAA-LL-ZZ` in the article's `revizuiri` list, and the site resolves the name from the profile (so an unpublished doctor shows nowhere).
  * A doctor can also send suggested changes: they wait in `sugestii_medici` (internal, never public) for the team. Nothing here publishes an article:
  * the team does, after reading the confirmation. Only published doctors with a valid CMR verification and the article's specialty can review.
+ *
+ * The reviewing doctor may correct the text while confirming (`confirm` with `edits`): the changes are saved and the doctor's name goes on the corrected text in the
+ * same step, so a name never stays on words the doctor did not approve. The previous values are kept in the activity log so the team can go back.
  */
 import { z } from 'zod'
 import { db, Prisma } from '@repo/db'
@@ -16,7 +19,15 @@ export const SUGGESTIONS_KEY = 'sugestii_medici'
 const MAX_REVIEWS = 10, MAX_SUGGESTIONS = 30
 
 export const suggestionInput = z.object({ action: z.literal('suggest'), note: z.string().trim().min(10, 'Descrie pe scurt ce ar trebui schimbat').max(1500) })
-const action = z.union([z.object({ action: z.literal('confirm') }), z.object({ action: z.literal('withdraw') }), suggestionInput])
+const lines = (max: number) => z.array(z.string().trim().min(1).max(600)).max(max)
+/** "Întrebare | Răspuns": both parts are needed or the question would not show on the page. */
+const qa = lines(20).refine((l) => l.every((x) => { const p = x.split('|').map((t) => t.trim()); return p.length >= 2 && !!p[0] && !!p[1] }), 'Fiecare întrebare frecventă are forma „Întrebare | Răspuns”')
+export const editsInput = z.object({
+  summary: z.string().trim().max(500), body: z.string().trim().max(20_000),
+  simptome: lines(30), semne_alarma: lines(30), tratament: lines(30), intrebari: qa,
+}).partial().strict()
+export type Edits = z.infer<typeof editsInput>
+const action = z.union([z.object({ action: z.literal('confirm'), edits: editsInput.optional() }), z.object({ action: z.literal('withdraw') }), suggestionInput])
 
 type Doctor = { id: string; businessLineId: string; title: string }
 type Data = Record<string, unknown>
@@ -88,7 +99,7 @@ export async function answerArticle(doc: Doctor, articleId: string, raw: unknown
   const me = await reviewer(doc, now)
   return db.$transaction(async (tx) => {
     await tx.$queryRaw`SELECT id FROM "WebsiteEntry" WHERE id = ${articleId} FOR UPDATE`
-    const a = await tx.websiteEntry.findFirst({ where: { id: articleId, businessLineId: me.businessLineId, collection: { key: 'servicii' } }, select: { id: true, title: true, status: true, data: true } })
+    const a = await tx.websiteEntry.findFirst({ where: { id: articleId, businessLineId: me.businessLineId, collection: { key: 'servicii' } }, select: { id: true, title: true, status: true, summary: true, body: true, data: true } })
     const d = { ...((a?.data ?? {}) as Data) }
     if (!a || d.tip !== 'situatie' || !['draft', 'preview', 'published'].includes(a.status) || !sameField(me.data, d)) throw new AdminError('Articolul nu există sau nu este din specialitatea ta', 404)
     const reviews = parseReviews(d[REVIEWS_KEY])
@@ -109,9 +120,19 @@ export async function answerArticle(doc: Doctor, articleId: string, raw: unknown
       await audit('article_review_withdrawn')
       return { status: 'withdrawn' as const }
     }
+    // corrections made by the reviewer: only what really changed is written, and the old values are logged
+    const changed: Record<string, { before: unknown; after: unknown }> = {}
+    let summary = a.summary, body = a.body
+    for (const [k, v] of Object.entries(input.edits ?? {})) {
+      if (v === undefined) continue
+      if (k === 'summary' || k === 'body') {
+        const next = v as string, prev = (k === 'summary' ? a.summary : a.body) ?? ''
+        if (next !== prev.trim()) { changed[k] = { before: prev, after: next }; if (k === 'summary') summary = next || null; else body = next || null }
+      } else if (JSON.stringify(v) !== JSON.stringify(list(d[k]))) { changed[k] = { before: list(d[k]), after: v }; d[k] = v }
+    }
     d[REVIEWS_KEY] = [...others, { slug: me.slug, date: day(now) }].sort((x, y) => x.date.localeCompare(y.date)).slice(-MAX_REVIEWS).map((r) => `${r.slug}|${r.date}`)
-    await tx.websiteEntry.update({ where: { id: a.id }, data: { data: d as Prisma.InputJsonValue } })
-    await audit('article_review_confirmed', { first: reviews.length === 0 })
-    return { status: 'confirmed' as const }
+    await tx.websiteEntry.update({ where: { id: a.id }, data: { data: d as Prisma.InputJsonValue, summary, body } })
+    await audit('article_review_confirmed', { first: reviews.length === 0, ...(Object.keys(changed).length ? { edited: Object.keys(changed), changes: changed } : {}) })
+    return { status: 'confirmed' as const, edited: Object.keys(changed) }
   })
 }
