@@ -15,7 +15,7 @@ function CaseView({ raw }: { raw: string }) {
       <p className="font-semibold">{c.t}</p>
       {c.b.map((b: any, i: number) => b.k === "img" ? <img key={i} src={b.u} alt={b.a ?? ""} className="h-20 rounded border" />
         : b.k === "gal" ? <div key={i} className="flex flex-wrap gap-1">{b.g.map((x: any) => <img key={x.u} src={x.u} alt={x.a ?? ""} className="h-16 rounded border" />)}</div>
-        : b.k === "vid" ? <p key={i}>Video: <a href={b.u} target="_blank" rel="noreferrer" className="underline">{b.u}</a></p>
+        : b.k === "vid" ? <div key={i}>{b.p ? <video src={b.u} poster={b.p} controls preload="metadata" className="h-28 rounded border" /> : null}<p>Video{b.p ? " încărcat" : ""}: <a href={b.u} target="_blank" rel="noreferrer" className="underline">{b.u}</a></p></div>
         : b.k === "ul" || b.k === "ol" ? <ul key={i} className="list-disc pl-5">{b.i.map((x: string) => <li key={x}>{x}</li>)}</ul>
         : <p key={i} className={b.k === "h1" || b.k === "h2" ? "font-medium" : ""}>{b.x}</p>)}
     </div>

@@ -114,6 +114,18 @@ test('cazuistica blocks: validated, images only from the doctor\'s own uploads, 
   await Q.rejectPending('bl', 'd', { name: 'Echipa' })
 })
 
+test('cazuistica uploaded videos: only the doctor\'s own files (video and poster) are accepted', { skip }, async () => {
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'file', storageKey: 'v1', url: 'https://cdn.test/own-video.mp4', alt: 'cazuistica-video', mimeType: 'video/mp4', sizeBytes: 10, sortOrder: 950 } })
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'file', storageKey: 'p1', url: 'https://cdn.test/own-poster.webp', alt: 'cazuistica-poster', mimeType: 'image/webp', sizeBytes: 10, sortOrder: 951 } })
+  const c = (v: object) => JSON.stringify({ v: 2, t: 'Caz cu video', b: [{ k: 'long', x: 'Descriere anonimă, suficient de lungă pentru validare.' }, v] })
+  for (const bad of [{ k: 'vid', u: 'https://evil.test/v.mp4', p: 'https://cdn.test/own-poster.webp' }, { k: 'vid', u: 'https://cdn.test/own-video.mp4', p: 'https://evil.test/p.webp' }]) {
+    await assert.rejects(P.updateProfile(await entry('d'), { cazuistica: [c(bad)] }), (e: any) => e.status === 422)
+  }
+  await P.updateProfile(await entry('d'), { cazuistica: [c({ k: 'vid', u: 'https://cdn.test/own-video.mp4', p: 'https://cdn.test/own-poster.webp', c: 'Tehnica' })] })
+  assert.ok((await entry('d')).data.modificari_asteptare.includes('own-video.mp4'))
+  await Q.rejectPending('bl', 'd', { name: 'Echipa' })
+})
+
 test('on a line without the parafa field the medical keys do not exist, and old behaviour stays', { skip }, async () => {
   await assert.rejects(P.updateProfile(await entry('c'), { tarif_consultatie: 10 }), (e: any) => e.status === 422)
   await assert.rejects(P.updateProfile(await entry('c'), { cod_parafa: 'ABCD12' }), (e: any) => e.status === 422)

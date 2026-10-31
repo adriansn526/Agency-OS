@@ -6,7 +6,7 @@ import { normalizeWebsite } from '../admin/url'
 import { getTaxonomy, unknownCategories, type LiveTaxonomy } from '../glossary/live'
 import { nationalPhone } from '../../prospectare/import-mapping'
 import { THEME_PRESETS } from '../theme'
-import { canonicalCase, caseImageUrls, urlsInList } from './cazuistica'
+import { canonicalCase, caseImageUrls, caseVideoFiles, urlsInList } from './cazuistica'
 
 /** Medical claims proposed by the doctor wait here for the team (data key, JSON text); the public profile keeps showing the checked values. */
 export const PENDING_KEY = 'modificari_asteptare'
@@ -107,9 +107,9 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   }
   if (p.cazuistica) {
     // images in a case must be ones this doctor uploaded to their own profile
-    const own = new Set(entry.media.filter((m) => m.kind === 'image').map((m) => m.url))
-    const foreign = p.cazuistica.flatMap((c) => { const r = canonicalCase(c); return r.ok ? caseImageUrls(r.case) : [] }).filter((u) => !own.has(u))
-    if (foreign.length) throw new AdminError('Date invalide', 422, ['cazuistica: imagine necunoscută (încarcă imaginile din editor)'])
+    const own = new Set(entry.media.filter((m) => m.kind === 'image' || (m.kind === 'file' && (m.alt === 'cazuistica-video' || m.alt === 'cazuistica-poster'))).map((m) => m.url))
+    const foreign = p.cazuistica.flatMap((c) => { const r = canonicalCase(c); return r.ok ? [...caseImageUrls(r.case), ...caseVideoFiles(r.case)] : [] }).filter((u) => !own.has(u))
+    if (foreign.length) throw new AdminError('Date invalide', 422, ['cazuistica: imagine necunoscută (încarcă fișierele din editor)'])
   }
   const d = { ...((entry.data ?? {}) as Record<string, unknown>) }
   const column: Prisma.WebsiteEntryUpdateInput = {}

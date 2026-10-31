@@ -19,13 +19,13 @@ export const POST = partnerHandler(async (req, { entry, businessLineId }) => {
   return r
 })
 
-/** DELETE ?kind=logo|cover, or ?id=<media id> for a gallery image (refused while a case still shows it) */
+/** DELETE ?kind=logo|cover, or ?id=<media id> for a case image/video (refused while a case still shows it) */
 export const DELETE = partnerHandler(async (req, { entry, businessLineId }) => {
   const q = new URL(req.url).searchParams, id = q.get('id')
   if (id) {
-    const m = await db.websiteMedia.findFirst({ where: { id, entryId: entry.id, kind: 'image' }, select: { url: true } })
+    const m = await db.websiteMedia.findFirst({ where: { id, entryId: entry.id, OR: [{ kind: 'image' }, { kind: 'file', alt: { in: ['cazuistica-video', 'cazuistica-poster'] } }] }, select: { url: true } })
     if (!m) throw new AdminError('Imaginea nu există', 404)
-    if (caseImagesInUse(entry.data).includes(m.url)) throw new AdminError('Imaginea este folosită într-un caz; scoate-o întâi din caz', 409)
+    if (caseImagesInUse(entry.data).includes(m.url)) throw new AdminError('Fișierul este folosit într-un caz; scoate-l întâi din caz', 409)
     return deleteGalleryImage(businessLineId, entry.id, id)
   }
   const kind = q.get('kind')

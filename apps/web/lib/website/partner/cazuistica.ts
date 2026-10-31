@@ -3,8 +3,8 @@
  * {"v":2,"t":"Titlu","b":[{"k":"p","x":"…"}, …]}. Older entries are plain "Titlu | Descriere" strings and stay valid.
  *
  * Blocks: p (paragraph), long (several paragraphs / "- " lists), h1, h2, ul, ol, img, gal (gallery), vid (YouTube or Vimeo link).
- * Images must be ones the doctor uploaded to their own profile (so a case cannot point at arbitrary addresses) and videos only come from YouTube or
- * Vimeo. Everything is checked here, and the team still reads each proposal before it shows.
+ * Images and uploaded videos must be ones the doctor uploaded to their own profile (so a case cannot point at arbitrary addresses); other videos only come
+ * from YouTube or Vimeo. Everything is checked here, and the team still reads each proposal before it shows.
  */
 import { z } from 'zod'
 
@@ -25,7 +25,8 @@ export function normalizeVideoUrl(raw: string): string | null {
 const t = (max: number) => z.string().trim().min(1).max(max)
 const opt = (max: number) => z.string().trim().max(max).optional().transform((v) => v || undefined)
 const image = z.object({ u: z.string().trim().url().max(500), a: opt(200) }).strict()
-const video = z.string().trim().max(300).transform((v, ctx) => { const n = normalizeVideoUrl(v); if (!n) { ctx.addIssue({ code: 'custom', message: 'Linkul video trebuie să fie de pe YouTube sau Vimeo' }); return z.NEVER } return n })
+/** A YouTube/Vimeo link (made canonical) or the address of a video the doctor uploaded (checked against their own uploads in updateProfile). */
+const video = z.string().trim().url().max(500).transform((v) => normalizeVideoUrl(v) ?? v)
 
 const block = z.union([
   z.object({ k: z.literal('p'), x: t(2000) }).strict(),
@@ -36,7 +37,7 @@ const block = z.union([
   z.object({ k: z.literal('ol'), i: z.array(t(300)).min(1).max(20) }).strict(),
   z.object({ k: z.literal('img'), u: z.string().trim().url().max(500), a: opt(200), c: opt(200) }).strict(),
   z.object({ k: z.literal('gal'), g: z.array(image).min(2).max(8), c: opt(200) }).strict(),
-  z.object({ k: z.literal('vid'), u: video, c: opt(200) }).strict(),
+  z.object({ k: z.literal('vid'), u: video, p: opt(500), c: opt(200) }).strict(),
 ])
 
 export const caseV2 = z.object({ v: z.literal(2), t: z.string().trim().min(3).max(120), b: z.array(block).min(1).max(40) }).strict()
@@ -65,14 +66,20 @@ export function canonicalCase(raw: string): { ok: true; value: string; case: Cas
   return { ok: true, value: JSON.stringify(r.data), case: r.data }
 }
 
+/** Addresses of uploaded videos (and their posters): any video that is not a YouTube/Vimeo link. */
+export function caseVideoFiles(c: Case | null): string[] {
+  if (!c) return []
+  return c.b.flatMap((b) => (b.k === 'vid' && !normalizeVideoUrl(b.u) ? [b.u, ...(b.p ? [b.p] : [])] : []))
+}
+
 /** Every image address a case uses. */
 export function caseImageUrls(c: Case | null): string[] {
   if (!c) return []
   return c.b.flatMap((b) => (b.k === 'img' ? [b.u] : b.k === 'gal' ? b.g.map((x) => x.u) : []))
 }
 
-/** Image addresses used by the entries of a `cazuistica` list (live or proposed). */
+/** Image and uploaded-video addresses used by the entries of a `cazuistica` list (live or proposed). */
 export function urlsInList(list: unknown): string[] {
   if (!Array.isArray(list)) return []
-  return list.flatMap((s) => { const r = typeof s === 'string' ? canonicalCase(s) : null; return r?.ok ? caseImageUrls(r.case) : [] })
+  return list.flatMap((s) => { const r = typeof s === 'string' ? canonicalCase(s) : null; return r?.ok ? [...caseImageUrls(r.case), ...caseVideoFiles(r.case)] : [] })
 }
