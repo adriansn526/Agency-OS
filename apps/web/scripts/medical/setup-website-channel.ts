@@ -40,6 +40,7 @@ const COLLECTIONS: { key: string; name: string; namePlural: string; kind: string
       { key: 'studii', type: 'list', label: 'Studii și formare' },
       { key: 'afilieri', type: 'list', label: 'Afilieri profesionale' },
       { key: 'intrebari', type: 'list', label: 'Întrebări frecvente (Întrebare | Răspuns)' },
+      { key: 'cazuistica', type: 'list', label: 'Cazuistică: cazuri anonimizate (Titlu | Descriere), aprobate de echipă' },
       { key: 'modificari_asteptare', type: 'text', label: 'Modificări propuse de medic (în verificare)' },
       { key: 'tema', type: 'text', label: 'Temă de culoare' },
       { key: 'accent', type: 'text', label: 'Culoare de accent' },

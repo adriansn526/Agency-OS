@@ -9,7 +9,7 @@ import { THEME_PRESETS } from '../theme'
 
 /** Medical claims proposed by the doctor wait here for the team (data key, JSON text); the public profile keeps showing the checked values. */
 export const PENDING_KEY = 'modificari_asteptare'
-export const GATED_KEYS = ['servicii', 'specializare', 'subspecializari', 'cod_parafa'] as const
+export const GATED_KEYS = ['servicii', 'specializare', 'subspecializari', 'cod_parafa', 'cazuistica'] as const
 const MEDICAL_LIVE_KEYS = ['tarif_consultatie', 'consult_online', 'experienta_ani', 'clinici', 'limbi', 'studii', 'afilieri', 'intrebari'] as const
 export type Gated = Partial<Record<(typeof GATED_KEYS)[number], string | string[] | null>>
 
@@ -53,6 +53,8 @@ export const profilePatch = z.object({
   // medical lines: medical claims that the team checks before they show (specialty, procedures, sub-specialities, parafa code)
   specializare: text(120),
   subspecializari: z.array(z.string().trim().min(1).max(100)).max(20).optional(),
+  /** anonymised special cases, "Titlu | Descriere"; the team reads them before they show */
+  cazuistica: z.array(z.string().trim().min(10).max(2200).refine((s) => { const i = s.indexOf('|'); return i > 2 && i <= 120 && s.slice(i + 1).trim().length >= 20 }, 'Format: Titlu (max. 120 caractere) | Descriere (min. 20 caractere)')).max(12).optional(),
   cod_parafa: z.string().trim().regex(/^[A-Za-z0-9]{4,10}$/, 'Codul de parafă are 4–10 litere și cifre').nullish().transform((v) => v ?? null),
   /** colour theme: a preset key and/or a custom #rrggbb accent (null clears) */
   tema: z.enum(THEME_PRESETS as [string, ...string[]]).nullish().transform((v) => v ?? null),
@@ -75,7 +77,7 @@ export function serializeProfile(e: EntryWithMedia, tax: LiveTaxonomy, medical =
       medical: true,
       tarif_consultatie: typeof d.tarif_consultatie === 'number' ? d.tarif_consultatie : null, consult_online: d.consult_online === 'da' || d.consult_online === 'nu' ? d.consult_online : null,
       experienta_ani: typeof d.experienta_ani === 'number' ? d.experienta_ani : null, specializare: typeof d.specializare === 'string' ? d.specializare : null, cod_parafa: typeof d.cod_parafa === 'string' ? d.cod_parafa : null,
-      clinici: list('clinici'), limbi: list('limbi'), studii: list('studii'), afilieri: list('afilieri'), subspecializari: list('subspecializari'), intrebari: list('intrebari'),
+      clinici: list('clinici'), limbi: list('limbi'), studii: list('studii'), afilieri: list('afilieri'), subspecializari: list('subspecializari'), intrebari: list('intrebari'), cazuistica: list('cazuistica'),
       pending: parsePending(d[PENDING_KEY]),
     } : {}),
     id: e.id, slug: e.slug, status: e.status, title: e.title, cui: typeof d.cui === 'string' ? d.cui : null,
@@ -97,7 +99,7 @@ export async function updateProfile(entry: EntryWithMedia, raw: unknown) {
   if (!parsed.success) throw new AdminError('Date invalide', 422, parsed.error.issues.map((i) => `${i.path.join('.') || 'cerere'}: ${i.message}`))
   const p = parsed.data
   const medical = await isMedicalEntry(entry)
-  if (!medical) for (const k of ['specializare', 'subspecializari', 'cod_parafa', ...MEDICAL_LIVE_KEYS] as const) if ((p as Record<string, unknown>)[k] !== undefined) throw new AdminError('Date invalide', 422, [`${k}: câmp indisponibil pe această linie`])
+  if (!medical) for (const k of ['specializare', 'subspecializari', 'cod_parafa', 'cazuistica', ...MEDICAL_LIVE_KEYS] as const) if ((p as Record<string, unknown>)[k] !== undefined) throw new AdminError('Date invalide', 422, [`${k}: câmp indisponibil pe această linie`])
   if (p.servicii) {
     const bad = unknownCategories(await getTaxonomy(entry.businessLineId), p.servicii)
     if (bad.length) throw new AdminError('Date invalide', 422, [`servicii: categorie necunoscută (${bad.join(', ')})`])
