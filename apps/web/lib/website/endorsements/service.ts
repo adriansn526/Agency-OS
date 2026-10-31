@@ -84,7 +84,7 @@ export async function listMine(me: Doctor, now = new Date()) {
   }
 }
 
-export interface EndorsementSummary { count: number; items: { slug: string; title: string; specialty: string | null; note: string | null; servicii: { slug: string; title: string }[] }[] }
+export interface EndorsementSummary { count: number; items: { slug: string; title: string; logoUrl: string | null; specialty: string | null; note: string | null; servicii: { slug: string; title: string }[] }[] }
 
 /** Public summary per endorsee: the counted endorsements and, of those, the ones whose author agreed to be named. */
 export async function summaries(lineId: string, endorseeIds: string[], now = new Date()): Promise<Map<string, EndorsementSummary>> {
@@ -93,7 +93,7 @@ export async function summaries(lineId: string, endorseeIds: string[], now = new
   const rows = await db.websiteEndorsement.findMany({
     where: { businessLineId: lineId, endorseeId: { in: endorseeIds }, status: 'active', endorser: { status: 'published' } },
     orderBy: { endorsedAt: 'desc' },
-    include: { endorser: { select: { slug: true, title: true, data: true } }, endorsee: { select: { data: true } } },
+    include: { endorser: { select: { slug: true, title: true, logoUrl: true, data: true } }, endorsee: { select: { data: true } } },
   })
   const tax = await getTaxonomy(lineId)
   const back = await db.websiteEndorsement.findMany({ where: { businessLineId: lineId, endorserId: { in: endorseeIds }, status: 'active' }, select: { endorserId: true, endorseeId: true } })
@@ -106,7 +106,7 @@ export async function summaries(lineId: string, endorseeIds: string[], now = new
       // only areas the colleague still lists, with their titles
       const listed = new Set(((r.endorsee.data as { servicii?: unknown } | null)?.servicii as string[] | undefined) ?? [])
       const servicii = ((r.forServicii as string[] | null) ?? []).filter((x) => listed.has(x)).map((x) => ({ slug: x, title: tax.categories.find((c) => c.slug === x)?.title ?? x }))
-      s.items.push({ slug: r.endorser.slug, title: r.endorser.title, specialty: String((r.endorser.data as { specializare?: unknown } | null)?.specializare ?? '') || null, note: r.note, servicii })
+      s.items.push({ slug: r.endorser.slug, title: r.endorser.title, logoUrl: r.endorser.logoUrl, specialty: String((r.endorser.data as { specializare?: unknown } | null)?.specializare ?? '') || null, note: r.note, servicii })
     }
     out.set(r.endorseeId, s)
   }

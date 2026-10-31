@@ -72,6 +72,23 @@ test('the public profile never exposes the proposal; approving applies it, rejec
   assert.ok(await db.activity.findFirst({ where: { action: 'partner_changes_approved', entityId: 'd' } }))
 })
 
+test('cazuistica: anonymised cases are only proposed, validated, shown after approval, and never public before', { skip }, async () => {
+  await assert.rejects(P.updateProfile(await entry('d'), { cazuistica: ['fără separator, dar destul de lung ca să treacă de lungimea minimă'] }), (e: any) => e.status === 422)
+  await assert.rejects(P.updateProfile(await entry('d'), { cazuistica: ['Titlu | scurt'] }), (e: any) => e.status === 422)
+  const one = 'Hernie ombilicală recidivată | Pacient adult cu hernie recidivată după o operație anterioară; s-a ales o abordare laparoscopică, cu externare a doua zi.'
+  await P.updateProfile(await entry('d'), { cazuistica: [one] })
+  const p = P.serializeProfile(await entry('d'), { groups: [], categories: [] }, true) as any
+  assert.deepEqual(p.cazuistica, []); assert.deepEqual(p.pending.cazuistica, [one])
+  const pub = S.serializeListItem(await entry('d') as never, 'companii') as any
+  assert.equal(pub.data.cazuistica, undefined, 'nothing public before the team approves')
+  await Q.approvePending('bl', 'd', { name: 'Echipa' })
+  assert.deepEqual((await entry('d')).data.cazuistica, [one])
+  assert.deepEqual((S.serializeListItem(await entry('d') as never, 'companii') as any).data.cazuistica, [one])
+  await P.updateProfile(await entry('d'), { cazuistica: [] })
+  await Q.approvePending('bl', 'd', { name: 'Echipa' })
+  assert.equal((await entry('d')).data.cazuistica, undefined)
+})
+
 test('on a line without the parafa field the medical keys do not exist, and old behaviour stays', { skip }, async () => {
   await assert.rejects(P.updateProfile(await entry('c'), { tarif_consultatie: 10 }), (e: any) => e.status === 422)
   await assert.rejects(P.updateProfile(await entry('c'), { cod_parafa: 'ABCD12' }), (e: any) => e.status === 422)
