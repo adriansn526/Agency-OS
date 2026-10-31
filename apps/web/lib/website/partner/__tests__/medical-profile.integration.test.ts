@@ -89,6 +89,43 @@ test('cazuistica: anonymised cases are only proposed, validated, shown after app
   assert.equal((await entry('d')).data.cazuistica, undefined)
 })
 
+test('cazuistica blocks: validated, images only from the doctor\'s own uploads, videos only YouTube/Vimeo, old text cases stay valid', { skip }, async () => {
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'image', storageKey: 'k1', url: 'https://cdn.test/own-1.webp', alt: 'cazuistica', mimeType: 'image/webp', sizeBytes: 10, width: 10, height: 10, sortOrder: 0 } })
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'image', storageKey: 'k2', url: 'https://cdn.test/own-2.webp', alt: 'cazuistica', mimeType: 'image/webp', sizeBytes: 10, width: 10, height: 10, sortOrder: 1 } })
+  const c = (b: unknown[], t = 'Caz cu blocuri') => JSON.stringify({ v: 2, t, b })
+  const long = { k: 'long', x: 'Descriere anonimă, suficient de lungă pentru validare.' }
+  const bad = async (v: string) => assert.rejects(P.updateProfile(await entry('d'), { cazuistica: [v] }), (e: any) => e.status === 422)
+  await bad(c([{ k: 'script', x: 'abcdefghijklmnopqrstuvwxyz' }]))
+  await bad(c([long, { k: 'p', x: 'ok', extra: 1 }]))
+  await bad(c([long, { k: 'img', u: 'https://evil.test/track.png' }]))
+  await bad(c([long, { k: 'gal', g: [{ u: 'https://cdn.test/own-1.webp' }] }]))
+  await bad(c([long, { k: 'vid', u: 'https://evil.test/video.mp4' }]))
+  await bad(c([{ k: 'p', x: 'prea scurt' }]))
+  await bad('{ nu e json')
+  const ok = c([{ k: 'h1', x: 'Prezentarea cazului' }, long, { k: 'ul', i: ['unu', 'doi'] }, { k: 'ol', i: ['primul pas'] }, { k: 'h2', x: 'Imagini' }, { k: 'img', u: 'https://cdn.test/own-1.webp', a: 'CT abdominal', c: 'Înainte' }, { k: 'gal', g: [{ u: 'https://cdn.test/own-1.webp' }, { u: 'https://cdn.test/own-2.webp' }] }, { k: 'vid', u: 'https://youtu.be/dQw4w9WgXcQ?t=5', c: 'Tehnica' }])
+  await P.updateProfile(await entry('d'), { cazuistica: [ok, 'Titlu vechi | descriere în formatul vechi, destul de lungă'] })
+  const prop = ((await entry('d')).data.modificari_asteptare && JSON.parse((await entry('d')).data.modificari_asteptare).cazuistica) as string[]
+  assert.equal(prop.length, 2)
+  assert.equal(JSON.parse(prop[0]!).b.find((b: any) => b.k === 'vid').u, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'video link is normalised')
+  assert.equal(prop[1], 'Titlu vechi | descriere în formatul vechi, destul de lungă')
+  // the case images are never listed in the public gallery
+  const detail = S.serializeDetail(await entry('d') as never, 'companii', await db.websiteMedia.findMany({ where: { entryId: 'd' } }), []) as any
+  assert.equal(detail.media.length, 0)
+  await Q.rejectPending('bl', 'd', { name: 'Echipa' })
+})
+
+test('cazuistica uploaded videos: only the doctor\'s own files (video and poster) are accepted', { skip }, async () => {
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'file', storageKey: 'v1', url: 'https://cdn.test/own-video.mp4', alt: 'cazuistica-video', mimeType: 'video/mp4', sizeBytes: 10, sortOrder: 950 } })
+  await db.websiteMedia.create({ data: { entryId: 'd', kind: 'file', storageKey: 'p1', url: 'https://cdn.test/own-poster.webp', alt: 'cazuistica-poster', mimeType: 'image/webp', sizeBytes: 10, sortOrder: 951 } })
+  const c = (v: object) => JSON.stringify({ v: 2, t: 'Caz cu video', b: [{ k: 'long', x: 'Descriere anonimă, suficient de lungă pentru validare.' }, v] })
+  for (const bad of [{ k: 'vid', u: 'https://evil.test/v.mp4', p: 'https://cdn.test/own-poster.webp' }, { k: 'vid', u: 'https://cdn.test/own-video.mp4', p: 'https://evil.test/p.webp' }]) {
+    await assert.rejects(P.updateProfile(await entry('d'), { cazuistica: [c(bad)] }), (e: any) => e.status === 422)
+  }
+  await P.updateProfile(await entry('d'), { cazuistica: [c({ k: 'vid', u: 'https://cdn.test/own-video.mp4', p: 'https://cdn.test/own-poster.webp', c: 'Tehnica' })] })
+  assert.ok((await entry('d')).data.modificari_asteptare.includes('own-video.mp4'))
+  await Q.rejectPending('bl', 'd', { name: 'Echipa' })
+})
+
 test('on a line without the parafa field the medical keys do not exist, and old behaviour stays', { skip }, async () => {
   await assert.rejects(P.updateProfile(await entry('c'), { tarif_consultatie: 10 }), (e: any) => e.status === 422)
   await assert.rejects(P.updateProfile(await entry('c'), { cod_parafa: 'ABCD12' }), (e: any) => e.status === 422)

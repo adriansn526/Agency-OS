@@ -71,7 +71,7 @@ export function serializeDetail(e: EntryRow, collectionKey: string, media: Media
     ...(isContentCollection(collectionKey) ? { pageLayout: effectiveContentLayout(e.layout) } : {}),
     body: e.body, phone: e.phone, websiteUrl: e.websiteUrl,
     seo: { title: e.seoTitle, description: e.seoDescription },
-    media: media.map((m) => ({ id: m.id, url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),
+    media: media.filter((m) => !m.alt?.startsWith('cazuistica')).map((m) => ({ id: m.id, url: m.url, alt: m.alt, kind: m.kind, width: m.width, height: m.height })),
     reviews: reviews.map((r) => ({ authorName: r.authorName, rating: r.rating, title: r.title, body: r.body, createdAt: r.createdAt.toISOString() })),
   }
 }

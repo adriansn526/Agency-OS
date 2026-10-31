@@ -29,7 +29,7 @@ export interface HeroVideo { video: Buffer; poster: Buffer; width: number; heigh
 
 let chain: Promise<unknown> = Promise.resolve()
 /** Transcodes are CPU heavy: they run one after another. */
-const exclusive = <T>(fn: () => Promise<T>): Promise<T> => { const p = chain.then(fn, fn); chain = p.catch(() => undefined); return p }
+export const exclusive = <T>(fn: () => Promise<T>): Promise<T> => { const p = chain.then(fn, fn); chain = p.catch(() => undefined); return p }
 
 const FF = ['-hide_banner', '-loglevel', 'error', '-nostdin']
 
