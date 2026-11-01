@@ -3,6 +3,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { LLMProvider, LLMMessage, LLMResponse, LLMStreamChunk, LLMOptions } from '../types'
+import { normalizeModel } from '../pricing'
 
 export class GeminiProvider implements LLMProvider {
   private genAI: GoogleGenerativeAI
@@ -10,7 +11,7 @@ export class GeminiProvider implements LLMProvider {
 
   constructor(apiKey?: string, model?: string) {
     this.genAI = new GoogleGenerativeAI(apiKey || process.env.GOOGLE_API_KEY || '')
-    this.modelName = model || process.env.GEMINI_MODEL || 'gemini-3.6-flash'
+    this.modelName = normalizeModel(model || process.env.GEMINI_MODEL) || 'gemini-3.6-flash'
   }
 
   async generate(messages: LLMMessage[], options?: LLMOptions): Promise<LLMResponse> {
@@ -18,7 +19,7 @@ export class GeminiProvider implements LLMProvider {
       model: this.modelName,
       generationConfig: {
         temperature: options?.temperature ?? 0.7,
-        maxOutputTokens: options?.maxTokens ?? 4096,
+        maxOutputTokens: options?.maxTokens ?? 8192,
         ...(options?.json && { responseMimeType: 'application/json' }),
       },
     })
@@ -40,14 +41,19 @@ export class GeminiProvider implements LLMProvider {
     const result = await chat.sendMessage(lastMsg!.content)
     const response = result.response
 
+    const meta = response.usageMetadata as (typeof response.usageMetadata & { thoughtsTokenCount?: number }) | undefined
+    const finishReason = response.candidates?.[0]?.finishReason
     return {
       content: response.text(),
-      usage: response.usageMetadata
+      usage: meta
         ? {
-            promptTokens: response.usageMetadata.promptTokenCount || 0,
-            completionTokens: response.usageMetadata.candidatesTokenCount || 0,
+            promptTokens: meta.promptTokenCount || 0,
+            completionTokens: meta.candidatesTokenCount || 0,
+            thinkingTokens: meta.thoughtsTokenCount || 0,
           }
         : undefined,
+      finishReason: finishReason ? String(finishReason) : undefined,
+      truncated: String(finishReason) === 'MAX_TOKENS',
     }
   }
 
@@ -56,7 +62,7 @@ export class GeminiProvider implements LLMProvider {
       model: this.modelName,
       generationConfig: {
         temperature: options?.temperature ?? 0.7,
-        maxOutputTokens: options?.maxTokens ?? 4096,
+        maxOutputTokens: options?.maxTokens ?? 8192,
         ...(options?.json && { responseMimeType: 'application/json' }),
       },
     })

@@ -3,6 +3,7 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
+import { costUsd } from './pricing'
 
 export interface UsageEntry {
   timestamp: string
@@ -10,6 +11,8 @@ export interface UsageEntry {
   model: string
   promptTokens: number
   completionTokens: number
+  /** reasoning tokens, billed as output (older entries do not have this) */
+  thinkingTokens?: number
   totalTokens: number
   cost: number        // estimated USD
   action: string      // 'brand_dna' | 'content_generate' | 'test'
@@ -23,17 +26,6 @@ export interface UsageStats {
   today: { calls: number; tokens: number; cost: number }
   thisMonth: { calls: number; tokens: number; cost: number }
   entries: UsageEntry[] // last 50
-}
-
-// Cost per 1M tokens (USD)
-const COST_TABLE: Record<string, { input: number; output: number }> = {
-  'gemini-3.6-flash':      { input: 0.15,  output: 0.60 },
-  'gemini-2.5-pro':        { input: 1.25,  output: 10.0 },
-  'gemini-2.0-flash-lite': { input: 0.075, output: 0.30 },
-  'gpt-4o':                { input: 2.50,  output: 10.0 },
-  'gpt-4o-mini':           { input: 0.15,  output: 0.60 },
-  'gpt-4-turbo':           { input: 10.0,  output: 30.0 },
-  'gpt-3.5-turbo':         { input: 0.50,  output: 1.50 },
 }
 
 function getUsageFilePath(): string {
@@ -61,16 +53,16 @@ function writeUsageLog(entries: UsageEntry[]) {
 export function estimateCost(
   model: string,
   promptTokens: number,
-  completionTokens: number
+  completionTokens: number,
+  thinkingTokens = 0
 ): number {
-  const rates = COST_TABLE[model] || { input: 1.0, output: 3.0 }
-  return (promptTokens * rates.input + completionTokens * rates.output) / 1_000_000
+  return costUsd(model, { promptTokens, completionTokens, thinkingTokens })
 }
 
 export function logUsage(entry: Omit<UsageEntry, 'timestamp' | 'totalTokens' | 'cost'> & { cost?: number }) {
   const entries = readUsageLog()
-  const totalTokens = entry.promptTokens + entry.completionTokens
-  const cost = entry.cost ?? estimateCost(entry.model, entry.promptTokens, entry.completionTokens)
+  const totalTokens = entry.promptTokens + entry.completionTokens + (entry.thinkingTokens ?? 0)
+  const cost = entry.cost ?? estimateCost(entry.model, entry.promptTokens, entry.completionTokens, entry.thinkingTokens ?? 0)
 
   entries.push({
     ...entry,
