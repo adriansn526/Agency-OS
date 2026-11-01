@@ -47,13 +47,31 @@ export function normTerms(raw: unknown, exclude: string): ProposalTerm[] {
   return out
 }
 
+/** Word with its Romanian article/plural ending removed ("furtul" → "furt", "inselaciunea" → "inselaciun"), so inflected forms compare equal. */
+const base = (w: string) => w.replace(/(ul|ea|le|a|e|i)$/, m => (w.length - m.length >= 4 ? '' : m))
+/** Same key = same wording up to inflection and filler words (cod penal, art, de, la...). */
+export function variantKey(t: string): string {
+  const w = (fold(t).match(/[a-z0-9]+/g) || []).filter(x => !STOP.has(x) && x.length > 2).map(base)
+  return [...new Set(w)].sort().join(' ') || fold(t)
+}
+
 /**
- * Difficulty of the whole article = average of its terms' KD weighted by search volume (plain average when no term has volume),
- * counting only the terms that have a KD. null = nothing computed yet.
+ * Search volume and difficulty of the whole article.
+ * Terms that differ only by form ("furt calificat" / "furtul calificat" / "furt calificat cod penal") are the same demand: Google
+ * reports the same number for close variants. They are counted once (the largest), so the total does not triple-count.
+ * KD = average of the counted terms' KD weighted by volume (plain average when no counted term has volume); null = none computed.
  */
-export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'> & { mainKd?: number }) {
-  const volume = p.mainVolume + p.longTails.reduce((s, t) => s + t.volume, 0)
-  const withKd = [{ volume: p.mainVolume, kd: p.mainKd }, ...p.longTails].filter((t): t is { volume: number; kd: number } => typeof t.kd === 'number')
+export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'> & { mainTerm?: string; mainKd?: number }) {
+  const key = variantKey
+  const best = new Map<string, { volume: number; kd?: number }>()
+  for (const t of [{ term: p.mainTerm ?? '', volume: p.mainVolume, kd: p.mainKd }, ...p.longTails]) {
+    const k = t.term ? key(t.term) : '\u0000main'
+    const cur = best.get(k)
+    if (!cur || t.volume > cur.volume) best.set(k, { volume: t.volume, kd: t.kd })
+  }
+  const counted = [...best.values()]
+  const volume = counted.reduce((s, t) => s + t.volume, 0)
+  const withKd = counted.filter((t): t is { volume: number; kd: number } => typeof t.kd === 'number')
   const w = withKd.reduce((s, t) => s + t.volume, 0)
   const kd = withKd.length === 0 ? null : Math.round(w > 0 ? withKd.reduce((s, t) => s + t.kd * t.volume, 0) / w : withKd.reduce((s, t) => s + t.kd, 0) / withKd.length)
   return { volume, clicks: Math.round(volume * EST_CTR), kd }

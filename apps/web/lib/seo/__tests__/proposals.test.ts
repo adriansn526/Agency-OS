@@ -76,3 +76,11 @@ test('regroupBySerp splits long tails that do not share enough SERP URLs with th
   assert.deepEqual(out[0]!.longTails.map(t => t.term), ['falsul intelectual', 'fara serp'])
   assert.deepEqual(out[1]!.longTails.map(t => t.term), ['uzul de fals'])
 })
+
+test('totals count close variants of the same term once', () => {
+  const p = buildProposal({ mainTerm: 'furtul calificat', mainVolume: 1600, mainKd: 30, longTails: [
+    { term: 'furt calificat', volume: 1600, kd: 20 }, { term: 'furt calificat cod penal', volume: 390 }, { term: 'art 229 cod penal', volume: 480, kd: 10 },
+  ] }) as any
+  assert.equal(totals(p).volume, 1600 + 480)
+  assert.equal(totals(p).kd, Math.round((30 * 1600 + 10 * 480) / 2080))
+})
