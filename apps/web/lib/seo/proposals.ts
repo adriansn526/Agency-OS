@@ -9,12 +9,14 @@ export type ProposalStatus = (typeof PROPOSAL_STATUSES)[number]
 /** Share of the monthly searches that turns into clicks for a page ranking around positions 3–5. Used for the estimate only. */
 export const EST_CTR = 0.08
 
-export interface ProposalTerm { term: string; volume: number }
+/** `kd` = estimated keyword difficulty 0–100 (see kdFromRanks); undefined = not computed yet. */
+export interface ProposalTerm { term: string; volume: number; kd?: number }
 
 export interface ArticleProposal {
   id: string
   mainTerm: string
   mainVolume: number
+  mainKd?: number
   longTails: ProposalTerm[]
   status: ProposalStatus
   source: 'gap' | 'manual'
@@ -27,6 +29,7 @@ export interface ArticleProposal {
 }
 
 const clean = (s: unknown) => String(s ?? '').replace(/\s+/g, ' ').trim().slice(0, 160)
+const kdv = (n: unknown): number | undefined => { const v = Number(n); return n != null && n !== '' && Number.isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : undefined }
 const vol = (n: unknown) => { const v = Math.round(Number(n)); return Number.isFinite(v) && v > 0 ? Math.min(v, 10_000_000) : 0 }
 
 export function normTerms(raw: unknown, exclude: string): ProposalTerm[] {
@@ -37,15 +40,33 @@ export function normTerms(raw: unknown, exclude: string): ProposalTerm[] {
     const term = clean(typeof t === 'string' ? t : (t as any)?.term)
     if (!term || seen.has(term.toLowerCase())) continue
     seen.add(term.toLowerCase())
-    out.push({ term, volume: vol(typeof t === 'string' ? 0 : (t as any)?.volume) })
+    const kd = typeof t === 'string' ? undefined : kdv((t as any)?.kd)
+    out.push({ term, volume: vol(typeof t === 'string' ? 0 : (t as any)?.volume), ...(kd === undefined ? {} : { kd }) })
     if (out.length >= 30) break
   }
   return out
 }
 
-export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'>) {
+/**
+ * Difficulty of the whole article = average of its terms' KD weighted by search volume (plain average when no term has volume),
+ * counting only the terms that have a KD. null = nothing computed yet.
+ */
+export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'> & { mainKd?: number }) {
   const volume = p.mainVolume + p.longTails.reduce((s, t) => s + t.volume, 0)
-  return { volume, clicks: Math.round(volume * EST_CTR) }
+  const withKd = [{ volume: p.mainVolume, kd: p.mainKd }, ...p.longTails].filter((t): t is { volume: number; kd: number } => typeof t.kd === 'number')
+  const w = withKd.reduce((s, t) => s + t.volume, 0)
+  const kd = withKd.length === 0 ? null : Math.round(w > 0 ? withKd.reduce((s, t) => s + t.kd * t.volume, 0) / w : withKd.reduce((s, t) => s + t.kd, 0) / withKd.length)
+  return { volume, clicks: Math.round(volume * EST_CTR), kd }
+}
+
+/**
+ * DataForSEO's own KD is 0 for almost every Romanian keyword, so difficulty is estimated from the SERP:
+ * the average authority rank (0–1000, DataForSEO backlinks rank) of the domains in the top 10, scaled to 0–100.
+ */
+export function kdFromRanks(ranks: number[]): number | null {
+  const r = ranks.filter(x => Number.isFinite(x) && x >= 0)
+  if (!r.length) return null
+  return Math.min(100, Math.round(r.reduce((a, b) => a + b, 0) / r.length / 10))
 }
 
 export function readProposals(metadata: unknown): ArticleProposal[] {
@@ -64,6 +85,7 @@ export function buildProposal(input: any, prev?: ArticleProposal): ArticlePropos
     id: prev?.id ?? `p_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
     mainTerm,
     mainVolume: input && 'mainVolume' in input ? vol(input.mainVolume) : prev?.mainVolume ?? 0,
+    ...(() => { const k = input && 'mainKd' in input ? kdv(input.mainKd) : prev?.mainKd; return k === undefined ? {} : { mainKd: k } })(),
     longTails: input && 'longTails' in input ? normTerms(input.longTails, mainTerm) : prev?.longTails ?? [],
     status,
     source: prev?.source ?? (input?.source === 'gap' ? 'gap' : 'manual'),

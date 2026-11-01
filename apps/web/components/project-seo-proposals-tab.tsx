@@ -6,8 +6,8 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { EST_CTR, PROPOSAL_STATUSES, type ProposalStatus } from "@/lib/seo/proposals"
 
-interface Term { term: string; volume: number }
-interface Row { id: string; mainTerm: string; mainVolume: number; longTails: Term[]; status: ProposalStatus; source: string; note?: string; claimedBy?: string; articleUrl?: string; volume: number; clicks: number }
+interface Term { term: string; volume: number; kd?: number }
+interface Row { id: string; mainTerm: string; mainVolume: number; mainKd?: number; longTails: Term[]; status: ProposalStatus; source: string; note?: string; claimedBy?: string; articleUrl?: string; volume: number; clicks: number; kd: number | null }
 interface Suggestion { mainTerm: string; mainVolume: number; longTails: Term[]; competitors: string[] }
 
 const STATUS_LABEL: Record<ProposalStatus, string> = { propus: 'Propus', in_lucru: 'În lucru', publicat: 'Publicat', respins: 'Respins' }
@@ -15,6 +15,10 @@ const STATUS_CLASS: Record<ProposalStatus, string> = {
   propus: 'bg-blue-500/10 text-blue-400', in_lucru: 'bg-amber-500/10 text-amber-400', publicat: 'bg-green-500/10 text-green-400', respins: 'bg-muted text-muted-foreground',
 }
 const nf = (n: number) => n.toLocaleString('ro-RO')
+const kdClass = (kd: number) => kd < 30 ? 'bg-green-500/10 text-green-400' : kd < 60 ? 'bg-amber-500/10 text-amber-400' : 'bg-red-500/10 text-red-400'
+function Kd({ v }: { v?: number | null }) {
+  return v == null ? <span className="text-muted-foreground">—</span> : <span className={cn('inline-block min-w-8 rounded px-1.5 py-0.5 text-center text-xs font-semibold tabular-nums', kdClass(v))}>{v}</span>
+}
 
 /** "term; volum" per line → terms */
 function parseTerms(text: string): Term[] {
@@ -34,6 +38,7 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
   const [comp, setComp] = useState(defaultCompetitors.join(', '))
   const [covered, setCovered] = useState('')
   const [suggesting, setSuggesting] = useState(false)
+  const [kdBusy, setKdBusy] = useState(false)
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null)
   const [picked, setPicked] = useState<Set<number>>(new Set())
 
@@ -56,7 +61,14 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
   }
 
   const shown = useMemo(() => rows.filter(r => filter === 'toate' ? r.status !== 'respins' : r.status === filter), [rows, filter])
-  const sum = useMemo(() => shown.reduce((a, r) => ({ volume: a.volume + r.volume, clicks: a.clicks + r.clicks }), { volume: 0, clicks: 0 }), [shown])
+  const sum = useMemo(() => {
+    const t = shown.reduce((a, r) => ({ volume: a.volume + r.volume, clicks: a.clicks + r.clicks }), { volume: 0, clicks: 0 })
+    const withKd = shown.filter(r => r.kd != null)
+    const w = withKd.reduce((a, r) => a + r.volume, 0)
+    const kd = withKd.length ? Math.round(w > 0 ? withKd.reduce((a, r) => a + r.kd! * r.volume, 0) / w : withKd.reduce((a, r) => a + r.kd!, 0) / withKd.length) : null
+    return { ...t, kd }
+  }, [shown])
+  const missingKd = useMemo(() => rows.some(r => r.mainKd === undefined || r.longTails.some(t => t.kd === undefined)), [rows])
 
   const add = async () => {
     try {
@@ -92,6 +104,23 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
     } catch (e: any) { toast.error(e.message) }
   }
 
+  /** Estimates KD in batches (one SERP request per term) until every term has one. */
+  const computeKd = async (reset = false) => {
+    setKdBusy(true)
+    try {
+      let first = true, total = 0, failed = 0
+      for (;;) {
+        const r = await fetch('/api/seo/proposals/kd', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId, reset: reset && first }) })
+        const j = await r.json()
+        if (!r.ok) throw new Error(j.error || 'Eroare')
+        first = false; total += j.data.computed; failed += j.data.failed
+        await load()
+        if (!j.data.remaining) break
+      }
+      toast.success(total ? `KD calculat pentru ${total} termeni${failed ? `, ${failed} au eșuat` : ''}` : 'Toți termenii au deja KD')
+    } catch (e: any) { toast.error(e.message || 'Calculul KD a eșuat') } finally { setKdBusy(false) }
+  }
+
   const toggle = (id: string) => setOpen(o => { const n = new Set(o); n.has(id) ? n.delete(id) : n.add(id); return n })
 
   return (
@@ -99,9 +128,13 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold">Articole propuse</h2>
-          <p className="text-sm text-muted-foreground">Termen principal + long tail cu volumul de căutări lunare. Clicurile sunt estimate la {Math.round(EST_CTR * 100)}% din volum (poziții 3–5). Avocatul le vede în contul zoana-partners.com.</p>
+          <p className="text-sm text-muted-foreground">Termen principal + long tail cu volumul de căutări lunare. Clicurile sunt estimate la {Math.round(EST_CTR * 100)}% din volum (poziții 3–5). KD (0–100) este estimat din primele 10 rezultate Google: media autorității domeniilor care ocupă SERP-ul (KD-ul DataForSEO e 0 pentru aproape toate cuvintele românești). KD-ul articolului este media KD-urilor termenilor, ponderată cu volumul. Avocatul le vede în contul zoana-partners.com.</p>
         </div>
+        <div className="flex gap-2">
+          <button onClick={() => computeKd(false)} disabled={kdBusy || !missingKd} className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium disabled:opacity-50">{kdBusy && <Loader2 className="h-4 w-4 animate-spin" />}Calculează KD</button>
+          <button onClick={() => { if (confirm('Recalculezi KD pentru toți termenii? Costă ~0,002 USD per termen.')) computeKd(true) }} disabled={kdBusy || !rows.length} className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground disabled:opacity-50">Recalculează</button>
         <button onClick={() => setAdding(a => !a)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"><Plus className="h-4 w-4" />Adaugă manual</button>
+        </div>
       </div>
 
       <div className="rounded-xl border border-border p-4 space-y-3">
@@ -162,10 +195,10 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
         <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-left text-xs text-muted-foreground">
-              <tr><th className="p-3">Termen principal</th><th className="p-3 text-right">Volum</th><th className="p-3 text-right">Long tail</th><th className="p-3 text-right">Total volum</th><th className="p-3 text-right"><MousePointerClick className="mr-1 inline h-3 w-3" />Clicuri est./lună</th><th className="p-3">Status</th><th className="p-3" /></tr>
+              <tr><th className="p-3">Termen principal</th><th className="p-3 text-right">Volum</th><th className="p-3 text-right">Long tail</th><th className="p-3 text-right">Total volum</th><th className="p-3 text-center" title="Dificultate estimată a articolului (medie ponderată cu volumul)">KD</th><th className="p-3 text-right"><MousePointerClick className="mr-1 inline h-3 w-3" />Clicuri est./lună</th><th className="p-3">Status</th><th className="p-3" /></tr>
             </thead>
             <tbody>
-              {shown.length === 0 && <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Nicio propunere.</td></tr>}
+              {shown.length === 0 && <tr><td colSpan={8} className="p-6 text-center text-muted-foreground">Nicio propunere.</td></tr>}
               {shown.map(r => (
                 <React.Fragment key={r.id}>
                   <tr className="border-t border-border align-top">
@@ -174,6 +207,7 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
                     <td className="p-3 text-right tabular-nums">{nf(r.mainVolume)}</td>
                     <td className="p-3 text-right tabular-nums">{r.longTails.length}</td>
                     <td className="p-3 text-right font-semibold tabular-nums">{nf(r.volume)}</td>
+                    <td className="p-3 text-center"><Kd v={r.kd} /></td>
                     <td className="p-3 text-right tabular-nums">{nf(r.clicks)}</td>
                     <td className="p-3">
                       <select value={r.status} onChange={e => setStatus(r.id, e.target.value as ProposalStatus)} className={cn('rounded-md border-0 px-2 py-1 text-xs', STATUS_CLASS[r.status])}>
@@ -183,10 +217,11 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
                     <td className="p-3"><button onClick={() => remove(r.id)} aria-label="Șterge" className="text-muted-foreground hover:text-red-400"><Trash2 className="h-4 w-4" /></button></td>
                   </tr>
                   {open.has(r.id) && (
-                    <tr className="bg-muted/20"><td colSpan={7} className="px-8 py-3">
+                    <tr className="bg-muted/20"><td colSpan={8} className="px-8 py-3">
+                      <div className="mb-2 flex items-center justify-between gap-4 border-b border-border pb-2"><span className="font-medium">{r.mainTerm} <span className="text-xs text-muted-foreground">(principal)</span></span><span className="flex items-center gap-3"><span className="tabular-nums text-muted-foreground">{nf(r.mainVolume)}</span><Kd v={r.mainKd} /></span></div>
                       {r.longTails.length === 0 ? <span className="text-muted-foreground">Fără long tail.</span> : (
                         <ul className="grid gap-x-8 gap-y-1 sm:grid-cols-2">
-                          {r.longTails.map(t => <li key={t.term} className="flex justify-between gap-4"><span>{t.term}</span><span className="tabular-nums text-muted-foreground">{nf(t.volume)}</span></li>)}
+                          {r.longTails.map(t => <li key={t.term} className="flex items-center justify-between gap-4"><span>{t.term}</span><span className="flex items-center gap-3"><span className="tabular-nums text-muted-foreground">{nf(t.volume)}</span><Kd v={t.kd} /></span></li>)}
                         </ul>
                       )}
                     </td></tr>
@@ -195,7 +230,7 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
               ))}
             </tbody>
             <tfoot className="border-t-2 border-border bg-muted/40 font-semibold">
-              <tr><td className="p-3">Total ({shown.length} articole)</td><td /><td /><td className="p-3 text-right tabular-nums">{nf(sum.volume)}</td><td className="p-3 text-right tabular-nums">{nf(sum.clicks)}</td><td colSpan={2} /></tr>
+              <tr><td className="p-3">Total ({shown.length} articole)</td><td /><td /><td className="p-3 text-right tabular-nums">{nf(sum.volume)}</td><td className="p-3 text-center"><Kd v={sum.kd} /></td><td className="p-3 text-right tabular-nums">{nf(sum.clicks)}</td><td colSpan={2} /></tr>
             </tfoot>
           </table>
         </div>
