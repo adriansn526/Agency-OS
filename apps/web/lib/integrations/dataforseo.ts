@@ -378,3 +378,25 @@ export async function getDomainBacklinksDetail(target: string, limit: number = 1
     throw error // Re-throw to be handled by the route
   }
 }
+
+/** Keywords a domain ranks for in the top 20, highest volume first (v3/dataforseo_labs/google/ranked_keywords/live). */
+export async function fetchRankedKeywords(domain: string, limit = 500, locationCode: number = 2642, languageCode: string = 'ro'): Promise<{ keyword: string; volume: number }[]> {
+  const res = await fetch('https://api.dataforseo.com/v3/dataforseo_labs/google/ranked_keywords/live', {
+    method: 'POST',
+    headers: getAuthHeader() as any,
+    body: JSON.stringify([{
+      target: domain,
+      location_code: locationCode,
+      language_code: languageCode,
+      limit,
+      order_by: ['keyword_data.keyword_info.search_volume,desc'],
+      filters: [['ranked_serp_element.serp_item.rank_group', '<=', 20]],
+    }]),
+  })
+  if (!res.ok) throw new Error(`DataForSEO API error: ${res.status} ${res.statusText}`)
+  const data = await res.json()
+  const items = data.tasks?.[0]?.result?.[0]?.items || []
+  return items
+    .map((i: any) => ({ keyword: i.keyword_data?.keyword, volume: i.keyword_data?.keyword_info?.search_volume || 0 }))
+    .filter((k: any) => k.keyword)
+}
