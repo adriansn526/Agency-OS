@@ -15,6 +15,7 @@ import { ProjectFinancialTab } from "@/components/project-financial-tab"
 import { ProjectAIContentTab } from "@/components/project-ai-content-tab"
 import { ProjectSeoAuditTab } from "@/components/project-seo-audit-tab"
 import { ProjectSeoContentTab } from "@/components/project-seo-content-tab"
+import { ProjectSeoProposalsTab } from "@/components/project-seo-proposals-tab"
 import { ProjectSeoBacklinksTab } from "@/components/project-seo-backlinks-tab"
 import {
   ArrowLeft,
@@ -44,7 +45,8 @@ import {
   Sparkles,
   Search,
   Link2,
-  Globe
+  Globe,
+  ListChecks,
 } from "lucide-react"
 
 import { AIContentGenerator } from "@/components/ai-content-generator"
@@ -54,7 +56,7 @@ import { ProjectContentSourcesTab } from "@/components/project-content-sources-t
 import { getDashboardVariant, getCardsConfig } from "@/lib/project-types/config"
 import { WebDevDashboard } from "@/components/project-dashboards/web-dev-dashboard"
 
-type TabView = "overview" | "tasks" | "time" | "files" | "activity" | "performance" | "keywords" | "financial" | "analytics" | "settings" | "ai-content" | "seo-audit" | "seo-content" | "seo-backlinks" | "seo-impact" | "content-sources"
+type TabView = "overview" | "tasks" | "time" | "files" | "activity" | "performance" | "keywords" | "financial" | "analytics" | "settings" | "ai-content" | "seo-audit" | "seo-content" | "seo-proposals" | "seo-backlinks" | "seo-impact" | "content-sources"
 
 interface APIProject {
   id: string
@@ -283,6 +285,7 @@ export default function ProjectSinglePage() {
     ...(isSeoProject ? [{ value: "keywords" as TabView, label: "Keywords", icon: Target }] : []),
     ...(isSeoProject ? [{ value: "seo-audit" as TabView, label: "Audit SEO", icon: Search }] : []),
     ...(isSeoProject ? [{ value: "seo-content" as TabView, label: "SEO Content", icon: FileText }] : []),
+    ...(isSeoProject ? [{ value: "seo-proposals" as TabView, label: "Articole propuse", icon: ListChecks }] : []),
     ...(isSeoProject ? [{ value: "seo-backlinks" as TabView, label: "Backlinks", icon: Link2 }] : []),
     ...(isSeoProject ? [{ value: "seo-impact" as TabView, label: "Impact Analysis", icon: BarChart3 }] : []),
     ...(isSeoProject ? [{ value: "content-sources" as TabView, label: "Surse Content", icon: Globe }] : []),
@@ -1512,6 +1515,11 @@ export default function ProjectSinglePage() {
           dateFrom={dateFrom}
           dateTo={dateTo}
         />
+      )}
+
+      {/* ARTICLE PROPOSALS TAB */}
+      {activeTab === "seo-proposals" && isSeoProject && (
+        <ProjectSeoProposalsTab projectId={project.id} defaultCompetitors={(metadata.contentSources || []).map((s: any) => { try { return new URL(s.url).hostname.replace(/^www\./, '') } catch { return '' } }).filter(Boolean)} />
       )}
 
       {/* BACKLINKS TAB */}
