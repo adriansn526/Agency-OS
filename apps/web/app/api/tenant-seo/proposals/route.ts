@@ -15,7 +15,7 @@ async function tenantProject(licenseKey: string | null) {
   return project
 }
 const view = (p: ArticleProposal) => ({
-  id: p.id, mainTerm: p.mainTerm, mainVolume: p.mainVolume, longTails: p.longTails, status: p.status,
+  id: p.id, mainTerm: p.mainTerm, mainVolume: p.mainVolume, mainKd: p.mainKd, longTails: p.longTails, status: p.status,
   note: p.note, claimedBy: p.claimedBy, articleUrl: p.articleUrl, ...totals(p),
 })
 const fail = (e: any) => e instanceof TenantAiError

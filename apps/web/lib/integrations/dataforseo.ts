@@ -400,3 +400,33 @@ export async function fetchRankedKeywords(domain: string, limit = 500, locationC
     .map((i: any) => ({ keyword: i.keyword_data?.keyword, volume: i.keyword_data?.keyword_info?.search_volume || 0 }))
     .filter((k: any) => k.keyword)
 }
+
+/** Domains of the top organic results for a keyword (v3/serp/google/organic/live/regular). null = the request failed. */
+export async function fetchSerpTopDomains(keyword: string, depth = 10, locationCode: number = 2642, languageCode: string = 'ro'): Promise<string[] | null> {
+  try {
+    const res = await fetch('https://api.dataforseo.com/v3/serp/google/organic/live/regular', {
+      method: 'POST',
+      headers: getAuthHeader() as any,
+      body: JSON.stringify([{ keyword, location_code: locationCode, language_code: languageCode, depth }]),
+    })
+    if (!res.ok) return null
+    const task = (await res.json()).tasks?.[0]
+    if (task?.status_code !== 20000) return null
+    const items: any[] = task.result?.[0]?.items || []
+    return items.filter(i => i.type === 'organic' && i.domain).slice(0, depth).map(i => String(i.domain).replace(/^www\./, ''))
+  } catch { return null }
+}
+
+/** Authority rank (0–1000) per domain (v3/backlinks/bulk_ranks/live). Missing domains are simply absent from the map. */
+export async function fetchDomainRanks(domains: string[]): Promise<Map<string, number>> {
+  const out = new Map<string, number>()
+  const unique = [...new Set(domains)]
+  for (let i = 0; i < unique.length; i += 500) {
+    const res = await fetch('https://api.dataforseo.com/v3/backlinks/bulk_ranks/live', {
+      method: 'POST', headers: getAuthHeader() as any, body: JSON.stringify([{ targets: unique.slice(i, i + 500) }]),
+    })
+    if (!res.ok) throw new Error(`DataForSEO API error: ${res.status} ${res.statusText}`)
+    for (const it of (await res.json()).tasks?.[0]?.result?.[0]?.items || []) if (typeof it.rank === 'number') out.set(String(it.target).replace(/^www\./, ''), it.rank)
+  }
+  return out
+}
