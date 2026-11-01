@@ -24,7 +24,10 @@ export class OpenAIProvider implements LLMProvider {
       ...(options?.json && { response_format: { type: 'json_object' as const } }),
     })
 
+    const finishReason = response.choices[0]?.finish_reason
     return {
+      finishReason: finishReason || undefined,
+      truncated: finishReason === 'length',
       content: response.choices[0]?.message?.content || '',
       usage: response.usage
         ? {

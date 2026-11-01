@@ -4,6 +4,7 @@
 
 import type { LLMProvider, LLMMessage, LLMOptions, ProviderType } from './types'
 import { logUsage } from './usage'
+import { costUsd, normalizeModel } from './pricing'
 
 let cachedProvider: LLMProvider | null = null
 let cachedCacheKey: string | null = null
@@ -40,12 +41,13 @@ export async function getLLMProvider(): Promise<LLMProvider> {
   // Env var overrides (always available as fallback)
   if (!apiKey) {
     if (providerType === 'openai') apiKey = process.env.OPENAI_API_KEY
-    else if (providerType === 'gemini') apiKey = process.env.GOOGLE_API_KEY
+    else if (providerType === 'gemini') apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY
   }
   if (!providerType && process.env.LLM_PROVIDER) {
     providerType = process.env.LLM_PROVIDER as ProviderType
   }
 
+  model = normalizeModel(model) // models Google retired are redirected to their successor
   const cacheKey = `${providerType}:${apiKey || 'env'}:${model || 'default'}`
   if (cachedProvider && cachedCacheKey === cacheKey) {
     return cachedProvider
@@ -97,6 +99,7 @@ export async function generateText(
       model: resolvedModel,
       promptTokens: response.usage.promptTokens,
       completionTokens: response.usage.completionTokens,
+      thinkingTokens: response.usage.thinkingTokens,
       action: options?.action || 'generate',
       detail: options?.detail,
     })
@@ -137,4 +140,40 @@ export async function generateJSON<T>(
     throw new Error(`LLM did not return valid JSON. Response: ${content.slice(0, 300)}`)
   }
   return JSON.parse(match[0]) as T
+}
+
+
+export interface GenerationResult {
+  content: string
+  provider: ProviderType
+  model: string
+  usage: { promptTokens: number; completionTokens: number; thinkingTokens: number }
+  finishReason?: string
+  truncated: boolean
+  /** estimated provider cost in USD (thinking tokens included) */
+  costUsd: number
+}
+
+/**
+ * One-off call with an explicit provider/model/key (not cached): used for billed tenant calls, which must run on the
+ * platform's own key and report exactly what they used. Throws on provider errors; the caller decides what to charge.
+ */
+export async function generateWithUsage(
+  messages: LLMMessage[],
+  opts: LLMOptions & { provider: ProviderType; model: string; apiKey: string; action?: string; detail?: string }
+): Promise<GenerationResult> {
+  const model = normalizeModel(opts.model) as string
+  let provider: LLMProvider
+  if (opts.provider === 'openai') {
+    const { OpenAIProvider } = await import('./providers/openai')
+    provider = new OpenAIProvider(opts.apiKey, model)
+  } else {
+    const { GeminiProvider } = await import('./providers/gemini')
+    provider = new GeminiProvider(opts.apiKey, model)
+  }
+  const r = await provider.generate(messages, { temperature: opts.temperature, maxTokens: opts.maxTokens, json: opts.json })
+  const usage = { promptTokens: r.usage?.promptTokens ?? 0, completionTokens: r.usage?.completionTokens ?? 0, thinkingTokens: r.usage?.thinkingTokens ?? 0 }
+  const cost = costUsd(model, usage)
+  logUsage({ provider: opts.provider, model, ...usage, cost, action: opts.action || 'generate', detail: opts.detail })
+  return { content: r.content, provider: opts.provider, model, usage, finishReason: r.finishReason, truncated: !!r.truncated, costUsd: cost }
 }

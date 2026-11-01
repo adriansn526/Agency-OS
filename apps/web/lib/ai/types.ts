@@ -11,7 +11,12 @@ export interface LLMResponse {
   usage?: {
     promptTokens: number
     completionTokens: number
+    /** reasoning tokens (Gemini "thoughts"): billed as output, not included in completionTokens */
+    thinkingTokens?: number
   }
+  /** provider's stop reason, normalised: the answer was cut because the output limit was reached */
+  truncated?: boolean
+  finishReason?: string
 }
 
 export interface LLMStreamChunk {

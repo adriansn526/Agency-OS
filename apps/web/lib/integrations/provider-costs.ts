@@ -4,24 +4,11 @@
 // Fetches real costs from AI/telecom provider APIs.
 // Used by the AI Usage & Billing dashboard.
 
+import { costUsd } from "@/lib/ai/pricing"
+
 // ─── OpenAI Costs ───
 
 const OPENAI_ADMIN_KEY = process.env.OPENAI_ADMIN_API_KEY || ""
-
-// Cost table per 1M tokens (USD) — fallback for estimation
-const OPENAI_COST_TABLE: Record<string, { input: number; output: number }> = {
-  "gpt-4o":                  { input: 2.50,  output: 10.0 },
-  "gpt-4o-mini":             { input: 0.15,  output: 0.60 },
-  "gpt-4-turbo":             { input: 10.0,  output: 30.0 },
-  "gpt-3.5-turbo":           { input: 0.50,  output: 1.50 },
-  "gpt-4o-realtime-preview": { input: 5.0,   output: 20.0 },
-}
-
-const GEMINI_COST_TABLE: Record<string, { input: number; output: number }> = {
-  "gemini-3.6-flash":      { input: 0.15,  output: 0.60 },
-  "gemini-2.5-pro":        { input: 1.25,  output: 10.0 },
-  "gemini-2.0-flash-lite": { input: 0.075, output: 0.30 },
-}
 
 export interface ProviderCostBreakdown {
   provider: string
@@ -239,14 +226,13 @@ export async function fetchTwilioCosts(
  * Google doesn't provide a billing API for API keys.
  */
 export function estimateFromTokens(
-  provider: string,
+  _provider: string,
   model: string,
   promptTokens: number,
-  completionTokens: number
+  completionTokens: number,
+  thinkingTokens = 0
 ): number {
-  const table = provider === "openai" ? OPENAI_COST_TABLE : GEMINI_COST_TABLE
-  const rates = table[model] || { input: 1.0, output: 3.0 }
-  return (promptTokens * rates.input + completionTokens * rates.output) / 1_000_000
+  return costUsd(model, { promptTokens, completionTokens, thinkingTokens })
 }
 
 /**
