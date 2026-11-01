@@ -401,8 +401,8 @@ export async function fetchRankedKeywords(domain: string, limit = 500, locationC
     .filter((k: any) => k.keyword)
 }
 
-/** Domains of the top organic results for a keyword (v3/serp/google/organic/live/regular). null = the request failed. */
-export async function fetchSerpTopDomains(keyword: string, depth = 10, locationCode: number = 2642, languageCode: string = 'ro'): Promise<string[] | null> {
+/** Top organic results (domain + url) for a keyword (v3/serp/google/organic/live/regular). null = the request failed. */
+export async function fetchSerpTop(keyword: string, depth = 10, locationCode: number = 2642, languageCode: string = 'ro'): Promise<{ domain: string; url: string }[] | null> {
   try {
     const res = await fetch('https://api.dataforseo.com/v3/serp/google/organic/live/regular', {
       method: 'POST',
@@ -413,7 +413,8 @@ export async function fetchSerpTopDomains(keyword: string, depth = 10, locationC
     const task = (await res.json()).tasks?.[0]
     if (task?.status_code !== 20000) return null
     const items: any[] = task.result?.[0]?.items || []
-    return items.filter(i => i.type === 'organic' && i.domain).slice(0, depth).map(i => String(i.domain).replace(/^www\./, ''))
+    // google.com/goto?url=… rows (Scholar/Books carousels) are not real results: they would skew overlap and authority
+    return items.filter(i => i.type === 'organic' && i.domain && i.url && !/(^|\.)google\.[a-z.]+$/.test(String(i.domain))).slice(0, depth).map(i => ({ domain: String(i.domain).replace(/^www\./, ''), url: String(i.url) }))
   } catch { return null }
 }
 

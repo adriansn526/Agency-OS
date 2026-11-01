@@ -1,24 +1,36 @@
-import { fetchDomainRanks, fetchSerpTopDomains } from '@/lib/integrations/dataforseo'
+import { fetchDomainRanks, fetchSerpTop } from '@/lib/integrations/dataforseo'
 import { kdFromRanks, type ArticleProposal } from './proposals'
 
-/** Estimated KD for each term (SERP top 10 → domain authority). Terms whose SERP request failed are left out of the result. */
-export async function estimateKd(terms: string[], concurrency = 5): Promise<Map<string, number>> {
-  const serps = new Map<string, string[]>()
+export type Serp = { domain: string; url: string }[]
+
+/** SERP top 10 per term, a few requests at a time. Terms whose request failed are absent from the map. */
+export async function fetchSerps(terms: string[], concurrency = 5): Promise<Map<string, Serp>> {
+  const serps = new Map<string, Serp>()
   let next = 0
   await Promise.all(Array.from({ length: Math.min(concurrency, terms.length) }, async () => {
     while (next < terms.length) {
       const t = terms[next++]!
-      const d = await fetchSerpTopDomains(t)
-      if (d) serps.set(t, d)
+      const r = await fetchSerpTop(t)
+      if (r) serps.set(t, r)
     }
   }))
-  const ranks = await fetchDomainRanks([...serps.values()].flat())
+  return serps
+}
+
+/** Estimated KD per term from already fetched SERPs (one backlinks-rank request for all domains). */
+export async function kdFromSerps(serps: Map<string, Serp>): Promise<Map<string, number>> {
+  const ranks = await fetchDomainRanks([...serps.values()].flatMap(s => s.map(r => r.domain)))
   const out = new Map<string, number>()
-  for (const [t, domains] of serps) {
-    const kd = kdFromRanks(domains.map(d => ranks.get(d)).filter((r): r is number => r !== undefined))
+  for (const [t, serp] of serps) {
+    const kd = kdFromRanks(serp.map(r => ranks.get(r.domain)).filter((r): r is number => r !== undefined))
     if (kd !== null) out.set(t, kd)
   }
   return out
+}
+
+/** Estimated KD for each term (SERP top 10 → domain authority). Terms whose SERP request failed are left out of the result. */
+export async function estimateKd(terms: string[], concurrency = 5): Promise<Map<string, number>> {
+  return kdFromSerps(await fetchSerps(terms, concurrency))
 }
 
 /** Terms of the given proposals that still have no KD. */

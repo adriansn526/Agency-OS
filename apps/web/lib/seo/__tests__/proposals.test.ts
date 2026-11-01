@@ -56,3 +56,23 @@ test('KD helpers fill only missing terms and can reset', async () => {
   assert.equal(cleared.mainKd, undefined); assert.ok(cleared.longTails.every(t => !('kd' in t)))
   assert.deepEqual(termsNeedingKd([cleared]), ['a', 'b', 'c'])
 })
+
+test('regroupBySerp splits long tails that do not share enough SERP URLs with the main term', async () => {
+  const { regroupBySerp, sharedUrls } = await import('../proposals')
+  const u = (...n: string[]) => n.map(x => `https://site${x}.ro/p/`)
+  assert.equal(sharedUrls(['https://www.A.ro/x/?q=1'], ['http://a.ro/x#top']), 1)
+  const serps = new Map<string, string[]>([
+    ['fals intelectual', u('1', '2', '3', '4', '5')],
+    ['falsul intelectual', u('1', '9', '10')],
+    ['uz de fals', u('7', '8', '6', '12')],
+    ['uzul de fals', u('7', '8', '6', '13')],
+    ['mister', u('11')],
+  ])
+  const out = regroupBySerp({
+    mainTerm: 'fals intelectual', mainVolume: 720,
+    longTails: [{ term: 'falsul intelectual', volume: 100 }, { term: 'uz de fals', volume: 480 }, { term: 'uzul de fals', volume: 300 }, { term: 'fara serp', volume: 50 }, { term: 'mister', volume: 10 }],
+  }, serps)
+  assert.deepEqual(out.map(o => o.mainTerm), ['fals intelectual', 'uz de fals', 'mister'])
+  assert.deepEqual(out[0]!.longTails.map(t => t.term), ['falsul intelectual', 'fara serp'])
+  assert.deepEqual(out[1]!.longTails.map(t => t.term), ['uzul de fals'])
+})

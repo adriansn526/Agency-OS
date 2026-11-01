@@ -149,3 +149,45 @@ function overlap(a: Set<string>, b: Set<string>) {
   let n = 0; for (const x of a) if (b.has(x)) n++
   return n / Math.min(a.size, b.size)
 }
+
+// ─── Same article or separate ones? Decided by SERP overlap ───
+
+/**
+ * Two keywords belong in the same article when Google shows at least this many of the same URLs for both.
+ * Measured on Romanian legal queries: even near-identical variants ("fals intelectual" / "falsul intelectual") share only 1–2 of
+ * the ~8 organic results (live SERPs are full of features and vary), while different offences share 0. So 1 shared URL is enough;
+ * 0 means a different search intent. It cannot link an article number to its description ("art 335" / "conducere fără permis" share 0),
+ * so the resulting groups are suggestions for a human to review.
+ */
+export const SAME_ARTICLE_MIN_SHARED = 1
+
+const normUrl = (u: string) => u.toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/[?#].*$/, '').replace(/\/+$/, '')
+export function sharedUrls(a: string[], b: string[]): number {
+  const sb = new Set(b.map(normUrl))
+  return [...new Set(a.map(normUrl))].filter(u => sb.has(u)).length
+}
+
+export interface Candidate { mainTerm: string; mainVolume: number; longTails: ProposalTerm[]; competitors?: string[] }
+
+/**
+ * Splits a candidate into separate articles: long tails whose SERP shares fewer than `min` URLs with the main term are
+ * a different search intent. They are regrouped among themselves the same way (highest volume first). Terms without
+ * a SERP (request failed) stay with the main term. `serps` maps term → result URLs.
+ */
+export function regroupBySerp(c: Candidate, serps: Map<string, string[]>, min = SAME_ARTICLE_MIN_SHARED): Candidate[] {
+  const out: Candidate[] = []
+  let main: ProposalTerm = { term: c.mainTerm, volume: c.mainVolume }
+  let rest = [...c.longTails]
+  for (;;) {
+    const mainUrls = serps.get(main.term)
+    const keep: ProposalTerm[] = [], split: ProposalTerm[] = []
+    for (const t of rest) {
+      const u = serps.get(t.term)
+      ;(!mainUrls || !u || sharedUrls(mainUrls, u) >= min ? keep : split).push(t)
+    }
+    out.push({ mainTerm: main.term, mainVolume: main.volume, longTails: keep, competitors: c.competitors })
+    if (!split.length) return out
+    split.sort((a, b) => b.volume - a.volume)
+    main = split[0]!; rest = split.slice(1)
+  }
+}
