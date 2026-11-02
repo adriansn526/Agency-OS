@@ -1,6 +1,9 @@
 import { fetchDomainRanks, fetchSerpTop } from '@/lib/integrations/dataforseo'
 import { kdFromRanks, type ArticleProposal } from './proposals'
 
+/** Minimum number of top results with a known authority rank needed to estimate KD. */
+export const MIN_RANKED = 5
+
 export type Serp = { domain: string; url: string }[]
 
 /** SERP top 10 per term, a few requests at a time. Terms whose request failed are absent from the map. */
@@ -22,7 +25,9 @@ export async function kdFromSerps(serps: Map<string, Serp>): Promise<Map<string,
   const ranks = await fetchDomainRanks([...serps.values()].flatMap(s => s.map(r => r.domain)))
   const out = new Map<string, number>()
   for (const [t, serp] of serps) {
-    const kd = kdFromRanks(serp.map(r => ranks.get(r.domain)).filter((r): r is number => r !== undefined))
+    // fewer than 5 ranked results (SERPs full of features) make the average swing wildly between runs: better no figure than a random one
+    const rs = serp.map(r => ranks.get(r.domain)).filter((r): r is number => r !== undefined)
+    const kd = rs.length >= MIN_RANKED ? kdFromRanks(rs) : null
     if (kd !== null) out.set(t, kd)
   }
   return out
