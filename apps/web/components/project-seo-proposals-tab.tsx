@@ -8,7 +8,7 @@ import { EST_CTR, PROPOSAL_STATUSES, type ProposalStatus } from "@/lib/seo/propo
 
 interface Term { term: string; volume: number; kd?: number }
 interface Row { id: string; mainTerm: string; mainVolume: number; mainKd?: number; longTails: Term[]; status: ProposalStatus; source: string; note?: string; claimedBy?: string; articleUrl?: string; volume: number; clicks: number; kd: number | null }
-interface Suggestion { mainTerm: string; mainVolume: number; longTails: Term[]; competitors: string[] }
+interface Suggestion { mainTerm: string; mainVolume: number; mainKd?: number; longTails: Term[]; competitors: string[]; kd?: number | null; volume?: number }
 
 const STATUS_LABEL: Record<ProposalStatus, string> = { propus: 'Propus', in_lucru: 'În lucru', publicat: 'Publicat', respins: 'Respins' }
 const STATUS_CLASS: Record<ProposalStatus, string> = {
@@ -38,6 +38,7 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
   const [comp, setComp] = useState(defaultCompetitors.join(', '))
   const [covered, setCovered] = useState('')
   const [suggesting, setSuggesting] = useState(false)
+  const [verifySerp, setVerifySerp] = useState(true)
   const [kdBusy, setKdBusy] = useState(false)
   const [suggestions, setSuggestions] = useState<Suggestion[] | null>(null)
   const [picked, setPicked] = useState<Set<number>>(new Set())
@@ -88,17 +89,17 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
     try {
       const r = await fetch('/api/seo/proposals/suggest', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId, competitors: comp.split(/[\s,;]+/).filter(Boolean), covered: covered.split('\n').map(s => s.trim()).filter(Boolean) }),
+        body: JSON.stringify({ projectId, competitors: comp.split(/[\s,;]+/).filter(Boolean), covered: covered.split('\n').map(s => s.trim()).filter(Boolean), verifySerp }),
       })
       const j = await r.json()
       if (!r.ok) throw new Error(j.error)
       setSuggestions(j.data); setPicked(new Set(j.data.map((_: any, i: number) => i)))
-      toast.success(`${j.data.length} articole candidate din ${j.meta.keywordsScanned} cuvinte-cheie`)
+      toast.success(`${j.data.length} articole candidate din ${j.meta.keywordsScanned} cuvinte-cheie${j.meta.serpTerms ? ` (grupate după SERP, ${j.meta.serpTerms} termeni verificați)` : ''}`)
     } catch (e: any) { toast.error(e.message || 'Analiza a eșuat') } finally { setSuggesting(false) }
   }
   const addPicked = async () => {
     try {
-      const proposals = suggestions!.filter((_, i) => picked.has(i)).map(s => ({ mainTerm: s.mainTerm, mainVolume: s.mainVolume, longTails: s.longTails, source: 'gap' }))
+      const proposals = suggestions!.filter((_, i) => picked.has(i)).map(s => ({ mainTerm: s.mainTerm, mainVolume: s.mainVolume, mainKd: s.mainKd, longTails: s.longTails, source: 'gap' }))
       const out = await call('POST', { proposals })
       setSuggestions(null); await load(); toast.success(`${out.added} adăugate${out.skipped ? `, ${out.skipped} existau deja` : ''}`)
     } catch (e: any) { toast.error(e.message) }
@@ -150,6 +151,7 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
         <button onClick={suggest} disabled={suggesting || !comp.trim()} className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm font-medium disabled:opacity-50">
           {suggesting && <Loader2 className="h-4 w-4 animate-spin" />}Rulează analiza (DataForSEO)
         </button>
+        <label className="ml-3 inline-flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" checked={verifySerp} onChange={e => setVerifySerp(e.target.checked)} />Verifică SERP: decide ce e același articol și calculează KD (~0,002 USD per termen)</label>
         {suggestions && (
           <div className="space-y-2">
             {suggestions.length === 0 ? <p className="text-sm text-muted-foreground">Nimic nou față de ce există deja.</p> : (
@@ -158,8 +160,8 @@ export function ProjectSeoProposalsTab({ projectId, defaultCompetitors = [] }: {
                   {suggestions.map((s, i) => (
                     <label key={i} className="flex cursor-pointer items-start gap-3 p-2.5 text-sm">
                       <input type="checkbox" className="mt-1" checked={picked.has(i)} onChange={() => setPicked(p => { const n = new Set(p); n.has(i) ? n.delete(i) : n.add(i); return n })} />
-                      <span className="flex-1"><b>{s.mainTerm}</b> <span className="text-muted-foreground">({nf(s.mainVolume)})</span>
-                        {s.longTails.length > 0 && <span className="block text-xs text-muted-foreground">{s.longTails.map(t => `${t.term} (${nf(t.volume)})`).join(' · ')}</span>}
+                      <span className="flex-1"><b>{s.mainTerm}</b> <span className="text-muted-foreground">({nf(s.mainVolume)})</span>{s.kd != null && <> <Kd v={s.kd} /></>}
+                        {s.longTails.length > 0 && <span className="block text-xs text-muted-foreground">{s.longTails.map(t => `${t.term} (${nf(t.volume)}${t.kd != null ? `, KD ${t.kd}` : ''})`).join(' · ')}</span>}
                       </span>
                       <span className="text-xs text-muted-foreground">{s.competitors.join(', ')}</span>
                     </label>

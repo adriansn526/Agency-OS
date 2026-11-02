@@ -47,13 +47,31 @@ export function normTerms(raw: unknown, exclude: string): ProposalTerm[] {
   return out
 }
 
+/** Word with its Romanian article/plural ending removed ("furtul" → "furt", "inselaciunea" → "inselaciun"), so inflected forms compare equal. */
+const base = (w: string) => w.replace(/(ul|ea|le|a|e|i)$/, m => (w.length - m.length >= 4 ? '' : m))
+/** Same key = same wording up to inflection and filler words (cod penal, art, de, la...). */
+export function variantKey(t: string): string {
+  const w = (fold(t).match(/[a-z0-9]+/g) || []).filter(x => !STOP.has(x) && x.length > 2).map(base)
+  return [...new Set(w)].sort().join(' ') || fold(t)
+}
+
 /**
- * Difficulty of the whole article = average of its terms' KD weighted by search volume (plain average when no term has volume),
- * counting only the terms that have a KD. null = nothing computed yet.
+ * Search volume and difficulty of the whole article.
+ * Terms that differ only by form ("furt calificat" / "furtul calificat" / "furt calificat cod penal") are the same demand: Google
+ * reports the same number for close variants. They are counted once (the largest), so the total does not triple-count.
+ * KD = average of the counted terms' KD weighted by volume (plain average when no counted term has volume); null = none computed.
  */
-export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'> & { mainKd?: number }) {
-  const volume = p.mainVolume + p.longTails.reduce((s, t) => s + t.volume, 0)
-  const withKd = [{ volume: p.mainVolume, kd: p.mainKd }, ...p.longTails].filter((t): t is { volume: number; kd: number } => typeof t.kd === 'number')
+export function totals(p: Pick<ArticleProposal, 'mainVolume' | 'longTails'> & { mainTerm?: string; mainKd?: number }) {
+  const key = variantKey
+  const best = new Map<string, { volume: number; kd?: number }>()
+  for (const t of [{ term: p.mainTerm ?? '', volume: p.mainVolume, kd: p.mainKd }, ...p.longTails]) {
+    const k = t.term ? key(t.term) : '\u0000main'
+    const cur = best.get(k)
+    if (!cur || t.volume > cur.volume) best.set(k, { volume: t.volume, kd: t.kd })
+  }
+  const counted = [...best.values()]
+  const volume = counted.reduce((s, t) => s + t.volume, 0)
+  const withKd = counted.filter((t): t is { volume: number; kd: number } => typeof t.kd === 'number')
   const w = withKd.reduce((s, t) => s + t.volume, 0)
   const kd = withKd.length === 0 ? null : Math.round(w > 0 ? withKd.reduce((s, t) => s + t.kd * t.volume, 0) / w : withKd.reduce((s, t) => s + t.kd, 0) / withKd.length)
   return { volume, clicks: Math.round(volume * EST_CTR), kd }
@@ -148,4 +166,46 @@ function overlap(a: Set<string>, b: Set<string>) {
   if (!a.size || !b.size) return 0
   let n = 0; for (const x of a) if (b.has(x)) n++
   return n / Math.min(a.size, b.size)
+}
+
+// ─── Same article or separate ones? Decided by SERP overlap ───
+
+/**
+ * Two keywords belong in the same article when Google shows at least this many of the same URLs for both.
+ * Measured on Romanian legal queries: even near-identical variants ("fals intelectual" / "falsul intelectual") share only 1–2 of
+ * the ~8 organic results (live SERPs are full of features and vary), while different offences share 0. So 1 shared URL is enough;
+ * 0 means a different search intent. It cannot link an article number to its description ("art 335" / "conducere fără permis" share 0),
+ * so the resulting groups are suggestions for a human to review.
+ */
+export const SAME_ARTICLE_MIN_SHARED = 1
+
+const normUrl = (u: string) => u.toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/[?#].*$/, '').replace(/\/+$/, '')
+export function sharedUrls(a: string[], b: string[]): number {
+  const sb = new Set(b.map(normUrl))
+  return [...new Set(a.map(normUrl))].filter(u => sb.has(u)).length
+}
+
+export interface Candidate { mainTerm: string; mainVolume: number; longTails: ProposalTerm[]; competitors?: string[] }
+
+/**
+ * Splits a candidate into separate articles: long tails whose SERP shares fewer than `min` URLs with the main term are
+ * a different search intent. They are regrouped among themselves the same way (highest volume first). Terms without
+ * a SERP (request failed) stay with the main term. `serps` maps term → result URLs.
+ */
+export function regroupBySerp(c: Candidate, serps: Map<string, string[]>, min = SAME_ARTICLE_MIN_SHARED): Candidate[] {
+  const out: Candidate[] = []
+  let main: ProposalTerm = { term: c.mainTerm, volume: c.mainVolume }
+  let rest = [...c.longTails]
+  for (;;) {
+    const mainUrls = serps.get(main.term)
+    const keep: ProposalTerm[] = [], split: ProposalTerm[] = []
+    for (const t of rest) {
+      const u = serps.get(t.term)
+      ;(!mainUrls || !u || sharedUrls(mainUrls, u) >= min ? keep : split).push(t)
+    }
+    out.push({ mainTerm: main.term, mainVolume: main.volume, longTails: keep, competitors: c.competitors })
+    if (!split.length) return out
+    split.sort((a, b) => b.volume - a.volume)
+    main = split[0]!; rest = split.slice(1)
+  }
 }
