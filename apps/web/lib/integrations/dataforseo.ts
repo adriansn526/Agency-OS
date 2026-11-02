@@ -407,14 +407,25 @@ export async function fetchSerpTop(keyword: string, depth = 10, locationCode: nu
     const res = await fetch('https://api.dataforseo.com/v3/serp/google/organic/live/regular', {
       method: 'POST',
       headers: getAuthHeader() as any,
-      body: JSON.stringify([{ keyword, location_code: locationCode, language_code: languageCode, depth }]),
+      // SERPs are full of features (videos, PAA, carousels) and repeat domains, so asking for `depth` rows often leaves 3–4 real
+      // results: ask for twice as many and keep the first `depth` distinct domains
+      body: JSON.stringify([{ keyword, location_code: locationCode, language_code: languageCode, depth: depth * 2 }]),
     })
     if (!res.ok) return null
     const task = (await res.json()).tasks?.[0]
     if (task?.status_code !== 20000) return null
     const items: any[] = task.result?.[0]?.items || []
     // google.com/goto?url=… rows (Scholar/Books carousels) are not real results: they would skew overlap and authority
-    return items.filter(i => i.type === 'organic' && i.domain && i.url && !/(^|\.)google\.[a-z.]+$/.test(String(i.domain))).slice(0, depth).map(i => ({ domain: String(i.domain).replace(/^www\./, ''), url: String(i.url) }))
+    const seen = new Set<string>()
+    const out: { domain: string; url: string }[] = []
+    for (const i of items) {
+      if (i.type !== 'organic' || !i.domain || !i.url) continue
+      const domain = String(i.domain).replace(/^www\./, '')
+      if (/(^|\.)google\.[a-z.]+$/.test(domain) || seen.has(domain)) continue
+      seen.add(domain); out.push({ domain, url: String(i.url) })
+      if (out.length >= depth) break
+    }
+    return out
   } catch { return null }
 }
 
