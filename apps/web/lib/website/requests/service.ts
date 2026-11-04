@@ -18,6 +18,7 @@ import { getTaxonomy } from '../glossary/live'
 import { nationalPhone } from '../../prospectare/import-mapping'
 import type { Notifier } from '../partner/auth'
 import { planActive } from '../plan'
+import { pushToEntries } from '../partner/push'
 import { pickFirms, teaserText, type Candidate } from './routing'
 
 export const REQUEST_TTL_HOURS = 72
@@ -148,6 +149,11 @@ async function notifyFirms(lineId: string, requestId: string, entries: { id: str
   if (!req) return
   const tax = await getTaxonomy(lineId)
   const cat = tax.categories.find((c) => c.slug === req.category)?.title ?? req.category
+  // Push goes to every firm with the app, whether or not it has an email; it carries no customer data (it shows on the lock screen).
+  await pushToEntries(entries.map((e) => e.id), (entryId) => {
+    const included = req.deliveries.find((x) => x.entryId === entryId)?.status === 'accepted'
+    return { title: `Cerere nouă: ${cat}`, body: `${req.city ? req.city + ', ' : ''}${req.county}${included ? ' · inclusă în abonament' : ' · deschide pentru detalii'}`, data: { type: 'quote-request', requestId } }
+  })
   for (const e of entries) {
     if (!e.email) continue
     const d = req.deliveries.find((x) => x.entryId === e.id)
