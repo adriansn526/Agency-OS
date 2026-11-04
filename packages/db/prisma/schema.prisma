@@ -1945,6 +1945,7 @@ model WebsiteEntry {
   children         WebsiteEntry[]    @relation("EntryChildren")
   partnerLogins    WebsitePartnerLogin[]
   partnerSessions  WebsitePartnerSession[]
+  partnerDevices   WebsitePartnerDevice[]
   /// Home page blocks chosen by the firm (see lib/website/layout.ts); null = default layout
   layout           Json?
   layoutVersions   WebsiteLayoutVersion[]
@@ -2086,6 +2087,18 @@ model WebsitePartnerSession {
   lastUsedAt DateTime     @default(now())
   userAgent  String?
   ip         String?
+  createdAt  DateTime     @default(now())
+  entry      WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+
+  @@index([entryId])
+}
+
+/// Device of a partner's mobile app (Expo push token); new quote requests are pushed to it. A token belongs to one firm at a time.
+model WebsitePartnerDevice {
+  id         String       @id @default(cuid())
+  entryId    String
+  token      String       @unique
+  lastSeenAt DateTime     @default(now())
   createdAt  DateTime     @default(now())
   entry      WebsiteEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
 
