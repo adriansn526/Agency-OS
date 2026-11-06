@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildProposal, totals, suggestProposals, kdFromRanks, EST_CTR } from '../proposals'
+import { buildProposal, totals, suggestProposals, kdFromRanks, findDuplicate, EST_CTR } from '../proposals'
 
 test('validates and totals', () => {
     const p = buildProposal({ mainTerm: ' fals intelectual ', mainVolume: 720, longTails: [{ term: 'uz de fals', volume: 480 }, 'fals intelectual', { term: 'Uz de fals' }] }) as any
@@ -83,4 +83,13 @@ test('totals count close variants of the same term once', () => {
   ] }) as any
   assert.equal(totals(p).volume, 1600 + 480)
   assert.equal(totals(p).kd, Math.round((30 * 1600 + 10 * 480) / 2080))
+})
+
+test('finds a proposal covering the same wording, ignoring rejected ones', () => {
+    const a = buildProposal({ mainTerm: 'furtul calificat', longTails: ['art 229 cod penal'] }) as any
+    const r = buildProposal({ mainTerm: 'abuz de incredere', status: 'respins' }) as any
+    assert.equal(findDuplicate([a, r], 'furt calificat')?.id, a.id)
+    assert.equal(findDuplicate([a, r], 'Art. 229')?.id, a.id)
+    assert.equal(findDuplicate([a, r], 'abuz de incredere'), undefined)
+    assert.equal(findDuplicate([a, r], 'tâlhărie'), undefined)
 })
