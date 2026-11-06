@@ -55,6 +55,12 @@ export function variantKey(t: string): string {
   return [...new Set(w)].sort().join(' ') || fold(t)
 }
 
+/** An existing proposal that covers the same wording (up to inflection / filler words), as main term or long tail. */
+export function findDuplicate(list: ArticleProposal[], term: string): ArticleProposal | undefined {
+  const k = variantKey(term)
+  return list.find(p => p.status !== 'respins' && [p.mainTerm, ...p.longTails.map(t => t.term)].some(t => variantKey(t) === k))
+}
+
 /**
  * Search volume and difficulty of the whole article.
  * Terms that differ only by form ("furt calificat" / "furtul calificat" / "furt calificat cod penal") are the same demand: Google
