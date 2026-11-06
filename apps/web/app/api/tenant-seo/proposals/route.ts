@@ -16,7 +16,7 @@ async function tenantProject(licenseKey: string | null) {
   return project
 }
 const view = (p: ArticleProposal) => ({
-  id: p.id, mainTerm: p.mainTerm, mainVolume: p.mainVolume, mainKd: p.mainKd, longTails: p.longTails, status: p.status,
+  id: p.id, mainTerm: p.mainTerm, title: p.title, mainVolume: p.mainVolume, mainKd: p.mainKd, longTails: p.longTails, status: p.status,
   note: p.note, claimedBy: p.claimedBy, articleUrl: p.articleUrl, ...totals(p),
 })
 const fail = (e: any) => e instanceof TenantAiError
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * POST { mainTerm, longTails?: string[], note?, proposedBy? }: the portal's coordinator proposes a new article. Volumes come from Google Ads
+ * POST { mainTerm, title?, longTails?: string[], note?, proposedBy? }: the portal's coordinator proposes a new article. Volumes come from Google Ads
  * (best effort: the proposal is saved without them if the Planner is unavailable); KD stays empty until it is estimated.
  * 409 { error, existing } when the same wording is already proposed.
  */
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   try {
     const project = await tenantProject(req.headers.get('x-license-key'))
     const b = await req.json().catch(() => ({}))
-    const first = buildProposal({ mainTerm: b?.mainTerm, longTails: Array.isArray(b?.longTails) ? b.longTails : [], note: b?.note ? `${b.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}. ` : ''}${b.note}` : b?.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}` : undefined })
+    const first = buildProposal({ mainTerm: b?.mainTerm, title: b?.title, longTails: Array.isArray(b?.longTails) ? b.longTails : [], note: b?.note ? `${b.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}. ` : ''}${b.note}` : b?.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}` : undefined })
     if ('error' in first) return NextResponse.json({ error: first.error }, { status: 400 })
     const terms = [first.mainTerm, ...first.longTails.map(t => t.term)]
     const vols = await volumesFor(terms).catch(() => ({} as Record<string, number>))
