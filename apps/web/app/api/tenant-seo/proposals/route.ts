@@ -33,19 +33,21 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * POST { mainTerm, title?, longTails?: string[], note?, proposedBy? }: the portal's coordinator proposes a new article. Volumes come from Google Ads
- * (best effort: the proposal is saved without them if the Planner is unavailable); KD stays empty until it is estimated.
+ * POST { mainTerm, title?, mainVolume?, mainKd?, longTails?: (string | { term, volume?, kd? })[], note?, proposedBy? }: the portal's coordinator proposes a new article. Missing volumes come from Google Ads
+ * unless the portal sends them (it shows live volume / KD while typing); then those figures are kept as sent (best effort: the proposal is saved without volumes if the Planner is unavailable).
  * 409 { error, existing } when the same wording is already proposed.
  */
 export async function POST(req: NextRequest) {
   try {
     const project = await tenantProject(req.headers.get('x-license-key'))
     const b = await req.json().catch(() => ({}))
-    const first = buildProposal({ mainTerm: b?.mainTerm, title: b?.title, longTails: Array.isArray(b?.longTails) ? b.longTails : [], note: b?.note ? `${b.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}. ` : ''}${b.note}` : b?.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}` : undefined })
+    const first = buildProposal({ mainTerm: b?.mainTerm, title: b?.title, mainVolume: b?.mainVolume, mainKd: b?.mainKd, longTails: Array.isArray(b?.longTails) ? b.longTails : [], note: b?.note ? `${b.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}. ` : ''}${b.note}` : b?.proposedBy ? `Propus de ${String(b.proposedBy).slice(0, 80)}` : undefined })
     if ('error' in first) return NextResponse.json({ error: first.error }, { status: 400 })
     const terms = [first.mainTerm, ...first.longTails.map(t => t.term)]
-    const vols = await volumesFor(terms).catch(() => ({} as Record<string, number>))
-    const draft = buildProposal({ ...first, mainVolume: vols[first.mainTerm] ?? 0, longTails: first.longTails.map(t => ({ term: t.term, volume: vols[t.term] ?? 0 })), source: 'manual' }) as ArticleProposal
+    // figures the portal already showed the user (volume / KD) are kept; only the missing volumes are fetched from Google Ads
+    const missing = terms.filter(t => (t === first.mainTerm ? first.mainVolume : first.longTails.find(x => x.term === t)?.volume) === 0)
+    const vols = missing.length ? await volumesFor(missing).catch(() => ({} as Record<string, number>)) : {}
+    const draft = buildProposal({ ...first, mainVolume: first.mainVolume || vols[first.mainTerm] || 0, longTails: first.longTails.map(t => ({ ...t, volume: t.volume || vols[t.term] || 0 })), source: 'manual' }) as ArticleProposal
     const out = await withProject(project.id, async list => {
       for (const t of terms) {
         const dup = findDuplicate(list, t)
