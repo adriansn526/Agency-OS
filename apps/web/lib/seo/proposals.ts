@@ -17,6 +17,8 @@ export interface ArticleProposal {
   mainTerm: string
   mainVolume: number
   mainKd?: number
+  /** Suggested article title; the draft starts with it (falls back to the main term). */
+  title?: string
   longTails: ProposalTerm[]
   status: ProposalStatus
   source: 'gap' | 'manual'
@@ -110,6 +112,7 @@ export function buildProposal(input: any, prev?: ArticleProposal): ArticlePropos
     mainTerm,
     mainVolume: input && 'mainVolume' in input ? vol(input.mainVolume) : prev?.mainVolume ?? 0,
     ...(() => { const k = input && 'mainKd' in input ? kdv(input.mainKd) : prev?.mainKd; return k === undefined ? {} : { mainKd: k } })(),
+    ...(() => { const t = input && 'title' in input ? clean(input.title) : prev?.title; return t ? { title: t } : {} })(),
     longTails: input && 'longTails' in input ? normTerms(input.longTails, mainTerm) : prev?.longTails ?? [],
     status,
     source: prev?.source ?? (input?.source === 'gap' ? 'gap' : 'manual'),

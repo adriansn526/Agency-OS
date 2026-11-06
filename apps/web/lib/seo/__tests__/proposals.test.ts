@@ -93,3 +93,11 @@ test('finds a proposal covering the same wording, ignoring rejected ones', () =>
     assert.equal(findDuplicate([a, r], 'abuz de incredere'), undefined)
     assert.equal(findDuplicate([a, r], 'tâlhărie'), undefined)
 })
+
+test('keeps an optional suggested title and preserves it on update', () => {
+    const a = buildProposal({ mainTerm: 'abuz in serviciu', title: '  Abuzul în serviciu:  condiții și pedeapsă ' }) as any
+    assert.equal(a.title, 'Abuzul în serviciu: condiții și pedeapsă')
+    assert.equal((buildProposal({ status: 'in_lucru' }, a) as any).title, a.title)
+    assert.equal('title' in (buildProposal({ mainTerm: 'furt' }) as any), false)
+    assert.equal('title' in (buildProposal({ title: '' }, a) as any), false)
+})
